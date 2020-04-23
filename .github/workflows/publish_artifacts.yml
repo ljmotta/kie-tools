@@ -18,7 +18,7 @@ jobs:
       - name: Parse `tag`
         id: release-tag
         run: |
-          echo ::set-output name=tag::$(node -e "console.log('${{ github.ref }}'.match(/^.*\/(.+)$/)[1])")
+          echo ::set-output name=tag::$(echo "0.4.3")
 
       # This bash script returns 0 if equal and 1 otherwise. Will fail if versions are not equal.
 #      - name: Check release `tag` against `lerna.json.version`
