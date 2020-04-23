@@ -6,7 +6,6 @@ on:
 
 jobs:
   publish_release_artifacts:
-    if: github.repository == 'kiegroup/kogito-tooling'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -94,14 +93,7 @@ jobs:
           access_token=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${client_id}&client_secret=${client_secret}&refresh_token=${refresh_token}&grant_type=refresh_token" | jq -r '.access_token')
           uploadResponse=$(curl -X PUT -sS "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${extension_id}" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2}" -T ${file_path})
           echo "$uploadResponse"
-          echo ::set-output name=upload_status::$(echo "$uploadResponse" | jq -r '.uploadState')
-
-      - name: Check Upload
-        run: |
-          [ "${{ steps.update_extension.outputs.upload_status }}" == 'SUCCESS' ]
-
-      - name: Publish Extension
-        run: |
+          echo "$uploadResponse" | jq -r '.uploadState'
           publishResponse=$(curl -X POST -sS "https://www.googleapis.com/chromewebstore/v1.1/items/${extension_id}/publish" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2" -H "Content-Length:0" -H "publishTarget:trustedTesters")
           echo "$publishResponse"
           echo ::set-output name=publish_status::$(echo "$publishResponse" | jq -r '.status')
