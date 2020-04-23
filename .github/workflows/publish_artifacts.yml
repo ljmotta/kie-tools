@@ -1,8 +1,10 @@
 name: Publish release artifacts
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [master]
+  pull_request:
+    branches: "**"
 
 jobs:
   publish_release_artifacts:
