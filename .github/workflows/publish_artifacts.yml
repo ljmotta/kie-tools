@@ -92,13 +92,15 @@ jobs:
           extension_id: ${{ secrets.EXTENSION_ID }}
           file_path: ./kogito-tooling/packages/chrome-extension-pack-kogito-kie-editors/dist/chrome_extension_kogito_kie_editors_${{ steps.release-tag.outputs.tag }}.zip"
         run: |
-          access_token=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${client_id}&client_secret=${client_secret}&refresh_token=${refresh_token}&grant_type=refresh_token" | jq -r '.access_token')
-          uploadResponse=$(curl -X PUT -sS "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${extension_id}" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2}" -T ${file_path})
-          echo "$uploadResponse"
-          echo "$uploadResponse" | jq -r '.uploadState'
-          publishResponse=$(curl -X POST -sS "https://www.googleapis.com/chromewebstore/v1.1/items/${extension_id}/publish" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2" -H "Content-Length:0" -H "publishTarget:trustedTesters")
-          echo "$publishResponse"
-          echo ::set-output name=publish_status::$(echo "$publishResponse" | jq -r '.status')
+          ls -la
+          cd ./kogito-tooling/packages/chrome-extension-pack-kogito-kie-editors/dist/ && ls -la
+#          access_token=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${client_id}&client_secret=${client_secret}&refresh_token=${refresh_token}&grant_type=refresh_token" | jq -r '.access_token')
+#          uploadResponse=$(curl -X PUT -sS "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${extension_id}" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2}" -T ${file_path})
+#          echo "$uploadResponse"
+#          echo "$uploadResponse" | jq -r '.uploadState'
+#          publishResponse=$(curl -X POST -sS "https://www.googleapis.com/chromewebstore/v1.1/items/${extension_id}/publish" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2" -H "Content-Length:0" -H "publishTarget:trustedTesters")
+#          echo "$publishResponse"
+#          echo ::set-output name=publish_status::$(echo "$publishResponse" | jq -r '.status')
 
       - name: Check Publish
         run: |
