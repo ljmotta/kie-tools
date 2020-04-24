@@ -99,4 +99,5 @@ jobs:
 
       - name: Check Publish
         run: |
+          ! [ -z "${{ steps.update_extension.outputs.publish_status }}" ]
           ! [ "${{ steps.update_extension.outputs.publish_status }}" == 'FAILURE' ]
