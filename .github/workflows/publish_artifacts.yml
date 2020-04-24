@@ -1,10 +1,8 @@
 name: Publish release artifacts
 
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: "**"
+  release:
+    types: [published]
 
 jobs:
   publish_release_artifacts:
@@ -87,7 +85,7 @@ jobs:
       - name: Update Extension
         id: update_extension
         env:
-          file_path: ./kogito-tooling/packages/chrome-extension-pack-kogito-kie-editors/dist/chrome_extension_kogito_kie_editors_0.4.3.zip
+          file_path: ./kogito-tooling/packages/chrome-extension-pack-kogito-kie-editors/dist/chrome_extension_kogito_kie_editors_${{ steps.release-tag.outputs.tag }}.zip
         run: |
           access_token=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${{ secrets.CLIENT_ID }}&client_secret=${{ secrets.CLIENT_SECRET }}&refresh_token=${{ secrets.REFRESH_TOKEN }}&grant_type=refresh_token" | jq -r '.access_token')
           uploadResponse=$(curl -X PUT -sS "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2}" -T ${file_path})
