@@ -14,41 +14,60 @@
  * limitations under the License.
  */
 
-import * as vscode from "vscode";
-import * as path_ from "path";
 import { KogitoEditorStore } from "./KogitoEditorStore";
 import { KogitoEditor } from "./KogitoEditor";
-import { Router, ResourceContentService } from "@kogito-tooling/core-api";
+import { ResourceContentService, Router, KogitoEdit } from "@kogito-tooling/core-api";
+import { VsCodeNodeResourceContentService } from "./VsCodeNodeResourceContentService";
+import { VsCodeResourceContentService } from "./VsCodeResourceContentService";
+
+import * as vscode from "vscode";
+import * as nodePath from "path";
 
 export class KogitoEditorFactory {
   private readonly context: vscode.ExtensionContext;
   private readonly editorStore: KogitoEditorStore;
   private readonly webviewLocation: string;
   private readonly router: Router;
-  private readonly resourceContentService: ResourceContentService;
 
   constructor(
     context: vscode.ExtensionContext,
     router: Router,
     webviewLocation: string,
-    editorStore: KogitoEditorStore,
-    resourceContentService: ResourceContentService
+    editorStore: KogitoEditorStore
   ) {
     this.context = context;
     this.editorStore = editorStore;
     this.router = router;
     this.webviewLocation = webviewLocation;
-    this.resourceContentService = resourceContentService;
   }
 
-  public openNew(path: string) {
+  public configureNew(uri: vscode.Uri, webviewPanel: vscode.WebviewPanel, signalEdit: (edit: KogitoEdit) => void) {
+    const path = uri.fsPath;
     if (path.length <= 0) {
       throw new Error("parameter 'path' cannot be empty");
     }
-    
+
+    webviewPanel.webview.options = {
+      enableCommandUris: true,
+      enableScripts: true,
+      localResourceRoots: [vscode.Uri.file(this.context.extensionPath)]
+    };
+
     const workspacePath = vscode.workspace.asRelativePath(path);
-    const panel = this.openNewPanel(path);
-    const editor = new KogitoEditor(workspacePath, path, panel, this.context, this.router, this.webviewLocation, this.editorStore, this.resourceContentService);
+
+    const contentService = this.createContentService(path, workspacePath);
+
+    const editor = new KogitoEditor(
+      workspacePath,
+      path,
+      webviewPanel,
+      this.context,
+      this.router,
+      this.webviewLocation,
+      this.editorStore,
+      contentService,
+      signalEdit
+    );
     this.editorStore.addAsActive(editor);
     editor.setupEnvelopeBus();
     editor.setupPanelActiveStatusChange();
@@ -56,15 +75,28 @@ export class KogitoEditorFactory {
     editor.setupWebviewContent();
   }
 
-  private openNewPanel(path: string) {
-    const panelTitle = path.split(path_.sep).pop()!;
+  public createContentService(path: string, workspacePath: string): ResourceContentService {
+    if (this.isAssetInWorkspace(path)) {
+      return new VsCodeResourceContentService(this.getParentFolder(workspacePath));
+    }
+    return new VsCodeNodeResourceContentService(this.getParentFolder(path));
+  }
 
-    //this will open a panel on vscode's UI.
-    return vscode.window.createWebviewPanel(
-      "kogito-editor",
-      panelTitle,
-      { viewColumn: vscode.ViewColumn.Active, preserveFocus: false },
-      { enableCommandUris: true, enableScripts: true, retainContextWhenHidden: true }
-    );
+  private isAssetInWorkspace(path: string): boolean {
+    const workspaceFolders = vscode.workspace.workspaceFolders?.map(folder => folder.uri.path);
+
+    for (const key in workspaceFolders) {
+      if (path.startsWith(workspaceFolders[key])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private getParentFolder(assetPath: string) {
+    if (assetPath.includes(nodePath.sep)) {
+      return assetPath.substring(0, assetPath.lastIndexOf(nodePath.sep) + 1);
+    }
+    return "";
   }
 }

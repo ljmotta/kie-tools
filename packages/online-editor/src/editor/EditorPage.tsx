@@ -21,10 +21,12 @@ import { EditorToolbar } from "./EditorToolbar";
 import { FullScreenToolbar } from "./EditorFullScreenToolbar";
 import { Editor, EditorRef } from "./Editor";
 import { GlobalContext } from "../common/GlobalContext";
-import { Alert, AlertActionCloseButton, Page, PageSection, Stack, StackItem, Title } from "@patternfly/react-core";
+import { Alert, AlertActionCloseButton, Page, PageSection } from "@patternfly/react-core";
 import "@patternfly/patternfly/patternfly.css";
 import { useLocation } from "react-router";
 import { EditorContent } from "@kogito-tooling/core-api";
+import { extractFileExtension, removeFileExtension } from "../common/utils";
+import { GithubTokenModal } from '../common/GithubTokenModal';
 
 interface Props {
   onFileNameChanged: (fileName: string) => void;
@@ -34,7 +36,9 @@ enum ActionType {
   NONE,
   SAVE,
   DOWNLOAD,
-  COPY
+  COPY,
+  PREVIEW,
+  EXPORT_GIST
 }
 
 const ALERT_AUTO_CLOSE_TIMEOUT = 3000;
@@ -48,9 +52,11 @@ export function EditorPage(props: Props) {
   const history = useHistory();
   const editorRef = useRef<EditorRef>(null);
   const downloadRef = useRef<HTMLAnchorElement>(null);
+  const downloadPreviewRef = useRef<HTMLAnchorElement>(null);
   const copyContentTextArea = useRef<HTMLTextAreaElement>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const [copySuccessAlertVisible, setCopySuccessAlertVisible] = useState(false);
+  const [githubTokenModalVisible, setGithubTokenModalVisible] = useState(false);
 
   const close = useCallback(() => {
     window.location.href = window.location.href.split("?")[0].split("#")[0];
@@ -63,6 +69,16 @@ export function EditorPage(props: Props) {
 
   const requestDownload = useCallback(() => {
     action = ActionType.DOWNLOAD;
+    editorRef.current?.requestContent();
+  }, []);
+
+  const requestPreview = useCallback(() => {
+    action = ActionType.PREVIEW;
+    editorRef.current?.requestPreview();
+  }, []);
+
+  const requestExportGist = useCallback(() => {
+    action = ActionType.EXPORT_GIST;
     editorRef.current?.requestContent();
   }, []);
 
@@ -95,6 +111,13 @@ export function EditorPage(props: Props) {
 
   const closeCopySuccessAlert = useCallback(() => setCopySuccessAlertVisible(false), []);
 
+  const closeGithubTokenModal = useCallback(() => setGithubTokenModalVisible(false), []);
+
+  const continueExport = useCallback(() => {
+    closeGithubTokenModal();
+    requestExportGist();
+  }, [closeGithubTokenModal, requestExportGist]);
+
   const onContentResponse = useCallback(
     (content: EditorContent) => {
       if (action === ActionType.SAVE) {
@@ -117,6 +140,37 @@ export function EditorPage(props: Props) {
         if (document.execCommand("copy")) {
           setCopySuccessAlertVisible(true);
         }
+      } else if (action === ActionType.EXPORT_GIST) {
+        if (!context.githubService.isAuthenticated()) {
+          setGithubTokenModalVisible(true);
+          return;
+        }
+
+        context.githubService
+          .createGist({
+            filename: fileNameWithExtension,
+            content: content.content,
+            description: content.path ?? fileNameWithExtension,
+            isPublic: true
+          })
+          .then(gistUrl => {
+            setGithubTokenModalVisible(false);
+            const fileExtension = extractFileExtension(new URL(gistUrl).pathname);
+            // FIXME: KOGITO-1202
+            window.location.href = `?file=${gistUrl}#/editor/${fileExtension}`;
+          })
+          .catch(() => setGithubTokenModalVisible(true));
+      }
+    },
+    [fileNameWithExtension]
+  );
+
+  const onPreviewResponse = useCallback(
+    preview => {
+      if (action === ActionType.PREVIEW && downloadPreviewRef.current) {
+        const fileBlob = new Blob([preview], { type: "image/svg+xml" });
+        downloadPreviewRef.current.href = URL.createObjectURL(fileBlob);
+        downloadPreviewRef.current.click();
       }
     },
     [fileNameWithExtension]
@@ -137,6 +191,10 @@ export function EditorPage(props: Props) {
     if (downloadRef.current) {
       downloadRef.current.download = fileNameWithExtension;
     }
+    if (downloadPreviewRef.current) {
+      const fileName = removeFileExtension(fileNameWithExtension);
+      downloadPreviewRef.current.download = `${fileName}-svg.svg`;
+    }
   }, [fileNameWithExtension]);
 
   useEffect(() => {
@@ -153,6 +211,14 @@ export function EditorPage(props: Props) {
     };
   });
 
+  useEffect(() => {
+    (async function tryAuthenticate() {
+      if (!context.githubService.isAuthenticated()) {
+        await context.githubService.authenticate();
+      }
+    })();
+  });
+
   return (
     <Page
       header={
@@ -164,36 +230,38 @@ export function EditorPage(props: Props) {
           onFileNameChanged={props.onFileNameChanged}
           onCopyContentToClipboard={requestCopyContentToClipboard}
           isPageFullscreen={fullscreen}
+          onPreview={requestPreview}
+          onExportGist={requestExportGist}
         />
       }
     >
-      <Title size={"xs"} className={"sr-only"} headingLevel={"h1"}>
-        Kogito editor
-      </Title>
-      {!fullscreen && (
-        <PageSection variant="dark" noPadding={true}>
-          {copySuccessAlertVisible && (
-            <div className={"kogito--alert-container"}>
-              <Alert
-                variant="success"
-                title="Content copied to clipboard"
-                action={<AlertActionCloseButton onClose={closeCopySuccessAlert} />}
-              />
-            </div>
-          )}
-        </PageSection>
-      )}
-
-      <PageSection isFilled={true} noPadding={true} noPaddingMobile={true}>
+      <PageSection isFilled={true} noPadding={true} noPaddingMobile={true} style={{ flexBasis: "100%" }}>
+        {!fullscreen && copySuccessAlertVisible && (
+          <div className={"kogito--alert-container"}>
+            <Alert
+              variant="success"
+              title="Content copied to clipboard"
+              action={<AlertActionCloseButton onClose={closeCopySuccessAlert} />}
+            />
+          </div>
+        )}
+        {!fullscreen && githubTokenModalVisible && (
+          <GithubTokenModal
+            isOpen={githubTokenModalVisible}
+            onClose={closeGithubTokenModal}
+            onContinue={continueExport} />
+        )}
         {fullscreen && <FullScreenToolbar onExitFullScreen={exitFullscreen} />}
-        <Editor ref={editorRef} fullscreen={fullscreen} onContentResponse={onContentResponse} />
+        <Editor
+          ref={editorRef}
+          fullscreen={fullscreen}
+          onContentResponse={onContentResponse}
+          onPreviewResponse={onPreviewResponse}
+        />
       </PageSection>
+      <textarea ref={copyContentTextArea} style={{ height: 0, position: "absolute", zIndex: -1 }} />
       <a ref={downloadRef} />
-      <textarea
-        ref={copyContentTextArea}
-        aria-hidden={"true"}
-        style={{ height: 0, position: "absolute", zIndex: -1 }}
-      />
+      <a ref={downloadPreviewRef} />
     </Page>
   );
 }

@@ -18,15 +18,24 @@ import * as React from "react";
 import { useContext, useEffect, useImperativeHandle, useMemo, useRef } from "react";
 import { GlobalContext } from "../common/GlobalContext";
 import { useLocation } from "react-router";
-import { EditorContent, ResourceContent, ResourcesList, ResourceContentRequest } from "@kogito-tooling/core-api";
+import {
+  EditorContent,
+  KogitoEdit,
+  ResourceContent,
+  ResourceContentRequest,
+  ResourceListRequest,
+  ResourcesList
+} from "@kogito-tooling/core-api";
 
 interface Props {
   fullscreen: boolean;
   onContentResponse: (content: EditorContent) => void;
+  onPreviewResponse: (previewSvg: string) => void;
 }
 
 export type EditorRef = {
   requestContent(): void;
+  requestPreview(): void;
 } | null;
 
 const RefForwardingEditor: React.RefForwardingComponent<EditorRef, Props> = (props, forwardedRef) => {
@@ -48,7 +57,9 @@ const RefForwardingEditor: React.RefForwardingComponent<EditorRef, Props> = (pro
         props.onContentResponse(content);
       },
       receive_contentRequest() {
-        context.file.getFileContents().then(c => self.respond_contentRequest({ content: c || "" }));
+        context.file
+          .getFileContents()
+          .then(c => self.respond_contentRequest({ content: c || "", path: context.file.fileName }));
       },
       receive_setContentError() {
         console.info("Set content error");
@@ -63,9 +74,23 @@ const RefForwardingEditor: React.RefForwardingComponent<EditorRef, Props> = (pro
         console.debug(`Resource Content Request`);
         self.respond_resourceContent(new ResourceContent(resourceContentRequest.path, undefined));
       },
-      receive_resourceListRequest(globPattern: string) {
+      receive_resourceListRequest(request:ResourceListRequest) {
         console.debug(`Resource List Request`);
-        self.respond_resourceList(new ResourcesList(globPattern, []));
+        self.respond_resourceList(new ResourcesList(request.pattern, []));
+      },
+      notify_editorUndo: (edits: ReadonlyArray<KogitoEdit>) => {
+        console.debug("Notify Undo");
+      },
+      notify_editorRedo: (edits: ReadonlyArray<KogitoEdit>) => {
+        console.debug("Notify Redo");
+      },
+      receive_newEdit(edit: KogitoEdit) {
+        console.debug(`New Edit: ` + edit.id);
+        // TODO: implement new edit
+      },
+      receive_previewRequest(previewSvg: string) {
+        console.debug("received preview");
+        props.onPreviewResponse(previewSvg);
       }
     }));
   }, [editorType, context.file.getFileContents, props.onContentResponse]);
@@ -83,7 +108,10 @@ const RefForwardingEditor: React.RefForwardingComponent<EditorRef, Props> = (pro
 
   useImperativeHandle(
     forwardedRef,
-    () => ({ requestContent: () => envelopeBusOuterMessageHandler.request_contentResponse() }),
+    () => ({
+      requestContent: () => envelopeBusOuterMessageHandler.request_contentResponse(),
+      requestPreview: () => envelopeBusOuterMessageHandler.request_previewResponse()
+    }),
     [envelopeBusOuterMessageHandler]
   );
 

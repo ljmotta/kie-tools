@@ -1,62 +1,93 @@
-import * as vscode from "vscode";
+/*
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {
   ContentType,
-  ResourceContentOptions,
-  ResourcesList,
   ResourceContent,
-  ResourceContentService
+  ResourceContentOptions,
+  ResourceContentService,
+  ResourceListOptions,
+  ResourcesList,
+  SearchType
 } from "@kogito-tooling/core-api";
 
+import * as vscode from "vscode";
+import * as nodePath from "path";
+
+/**
+ * Implementation of a ResourceContentService using the vscode apis to list/get assets.
+ */
 export class VsCodeResourceContentService implements ResourceContentService {
-  public get(path: string, opts?: ResourceContentOptions): Promise<ResourceContent | undefined> {
-    const contentPath = this.resolvePath(path)!;
-    const type = opts?.type;
-    if (contentPath) {
-      return new Promise(resolve => {
-        if (type === ContentType.BINARY) {
-          vscode.workspace.fs.readFile(vscode.Uri.parse(contentPath)).then(content => {
-            const base64Content = new Buffer(content).toString("base64");
-            resolve(new ResourceContent(path, base64Content, ContentType.BINARY));
-          }, this.errorRetrievingFile(contentPath, resolve));
-        } else {
-          vscode.workspace.openTextDocument(contentPath).then(textDoc => {
-            const textContent = textDoc.getText();
-            resolve(new ResourceContent(path, textContent, ContentType.TEXT));
-          }, this.errorRetrievingFile(contentPath, resolve));
-        }
-      });
-    }
-    return Promise.resolve(new ResourceContent(path, undefined));
+
+  private readonly currentAssetFolder: string;
+
+  constructor(currentAssetFolder: string) {
+    this.currentAssetFolder = currentAssetFolder;
   }
 
-  public list(pattern: string): Promise<ResourcesList> {
-    return new Promise((resolve, error) => {
-      vscode.workspace.findFiles(pattern).then(files => {
-        const paths: string[] = files.map(f => f.path).map(f => vscode.workspace.asRelativePath(f));
-        resolve(new ResourcesList(pattern, paths));
-      });
-    });
+  public async list(pattern: string, opts?: ResourceListOptions): Promise<ResourcesList> {
+
+    const expr = opts?.type === SearchType.ASSET_FOLDER
+      ? this.currentAssetFolder + pattern
+      : pattern;
+
+    const files = await vscode.workspace.findFiles(expr);
+    const paths = files.map(f => vscode.workspace.asRelativePath(f.path));
+    return new ResourcesList(pattern, paths);
+  }
+
+  public async get(path: string, opts?: ResourceContentOptions): Promise<ResourceContent | undefined> {
+
+    const contentPath = this.resolvePath(path);
+
+    if (!contentPath) {
+      return new ResourceContent(path, undefined);
+    }
+
+    try {
+      await vscode.workspace.fs.stat(vscode.Uri.parse(contentPath));
+    } catch (e) {
+      console.warn(`Error checking file ${path}: ${e}`);
+      return new ResourceContent(path, undefined);
+    }
+
+    return this.retrieveContent(opts?.type, path, contentPath);
   }
 
   private resolvePath(uri: string) {
     const folders: vscode.WorkspaceFolder[] = vscode.workspace!.workspaceFolders!;
     if (folders) {
       const rootPath = folders[0].uri.path;
-      if (!uri.startsWith("/")) {
-        uri = "/" + uri;
+      if (!uri.startsWith(nodePath.sep)) {
+        uri = nodePath.sep + uri;
       }
       return rootPath + uri;
     }
     return null;
   }
 
-  private errorRetrievingFile(
-    uri: string,
-    resolve: (value?: any) => void
-  ): ((reason: any) => void | Thenable<void>) | undefined {
-    return errorMsg => {
-      console.error(`Error retrieving file ${uri}: ${errorMsg}`);
-      resolve(new ResourceContent(uri, undefined));
-    };
+  private retrieveContent(type: ContentType | undefined, path: string, contentPath: string): Thenable<ResourceContent> {
+    if (type === ContentType.BINARY) {
+      return vscode.workspace.fs
+        .readFile(vscode.Uri.parse(contentPath))
+        .then(content => new ResourceContent(path, Buffer.from(content).toString("base64"), ContentType.BINARY));
+    } else {
+      return vscode.workspace
+        .openTextDocument(contentPath)
+        .then(textDoc => new ResourceContent(path, textDoc.getText(), ContentType.TEXT));
+    }
   }
 }

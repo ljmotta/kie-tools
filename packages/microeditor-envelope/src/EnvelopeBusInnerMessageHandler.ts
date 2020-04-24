@@ -25,7 +25,8 @@ import {
   LanguageData,
   ResourceContent,
   ResourceContentOptions,
-  ResourcesList
+  ResourcesList,
+  ResourceListOptions
 } from "@kogito-tooling/core-api";
 
 export interface Impl {
@@ -34,8 +35,9 @@ export interface Impl {
   receive_contentRequest(): void;
   receive_resourceContentResponse(content: ResourceContent): void;
   receive_resourceContentList(list: ResourcesList): void;
-  receive_editorUndo(): void;
-  receive_editorRedo(): void;
+  receive_editorUndo(edits: ReadonlyArray<KogitoEdit>): void;
+  receive_editorRedo(edits: ReadonlyArray<KogitoEdit>): void;
+  receive_previewRequest(): void;
 }
 
 export class EnvelopeBusInnerMessageHandler {
@@ -104,12 +106,15 @@ export class EnvelopeBusInnerMessageHandler {
     return this.send({ type: EnvelopeBusMessageType.REQUEST_RESOURCE_CONTENT, data: { path: path, opts: opts } });
   }
 
-  public request_resourceList(pattern: string) {
-    return this.send({ type: EnvelopeBusMessageType.REQUEST_RESOURCE_LIST, data: pattern });
+  public request_resourceList(pattern: string, opts?: ResourceListOptions) {
+    return this.send({ type: EnvelopeBusMessageType.REQUEST_RESOURCE_LIST, data: { pattern: pattern, opts: opts } });
   }
 
   public notify_newEdit(edit: KogitoEdit) {
     return this.send({ type: EnvelopeBusMessageType.NOTIFY_EDITOR_NEW_EDIT, data: edit });
+  }
+  public respond_previewRequest(previewSvg: string) {
+    return this.send({ type: EnvelopeBusMessageType.RETURN_PREVIEW, data: previewSvg });
   }
 
   private receive_initRequest(init: { origin: string; busId: string }) {
@@ -150,10 +155,15 @@ export class EnvelopeBusInnerMessageHandler {
         this.impl.receive_resourceContentList(resourcesList);
         break;
       case EnvelopeBusMessageType.NOTIFY_EDITOR_UNDO:
-        this.impl.receive_editorUndo();
+        const undoEdits = message.data as ReadonlyArray<KogitoEdit>;
+        this.impl.receive_editorUndo(undoEdits);
         break;
       case EnvelopeBusMessageType.NOTIFY_EDITOR_REDO:
-        this.impl.receive_editorRedo();
+        const redoEdits = message.data as ReadonlyArray<KogitoEdit>;
+        this.impl.receive_editorRedo(redoEdits);
+        break;
+      case EnvelopeBusMessageType.REQUEST_PREVIEW:
+        this.impl.receive_previewRequest();
         break;
       default:
         console.info(`[Bus ${this.id}]: Unknown message type received: ${message.type}`);

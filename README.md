@@ -32,13 +32,11 @@ Getting Started
 
 This module contains a number of examples that you can take a look at and try out yourself.
  Please take a look at the readme of each individual example for more details on how the example works and how to run it yourself (either locally or on Kubernetes):
-- jBPM + Quarkus Hello World: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/jbpm-quarkus-helloworld/README.md)
-- jBPM + Quarkus: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/jbpm-quarkus-example/README.md)
-- jBPM + Spring Boot: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/jbpm-springboot-example/README.md)
-- jBPM + Drools + Quarkus: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/onboarding-example/readme.md) - Onboarding example combining one process and two decision services
-- Polyglot Drools with GraalVM: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/drools-polyglot-example/README.md)
-- Drools + Quarkus: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/drools-quarkus-example/README.md)
-- Drools + Quarkus with Unit: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/drools-quarkus-unit-example/README.md)
+- Process + Quarkus: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/process-quarkus-example/README.md)
+- Process + Spring Boot: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/process-springboot-example/README.md)
+- Process + Rules + Quarkus: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/onboarding-example/README.md) - Onboarding example combining one process and two decision services
+- Rules + Quarkus: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/rules-quarkus-helloworld/README.md)
+- Rule Unit + Quarkus: [README.md](https://github.com/kiegroup/kogito-examples/tree/master/ruleunit-quarkus-example/README.md)
 
 Releases
 --------------------
@@ -98,6 +96,18 @@ Develop
 3. Open a terminal and run `yarn start` on `packages/online-editor`. This will start a `webpack-dev-server` instance with the Online Editor resources.
 4. You also have to enable invalid certificates for resources loaded from localhost in your browser. To do that, go to `chrome://flags/#allow-insecure-localhost` in your Chrome browser and enable this flag.
 5. From now on you can use the development version of the Online Editor by accessing `https://localhost:9001`.
+
+##### Desktop and Hub
+1. After you've successfully built the project following the instructions above, go to `packages/desktop` or `packages/hub`. They work exactly the same.
+2. To start the application in development mode, you can run `yarn start`. If you make changes and want to reload the app, run `yarn run build:fasts && yarn start`. This will recompile the module and restart the Electron app. Remember: if you make changes to other modules, you have to build them too!
+3. To build and package the application for production (i.e. generating an executable), you can run `yarn run build:prod`. This will pack the application for the current OS. If you want to pack the application for a different OS, run `yarn run pack:linux`, for example. See `package.json` for more details.
+
+
+Contribute
+--------------------
+- When opening PRs, please make sure to provide a detailed description of the issue along with the JIRA, if there's one.
+- Also, since we depend on DMN and BPMN editores and our CI build is *not* integrated with the editors, when you need an updated version of the editors to be used, **please provide a VSIX bundle so people can at least test your changes easily on VSCode. Also, it's a good pratice to put a note on your PR saying that the editors have changed too**.
+
 
 
 Contributing to Kogito

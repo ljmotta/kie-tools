@@ -1,26 +1,29 @@
 name: Publish release artifacts
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [master]
+  pull_request:
+    branches: "**"
 
 jobs:
   publish_release_artifacts:
-    if: github.repository == 'kiegroup/kogito-tooling'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          path: kogito-tooling
 
+      # This bash script returns the `tag` name for the release. Will match "/refs/[tags/heads]/[tag]"
       - name: Parse `tag`
         id: release-tag
         run: |
-          # This bash script returns the `tag` name for the release. Will match "/refs/[tags/heads]/[tag]"
           echo ::set-output name=tag::$(node -e "console.log('${{ github.ref }}'.match(/^.*\/(.+)$/)[1])")
 
+      # This bash script returns 0 if equal and 1 otherwise. Will fail if versions are not equal.
       - name: Check release `tag` against `lerna.json.version`
         run: |
-          # This bash script returns 0 if equal and 1 otherwise. Will fail if versions are not equal.
-          [ "${{ steps.release-tag.outputs.tag }}" == "$(node -e "console.log(require('./lerna.json').version);")" ]
+          [ "${{ steps.release-tag.outputs.tag }}" == "$(node -e "console.log(require('./kogito-tooling/lerna.json').version);")" ]
 
       - name: Setup Node
         uses: actions/setup-node@v1
@@ -37,34 +40,64 @@ jobs:
         env:
           ROUTER_targetOrigin: "https://kiegroup.github.io"
           ROUTER_relativePath: "kogito-online/editors/${{ steps.release-tag.outputs.tag }}/"
+          DOWNLOAD_HUB_linuxUrl: "https://github.com/kiegroup/kogito-tooling/releases/download/${{ steps.release-tag.outputs.tag }}/business_modeler_hub_preview_linux_${{ steps.release-tag.outputs.tag }}.tar.gz"
+          DOWNLOAD_HUB_macOsUrl: "https://github.com/kiegroup/kogito-tooling/releases/download/${{ steps.release-tag.outputs.tag }}/business_modeler_hub_preview_macos_${{ steps.release-tag.outputs.tag }}.zip"
+          DOWNLOAD_HUB_windowsUrl: "https://github.com/kiegroup/kogito-tooling/releases/download/${{ steps.release-tag.outputs.tag }}/business_modeler_hub_preview_windows_${{ steps.release-tag.outputs.tag }}.zip"
           DISPLAY: ":99.0"
-        run: yarn run init && yarn run build:prod
+        run: cd kogito-tooling && yarn run init && yarn run build:prod && cd -
 
-      - name: Checkout "kogito-online"
-        uses: actions/checkout@v1
-        with:
-          repository: kiegroup/kogito-online
-          ref: gh-pages
+#      - name: Checkout "kogito-online"
+#        uses: actions/checkout@v2
+#        with:
+#          token: ${{ secrets.KOGITO_TOOLING_BOT_TOKEN }}
+#          path: kogito-online
+#          repository: kiegroup/kogito-online
+#          ref: gh-pages
 
       # For this step to work properly, you have to add the owner of KOGITO_TOOLING_BOT_TOKEN as collaborator on 'kogito-online'.
-      - name: Update "kogito-online" latest resources
-        run: |
-          cd ../kogito-online
-          rm -rf ./editors/latest
-          ln -s ${{ steps.release-tag.outputs.tag }} ./editors/latest
-          cp -r ./online-editor-staging/* .
-          rm -rf ./online-editor-staging
-          git config --global user.email "kogito-tooling-bot@gmail.com"
-          git config --global user.name "Kogito Tooling Bot (kiegroup)"
-          git add . && git commit -m "Update editors/latest to ${{ steps.release-tag.outputs.tag }}" || echo "No changes."
-          git remote set-url --push origin https://${{ secrets.KOGITO_TOOLING_BOT_TOKEN }}@github.com/kiegroup/kogito-online
-          git push origin gh-pages
-          cd -
+#      - name: Update "kogito-online" latest resources
+#        env:
+#          KOGITO_ONLINE_CHROME_EXT_EDITOR_DIR: ./editors/${{ steps.release-tag.outputs.tag }}
+#          KOGITO_ONLINE_EDITOR_DIR: .
+#        run: |
+#          cd kogito-online
+#          rm -rf ./editors/latest
+#          ln -s ${{ steps.release-tag.outputs.tag }} ./editors/latest
+#          rm -rf $KOGITO_ONLINE_CHROME_EXT_EDITOR_DIR
+#          mkdir -p $KOGITO_ONLINE_CHROME_EXT_EDITOR_DIR
+#          cp -r ../kogito-tooling/packages/kie-bc-editors-unpacked/bpmn $KOGITO_ONLINE_CHROME_EXT_EDITOR_DIR/
+#          cp -r ../kogito-tooling/packages/kie-bc-editors-unpacked/dmn $KOGITO_ONLINE_CHROME_EXT_EDITOR_DIR/
+#          cp -r ../kogito-tooling/packages/chrome-extension-pack-kogito-kie-editors/dist/envelope $KOGITO_ONLINE_CHROME_EXT_EDITOR_DIR/
+#          cp -r ../kogito-tooling/packages/online-editor/dist/* $KOGITO_ONLINE_EDITOR_DIR
+#          rm -rf ./online-editor-staging
+#          git config --global user.email "kogito-tooling-bot@gmail.com"
+#          git config --global user.name "Kogito Tooling Bot (kiegroup)"
+#          git add . && git commit -m "Update editors/latest to ${{ steps.release-tag.outputs.tag }}" || echo "No changes."
+#          git push origin gh-pages
+#          cd -
 
-      - name: Publish artifacts to NPM registry
+#      - name: Publish artifacts to NPM registry
+#        env:
+#          NPM_TOKEN: ${{ secrets.KIEGROUP_NPM_TOKEN }}
+#        run: |
+#          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+#          cd kogito-tooling && npx lerna exec --scope @kogito-tooling/* --ignore @kogito-tooling/kie-bc-editors-unpacked --ignore @kogito-tooling/desktop --ignore @kogito-tooling/hub -- npm publish --access public && cd -
+
+
+      - name: Update Extension
+        id: update_extension
         env:
-          NPM_TOKEN: ${{ secrets.KIEGROUP_NPM_TOKEN }}
+          file_path: ./kogito-tooling/packages/chrome-extension-pack-kogito-kie-editors/dist/chrome_extension_kogito_kie_editors_0.4.3.zip
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          npx lerna exec --scope @kogito-tooling/* --ignore @kogito-tooling/kie-bc-editors-unpacked -- npm publish --access public
+          access_token=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${{ secrets.CLIENT_ID }}&client_secret=${{ secrets.CLIENT_SECRET }}&refresh_token=${{ secrets.REFRESH_TOKEN }}&grant_type=refresh_token" | jq -r '.access_token')
+          uploadResponse=$(curl -X PUT -sS "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2}" -T ${file_path})
+          echo "$uploadResponse"
+          echo "$uploadResponse" | jq -r '.uploadState'
+          publishResponse=$(curl -X POST -sS "https://www.googleapis.com/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}/publish" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2" -H "Content-Length:0" -H "publishTarget:trustedTesters")
+          echo "$publishResponse"
+          echo ::set-output name=publish_status::$(echo "$publishResponse" | jq -r '.status')
 
+      - name: Check Publish
+        run: |
+          ! [ -z "${{ steps.update_extension.outputs.publish_status }}" ]
+          ! [ "${{ steps.update_extension.outputs.publish_status }}" == 'FAILURE' ]
