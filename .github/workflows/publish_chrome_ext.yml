@@ -1,4 +1,4 @@
-name: Publish release artifacts
+name: Publish extension
 
 on:
   release:
@@ -22,6 +22,7 @@ jobs:
       # This bash script returns 0 if equal and 1 otherwise. Will fail if versions are not equal.
       - name: Check release `tag` against `lerna.json.version`
         run: |
+          echo "$(node -e "console.log(require('./kogito-tooling/lerna.json').version);")"
           [ "${{ steps.release-tag.outputs.tag }}" == "$(node -e "console.log(require('./kogito-tooling/lerna.json').version);")" ]
 
       - name: Get Access Token
