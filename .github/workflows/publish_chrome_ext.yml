@@ -51,3 +51,4 @@ jobs:
       - name: Check Publish
         run: |
           [ "${{ steps.update_extension.outputs.publish_status }}" == 'OK' ]
+
