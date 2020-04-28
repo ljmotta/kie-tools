@@ -28,7 +28,7 @@ jobs:
       - name: Update Extension
         id: update_extension
         run: |
-          curl -sSLJO https://github.com/kiegroup/kogito-tooling/releases/download/0.4.1/chrome_extension_kogito_kie_editors_0.4.1.zip
+          curl -vsSLJO https://github.com/kiegroup/kogito-tooling/releases/download/0.4.1/chrome_extension_kogito_kie_editors_0.4.1.zip
           access_token=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${{ secrets.CLIENT_ID }}&client_secret=${{ secrets.CLIENT_SECRET }}&refresh_token=${{ secrets.REFRESH_TOKEN }}&grant_type=refresh_token")
           uploadResponse=$(curl -X PUT -sS "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2}" -T ./chrome_extension_kogito_kie_editors_0.4.1.zip )
           echo "$uploadResponse"
