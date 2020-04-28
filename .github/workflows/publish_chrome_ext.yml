@@ -25,11 +25,14 @@ jobs:
           echo "$(node -e "console.log(require('./kogito-tooling/lerna.json').version);")"
           [ "${{ steps.release-tag.outputs.tag }}" == "$(node -e "console.log(require('./kogito-tooling/lerna.json').version);")" ]
 
+      - name: Download Current Extension
+        run: |
+          curl -vsSLJO https://github.com/kiegroup/kogito-tooling/releases/download/0.4.1/chrome_extension_kogito_kie_editors_0.4.1.zip
+          ls -la
+
       - name: Update Extension
         id: update_extension
         run: |
-          curl -sSLJO https://github.com/kiegroup/kogito-tooling/releases/download/0.4.1/chrome_extension_kogito_kie_editors_0.4.1.zip
-          ls -la
           access_token=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${{ secrets.CLIENT_ID }}&client_secret=${{ secrets.CLIENT_SECRET }}&refresh_token=${{ secrets.REFRESH_TOKEN }}&grant_type=refresh_token")
           ls -la
           uploadResponse=$(curl -X PUT "https://www.googleapis.com/upload/chromewebstore/v1.1/items/dcipajboknkkijobafnillgfmpcibjbi" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2" -T ./chrome_extension_kogito_kie_editors_0.4.1.zip)
