@@ -24,16 +24,12 @@ jobs:
           echo "$(node -e "console.log(require('./kogito-tooling/lerna.json').version);")"
           [ "${{ steps.release-tag.outputs.tag }}" == "$(node -e "console.log(require('./kogito-tooling/lerna.json').version);")" ]
 
-      - name: Get Access Token
-        id: get_access_token
-        run: |
-          echo ::set-output name=access_token::=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${{ secrets.CLIENT_ID }}&client_secret=${{ secrets.CLIENT_SECRET }}&refresh_token=${{ secrets.REFRESH_TOKEN }}&grant_type=refresh_token" | jq -r '.access_token')
-
       - name: Update Extension
         id: update_extension
         run: |
           curl -sSLo chrome_extension.zip https://github.com/kiegroup/kogito-tooling/releases/download/${{ steps.release-tag.outputs.tag }}/chrome_extension_kogito_kie_editors_${{ steps.release-tag.outputs.tag }}.zip
-          uploadResponse=$(curl -X PUT -sS "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}" -H "Authorization:Bearer ${{ steps.get_access_token.outputs.access_token }}" -H "x-goog-api-version:2}" -T ${file_path})
+          access_token::=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${{ secrets.CLIENT_ID }}&client_secret=${{ secrets.CLIENT_SECRET }}&refresh_token=${{ secrets.REFRESH_TOKEN }}&grant_type=refresh_token"
+          uploadResponse=$(curl -X PUT -sS "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2}" -T ./chrome_extension.zip )
           echo "$uploadResponse"
           echo ::set-output name=upload_status::$(echo "$uploadResponse" | jq -r '.uploadState')
 
@@ -44,7 +40,8 @@ jobs:
       - name: Publish Extension
         id: publish_extension
         run: |
-          publishResponse=$(curl -X POST -sS "https://www.googleapis.com/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}/publish" -H "Authorization:Bearer ${{ steps.get_access_token.outputs.access_token }}" -H "x-goog-api-version:2" -H "Content-Length:0" -H "publishTarget:trustedTesters")
+          access_token::=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${{ secrets.CLIENT_ID }}&client_secret=${{ secrets.CLIENT_SECRET }}&refresh_token=${{ secrets.REFRESH_TOKEN }}&grant_type=refresh_token"
+          publishResponse=$(curl -X POST -sS "https://www.googleapis.com/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}/publish" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2" -H "Content-Length:0" -H "publishTarget:trustedTesters")
           echo "$publishResponse"
           echo ::set-output name=publish_status::$(echo "$publishResponse" | jq -r '.status | .[0]')
 
