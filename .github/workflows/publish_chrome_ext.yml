@@ -7,7 +7,6 @@ on:
 jobs:
   publish_release_artifacts:
     runs-on: ubuntu-latest
-    if:
     steps:
       - uses: actions/checkout@v2
         with:
