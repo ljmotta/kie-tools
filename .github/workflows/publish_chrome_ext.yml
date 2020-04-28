@@ -42,11 +42,11 @@ jobs:
           [ "${{ steps.update_extension.outputs.upload_status }}" == 'SUCCESS' ]
 
       - name: Publish Extension
-          id: publish_extension
-          run: |
-            publishResponse=$(curl -X POST -sS "https://www.googleapis.com/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}/publish" -H "Authorization:Bearer ${{ steps.get_access_token.outputs.access_token }}" -H "x-goog-api-version:2" -H "Content-Length:0" -H "publishTarget:trustedTesters")
-            echo "$publishResponse"
-            echo ::set-output name=publish_status::$(echo "$publishResponse" | jq -r '.status | .[0]')
+        id: publish_extension
+        run: |
+          publishResponse=$(curl -X POST -sS "https://www.googleapis.com/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}/publish" -H "Authorization:Bearer ${{ steps.get_access_token.outputs.access_token }}" -H "x-goog-api-version:2" -H "Content-Length:0" -H "publishTarget:trustedTesters")
+          echo "$publishResponse"
+          echo ::set-output name=publish_status::$(echo "$publishResponse" | jq -r '.status | .[0]')
 
       - name: Check Publish
         run: |
