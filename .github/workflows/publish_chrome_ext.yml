@@ -1,4 +1,4 @@
-name: Publish extension
+name: Publish Chrome Extension on the Chrome Store
 
 on:
   release:
@@ -7,7 +7,7 @@ on:
 jobs:
   upload_extension:
     runs-on: ubuntu-latest
-#    if: github.repository == 'kiegroup/kogito-tooling'
+    if: github.repository == 'kiegroup/kogito-tooling'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -25,11 +25,11 @@ jobs:
           echo "$(node -e "console.log(require('./kogito-tooling/lerna.json').version);")"
           [ "${{ steps.release-tag.outputs.tag }}" == "$(node -e "console.log(require('./kogito-tooling/lerna.json').version);")" ]
 
-      - name: Download Current Extension
+      - name: Download Chrome Extension related to the `tag`
         run: |
           curl -vsSLJO https://github.com/kiegroup/kogito-tooling/releases/download/${{ steps.release-tag.outputs.tag }}/chrome_extension_kogito_kie_editors_${{ steps.release-tag.outputs.tag }}.zip
 
-      - name: Update Extension
+      - name: Upload Chrome Extension to the Chrome Store
         id: update_extension
         run: |
           access_token=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${{ secrets.CLIENT_ID }}&client_secret=${{ secrets.CLIENT_SECRET }}&refresh_token=${{ secrets.REFRESH_TOKEN }}&grant_type=refresh_token" | jq -r '.access_token')
@@ -44,17 +44,16 @@ jobs:
   publish_extension:
     needs: upload_extension
     runs-on: ubuntu-latest
-#    if: github.repository == 'kiegroup/kogito-tooling'
+    if: github.repository == 'kiegroup/kogito-tooling'
     steps:
-      - name: Publish Extension
+      - name: Publish Chrome Extension for users
         id: publish_extension
         run: |
           access_token=$(curl -X POST -fsS "https://oauth2.googleapis.com/token" -d "client_id=${{ secrets.CLIENT_ID }}&client_secret=${{ secrets.CLIENT_SECRET }}&refresh_token=${{ secrets.REFRESH_TOKEN }}&grant_type=refresh_token" | jq -r '.access_token')
-          publishResponse=$(curl -X POST -sS "https://www.googleapis.com/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}/publish" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2" -H "Content-Length:0" -H "publishTarget:trustedTesters")
+          publishResponse=$(curl -X POST -sS "https://www.googleapis.com/chromewebstore/v1.1/items/${{ secrets.EXTENSION_ID }}/publish" -H "Authorization:Bearer ${access_token}" -H "x-goog-api-version:2" -H "Content-Length:0")
           echo "$publishResponse"
           echo ::set-output name=publish_status::$(echo "$publishResponse" | jq -r '.status | .[0]')
 
       - name: Check Publish
         run: |
-          [ "${{ steps.update_extension.outputs.publish_status }}" == 'OK' ]
-
+          [[ "${{ steps.update_extension.outputs.publish_status }}" == 'OK' ] || [ "${{ steps.update_extension.outputs.publish_status }}" == 'PUBLISHED_WITH_FRICTION_WARNING' ]]
