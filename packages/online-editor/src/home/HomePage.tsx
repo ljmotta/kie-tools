@@ -49,6 +49,7 @@ import { Link } from "react-router-dom";
 import { AnimatedTripleDotLabel } from "../common/AnimatedTripleDotLabel";
 import { GlobalContext } from "../common/GlobalContext";
 import { extractFileExtension, removeFileExtension } from "../common/utils";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   onFileOpened: (file: UploadFile) => void;
@@ -460,13 +461,25 @@ export function HomePage(props: Props) {
     /*<DropdownItem key="">
       <Link to ={'/'}>Documentation</Link>
     </DropdownItem>,*/
-    <DropdownItem key="">
+    <DropdownItem key="user-dropdown-items">
       <a href={"https://groups.google.com/forum/#!forum/kogito-development"} target={"_blank"}>
         Online forum <ExternalLinkAltIcon className="pf-u-mx-sm" />
       </a>
     </DropdownItem>
   ];
 
+  const { i18n } = useTranslation("home");
+
+  const localeOptions = [
+    <DropdownItem key="choose-locale-pt">
+      <Button onClick={() => i18n.changeLanguage("pt")}>PT</Button>
+    </DropdownItem>,
+    <DropdownItem key="choose-locale-en">
+      <Button onClick={() => i18n.changeLanguage("en")}>EN</Button>
+    </DropdownItem>
+  ];
+
+  const [locale, setLocale] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isLinkDropdownOpen, setIsLinkDropdownOpen] = useState(false);
 
@@ -474,6 +487,19 @@ export function HomePage(props: Props) {
     <>
       <Toolbar>
         <ToolbarGroup>
+          <ToolbarItem>
+            <Dropdown
+              isPlain={true}
+              position="right"
+              isOpen={locale}
+              toggle={
+                <DropdownToggle iconComponent={null} onToggle={setLocale} aria-label="Links">
+                  <OutlinedQuestionCircleIcon />
+                </DropdownToggle>
+              }
+              dropdownItems={localeOptions}
+            />
+          </ToolbarItem>
           <ToolbarItem className="pf-u-display-none pf-u-display-flex-on-lg">
             <Link to={context.routes.downloadHub.url({})} className="kogito--editor-hub-download_link">
               Get Business Modeler Hub Preview

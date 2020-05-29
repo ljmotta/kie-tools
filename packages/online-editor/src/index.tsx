@@ -21,6 +21,7 @@ import { EMPTY_FILE_DMN, EditorType } from "@kogito-tooling/embedded-editor";
 import { removeDirectories, removeFileExtension, extractFileExtension } from "./common/utils";
 import { GithubService } from "./common/GithubService";
 import { Alert, AlertVariant, AlertActionLink } from "@patternfly/react-core";
+import "./common/i18n"
 
 const urlParams = new URLSearchParams(window.location.search);
 const githubService = new GithubService();

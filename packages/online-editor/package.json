@@ -16,6 +16,10 @@
     "@octokit/rest": "16.35.0",
     "@types/react-router": "5.1.1",
     "@types/react-router-dom": "5.1.1",
+    "i18next": "^19.4.5",
+    "i18next-browser-languagedetector": "^4.2.0",
+    "i18next-http-backend": "^1.0.12",
+    "react-i18next": "^11.5.0",
     "react-router": "5.1.1",
     "react-router-dom": "5.1.1"
   },
