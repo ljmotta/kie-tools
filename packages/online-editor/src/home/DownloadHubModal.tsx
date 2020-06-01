@@ -28,7 +28,7 @@ import {
 import { Redirect } from "react-router";
 import { GlobalContext } from "../common/GlobalContext";
 import { OperatingSystem, getOperatingSystem } from "../common/utils";
-import {useTranslation} from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 enum ModalState {
   SELECT_OS,
@@ -47,7 +47,7 @@ export function DownloadHubModal(props: {}) {
   const [modalState, setModalState] = useState(ModalState.SELECT_OS);
   const [operationalSystem, setOperationalSystem] = useState(getOperatingSystem() ?? OperatingSystem.LINUX);
   const [isSelectExpanded, setSelectIsExpanded] = useState(false);
-  const { t } = useTranslation("downloadHubModal");
+  const { t } = useTranslation("downloadHubModal")
 
   const onDownload = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
@@ -95,7 +95,7 @@ export function DownloadHubModal(props: {}) {
                 <div>
                   <a key="download" href={downloadHub} download={true}>
                     <Button variant="primary" onClick={onDownload}>
-                      {t("test")}
+                      <Trans t={t} i18nKey={"test"}>Download</Trans>
                     </Button>
                   </a>
                   <Button key="cancel" variant="link" onClick={onClose}>

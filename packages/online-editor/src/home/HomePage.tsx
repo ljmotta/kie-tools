@@ -468,7 +468,7 @@ export function HomePage(props: Props) {
     </DropdownItem>
   ];
 
-  const { i18n } = useTranslation("home");
+  const { i18n } = useTranslation("downloadHubModal");
 
   const localeOptions = [
     <DropdownItem key="choose-locale-pt">
