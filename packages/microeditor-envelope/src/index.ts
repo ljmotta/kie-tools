@@ -28,11 +28,9 @@ import { SpecialDomElements } from "./SpecialDomElements";
 import { WorkspaceService, WorkspaceServiceApi } from "./api/workspaceService";
 import { GuidedTourApi, GuidedTourServiceCoordinator } from "./api/tour";
 
-export * from "./api/resourceContent";
 export { EditorEnvelopeController } from "./EditorEnvelopeController";
-export * from "./EditorFactory";
-export * from "./EnvelopeBusInnerMessageHandler";
-export { SpecialDomElements } from "./SpecialDomElements";
+export { EditorFactory } from "./EditorFactory";
+export { EnvelopeBusInnerMessageHandler, Impl } from "./EnvelopeBusInnerMessageHandler";
 
 declare global {
   interface Window {
