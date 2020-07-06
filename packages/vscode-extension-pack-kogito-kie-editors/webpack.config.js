@@ -68,7 +68,10 @@ module.exports = [
     entry: {
       "extension/extension": "./src/extension/extension.ts"
     },
-    plugins: []
+    plugins: [],
+    module: {
+      rules: [...commonConfig.module.rules, ...pfWebpackUtils.patternflyLoaders]
+    },
   },
   {
     ...commonConfig,
