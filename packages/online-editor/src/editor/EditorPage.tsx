@@ -29,7 +29,7 @@ import { useDmnTour } from "../tour";
 import { useOnlineI18n } from "../common/i18n";
 
 interface Props {
-  onFileNameChanged: (fileName: string) => void;
+  onFileNameChanged: (fileName: string, fileExtension: string) => void;
 }
 
 const ALERT_AUTO_CLOSE_TIMEOUT = 3000;
@@ -67,7 +67,7 @@ export function EditorPage(props: Props) {
       window.dispatchEvent(
         new CustomEvent("saveOnlineEditor", {
           detail: {
-            fileName: context.file.fileName,
+            fileName: `${context.file.fileName}.${context.file.fileExtension}`,
             fileContent: content,
             senderTabId: context.senderTabId!
           }
@@ -107,9 +107,9 @@ export function EditorPage(props: Props) {
 
       context.githubService
         .createGist({
-          filename: context.file.fileName,
+          filename: `${context.file.fileName}.${context.file.fileExtension}`,
           content: content,
-          description: context.file.fileName,
+          description: `${context.file.fileName}.${context.file.fileExtension}`,
           isPublic: true
         })
         .then(gistUrl => {
@@ -175,10 +175,10 @@ export function EditorPage(props: Props) {
 
   useEffect(() => {
     if (downloadRef.current) {
-      downloadRef.current.download = context.file.fileName;
+      downloadRef.current.download = `${context.file.fileName}.${context.file.fileExtension}`
     }
     if (downloadPreviewRef.current) {
-      const fileName = removeFileExtension(context.file.fileName);
+      const fileName = context.file.fileName;
       downloadPreviewRef.current.download = `${fileName}-svg.svg`;
     }
   }, [context.file.fileName]);
