@@ -17,6 +17,7 @@
 import { EditorInitArgs } from "./KogitoEditorEnvelopeApi";
 import { Editor } from "./Editor";
 import { KogitoEditorEnvelopeContextType } from "./KogitoEditorEnvelopeContext";
+import { EditorEnvelopeView } from "../envelope";
 
 /**
  * Factory of Editors to be created inside the envelope.
@@ -30,8 +31,13 @@ export interface EditorFactory {
 
   /**
    * Returns an Editor instance.
+   * @param view The envelope view.
    * @param envelopeContext The context to be used by Editor implementation.
    * @param initArgs Initial arguments required for the Editor to initialize itself properly.
    */
-  createEditor(envelopeContext: KogitoEditorEnvelopeContextType, initArgs: EditorInitArgs): Promise<Editor>;
+  createEditor(
+    view: EditorEnvelopeView,
+    envelopeContext: KogitoEditorEnvelopeContextType,
+    initArgs: EditorInitArgs
+  ): Promise<Editor>;
 }

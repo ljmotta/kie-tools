@@ -16,6 +16,7 @@
 import { PMMLEditorInterface } from "./PMMLEditorInterface";
 import { Editor, EditorFactory, KogitoEditorEnvelopeContextType } from "@kogito-tooling/editor/dist/api";
 import { EditorInitArgs } from "@kogito-tooling/editor/dist/api";
+import { EditorEnvelopeView } from "@kogito-tooling/editor/dist/envelope";
 
 export const FACTORY_TYPE = "pmml";
 
@@ -24,7 +25,11 @@ export class PMMLEditorFactory implements EditorFactory {
     return fileExtension === FACTORY_TYPE;
   }
 
-  public createEditor(envelopeContext: KogitoEditorEnvelopeContextType, initArgs: EditorInitArgs): Promise<Editor> {
+  public createEditor(
+    view: EditorEnvelopeView,
+    envelopeContext: KogitoEditorEnvelopeContextType,
+    initArgs: EditorInitArgs
+  ): Promise<Editor> {
     return Promise.resolve(new PMMLEditorInterface(envelopeContext));
   }
 }

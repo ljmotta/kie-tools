@@ -14,5 +14,4 @@
  * limitations under the License.
  */
 
-export { en } from "./en";
-export { pt } from "./pt";
+export * from "./ResetEditorModal";

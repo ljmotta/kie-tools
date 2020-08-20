@@ -54,7 +54,7 @@ export function EditorToolbar(props: Props) {
   const [fileName, setFileName] = useState(context.file.fileName);
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isKebabOpen, setKebabOpen] = useState(false);
-  const { i18n } = useOnlineI18n();
+  const { i18n, locale, setLocale } = useOnlineI18n();
 
   const logoProps = useMemo(() => {
     return { onClick: props.onClose };
@@ -139,6 +139,21 @@ export function EditorToolbar(props: Props) {
       ]
     );
 
+  const [changeLocale, setChangeLocale] = useState(false);
+
+  const localeItems = (dropdownId: string) =>
+    useMemo(
+      () => [
+        <DropdownItem key={`pt-${dropdownId}-locale`} component={"button"} onClick={() => setLocale("pt")}>
+          pt
+        </DropdownItem>,
+        <DropdownItem key={`en-${dropdownId}-locale`} component="button" onClick={() => setLocale("en")}>
+          en
+        </DropdownItem>
+      ],
+      []
+    );
+
   const filenameInput = (
     <>
       <div data-testid={"toolbar-title"} className={"kogito--editor__toolbar-name-container"}>
@@ -169,6 +184,35 @@ export function EditorToolbar(props: Props) {
 
   const headerToolbar = (
     <PageHeaderTools>
+      <PageHeaderToolsGroup>
+        <PageHeaderToolsItem
+          visibility={{
+            default: "hidden",
+            "2xl": "visible",
+            xl: "visible",
+            lg: "hidden",
+            md: "hidden",
+            sm: "hidden"
+          }}
+        >
+          <Dropdown
+            onSelect={() => setChangeLocale(false)}
+            toggle={
+              <DropdownToggle
+                id={"toggle-id-lg"}
+                className={"kogito--editor__toolbar-toggle-icon-button"}
+                onToggle={isOpen => setChangeLocale(isOpen)}
+              >
+                Locale
+              </DropdownToggle>
+            }
+            isOpen={changeLocale}
+            isPlain={true}
+            dropdownItems={localeItems("lg")}
+            position={DropdownPosition.right}
+          />
+        </PageHeaderToolsItem>
+      </PageHeaderToolsGroup>
       <PageHeaderToolsGroup>
         <PageHeaderToolsItem
           visibility={{

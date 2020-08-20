@@ -84,7 +84,7 @@ export class KogitoEditorEnvelopeApiImpl implements KogitoEditorEnvelopeApi {
 
     this.ackCapturedInitRequest();
 
-    this.editor = await this.editorFactory.createEditor(this.args.envelopeContext, initArgs);
+    this.editor = await this.editorFactory.createEditor(this.args.view, this.args.envelopeContext, initArgs);
 
     await this.args.view.setEditor(this.editor);
 

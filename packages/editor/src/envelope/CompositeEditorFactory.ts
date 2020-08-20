@@ -15,6 +15,7 @@
  */
 
 import { Editor, EditorFactory, EditorInitArgs, KogitoEditorEnvelopeContextType } from "../api";
+import { EditorEnvelopeView } from "./EditorEnvelopeView";
 
 /**
  * Composite Factory of Editors to be created inside the envelope. This implementation delegates potential construction
@@ -29,10 +30,14 @@ export class CompositeEditorFactory implements EditorFactory {
     return true;
   }
 
-  public createEditor(envelopeContext: KogitoEditorEnvelopeContextType, initArgs: EditorInitArgs): Promise<Editor> {
+  public createEditor(
+    view: EditorEnvelopeView,
+    envelopeContext: KogitoEditorEnvelopeContextType,
+    initArgs: EditorInitArgs
+  ): Promise<Editor> {
     const candidates = this.factories.filter(f => f.supports(initArgs.fileExtension));
     this.assertSingleEditorFactory(candidates, initArgs.fileExtension);
-    return candidates[0].createEditor(envelopeContext, initArgs);
+    return candidates[0].createEditor(view, envelopeContext, initArgs);
   }
 
   private assertSingleEditorFactory(candidates: EditorFactory[], fileExtension: string): void {

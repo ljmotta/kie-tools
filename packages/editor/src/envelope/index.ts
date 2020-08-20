@@ -36,3 +36,4 @@ export function init(args: {
 }
 
 export * from "./CompositeEditorFactory";
+export * from "./EditorEnvelopeView";

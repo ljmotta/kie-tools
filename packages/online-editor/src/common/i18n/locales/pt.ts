@@ -16,9 +16,9 @@
 
 import { OnlineI18n } from "..";
 import { en as en_common } from "@kogito-tooling/i18n-common-dictionary";
-import {TranslatedDictionary} from "@kogito-tooling/i18n/dist/core";
+import { TranslatedDictionary } from "@kogito-tooling/i18n/dist/core";
 
-export const en: OnlineI18n = {
+export const pt: TranslatedDictionary<OnlineI18n> = {
   ...en_common,
   downloadHubModal: {
     beforeDownload: {
@@ -59,7 +59,7 @@ export const en: OnlineI18n = {
     copySource: "Copy Source",
     downloadSVG: `${en_common.terms.download} ${en_common.names.svg}`,
     gistIt: "Gist it!",
-    fileActions: "File actions"
+    fileActions: "Arquivos acoes kk"
   },
   githubTokenModal: {
     header: {
