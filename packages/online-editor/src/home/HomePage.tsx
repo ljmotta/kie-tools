@@ -100,13 +100,18 @@ export function HomePage(props: Props) {
       e.preventDefault();
 
       setUploadedFileName(fileName);
-      setIsUploadRejected(false);
 
-      const fileExtension = extractFileExtension(fileName);
-      if (!fileExtension || !context.editorEnvelopeLocator.mapping.has(fileExtension)) {
+      let fileExtension = extractFileExtension(fileName);
+      if (!fileExtension) {
         return;
       }
 
+      fileExtension = fileExtension.toLocaleLowerCase();
+      if (!context.editorEnvelopeLocator.mapping.has(fileExtension)) {
+        return;
+      }
+
+      setIsUploadRejected(false);
       props.onFileOpened({
         isReadOnly: false,
         fileExtension,
