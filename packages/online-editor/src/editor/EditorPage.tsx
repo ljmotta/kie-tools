@@ -120,6 +120,24 @@ export function EditorPage(props: Props) {
     });
   }, [context.file.fileName]);
 
+  const requestUpdateGist = useCallback(() => {
+    editorRef.current?.getContent().then(content => {
+      if (!context.githubService.isAuthenticated()) {
+        setGithubTokenModalVisible(true);
+        return;
+      }
+
+      context.githubService
+        .updateGist({
+          gistId: context.githubService.extractGistIdFromRaw(window.location.search),
+          filename: `${context.file.fileName}.${context.file.fileExtension}`,
+          content: content,
+          description: `${context.file.fileName}.${context.file.fileExtension}`,
+          isPublic: true
+        }).then(console.log).catch(console.error)
+    });
+  }, [context.file.fileName]);
+
   const requestCopyContentToClipboard = useCallback(() => {
     editorRef.current?.getContent().then(content => {
       if (copyContentTextArea.current) {
@@ -156,7 +174,9 @@ export function EditorPage(props: Props) {
 
   const continueExport = useCallback(() => {
     closeGithubTokenModal();
-    requestExportGist();
+    if (!context.githubService.isGistRaw(window.location.search)) {
+      requestExportGist();
+    }
   }, [closeGithubTokenModal, requestExportGist]);
 
   const onReady = useCallback(() => setIsEditorReady(true), []);
@@ -219,6 +239,7 @@ export function EditorPage(props: Props) {
           isPageFullscreen={fullscreen}
           onPreview={requestPreview}
           onExportGist={requestExportGist}
+          onUpdateGist={requestUpdateGist}
           isEdited={isDirty}
         />
       }

@@ -111,8 +111,16 @@ export class GithubService {
     return /^(http:\/\/|https:\/\/)?(www\.)?gist.github.com.*$/.test(url);
   }
 
+  public isGistRaw(url: string): boolean {
+    return /^(http:\/\/|https:\/\/)?(www\.)?gist.githubusercontent.com.*$/.test(url);
+  }
+
   public extractGistId(url: string): string {
     return url.substr(url.lastIndexOf("/") + 1);
+  }
+
+  public extractGistIdFromRaw(url: string): string {
+    return url.split("gist.githubusercontent.com/")[1].split("/")[1]
   }
 
   public retrieveFileInfo(fileUrl: string): FileInfo {
@@ -185,6 +193,21 @@ export class GithubService {
       .create(gistContent)
       .then(response => (response.data as any).files[args.filename].raw_url)
       .catch(e => Promise.reject("Not able to create gist on Github."));
+  }
+
+  public updateGist(args: any) {
+    const gistContent: any = {
+      gist_id: args.gistId,
+      description: args.description,
+      public: args.isPublic,
+      files: {
+        [args.filename]: {
+          content: args.content
+        }
+      }
+    };
+
+    return this.octokit.gists.update(gistContent)
   }
 
   public getGistRawUrlFromId(gistId: string): Promise<string> {
