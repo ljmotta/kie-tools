@@ -34,6 +34,7 @@ import { useCallback, useContext, useMemo, useState } from "react";
 import { GlobalContext } from "../common/GlobalContext";
 import { useLocation } from "react-router";
 import { useOnlineI18n } from "../common/i18n";
+import { getFileUrl } from "../common/utils";
 
 interface Props {
   onFileNameChanged: (fileName: string, fileExtension: string) => void;
@@ -130,7 +131,7 @@ export function EditorToolbar(props: Props) {
           {i18n.editorToolbar.gistIt}
         </DropdownItem>,
         <>
-          {context.githubService.isGistRaw(window.location.search.split("?file=")[1]) && (
+          {context.githubService.isGistRaw(getFileUrl()) && (
             <DropdownItem key={`dropdown-${dropdownId}-update-gist`} component="button" onClick={props.onUpdateGist}>
               Update Gist
             </DropdownItem>

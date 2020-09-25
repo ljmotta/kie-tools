@@ -26,12 +26,11 @@ import { FullScreenToolbar } from "./EditorFullScreenToolbar";
 import { EditorToolbar } from "./EditorToolbar";
 import { useDmnTour } from "../tour";
 import { useOnlineI18n } from "../common/i18n";
+import { getFileUrl } from "../common/utils";
 
 interface Props {
   onFileNameChanged: (fileName: string, fileExtension: string) => void;
 }
-
-const ALERT_AUTO_CLOSE_TIMEOUT = 3000;
 
 export function EditorPage(props: Props) {
   const context = useContext(GlobalContext);
@@ -43,6 +42,7 @@ export function EditorPage(props: Props) {
   const [isEditorReady, setIsEditorReady] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [copySuccessAlertVisible, setCopySuccessAlertVisible] = useState(false);
+  const [updateGistSuccessAlertVisible, setUpdateGistSuccessAlertVisible] = useState(false);
   const [githubTokenModalVisible, setGithubTokenModalVisible] = useState(false);
   const [showUnsavedAlert, setShowUnsavedAlert] = useState(false);
   const isDirty = useDirtyState(editorRef);
@@ -134,7 +134,13 @@ export function EditorPage(props: Props) {
           content: content,
           description: `${context.file.fileName}.${context.file.fileExtension}`,
           isPublic: true
-        }).then(console.log).catch(console.error)
+        })
+        .then(() => {
+          editorRef.current?.getStateControl().setSavedCommand();
+          closeAllSuccessAlerts();
+          setUpdateGistSuccessAlertVisible(true);
+        })
+        .catch(() => setGithubTokenModalVisible(true));
     });
   }, [context.file.fileName]);
 
@@ -144,6 +150,7 @@ export function EditorPage(props: Props) {
         copyContentTextArea.current.value = content;
         copyContentTextArea.current.select();
         if (document.execCommand("copy")) {
+          closeAllSuccessAlerts();
           setCopySuccessAlertVisible(true);
         }
       }
@@ -170,27 +177,23 @@ export function EditorPage(props: Props) {
 
   const closeCopySuccessAlert = useCallback(() => setCopySuccessAlertVisible(false), []);
 
+  const closeUpdateGistSuccessAlert = useCallback(() => setUpdateGistSuccessAlertVisible(false), []);
+
   const closeGithubTokenModal = useCallback(() => setGithubTokenModalVisible(false), []);
+
+  const closeAllSuccessAlerts = useCallback(() => {
+    setCopySuccessAlertVisible(false);
+    setUpdateGistSuccessAlertVisible(false);
+  }, []);
 
   const continueExport = useCallback(() => {
     closeGithubTokenModal();
-    if (!context.githubService.isGistRaw(window.location.search)) {
+    if (!context.githubService.isGistRaw(getFileUrl())) {
       requestExportGist();
     }
-  }, [closeGithubTokenModal, requestExportGist]);
+  }, [closeGithubTokenModal, requestExportGist, window.location]);
 
   const onReady = useCallback(() => setIsEditorReady(true), []);
-
-  useEffect(() => {
-    if (closeCopySuccessAlert) {
-      const autoCloseCopySuccessAlert = setTimeout(closeCopySuccessAlert, ALERT_AUTO_CLOSE_TIMEOUT);
-      return () => clearInterval(autoCloseCopySuccessAlert);
-    }
-
-    return () => {
-      /* Do nothing */
-    };
-  }, [copySuccessAlertVisible]);
 
   useEffect(() => {
     if (downloadRef.current) {
@@ -251,6 +254,15 @@ export function EditorPage(props: Props) {
               variant="success"
               title={i18n.editorPage.alerts.copy}
               actionClose={<AlertActionCloseButton onClose={closeCopySuccessAlert} />}
+            />
+          </div>
+        )}
+        {!fullscreen && updateGistSuccessAlertVisible && (
+          <div className={"kogito--alert-container"}>
+            <Alert
+              variant="success"
+              title={"Your gist was updated."}
+              actionClose={<AlertActionCloseButton onClose={closeUpdateGistSuccessAlert} />}
             />
           </div>
         )}
