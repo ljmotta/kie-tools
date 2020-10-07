@@ -100,7 +100,8 @@ export function setCookie(name: string, value: string) {
   document.cookie = name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
 }
 
-const SOURCE = "https://paulovmr.github.io/kogito-online/bpmn/index.js";
+const BPMN_SOURCE = "https://paulovmr.github.io/kogito-online/bpmn/index.js";
+const DMN_SOURCE = "https://paulovmr.github.io/kogito-online/dmn/index.js";
 type EmbeddableClass = "BpmnEditor" | "DmnEditor";
 
 export function getEmbeddableEditorFromGist(editor: EmbeddableClass, gistId: string) {
@@ -127,11 +128,11 @@ export function getEmbeddableEditorFromContent(editor: EmbeddableClass, content:
     </script>`;
 }
 
-export function getEmbeddableEditorTemplate(script: string) {
+export function getEmbeddableEditorTemplate(script: string, type: "dmn" | "bpmn") {
   return `<!DOCTYPE html>
     <html lang="en">
     <head>
-      <script src="${SOURCE}"></script>
+      <script src="${type === "dmn" ? DMN_SOURCE : BPMN_SOURCE}"></script>
       <title></title>
       <style>
         html,

@@ -153,18 +153,21 @@ export function EditorPage(props: Props) {
   const requestExportIframeGist = useCallback(() => {
     const gistId = context.githubService.extractGistIdFromRawUrl(fileUrl!);
     let script: string = "";
+    let template: string = "";
     if (fileExtension === "dmn") {
       script = getEmbeddableEditorFromGist("DmnEditor", gistId);
+      template = getEmbeddableEditorTemplate(script, "dmn");
     }
 
     if (fileExtension === "bpmn") {
       script = getEmbeddableEditorFromGist("BpmnEditor", gistId);
+      template = getEmbeddableEditorTemplate(script, "bpmn");
     }
 
     const iframe = document.createElement("iframe");
     iframe.width = "100%";
     iframe.height = "100%";
-    iframe.srcdoc = getEmbeddableEditorTemplate(script);
+    iframe.srcdoc = template;
 
     copyContentTextArea.current!.value = iframe.outerHTML;
     copyContentTextArea.current!.select();
@@ -177,18 +180,21 @@ export function EditorPage(props: Props) {
   const requestExportIframeContent = useCallback(async () => {
     const content = ((await editorRef.current?.getContent()) ?? "").replace(/(\r\n|\n|\r)/gm, "");
     let script: string = "";
+    let template: string = "";
     if (fileExtension === "dmn") {
       script = getEmbeddableEditorFromContent("DmnEditor", content);
+      template = getEmbeddableEditorTemplate(script, "dmn");
     }
 
     if (fileExtension === "bpmn") {
       script = getEmbeddableEditorFromContent("BpmnEditor", content);
+      template = getEmbeddableEditorTemplate(script, "bpmn");
     }
 
     const iframe = document.createElement("iframe");
     iframe.width = "100%";
     iframe.height = "100%";
-    iframe.srcdoc = getEmbeddableEditorTemplate(script);
+    iframe.srcdoc = template;
 
     copyContentTextArea.current!.value = iframe.outerHTML;
     copyContentTextArea.current!.select();
