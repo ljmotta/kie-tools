@@ -100,10 +100,32 @@ export function setCookie(name: string, value: string) {
   document.cookie = name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
 }
 
-const SOURCE = "https://paulovmr.github.io/kogito-online/bpmn/index.js"
-export function getEmbeddableEditor(editor: string, readOnly: boolean, gistId: string) {
+const SOURCE = "https://paulovmr.github.io/kogito-online/bpmn/index.js";
+type EmbeddableClass = "BpmnEditor" | "DmnEditor";
+
+export function getEmbeddableEditorFromGist(editor: EmbeddableClass, readOnly: boolean, gistId: string) {
+  return `
+    <script type="module">
+      import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
+      const octokit = new Octokit()
+      octokit.gists.get({ gist_id: "${gistId}" })
+        .then(response => response.data.files[Object.keys(response.data.files)[0]].raw_url)
+        .then(url => fetch(url))
+        .then(response => response.text())
+        .then(content => ${editor}.open({container: document.body, initialContent: content, readOnly: ${readOnly}, origin: "*" }))
+    </script>`;
+}
+
+export function getEmbeddableEditorFromContent(editor: EmbeddableClass, readOnly: boolean, content: string) {
+  return `
+    <script>
+      ${editor}.open({container: document.body, initialContent: '${content}', readOnly: ${readOnly}, origin: "*" })
+    </script>`;
+}
+
+export function getEmbeddableEditorTemplate(script: string) {
   return `<!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
       <script src="${SOURCE}"></script>
       <title></title>
@@ -120,15 +142,7 @@ export function getEmbeddableEditor(editor: string, readOnly: boolean, gistId: s
       </style>
     </head>
     <body>
-      <script type="module">
-        import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
-        const octokit = new Octokit()
-        octokit.gists.get({ gist_id: "${gistId}" })
-          .then(response => response.data.files[Object.keys(response.data.files)[0]].raw_url)
-          .then(url => fetch(url))
-          .then(response => response.text())
-          .then(content => ${editor}.open({container: document.body, initialContent: content, readOnly: ${readOnly}, origin: "*" }))
-      </script>
+      ${script}
     </body>
     </html>`;
 }

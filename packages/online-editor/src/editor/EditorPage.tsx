@@ -26,7 +26,12 @@ import { FullScreenToolbar } from "./EditorFullScreenToolbar";
 import { EditorToolbar } from "./EditorToolbar";
 import { useDmnTour } from "../tour";
 import { useOnlineI18n } from "../common/i18n";
-import { getEmbeddableEditor, getFileUrl } from "../common/utils";
+import {
+  getEmbeddableEditorFromContent,
+  getEmbeddableEditorFromGist,
+  getEmbeddableEditorTemplate,
+  getFileUrl
+} from "../common/utils";
 
 interface Props {
   onFileNameChanged: (fileName: string, fileExtension: string) => void;
@@ -145,10 +150,20 @@ export function EditorPage(props: Props) {
   }, [context.file.fileName]);
 
   const requestExportIframeGist = useCallback(() => {
-    const gistId = context.githubService.extractGistIdFromRawUrl(getFileUrl())
+    const gistId = context.githubService.extractGistIdFromRawUrl(getFileUrl());
+    let script: string = "";
+    if (fileExtension === "dmn") {
+      script = getEmbeddableEditorFromGist("DmnEditor", false, gistId);
+    }
+
+    if (fileExtension === "bpmn") {
+      script = getEmbeddableEditorFromGist("BpmnEditor", false, gistId);
+    }
 
     const iframe = document.createElement("iframe");
-    iframe.srcdoc = getEmbeddableEditor("BpmnEditor", false, gistId);
+    iframe.width = "100%";
+    iframe.height = "100%";
+    iframe.srcdoc = getEmbeddableEditorTemplate(script);
 
     copyContentTextArea.current!.value = iframe.outerHTML;
     copyContentTextArea.current!.select();
@@ -158,8 +173,28 @@ export function EditorPage(props: Props) {
     }
   }, []);
 
-  const requestExportIframeContent = useCallback(() => {
-    // something
+  const requestExportIframeContent = useCallback(async () => {
+    const content = ((await editorRef.current?.getContent()) ?? "").replace(/(\r\n|\n|\r)/gm, "");
+    let script: string = "";
+    if (fileExtension === "dmn") {
+      script = getEmbeddableEditorFromContent("DmnEditor", false, content);
+    }
+
+    if (fileExtension === "bpmn") {
+      script = getEmbeddableEditorFromContent("BpmnEditor", false, content);
+    }
+
+    const iframe = document.createElement("iframe");
+    iframe.width = "100%";
+    iframe.height = "100%";
+    iframe.srcdoc = getEmbeddableEditorTemplate(script);
+
+    copyContentTextArea.current!.value = iframe.outerHTML;
+    copyContentTextArea.current!.select();
+    if (document.execCommand("copy")) {
+      closeAllSuccessAlerts();
+      setCopySuccessAlertVisible(true);
+    }
   }, []);
 
   const requestCopyContentToClipboard = useCallback(() => {
