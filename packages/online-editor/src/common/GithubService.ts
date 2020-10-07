@@ -22,7 +22,7 @@ export const GITHUB_TOKENS_URL = "https://github.com/settings/tokens";
 export const GITHUB_TOKENS_HOW_TO_URL =
   "https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line";
 
-const GITHUB_AUTH_TOKEN_COOKIE_NAME = "github-oauth-token-kie-editors";
+export const GITHUB_AUTH_TOKEN_COOKIE_NAME = "github-oauth-token-kie-editors";
 const EMPTY_TOKEN = "";
 
 export interface FileInfo {
@@ -42,6 +42,7 @@ export interface CreateGistArgs {
 export class GithubService {
   private octokit: Octokit;
   private authenticated: boolean;
+  private userLogin: string;
 
   constructor() {
     this.init(false);
@@ -50,6 +51,7 @@ export class GithubService {
   private init(resetToken: boolean): void {
     this.octokit = new Octokit();
     this.authenticated = false;
+    this.userLogin = "";
 
     if (resetToken) {
       setCookie(GITHUB_AUTH_TOKEN_COOKIE_NAME, EMPTY_TOKEN);
@@ -63,15 +65,15 @@ export class GithubService {
     setCookie(GITHUB_AUTH_TOKEN_COOKIE_NAME, token);
   }
 
-  private validateToken(token: string): Promise<boolean> {
+  private validateToken(token: string): Promise<string | false> {
     if (!token) {
       return Promise.resolve(false);
     }
 
     const testOctokit = new Octokit({ auth: token });
-    return testOctokit.emojis
-      .get({})
-      .then(() => Promise.resolve(true))
+    return testOctokit.users
+      .getAuthenticated()
+      .then(res => Promise.resolve(res.data.login))
       .catch(() => Promise.resolve(false));
   }
 
@@ -82,11 +84,13 @@ export class GithubService {
   public async authenticate(token: string = EMPTY_TOKEN) {
     token = this.resolveToken(token);
 
-    if (!(await this.validateToken(token))) {
+    const userLogin = await this.validateToken(token);
+    if (!userLogin) {
       this.init(true);
       return false;
     }
 
+    this.userLogin = userLogin;
     this.initAuthenticated(token);
     return true;
   }
@@ -101,6 +105,10 @@ export class GithubService {
 
   public isAuthenticated(): boolean {
     return this.authenticated;
+  }
+
+  public getLogin(): string {
+    return this.userLogin;
   }
 
   public isGithub(url: string): boolean {
@@ -125,6 +133,10 @@ export class GithubService {
 
   public extractGistIdFromRawUrl(url: string): string {
     return url.split("gist.githubusercontent.com/")[1].split("/")[1];
+  }
+
+  public extractUserLoginFromGistRawUrl(url: string): string {
+    return url.split("gist.githubusercontent.com/")[1].split("/")[0];
   }
 
   public retrieveFileInfo(fileUrl: string): FileInfo {

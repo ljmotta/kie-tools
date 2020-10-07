@@ -35,7 +35,7 @@ export function extractEditorFileExtensionFromUrl(supportedFileExtensions: strin
   return supportedFileExtensions.indexOf(typeFromUrl!) !== -1 ? typeFromUrl : undefined;
 }
 
-export function getFileUrl(): string {
+export function getFileUrl(): string | undefined {
   return window.location.search.split("?file=")[1];
 }
 
@@ -103,23 +103,27 @@ export function setCookie(name: string, value: string) {
 const SOURCE = "https://paulovmr.github.io/kogito-online/bpmn/index.js";
 type EmbeddableClass = "BpmnEditor" | "DmnEditor";
 
-export function getEmbeddableEditorFromGist(editor: EmbeddableClass, readOnly: boolean, gistId: string) {
+export function getEmbeddableEditorFromGist(editor: EmbeddableClass, gistId: string) {
   return `
     <script type="module">
+      // You can manually change the readOnly property.
+      const readOnly = true;
       import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
       const octokit = new Octokit()
       octokit.gists.get({ gist_id: "${gistId}" })
         .then(response => response.data.files[Object.keys(response.data.files)[0]].raw_url)
         .then(url => fetch(url))
         .then(response => response.text())
-        .then(content => ${editor}.open({container: document.body, initialContent: content, readOnly: ${readOnly}, origin: "*" }))
+        .then(content => ${editor}.open({container: document.body, initialContent: content, readOnly, origin: "*" }))
     </script>`;
 }
 
-export function getEmbeddableEditorFromContent(editor: EmbeddableClass, readOnly: boolean, content: string) {
+export function getEmbeddableEditorFromContent(editor: EmbeddableClass, content: string) {
   return `
     <script>
-      ${editor}.open({container: document.body, initialContent: '${content}', readOnly: ${readOnly}, origin: "*" })
+      // You can manually change the readOnly property.
+      const readOnly = true;
+      ${editor}.open({container: document.body, initialContent: '${content}', readOnly, origin: "*" })
     </script>`;
 }
 

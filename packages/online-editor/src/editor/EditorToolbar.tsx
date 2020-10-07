@@ -30,7 +30,7 @@ import {
 } from "@patternfly/react-core";
 import { CloseIcon, ExpandIcon, EllipsisVIcon } from "@patternfly/react-icons";
 import * as React from "react";
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { GlobalContext } from "../common/GlobalContext";
 import { useLocation } from "react-router";
 import { useOnlineI18n } from "../common/i18n";
@@ -89,6 +89,21 @@ export function EditorToolbar(props: Props) {
     [saveNewName, cancelNewName]
   );
 
+  const fileUrl = useMemo(() => getFileUrl(), [])
+  const [updateGist, setUpdateGist] = useState(false);
+
+  useEffect(() => {
+    if (fileUrl) {
+      const userLogin = context.githubService.extractUserLoginFromGistRawUrl(fileUrl);
+      if (userLogin === context.githubService.getLogin()) {
+        setUpdateGist(true);
+      } else {
+        setUpdateGist(false);
+      }
+    }
+  }, [context.githubService.getLogin()]);
+
+
   const kebabItems = (dropdownId: string) =>
     useMemo(
       () => [
@@ -133,16 +148,16 @@ export function EditorToolbar(props: Props) {
           {i18n.editorToolbar.gistIt}
         </DropdownItem>,
         <React.Fragment key={`dropdown-${dropdownId}-update-gist`}>
-          {context.githubService.isGistRaw(getFileUrl()) && (
+          {updateGist && (
             <DropdownItem component="button" onClick={props.onUpdateGist}>
               Update Gist
             </DropdownItem>
           )}
         </React.Fragment>,
         <React.Fragment key={`dropdown-${dropdownId}-export-iframe-gist`}>
-          {context.githubService.isGistRaw(getFileUrl()) && (
+          {fileUrl && context.githubService.isGistRaw(fileUrl) && (
             <DropdownItem component="button" onClick={props.onExportIframeGist}>
-              Export Iframe from Gist
+              Copy an Iframe from Gist
             </DropdownItem>
           )}
         </React.Fragment>,
@@ -151,7 +166,7 @@ export function EditorToolbar(props: Props) {
           component="button"
           onClick={props.onExportIframeContent}
         >
-          Export Iframe from Content
+          Copy an Iframe from Content
         </DropdownItem>
       ],
       [
@@ -162,7 +177,8 @@ export function EditorToolbar(props: Props) {
         props.onCopyContentToClipboard,
         props.onExportGist,
         props.onUpdateGist,
-        window.location
+        window.location,
+        updateGist
       ]
     );
 

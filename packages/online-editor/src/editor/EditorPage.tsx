@@ -52,6 +52,7 @@ export function EditorPage(props: Props) {
   const [showUnsavedAlert, setShowUnsavedAlert] = useState(false);
   const isDirty = useDirtyState(editorRef);
   const { locale, i18n } = useOnlineI18n();
+  const fileUrl = useMemo(() => getFileUrl(), [])
 
   const close = useCallback(() => {
     if (!isDirty) {
@@ -134,7 +135,7 @@ export function EditorPage(props: Props) {
 
       context.githubService
         .updateGist({
-          gistId: context.githubService.extractGistIdFromRawUrl(getFileUrl()),
+          gistId: context.githubService.extractGistIdFromRawUrl(fileUrl!),
           filename: `${context.file.fileName}.${context.file.fileExtension}`,
           content: content,
           description: `${context.file.fileName}.${context.file.fileExtension}`,
@@ -150,14 +151,14 @@ export function EditorPage(props: Props) {
   }, [context.file.fileName]);
 
   const requestExportIframeGist = useCallback(() => {
-    const gistId = context.githubService.extractGistIdFromRawUrl(getFileUrl());
+    const gistId = context.githubService.extractGistIdFromRawUrl(fileUrl!);
     let script: string = "";
     if (fileExtension === "dmn") {
-      script = getEmbeddableEditorFromGist("DmnEditor", false, gistId);
+      script = getEmbeddableEditorFromGist("DmnEditor", gistId);
     }
 
     if (fileExtension === "bpmn") {
-      script = getEmbeddableEditorFromGist("BpmnEditor", false, gistId);
+      script = getEmbeddableEditorFromGist("BpmnEditor", gistId);
     }
 
     const iframe = document.createElement("iframe");
@@ -177,11 +178,11 @@ export function EditorPage(props: Props) {
     const content = ((await editorRef.current?.getContent()) ?? "").replace(/(\r\n|\n|\r)/gm, "");
     let script: string = "";
     if (fileExtension === "dmn") {
-      script = getEmbeddableEditorFromContent("DmnEditor", false, content);
+      script = getEmbeddableEditorFromContent("DmnEditor", content);
     }
 
     if (fileExtension === "bpmn") {
-      script = getEmbeddableEditorFromContent("BpmnEditor", false, content);
+      script = getEmbeddableEditorFromContent("BpmnEditor", content);
     }
 
     const iframe = document.createElement("iframe");
@@ -241,7 +242,7 @@ export function EditorPage(props: Props) {
 
   const continueExport = useCallback(() => {
     closeGithubTokenModal();
-    if (!context.githubService.isGistRaw(getFileUrl())) {
+    if (fileUrl && !context.githubService.isGistRaw(fileUrl)) {
       requestExportGist();
     }
   }, [closeGithubTokenModal, requestExportGist, window.location]);
