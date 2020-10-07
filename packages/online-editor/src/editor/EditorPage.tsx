@@ -26,7 +26,7 @@ import { FullScreenToolbar } from "./EditorFullScreenToolbar";
 import { EditorToolbar } from "./EditorToolbar";
 import { useDmnTour } from "../tour";
 import { useOnlineI18n } from "../common/i18n";
-import { getFileUrl } from "../common/utils";
+import { getEmbeddableEditor, getFileUrl } from "../common/utils";
 
 interface Props {
   onFileNameChanged: (fileName: string, fileExtension: string) => void;
@@ -129,7 +129,7 @@ export function EditorPage(props: Props) {
 
       context.githubService
         .updateGist({
-          gistId: context.githubService.extractGistIdFromRaw(window.location.search),
+          gistId: context.githubService.extractGistIdFromRawUrl(getFileUrl()),
           filename: `${context.file.fileName}.${context.file.fileExtension}`,
           content: content,
           description: `${context.file.fileName}.${context.file.fileExtension}`,
@@ -143,6 +143,24 @@ export function EditorPage(props: Props) {
         .catch(() => setGithubTokenModalVisible(true));
     });
   }, [context.file.fileName]);
+
+  const requestExportIframeGist = useCallback(() => {
+    const gistId = context.githubService.extractGistIdFromRawUrl(getFileUrl())
+
+    const iframe = document.createElement("iframe");
+    iframe.srcdoc = getEmbeddableEditor("BpmnEditor", false, gistId);
+
+    copyContentTextArea.current!.value = iframe.outerHTML;
+    copyContentTextArea.current!.select();
+    if (document.execCommand("copy")) {
+      closeAllSuccessAlerts();
+      setCopySuccessAlertVisible(true);
+    }
+  }, []);
+
+  const requestExportIframeContent = useCallback(() => {
+    // something
+  }, []);
 
   const requestCopyContentToClipboard = useCallback(() => {
     editorRef.current?.getContent().then(content => {
@@ -243,6 +261,8 @@ export function EditorPage(props: Props) {
           onPreview={requestPreview}
           onExportGist={requestExportGist}
           onUpdateGist={requestUpdateGist}
+          onExportIframeGist={requestExportIframeGist}
+          onExportIframeContent={requestExportIframeContent}
           isEdited={isDirty}
         />
       }

@@ -108,6 +108,10 @@ export class GithubService {
   }
 
   public isGist(url: string): boolean {
+    return this.isGistDefault(url) || this.isGistRaw(url);
+  }
+
+  public isGistDefault(url: string): boolean {
     return /^(http:\/\/|https:\/\/)?(www\.)?gist.github.com.*$/.test(url);
   }
 
@@ -119,8 +123,8 @@ export class GithubService {
     return url.substr(url.lastIndexOf("/") + 1);
   }
 
-  public extractGistIdFromRaw(url: string): string {
-    return url.split("gist.githubusercontent.com/")[1].split("/")[1]
+  public extractGistIdFromRawUrl(url: string): string {
+    return url.split("gist.githubusercontent.com/")[1].split("/")[1];
   }
 
   public retrieveFileInfo(fileUrl: string): FileInfo {
@@ -207,12 +211,14 @@ export class GithubService {
       }
     };
 
-    return this.octokit.gists.update(gistContent)
+    return this.octokit.gists.update(gistContent);
   }
 
   public getGistRawUrlFromId(gistId: string): Promise<string> {
     return this.octokit.gists
-      .get({ gist_id: gistId })
+      .get({
+        gist_id: gistId
+      })
       .then(response => {
         const filename = Object.keys(response.data.files)[0];
         return (response.data as any).files[filename].raw_url;

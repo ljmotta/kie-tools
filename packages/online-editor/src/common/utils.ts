@@ -99,3 +99,36 @@ export function setCookie(name: string, value: string) {
 
   document.cookie = name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
 }
+
+const SOURCE = "https://paulovmr.github.io/kogito-online/bpmn/index.js"
+export function getEmbeddableEditor(editor: string, readOnly: boolean, gistId: string) {
+  return `<!DOCTYPE html>
+    <html>
+    <head>
+      <script src="${SOURCE}"></script>
+      <title></title>
+      <style>
+        html,
+        body,
+        iframe {
+          margin: 0;
+          border: 0;
+          padding: 0;
+          height: 100%;
+          width: 100%;
+        }
+      </style>
+    </head>
+    <body>
+      <script type="module">
+        import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
+        const octokit = new Octokit()
+        octokit.gists.get({ gist_id: "${gistId}" })
+          .then(response => response.data.files[Object.keys(response.data.files)[0]].raw_url)
+          .then(url => fetch(url))
+          .then(response => response.text())
+          .then(content => ${editor}.open({container: document.body, initialContent: content, readOnly: ${readOnly}, origin: "*" }))
+      </script>
+    </body>
+    </html>`;
+}

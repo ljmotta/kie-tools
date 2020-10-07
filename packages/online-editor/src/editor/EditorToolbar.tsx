@@ -44,6 +44,8 @@ interface Props {
   onPreview: () => void;
   onExportGist: () => void;
   onUpdateGist: () => void;
+  onExportIframeGist: () => void;
+  onExportIframeContent: () => void;
   onClose: () => void;
   onCopyContentToClipboard: () => void;
   isPageFullscreen: boolean;
@@ -130,13 +132,27 @@ export function EditorToolbar(props: Props) {
         <DropdownItem key={`dropdown-${dropdownId}-export-gist`} component="button" onClick={props.onExportGist}>
           {i18n.editorToolbar.gistIt}
         </DropdownItem>,
-        <>
+        <React.Fragment key={`dropdown-${dropdownId}-update-gist`}>
           {context.githubService.isGistRaw(getFileUrl()) && (
-            <DropdownItem key={`dropdown-${dropdownId}-update-gist`} component="button" onClick={props.onUpdateGist}>
+            <DropdownItem component="button" onClick={props.onUpdateGist}>
               Update Gist
             </DropdownItem>
           )}
-        </>
+        </React.Fragment>,
+        <React.Fragment key={`dropdown-${dropdownId}-export-iframe-gist`}>
+          {context.githubService.isGistRaw(getFileUrl()) && (
+            <DropdownItem component="button" onClick={props.onExportIframeGist}>
+              Export Iframe from Gist
+            </DropdownItem>
+          )}
+        </React.Fragment>,
+        <DropdownItem
+          key={`dropdown-${dropdownId}-export-iframe-content`}
+          component="button"
+          onClick={props.onExportIframeContent}
+        >
+          Export Iframe from Content
+        </DropdownItem>
       ],
       [
         context.external,
