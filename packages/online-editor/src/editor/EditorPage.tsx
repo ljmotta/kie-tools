@@ -52,7 +52,7 @@ export function EditorPage(props: Props) {
   const [showUnsavedAlert, setShowUnsavedAlert] = useState(false);
   const isDirty = useDirtyState(editorRef);
   const { locale, i18n } = useOnlineI18n();
-  const fileUrl = useMemo(() => getFileUrl(), [])
+  const fileUrl = useMemo(() => getFileUrl(), [window.location]);
 
   const close = useCallback(() => {
     if (!isDirty) {

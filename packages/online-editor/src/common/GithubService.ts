@@ -22,7 +22,7 @@ export const GITHUB_TOKENS_URL = "https://github.com/settings/tokens";
 export const GITHUB_TOKENS_HOW_TO_URL =
   "https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line";
 
-export const GITHUB_AUTH_TOKEN_COOKIE_NAME = "github-oauth-token-kie-editors";
+const GITHUB_AUTH_TOKEN_COOKIE_NAME = "github-oauth-token-kie-editors";
 const EMPTY_TOKEN = "";
 
 export interface FileInfo {

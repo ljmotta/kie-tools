@@ -89,7 +89,8 @@ export function EditorToolbar(props: Props) {
     [saveNewName, cancelNewName]
   );
 
-  const fileUrl = useMemo(() => getFileUrl(), [])
+  const fileUrl = useMemo(() => getFileUrl(), [window.location]);
+  
   const [updateGist, setUpdateGist] = useState(false);
 
   useEffect(() => {
@@ -102,7 +103,6 @@ export function EditorToolbar(props: Props) {
       }
     }
   }, [context.githubService.getLogin()]);
-
 
   const kebabItems = (dropdownId: string) =>
     useMemo(
