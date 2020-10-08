@@ -27,11 +27,19 @@ import { EditorToolbar } from "./EditorToolbar";
 import { useDmnTour } from "../tour";
 import { useOnlineI18n } from "../common/i18n";
 import {
+  EmbeddableClass,
+  FileExtension,
   getEmbeddableEditorFromContent,
   getEmbeddableEditorFromGist,
-  getEmbeddableEditorTemplate,
+  getEmbeddableEditorSrcdoc,
   getFileUrl
 } from "../common/utils";
+
+const editorEmbeddableClassMapping = new Map<FileExtension, EmbeddableClass>([
+  ["bpmn", "BpmnEditor"],
+  ["bpmn2", "BpmnEditor"],
+  ["dmn", "DmnEditor"]
+]);
 
 interface Props {
   onFileNameChanged: (fileName: string, fileExtension: string) => void;
@@ -150,24 +158,34 @@ export function EditorPage(props: Props) {
     });
   }, [context.file.fileName]);
 
+  const fileExtension = useMemo(() => {
+    return context.routes.editor.args(location.pathname).type as FileExtension;
+  }, [location.pathname]);
+
+  const getEmbeddableScript = useCallback(
+    (content?: string, gistId?: string) => {
+      const embeddableClass = editorEmbeddableClassMapping.get(fileExtension)!;
+      if (content) {
+        return getEmbeddableEditorFromContent(embeddableClass, content);
+      }
+
+      if (gistId) {
+        return getEmbeddableEditorFromGist(embeddableClass, gistId, context.githubService.getLogin());
+      }
+
+      throw new Error("It's not possible to generate a script without a content or a gistId!");
+    },
+    [editorEmbeddableClassMapping, fileExtension]
+  );
+
   const requestExportIframeGist = useCallback(() => {
     const gistId = context.githubService.extractGistIdFromRawUrl(fileUrl!);
-    let script: string = "";
-    let template: string = "";
-    if (fileExtension === "dmn") {
-      script = getEmbeddableEditorFromGist("DmnEditor", gistId);
-      template = getEmbeddableEditorTemplate(script, "dmn");
-    }
-
-    if (fileExtension === "bpmn") {
-      script = getEmbeddableEditorFromGist("BpmnEditor", gistId);
-      template = getEmbeddableEditorTemplate(script, "bpmn");
-    }
+    const script = getEmbeddableScript(undefined, gistId);
 
     const iframe = document.createElement("iframe");
     iframe.width = "100%";
     iframe.height = "100%";
-    iframe.srcdoc = template;
+    iframe.srcdoc = getEmbeddableEditorSrcdoc(script, fileExtension);
 
     copyContentTextArea.current!.value = iframe.outerHTML;
     copyContentTextArea.current!.select();
@@ -179,22 +197,12 @@ export function EditorPage(props: Props) {
 
   const requestExportIframeContent = useCallback(async () => {
     const content = ((await editorRef.current?.getContent()) ?? "").replace(/(\r\n|\n|\r)/gm, "");
-    let script: string = "";
-    let template: string = "";
-    if (fileExtension === "dmn") {
-      script = getEmbeddableEditorFromContent("DmnEditor", content);
-      template = getEmbeddableEditorTemplate(script, "dmn");
-    }
-
-    if (fileExtension === "bpmn") {
-      script = getEmbeddableEditorFromContent("BpmnEditor", content);
-      template = getEmbeddableEditorTemplate(script, "bpmn");
-    }
+    const script = getEmbeddableScript(content);
 
     const iframe = document.createElement("iframe");
     iframe.width = "100%";
     iframe.height = "100%";
-    iframe.srcdoc = template;
+    iframe.srcdoc = getEmbeddableEditorSrcdoc(script, fileExtension);
 
     copyContentTextArea.current!.value = iframe.outerHTML;
     copyContentTextArea.current!.select();
@@ -230,10 +238,6 @@ export function EditorPage(props: Props) {
   const toggleFullScreen = useCallback(() => {
     setFullscreen(!fullscreen);
   }, [fullscreen]);
-
-  const fileExtension = useMemo(() => {
-    return context.routes.editor.args(location.pathname).type;
-  }, [location.pathname]);
 
   const closeCopySuccessAlert = useCallback(() => setCopySuccessAlertVisible(false), []);
 

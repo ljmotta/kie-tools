@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { useMemo } from "react";
+
 export function extractFileExtension(fileName: string) {
   return fileName.match(/[\.]/)
     ? fileName
@@ -100,22 +102,17 @@ export function setCookie(name: string, value: string) {
   document.cookie = name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
 }
 
-const BPMN_SOURCE = "https://paulovmr.github.io/kogito-online/bpmn/index.js";
-const DMN_SOURCE = "https://paulovmr.github.io/kogito-online/dmn/index.js";
-type EmbeddableClass = "BpmnEditor" | "DmnEditor";
+export type FileExtension = "bpmn" | "bpmn2" | "dmn";
+export type EmbeddableClass = "BpmnEditor" | "DmnEditor";
 
-export function getEmbeddableEditorFromGist(editor: EmbeddableClass, gistId: string) {
+export function getEmbeddableEditorFromGist(editor: EmbeddableClass, gistId: string, userLogin: string) {
   return `
-    <script type="module">
+    <script>
       // You can manually change the readOnly property.
       const readOnly = true;
-      import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
-      const octokit = new Octokit()
-      octokit.gists.get({ gist_id: "${gistId}" })
-        .then(response => response.data.files[Object.keys(response.data.files)[0]].raw_url)
-        .then(url => fetch(url))
+      fetch("https://gist.githubusercontent.com/${userLogin}/${gistId}/raw")
         .then(response => response.text())
-        .then(content => ${editor}.open({container: document.body, initialContent: content, readOnly, origin: "*" }))
+        .then(content => ${editor}.open({container: document.body, initialContent: content, readOnly, origin: "*" }))        
     </script>`;
 }
 
@@ -128,7 +125,10 @@ export function getEmbeddableEditorFromContent(editor: EmbeddableClass, content:
     </script>`;
 }
 
-export function getEmbeddableEditorTemplate(script: string, type: "dmn" | "bpmn") {
+const BPMN_SOURCE = "https://paulovmr.github.io/kogito-online/bpmn/index.js";
+const DMN_SOURCE = "https://paulovmr.github.io/kogito-online/dmn/index.js";
+
+export function getEmbeddableEditorSrcdoc(script: string, type: FileExtension) {
   return `<!DOCTYPE html>
     <html lang="en">
     <head>

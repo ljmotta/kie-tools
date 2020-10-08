@@ -90,7 +90,7 @@ export function EditorToolbar(props: Props) {
   );
 
   const fileUrl = useMemo(() => getFileUrl(), [window.location]);
-  
+
   const [updateGist, setUpdateGist] = useState(false);
 
   useEffect(() => {
