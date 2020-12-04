@@ -36,7 +36,7 @@ chrome.webRequest.onHeadersReceived.addListener(
     removeHeader(details.responseHeaders!, "x-frame-options");
     return { responseHeaders: details.responseHeaders };
   },
-  { urls: ["https://github.com/*"] },
+  { urls: ["https://github.com/*", "https://gitlab.com/*", "https://bitbucket.org/*"] },
   ["blocking", "responseHeaders"]
 );
 
