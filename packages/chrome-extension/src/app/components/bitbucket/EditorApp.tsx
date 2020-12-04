@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { ReactNode, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
 import { IsolatedEditorContext } from "../common/IsolatedEditorContext";
 import { FileInfoBitBucket } from "./EditorView";

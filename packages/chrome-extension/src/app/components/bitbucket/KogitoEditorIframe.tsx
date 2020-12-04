@@ -41,8 +41,6 @@ export function KogitoEditorIframe(props: Props) {
     };
   }, [props.contentPath, props.openFileExtension, props.getFileContents, props.readonly]);
 
-  console.log("envelopeLOCATORRRR", props.editorEnvelopeLocator);
-
   return (
     <>
       <div className={`kogito-iframe ${fullscreen ? "fullscreen" : "not-fullscreen"}`}>

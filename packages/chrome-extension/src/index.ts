@@ -28,7 +28,7 @@ import { Globals } from "./app/components/common/Main";
 import { ExternalEditorManager } from "./ExternalEditorManager";
 import { ResourceContentServiceFactory } from "./app/components/common/ChromeResourceContentService";
 import { addExternalEditorLinks } from "./app/components/tree/externalEditorLinkManager";
-import {renderBitbucket} from "./app/components/bitbucket/EditorView";
+import { renderBitbucket } from "./app/components/bitbucket/EditorView";
 
 enum GitManager {
   GITHUB,
@@ -53,7 +53,7 @@ export function startExtension(args: {
   editorEnvelopeLocator: EditorEnvelopeLocator;
   externalEditorManager?: ExternalEditorManager;
 }) {
-  console.log("COMEÇOU", args.name, args.editorEnvelopeLocator)
+  console.log("COMEÇOU", args.name, args.editorEnvelopeLocator);
 
   const logger = new Logger(args.name);
   const resourceContentServiceFactory = new ResourceContentServiceFactory();
@@ -74,13 +74,20 @@ export function startExtension(args: {
   setTimeout(runInit, 0);
 }
 
+interface BitBucketFileInfo {
+  user: string;
+  repo: string;
+  branch: string;
+  path: string;
+}
+
 function init(args: Globals) {
   args.logger.log(`---`);
   args.logger.log(`Starting GitHub extension.`);
-
-  unmountPreviouslyRenderedFeatures(args.id, args.logger, args.dependencies);
+  console.log("RODANDO")
 
   const gitManager = discoverCurrentGitManager();
+
   if (gitManager === GitManager.BITBUCKET) {
     const split = window.location.pathname.split("/");
     const fileInfo = {
@@ -89,7 +96,15 @@ function init(args: Globals) {
       branch: split[4],
       path: split.slice(5).join("/")
     };
+    const pageType = discoverCurrentBitbucketPageType(fileInfo);
 
+    if (pageType === BitBucketPageType.ANY) {
+      console.log("anyyyy")
+      args.logger.log(`This Bitbucket page is not supported.`);
+      return;
+    }
+
+    console.log("editorrr")
     renderBitbucket({
       id: args.id,
       logger: args.logger,
@@ -98,10 +113,12 @@ function init(args: Globals) {
       extensionIconUrl: args.extensionIconUrl,
       externalEditorManager: args.externalEditorManager,
       fileInfo: fileInfo
-    })
+    });
   }
 
   if (gitManager === GitManager.GITHUB) {
+    unmountPreviouslyRenderedFeatures(args.id, args.logger, args.dependencies);
+
     const fileInfo = extractFileInfoFromUrl();
     const pageType = discoverCurrentGitHubPageType();
 
@@ -200,6 +217,34 @@ export function discoverCurrentGitManager() {
     return GitManager.GITLAB;
   }
   return GitManager.ANY;
+}
+
+enum BitBucketPageType {
+  VIEW,
+  ANY
+}
+
+function extractFileExtension(fileName: string) {
+  return fileName.match(/[\.]/)
+    ? fileName
+      .split(".")
+      ?.pop()
+      ?.match(/[\w\d]+/)
+      ?.pop()
+    : undefined;
+}
+
+function discoverCurrentBitbucketPageType(fileInfo: BitBucketFileInfo) {
+  const fileExtension = extractFileExtension(fileInfo.path)
+  console.log("fileExtension", fileExtension)
+  if (
+    (fileExtension === "dmn" || fileExtension === "bpmn" || fileExtension === "bpmn2") &&
+    uriMatches(`.*/.*/src/.*`)
+  ) {
+    return BitBucketPageType.VIEW;
+  }
+
+  return BitBucketPageType.ANY;
 }
 
 export function discoverCurrentGitHubPageType() {

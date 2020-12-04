@@ -25,7 +25,9 @@ export function runScriptOnPage(scriptString: string) {
   const scriptTag = document.createElement("script");
   scriptTag.setAttribute("type", "text/javascript");
   scriptTag.innerText = scriptString;
+  console.log("antes de dar append no script")
   document.body.appendChild(scriptTag);
+  console.log("depois de dar append?")
   scriptTag.remove();
 }
 
@@ -34,6 +36,7 @@ let lastUri = window.location.pathname;
 export function runAfterUriChange(logger: Logger, callback: () => void) {
   const checkUriThenCallback = () => {
     const currentUri = window.location.pathname;
+    console.log("CURRENT AND LAST", currentUri, lastUri)
 
     if (lastUri === currentUri) {
       return;
@@ -57,12 +60,16 @@ export function runAfterUriChange(logger: Logger, callback: () => void) {
   };
   history.replaceState = _wr('replaceState');`);
 
+  console.log("aqui?")
+
   window.addEventListener("replaceState", () => {
     logger.log("replaceState event happened");
+    console.log("replaceState")
     checkUriThenCallback();
   });
   window.addEventListener("popstate", () => {
     logger.log("popstate event happened");
+    console.log("popstate")
     checkUriThenCallback();
   });
 }

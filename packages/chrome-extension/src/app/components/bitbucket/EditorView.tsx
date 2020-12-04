@@ -41,13 +41,6 @@ export interface Globals {
 }
 
 export function renderBitbucket(args: Globals & { fileInfo: FileInfoBitBucket }) {
-  // Checking whether this text editor exists is a good way to determine if the page is "ready",
-  // because that would mean that the user could see the default GitHub page.
-  // if (!args.dependencies.singleView.githubTextEditorToReplaceElement()) {
-  //   args.logger.log(`Doesn't look like the GitHub page is ready yet.`);
-  //   return;
-  // }
-
   const openFileExtension = extractOpenFileExtension(window.location.href);
   if (!openFileExtension) {
     args.logger.log(`Unable to determine file extension from URL`);
@@ -58,9 +51,6 @@ export function renderBitbucket(args: Globals & { fileInfo: FileInfoBitBucket })
     args.logger.log(`No enhanced editor available for "${openFileExtension}" format.`);
     return;
   }
-
-  // Necessary because GitHub apparently "caches" DOM structures between changes on History.
-  // Without this method you can observe duplicated elements when using back/forward browser buttons.
 
   ReactDOM.render(
     <EditorViewApp
@@ -106,29 +96,18 @@ function EditorViewApp(props: {
     />
   );
 }
-//
-// function cleanup(id: string) {
-//   iframeContainer(id).then(res => removeAllChildren(res));
-// }
 
 function iframeContainer(id: string): Promise<HTMLElement> {
   return new Promise((resolve, reject) => {
     const interval = setInterval(() => {
       const element = () => document.querySelector(`.${KOGITO_IFRAME_CONTAINER_CLASS}.${id}`)!;
-      const fileContent = document.querySelector("div[data-qa='bk-file__content']");
+      const fileContent = document.querySelector("div[data-qa='bk-file__content']") as HTMLDivElement;
 
-      console.log("INTERVAL", fileContent);
       if (!element() && fileContent !== null) {
-
-        console.log("inside, ??", interval);
+        fileContent.style.display = "none";
         fileContent.insertAdjacentHTML("afterend", `<div class="${KOGITO_IFRAME_CONTAINER_CLASS} ${id} view"></div>`);
         resolve(element() as HTMLElement);
-
-      }
-
-      if (fileContent) {
         clearInterval(interval);
-        console.log("after");
       }
     }, 1000);
   });
