@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-import { createAndGetMainContainer, extractOpenFileExtension, removeAllChildren } from "../../utils";
+import { createAndGetMainContainer } from "../../utils";
 import * as ReactDOM from "react-dom";
-import { EditorApp } from "./EditorApp";
 import * as React from "react";
-import { useCallback } from "react";
-import { KOGITO_IFRAME_CONTAINER_CLASS } from "../../constants";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
 import { Logger } from "../../../Logger";
 import { ExternalEditorManager } from "../../../ExternalEditorManager";
-import { Dependencies } from "../../Dependencies";
-import { PrInfo } from "../pr/IsolatedPrEditor";
-import { PrEditorsApp } from "../pr/PrEditorsApp";
+import { PrEditorsApp } from "./PrEditorsApp";
 
 export interface FileInfoBitBucket {
   user: string;
@@ -37,44 +32,65 @@ export interface FileInfoBitBucket {
 export interface Globals {
   id: string;
   editorEnvelopeLocator: EditorEnvelopeLocator;
-  githubAuthTokenCookieName: string;
   logger: Logger;
   extensionIconUrl: string;
   externalEditorManager?: ExternalEditorManager;
 }
 
 export function renderBitbucketPr(args: Globals & { contentPath: string }) {
+  console.log("PRINFO", parsePrInfo());
   ReactDOM.render(
-    <PrEditorsApp prInfo={parsePrInfo()} contentPath={args.contentPath} />,
+    <PrEditorsApp
+      id={args.id}
+      prInfo={parsePrInfo()}
+      contentPath={args.contentPath}
+      logger={args.logger}
+      envelopeLocator={args.editorEnvelopeLocator}
+    />,
     createAndGetMainContainer(args.id, document.body),
     () => args.logger.log("Mounted.")
   );
 }
 
-export function parsePrInfo(): PrInfo {
-  // TODO REMOVE DEPENDENCIES AND USE THE QUERY SELECTOR
-  const prInfos = dependencies.all.array.pr__prInfoContainer()!.map(e => e.textContent!);
+export interface PrInfo {
+  repo: string;
+  targetOrg: string;
+  targetGitRef: string;
+  org: string;
+  gitRef: string;
+}
 
-  const targetOrganization = window.location.pathname.split("/")[1];
+export function parsePrInfo(): PrInfo {
   const repository = window.location.pathname.split("/")[2];
 
-  // PR is within the same organization
-  if (prInfos.length < 6) {
+  const prInfos = Array.from(
+    document.querySelector("div[data-qa='pr-branches-and-state-styles']")!.getElementsByTagName("span")
+  )!.map((element: any) => element.outerText.trim(""));
+
+  const [origin, , target] = prInfos;
+
+  // Cross Repo
+  if (origin.indexOf(":") > 0) {
+    const [originInfos, originGitRef] = origin.split(":");
+    const [originOrg] = originInfos.split("/");
+
+    const [targetInfos, targetGitRef] = target.split(":");
+    const [targetOrg] = targetInfos.split("/");
     return {
       repo: repository,
-      targetOrg: targetOrganization,
-      targetGitRef: prInfos[1],
-      org: targetOrganization,
-      gitRef: prInfos[3]
+      targetOrg: targetOrg,
+      targetGitRef: targetGitRef,
+      org: originOrg,
+      gitRef: originGitRef
     };
   }
 
-  // PR is from a fork to an upstream
+  const targetOrganization = window.location.pathname.split("/")[1];
   return {
     repo: repository,
     targetOrg: targetOrganization,
-    targetGitRef: prInfos[2],
-    org: prInfos[4],
-    gitRef: prInfos[5]
+    targetGitRef: target,
+    org: targetOrganization,
+    gitRef: origin
   };
 }
