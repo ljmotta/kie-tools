@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Logger } from "../../../Logger";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { FileStatusOnPr } from "./FileStatusOnPr";
-import { useInitialAsyncCallEffect } from "../common/customEffects";
-import {
-  GITHUB_RENAMED_FILE_ARROW,
-  KOGITO_IFRAME_CONTAINER_CLASS,
-  KOGITO_IFRAME_CONTAINER_PR_CLASS,
-  KOGITO_OPEN_WITH_ONLINE_EDITOR_LINK_CONTAINER_PR_CLASS,
-  KOGITO_TOOLBAR_CONTAINER_PR_CLASS,
-  KOGITO_VIEW_ORIGINAL_LINK_CONTAINER_PR_CLASS
-} from "../../constants";
+import { KOGITO_IFRAME_CONTAINER_PR_CLASS, KOGITO_TOOLBAR_CONTAINER_PR_CLASS } from "../../constants";
 import { PrInfo } from "./PrEditorView";
 import { IsolatedEditorContext } from "../common/IsolatedEditorContext";
 import { KogitoEditorIframe } from "./KogitoEditorIframe";
+import { PrToolbar } from "./PrToolbar";
+import { useIsolatedEditorTogglingEffect } from "../common/customEffects";
 
 export function PrEditorsApp(props: {
   id: string;
@@ -44,12 +38,10 @@ export function PrEditorsApp(props: {
 
   useEffect(() => {
     const observer = new MutationObserver(mutations => {
-      console.log(mutations);
       const addedNodes = mutations.reduce((l, r) => [...l, ...Array.from(r.addedNodes)], []);
       if (addedNodes.length <= 0) {
         return;
       }
-      console.log("addedNodes", addedNodes);
 
       const newContainers = supportedPrFileElements(props.id, props.logger, props.envelopeLocator);
       if (newContainers.length === prFileContainers.length) {
@@ -57,10 +49,10 @@ export function PrEditorsApp(props: {
         return;
       }
 
-      console.log("newcontainer", newContainers);
-      newContainers.forEach(container => {
-        (container as any).querySelector("div[data-qa='bk-file__content']")!.style.display = "none";
-      });
+      // console.log("newcontainer", newContainers);
+      // newContainers.forEach(container => {
+      //   (container as any).querySelector("div[data-qa='bk-file__content']")!.style.display = "none";
+      // });
 
       props.logger.log("Found new containers...");
       setPrFileContainers(newContainers);
@@ -104,13 +96,7 @@ function prFileElements(id: string): HTMLElement[] {
   const elements = Array.from(document.querySelectorAll("article[data-qa='pr-diff-file-styles']")).map(
     e => e as HTMLElement
   );
-  const htmlElements = elements.length > 0 ? (elements as HTMLElement[]) : [];
-
-  htmlElements.forEach(htmlElement => {
-    htmlElement.insertAdjacentHTML("afterend", `<div class="${KOGITO_IFRAME_CONTAINER_CLASS} ${id} view"></div>`);
-  });
-
-  return htmlElements;
+  return elements.length > 0 ? (elements as HTMLElement[]) : [];
 }
 
 function getFileExtension(prFileContainer: HTMLElement): string {
@@ -148,15 +134,43 @@ function IsolatedPrEditor(props: {
   envelopeLocator: EditorEnvelopeLocator;
 }) {
   const [editorReady, setEditorReady] = useState(false);
+  const [showOriginal, setShowOriginal] = useState(false);
+  const [textMode, setTextMode] = useState(true);
+  const [fileStatusOnPr, setFileStatusOnPr] = useState(FileStatusOnPr.UNKNOWN);
+
+  useEffect(() => {
+    if (!textMode) {
+      const fileContent = props.prFileContainer.querySelector("div[data-qa='bk-file__content']");
+      if (fileContent) {
+        fileContent.classList.add("hidden");
+      }
+
+      const iframeContainere = props.prFileContainer.querySelector(`.${KOGITO_IFRAME_CONTAINER_PR_CLASS}.${props.id}`);
+      if (iframeContainere) {
+        iframeContainere.classList.remove("hidden");
+      }
+    } else {
+      const fileContent = props.prFileContainer.querySelector("div[data-qa='bk-file__content']");
+      if (fileContent) {
+        fileContent.classList.remove("hidden");
+      }
+
+      const iframeContainere = props.prFileContainer.querySelector(`.${KOGITO_IFRAME_CONTAINER_PR_CLASS}.${props.id}`);
+      if (iframeContainere) {
+        iframeContainere.classList.add("hidden");
+      }
+    }
+  }, [props.prFileContainer, props.id, textMode]);
+
+  useEffect(() => {
+    setFileStatusOnPr(discoverFileStatusOnPr(props.prFileStatus));
+  }, [props.prFileStatus]);
 
   const getFileContents = useMemo(() => {
-    const something =
-      discoverFileStatusOnPr(props.prFileStatus) !== FileStatusOnPr.DELETED
-        ? () => getOriginalFileContents(props.prInfo, props.prFilePath)
-        : () => Promise.resolve("");
-    console.log("file", something);
-    return something;
-  }, [props.prFileStatus, props.prInfo, props.prFilePath]);
+    return showOriginal || fileStatusOnPr !== FileStatusOnPr.DELETED
+      ? () => getTargetFileContents(props.prInfo, props.prFilePath)
+      : () => getOriginFileContents(props.prInfo, props.prFilePath);
+  }, [fileStatusOnPr, props.prInfo, props.prFilePath]);
 
   const repoInfo = useMemo(() => {
     return {
@@ -170,26 +184,56 @@ function IsolatedPrEditor(props: {
     setEditorReady(true);
   }, []);
 
+  const toggleOriginal = useCallback(() => {
+    setShowOriginal(!showOriginal);
+  }, [showOriginal]);
+
+  const setDiagramMode = useCallback(() => {
+    setTextMode(false);
+  }, []);
+
+  const closeDiagram = useCallback(() => {
+    setTextMode(true);
+    setEditorReady(false);
+  }, []);
+
   return (
     <React.Fragment>
       <IsolatedEditorContext.Provider
         value={{
-          onEditorReady: () => null,
+          onEditorReady,
           fullscreen: false,
           textMode: false,
           repoInfo
         }}
       >
         {ReactDOM.createPortal(
-          <KogitoEditorIframe
-            getFileContents={getFileContents}
-            contentPath={props.contentPath}
-            openFileExtension={props.fileExtension}
-            readonly={true}
-            editorEnvelopeLocator={props.envelopeLocator}
+          <PrToolbar
+            showOriginalChangesToggle={editorReady}
+            fileStatusOnPr={fileStatusOnPr}
+            textMode={textMode}
+            originalDiagram={showOriginal}
+            toggleOriginal={toggleOriginal}
+            closeDiagram={closeDiagram}
+            onSeeAsDiagram={setDiagramMode}
           />,
-          iframeContainer(props.id, props.prFileContainer)
+          toolbarContainer(
+            props.id,
+            props.prFileContainer,
+            props.prFileContainer.querySelector("div[data-qa='bk-file__actions']")! as HTMLElement
+          )
         )}
+        {!textMode &&
+          ReactDOM.createPortal(
+            <KogitoEditorIframe
+              getFileContents={getFileContents}
+              contentPath={props.contentPath}
+              openFileExtension={props.fileExtension}
+              readonly={true}
+              editorEnvelopeLocator={props.envelopeLocator}
+            />,
+            iframeContainer(props.id, props.prFileContainer)
+          )}
       </IsolatedEditorContext.Provider>
     </React.Fragment>
   );
@@ -225,10 +269,24 @@ function iframeContainer(id: string, container: HTMLElement) {
   return element() as HTMLElement;
 }
 
-function getOriginalFileContents(prInfo: PrInfo, originalFilePath: string) {
-  return fetch(
-    `https://bitbucket.org/${prInfo.org}/${prInfo.repo}/raw/${prInfo.gitRef}/${originalFilePath}`
-  )
+function toolbarContainer(id: string, prFileContainer: HTMLElement, container: HTMLElement) {
+  const element = () => prFileContainer.querySelector(`.${KOGITO_TOOLBAR_CONTAINER_PR_CLASS}.${id}`);
+
+  if (!element()) {
+    container.insertAdjacentHTML("beforebegin", `<div class="${KOGITO_TOOLBAR_CONTAINER_PR_CLASS} ${id}"></div>`);
+  }
+
+  return element()!;
+}
+
+function getTargetFileContents(prInfo: PrInfo, targetFilePath: string) {
+  return fetch(`https://bitbucket.org/${prInfo.targetOrg}/${prInfo.repo}/raw/${prInfo.targetGitRef}/${targetFilePath}`)
+    .then(res => res.text())
+    .then(res => res);
+}
+
+function getOriginFileContents(prInfo: PrInfo, originFilePath: string) {
+  return fetch(`https://bitbucket.org/${prInfo.org}/${prInfo.repo}/raw/${prInfo.gitRef}/${originFilePath}`)
     .then(res => res.text())
     .then(res => res);
 }
