@@ -139,25 +139,15 @@ function IsolatedPrEditor(props: {
   const [fileStatusOnPr, setFileStatusOnPr] = useState(FileStatusOnPr.UNKNOWN);
 
   useEffect(() => {
-    if (!textMode) {
-      const fileContent = props.prFileContainer.querySelector("div[data-qa='bk-file__content']");
-      if (fileContent) {
+    const fileContent = props.prFileContainer.querySelector("div[data-qa='bk-file__content']");
+    const iframe = props.prFileContainer.querySelector(`.${KOGITO_IFRAME_CONTAINER_PR_CLASS}.${props.id}`);
+    if (fileContent && iframe) {
+      if (!textMode) {
         fileContent.classList.add("hidden");
-      }
-
-      const iframeContainere = props.prFileContainer.querySelector(`.${KOGITO_IFRAME_CONTAINER_PR_CLASS}.${props.id}`);
-      if (iframeContainere) {
-        iframeContainere.classList.remove("hidden");
-      }
-    } else {
-      const fileContent = props.prFileContainer.querySelector("div[data-qa='bk-file__content']");
-      if (fileContent) {
+        iframe.classList.remove("hidden");
+      } else {
         fileContent.classList.remove("hidden");
-      }
-
-      const iframeContainere = props.prFileContainer.querySelector(`.${KOGITO_IFRAME_CONTAINER_PR_CLASS}.${props.id}`);
-      if (iframeContainere) {
-        iframeContainere.classList.add("hidden");
+        iframe.classList.add("hidden");
       }
     }
   }, [props.prFileContainer, props.id, textMode]);
@@ -167,10 +157,11 @@ function IsolatedPrEditor(props: {
   }, [props.prFileStatus]);
 
   const getFileContents = useMemo(() => {
-    return showOriginal || fileStatusOnPr !== FileStatusOnPr.DELETED
-      ? () => getTargetFileContents(props.prInfo, props.prFilePath)
-      : () => getOriginFileContents(props.prInfo, props.prFilePath);
-  }, [fileStatusOnPr, props.prInfo, props.prFilePath]);
+    console.log("here", showOriginal, "filestatus", fileStatusOnPr)
+    return showOriginal || fileStatusOnPr === FileStatusOnPr.DELETED
+      ? () => getTargetFileContents(props.prInfo, props.prFilePath)  // master
+      : () => getOriginFileContents(props.prInfo, props.prFilePath); // branch
+  }, [showOriginal, fileStatusOnPr, props.prInfo, props.prFilePath]);
 
   const repoInfo = useMemo(() => {
     return {
@@ -280,12 +271,14 @@ function toolbarContainer(id: string, prFileContainer: HTMLElement, container: H
 }
 
 function getTargetFileContents(prInfo: PrInfo, targetFilePath: string) {
+  console.log("target", prInfo, `https://bitbucket.org/${prInfo.targetOrg}/${prInfo.repo}/raw/${prInfo.targetGitRef}/${targetFilePath}`)
   return fetch(`https://bitbucket.org/${prInfo.targetOrg}/${prInfo.repo}/raw/${prInfo.targetGitRef}/${targetFilePath}`)
     .then(res => res.text())
     .then(res => res);
 }
 
 function getOriginFileContents(prInfo: PrInfo, originFilePath: string) {
+  console.log("origin", prInfo, `https://bitbucket.org/${prInfo.org}/${prInfo.repo}/raw/${prInfo.gitRef}/${originFilePath}`)
   return fetch(`https://bitbucket.org/${prInfo.org}/${prInfo.repo}/raw/${prInfo.gitRef}/${originFilePath}`)
     .then(res => res.text())
     .then(res => res);

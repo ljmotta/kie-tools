@@ -16,7 +16,7 @@
 
 import * as React from "react";
 import { FileStatusOnPr } from "./FileStatusOnPr";
-import {useCallback, useEffect} from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 
 export function PrToolbar(props: {
   onSeeAsDiagram: () => void;
@@ -27,6 +27,8 @@ export function PrToolbar(props: {
   originalDiagram: boolean;
   fileStatusOnPr: FileStatusOnPr;
 }) {
+  const [buttonStyle, setButtonStyle] = useState("");
+
   const closeDiagram = useCallback(
     (e: any) => {
       e.preventDefault();
@@ -52,45 +54,48 @@ export function PrToolbar(props: {
   );
 
   useEffect(() => {
-    console.log("showOriginalChangesToggle", props.showOriginalChangesToggle)
-    console.log("fileStatusOnPr", props.fileStatusOnPr)
-    console.log("textMode", props.textMode)
-  }, [props])
+    console.log("showOriginalChangesToggle", props.showOriginalChangesToggle);
+    console.log("fileStatusOnPr", props.fileStatusOnPr);
+    console.log("textMode", props.textMode);
+  }, [props]);
+
+  useLayoutEffect(() => {
+    setButtonStyle(
+      Array.from(document.getElementsByTagName("a"))
+        .filter((container: any) => container.outerText === "Edit")
+        .pop()!.classList.value
+    );
+  });
 
   return (
-    <>
-      {!props.textMode && (
-        <button disabled={props.textMode} onClick={closeDiagram}>
-          Close Diagram
-        </button>
-      )}
-
-      {props.textMode && (
-        <button className={"btn btn-sm kogito-button"} onClick={seeAsDiagram}>
-          See as Diagram
-        </button>
-      )}
-
+    <div style={{ display: "flex" }}>
       {!props.textMode && props.fileStatusOnPr === FileStatusOnPr.CHANGED && props.showOriginalChangesToggle && (
-        <div>
-          <button
-            disabled={props.originalDiagram}
-            className={props.originalDiagram ? "disabled" : ""}
+        <div style={{ margin: "5px" }}>
+          <a
+            className={buttonStyle}
+            style={{ borderRight: "solid", borderRadius: "0px" }}
+            tabIndex={0}
             type={"button"}
             onClick={toggleOriginal}
           >
-            Original
-          </button>
-          <button
-            disabled={!props.originalDiagram}
-            className={!props.originalDiagram ? "disabled" : ""}
-            type={"button"}
-            onClick={toggleOriginal}
-          >
-            Changes
-          </button>
+            <span>Original</span>
+          </a>
+          <a className={buttonStyle} tabIndex={0} type={"button"} onClick={toggleOriginal}>
+            <span>Changes</span>
+          </a>
         </div>
       )}
-    </>
+
+      {!props.textMode && (
+        <a className={buttonStyle} style={{ margin: "5px" }} tabIndex={0} type={"button"} onClick={closeDiagram}>
+          <span>Close Diagram</span>
+        </a>
+      )}
+      {props.textMode && (
+        <a className={buttonStyle} style={{ margin: "5px" }} tabIndex={0} type={"button"} onClick={seeAsDiagram}>
+          <span>See as Diagram</span>
+        </a>
+      )}
+    </div>
   );
 }
