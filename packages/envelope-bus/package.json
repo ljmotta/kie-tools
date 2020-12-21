@@ -1,6 +1,6 @@
 {
   "name": "@kogito-tooling/envelope-bus",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "",
   "license": "Apache-2.0",
   "files": [
@@ -15,16 +15,12 @@
     "test": "jest --silent --verbose --passWithNoTests",
     "build:fast": "rm -rf dist && webpack",
     "build": "yarn run lint && yarn test && yarn run build:fast",
-    "build:prod": "yarn run build --mode production --devtool none",
-    "build:productization": "yarn run build:prod"
+    "build:prod": "yarn run build --mode production --devtool none"
   },
   "babel": {
     "presets": [
       "@babel/env",
       "@babel/react"
     ]
-  },
-  "jest-junit": {
-    "outputDirectory": "./target"
   }
 }

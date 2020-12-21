@@ -21,6 +21,7 @@ const packageJson = require("./package.json");
 const pfWebpackOptions = require("@kogito-tooling/patternfly-base/patternflyWebpackOptions");
 const { merge } = require("webpack-merge");
 const common = require("../../webpack.common.config");
+const externalAssets = require("@kogito-tooling/external-assets-base");
 
 function getLatestGitTag() {
   const tagName = require("child_process")
@@ -35,12 +36,10 @@ function getLatestGitTag() {
 }
 
 function getRouterArgs(argv) {
-  const isProd = argv.mode === "production";
-
   let targetOrigin = argv["ROUTER_targetOrigin"] || process.env["ROUTER_targetOrigin"];
   let relativePath = argv["ROUTER_relativePath"] || process.env["ROUTER_relativePath"];
 
-  if (isProd) {
+  if (argv.mode === "production") {
     targetOrigin = targetOrigin || "https://kiegroup.github.io";
     relativePath = relativePath || `kogito-online/editors/${getLatestGitTag()}/`;
   } else {
@@ -55,16 +54,15 @@ function getRouterArgs(argv) {
 }
 
 function getOnlineEditorArgs(argv) {
-  const isProd = argv.mode === "production";
-
   let onlineEditorUrl = argv["ONLINEEDITOR_url"] || process.env["ONLINEEDITOR_url"];
-  let manifestFile = "manifest.dev.json";
+  let manifestFile;
 
-  if (isProd) {
+  if (argv.mode === "production") {
     onlineEditorUrl = onlineEditorUrl || "https://kiegroup.github.io/kogito-online";
     manifestFile = "manifest.prod.json";
   } else {
     onlineEditorUrl = onlineEditorUrl || "http://localhost:9001";
+    manifestFile = "manifest.dev.json";
   }
 
   console.info("Online Editor :: URL: " + onlineEditorUrl);
@@ -85,7 +83,7 @@ module.exports = async (env, argv) => {
       "envelope/index": "./src/envelope/index.ts"
     },
     devServer: {
-      contentBase: [path.join(__dirname, "..", "kie-bc-editors-unpacked")],
+      contentBase: ["dist"],
       compress: true,
       watchContentBase: true,
       https: true,
@@ -94,11 +92,20 @@ module.exports = async (env, argv) => {
     plugins: [
       new CopyPlugin([
         { from: "./static", to: "." },
-        { from: `./${manifestFile}`, to: "./manifest.json" }
+        { from: `./${manifestFile}`, to: "./manifest.json" },
+
+        // These are used for development only.
+        { from: externalAssets.dmnEditorPath(argv), to: "dmn", ignore: ["WEB-INF/**/*"] },
+        { from: externalAssets.bpmnEditorPath(argv), to: "bpmn", ignore: ["WEB-INF/**/*"] },
+        { from: externalAssets.scesimEditorPath(argv), to: "scesim", ignore: ["WEB-INF/**/*"] }
       ]),
       new ZipPlugin({
         filename: "chrome_extension_kogito_kie_editors_" + packageJson.version + ".zip",
-        pathPrefix: "dist"
+        pathPrefix: "dist",
+
+        // These are used for development only,
+        // therefore should not be included in the ZIP file.
+        exclude: ["dmn", "bpmn", "scesim"]
       })
     ],
     module: {
