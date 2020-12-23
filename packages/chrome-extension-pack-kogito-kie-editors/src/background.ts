@@ -75,6 +75,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   sendResponse({ success: true });
 });
 
+chrome.webNavigation.onHistoryStateUpdated.addListener(request => {
+  chrome.tabs.sendMessage(request.tabId, {
+    messageId: "URL_UPDATE"
+  });
+});
+
 function openOnlineEditor(request: any, sender: chrome.runtime.MessageSender, sendResponse: (response: any) => void) {
   chrome.tabs.create(
     { url: "$_{WEBPACK_REPLACE__onlineEditor_url}/?ext#/editor/" + extractFileExtension(request.filePath) },

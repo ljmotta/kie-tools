@@ -39,7 +39,8 @@
     "https://gitlab.com/*",
     "http://gitlab.com/*",
     "webRequest",
-    "webRequestBlocking"
+    "webRequestBlocking",
+    "webNavigation"
   ],
   "content_security_policy": "script-src 'self' https://raw.githubusercontent.com; object-src 'self'",
   "externally_connectable": {

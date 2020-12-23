@@ -25,4 +25,6 @@ export interface ExternalEditorManager {
     setFileName: (fileName: string) => unknown,
     setFileContent: (content: string) => unknown
   ): { stopListening: () => void };
+
+  listenToUrlUpdate(callback: () => void): { stopListening: () => void };
 }

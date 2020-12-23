@@ -25,9 +25,7 @@ export function runScriptOnPage(scriptString: string) {
   const scriptTag = document.createElement("script");
   scriptTag.setAttribute("type", "text/javascript");
   scriptTag.innerText = scriptString;
-  console.log("antes de dar append no script");
   document.body.appendChild(scriptTag);
-  console.log("depois de dar append?");
   scriptTag.remove();
 }
 
@@ -60,33 +58,6 @@ export function runAfterUriChange(logger: Logger, callback: () => void) {
   };
   history.replaceState = _wr('replaceState');`);
 
-  console.log("aqui?");
-
-  // history.pushState = (f =>
-  //   function pushState(this: any) {
-  //     const ret = f.apply(this, arguments);
-  //     window.dispatchEvent(new Event("pushstate"));
-  //     window.dispatchEvent(new Event("locationchange"));
-  //     return ret;
-  //   })(history.pushState);
-  //
-  // history.replaceState = (f =>
-  //   function replaceState(this: any) {
-  //     const ret = f.apply(this, arguments);
-  //     window.dispatchEvent(new Event("replacestate"));
-  //     window.dispatchEvent(new Event("locationchange"));
-  //     return ret;
-  //   })(history.replaceState);
-  //
-  // window.addEventListener("popstate", () => {
-  //   window.dispatchEvent(new Event("locationchange"));
-  // });
-  //
-  // window.addEventListener("locationchange", () => {
-  //   console.log("location changeeddd");
-  //   checkUriThenCallback();
-  // });
-
   window.addEventListener("replaceState", () => {
     logger.log("replaceState event happened");
     console.log("replaceState");
@@ -98,6 +69,8 @@ export function runAfterUriChange(logger: Logger, callback: () => void) {
     checkUriThenCallback();
   });
 }
+
+// export function checkIfBitBucket
 
 export function removeAllChildren(node: Node) {
   while (node.firstChild) {

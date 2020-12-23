@@ -33,7 +33,9 @@ export class OnlineEditorManager implements ExternalEditorManager {
   }
 
   public getLink(filePath: string) {
-    return `$_{WEBPACK_REPLACE__onlineEditor_url}/?file=https://raw.githubusercontent.com/${filePath}#/editor/${extractFileExtension(filePath)}`;
+    return `$_{WEBPACK_REPLACE__onlineEditor_url}/?file=https://raw.githubusercontent.com/${filePath}#/editor/${extractFileExtension(
+      filePath
+    )}`;
   }
 
   public listenToComeBack(setFileName: (fileName: string) => void, setFileContent: (fileContent: string) => void) {
@@ -43,6 +45,20 @@ export class OnlineEditorManager implements ExternalEditorManager {
         setFileContent(request.fileContent);
       }
       sendResponse({ success: true });
+    };
+
+    chrome.runtime.onMessage.addListener(listener);
+
+    return { stopListening: () => chrome.runtime.onMessage.removeListener(listener) };
+  }
+
+  public listenToUrlUpdate(callback: () => void) {
+    const listener = (request: any, sender: chrome.runtime.MessageSender) => {
+      if (request.messageId === "URL_UPDATE") {
+        console.log("ready", document.readyState);
+        console.log(`URI changed. Restarting the extension.`);
+        callback();
+      }
     };
 
     chrome.runtime.onMessage.addListener(listener);

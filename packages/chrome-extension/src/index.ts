@@ -54,8 +54,6 @@ export function startExtension(args: {
   editorEnvelopeLocator: EditorEnvelopeLocator;
   externalEditorManager?: ExternalEditorManager;
 }) {
-  console.log("COMEÇOU", args.name, args.editorEnvelopeLocator);
-
   const logger = new Logger(args.name);
   const resourceContentServiceFactory = new ResourceContentServiceFactory();
   const dependencies = new Dependencies();
@@ -71,6 +69,7 @@ export function startExtension(args: {
       externalEditorManager: args.externalEditorManager
     });
 
+  // args.externalEditorManager!.listenToUrlUpdate(() => setTimeout(runInit, 0));
   runAfterUriChange(logger, () => setTimeout(runInit, 0));
   setTimeout(runInit, 0);
 }
@@ -85,7 +84,6 @@ interface BitBucketFileInfo {
 function init(args: Globals) {
   args.logger.log(`---`);
   args.logger.log(`Starting GitHub extension.`);
-  console.log("RODANDO");
 
   const gitManager = discoverCurrentGitManager();
 
@@ -259,7 +257,7 @@ function discoverCurrentBitbucketPageType(fileInfo: BitBucketFileInfo) {
   ) {
     return BitBucketPageType.SINGLE;
   }
-  if (uriMatches(`.*/.*/pull-requests/.*`)) {
+  if (uriMatches(`.*/.*/pull-requests/.+`)) {
     return BitBucketPageType.PR;
   }
 

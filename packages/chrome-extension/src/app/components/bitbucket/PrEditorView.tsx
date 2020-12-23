@@ -38,18 +38,43 @@ export interface Globals {
 }
 
 export function renderBitbucketPr(args: Globals & { contentPath: string }) {
-  console.log("PRINFO", parsePrInfo());
-  ReactDOM.render(
-    <PrEditorsApp
-      id={args.id}
-      prInfo={parsePrInfo()}
-      contentPath={args.contentPath}
-      logger={args.logger}
-      envelopeLocator={args.editorEnvelopeLocator}
-    />,
-    createAndGetMainContainer(args.id, document.body),
-    () => args.logger.log("Mounted.")
-  );
+  checkIfPageIsReady()
+    .then(() => {
+      console.log("thennn");
+      ReactDOM.render(
+        <PrEditorsApp
+          id={args.id}
+          contentPath={args.contentPath}
+          logger={args.logger}
+          envelopeLocator={args.editorEnvelopeLocator}
+        />,
+        createAndGetMainContainer(args.id, document.body),
+        () => args.logger.log("Mounted.")
+      );
+    })
+    .catch(err => {
+      console.error(err);
+      console.error("problem loading the PR extension");
+    });
+}
+
+function checkIfPageIsReady() {
+  return new Promise((resolve, reject) => {
+    let tries = 0;
+    const interval = setInterval(() => {
+      const h2Elements = Array.from(document.getElementsByTagName("h2"));
+      if (tries > 50 || h2Elements.length === 0) {
+        clearInterval(interval);
+        reject();
+      }
+      console.log(h2Elements.length);
+      if (h2Elements && h2Elements.length > 3) {
+        resolve();
+        clearInterval(interval);
+      }
+      tries++;
+    }, 500);
+  });
 }
 
 export interface PrInfo {
@@ -58,39 +83,4 @@ export interface PrInfo {
   targetGitRef: string;
   org: string;
   gitRef: string;
-}
-
-export function parsePrInfo(): PrInfo {
-  const repository = window.location.pathname.split("/")[2];
-
-  const prInfos = Array.from(
-    document.querySelector("div[data-qa='pr-branches-and-state-styles']")!.getElementsByTagName("span")
-  )!.map((element: any) => element.outerText.trim(""));
-
-  const [origin, , target] = prInfos;
-
-  // Cross Repo
-  if (origin.indexOf(":") > 0) {
-    const [originInfos, originGitRef] = origin.split(":");
-    const [originOrg] = originInfos.split("/");
-
-    const [targetInfos, targetGitRef] = target.split(":");
-    const [targetOrg] = targetInfos.split("/");
-    return {
-      repo: repository,
-      targetOrg: targetOrg,
-      targetGitRef: targetGitRef,
-      org: originOrg,
-      gitRef: originGitRef
-    };
-  }
-
-  const targetOrganization = window.location.pathname.split("/")[1];
-  return {
-    repo: repository,
-    targetOrg: targetOrganization,
-    targetGitRef: target,
-    org: targetOrganization,
-    gitRef: origin
-  };
 }

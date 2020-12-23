@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Logger } from "../../../Logger";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
 import * as React from "react";
@@ -29,14 +29,14 @@ import { useIsolatedEditorTogglingEffect } from "../common/customEffects";
 
 export function PrEditorsApp(props: {
   id: string;
-  prInfo: PrInfo;
   contentPath: string;
   logger: Logger;
   envelopeLocator: EditorEnvelopeLocator;
 }) {
   const [prFileContainers, setPrFileContainers] = useState<HTMLElement[]>([]);
-
+  console.log("e aaqui?");
   useEffect(() => {
+    console.log("renderizado?");
     const observer = new MutationObserver(mutations => {
       const addedNodes = mutations.reduce((l, r) => [...l, ...Array.from(r.addedNodes)], []);
       if (addedNodes.length <= 0) {
@@ -48,11 +48,6 @@ export function PrEditorsApp(props: {
         props.logger.log("Found new unsupported containers");
         return;
       }
-
-      // console.log("newcontainer", newContainers);
-      // newContainers.forEach(container => {
-      //   (container as any).querySelector("div[data-qa='bk-file__content']")!.style.display = "none";
-      // });
 
       props.logger.log("Found new containers...");
       setPrFileContainers(newContainers);
@@ -68,13 +63,17 @@ export function PrEditorsApp(props: {
     };
   }, [prFileContainers, props]);
 
+  useEffect(() => {
+    setPrFileContainers(supportedPrFileElements(props.id, props.logger, props.envelopeLocator));
+  }, []);
+
   return (
     <>
       {prFileContainers.map(container => (
         <IsolatedPrEditor
           id={props.id}
           key={getUnprocessedFilePath(container)}
-          prInfo={props.prInfo}
+          prInfo={parsePrInfo()}
           contentPath={props.contentPath}
           prFileContainer={container}
           fileExtension={getFileExtension(container)}
@@ -86,6 +85,41 @@ export function PrEditorsApp(props: {
       ))}
     </>
   );
+}
+
+function parsePrInfo(): PrInfo {
+  const repository = window.location.pathname.split("/")[2];
+
+  const prInfos = Array.from(
+    document.querySelector("div[data-qa='pr-branches-and-state-styles']")!.getElementsByTagName("span")
+  )!.map((element: any) => element.outerText.trim(""));
+
+  const [origin, , target] = prInfos;
+
+  // Cross Repo
+  if (origin.indexOf(":") > 0) {
+    const [originInfos, originGitRef] = origin.split(":");
+    const [originOrg] = originInfos.split("/");
+
+    const [targetInfos, targetGitRef] = target.split(":");
+    const [targetOrg] = targetInfos.split("/");
+    return {
+      repo: repository,
+      targetOrg: targetOrg,
+      targetGitRef: targetGitRef,
+      org: originOrg,
+      gitRef: originGitRef
+    };
+  }
+
+  const targetOrganization = window.location.pathname.split("/")[1];
+  return {
+    repo: repository,
+    targetOrg: targetOrganization,
+    targetGitRef: target,
+    org: targetOrganization,
+    gitRef: origin
+  };
 }
 
 function supportedPrFileElements(id: string, logger: Logger, envelopeLocator: EditorEnvelopeLocator) {
@@ -157,9 +191,9 @@ function IsolatedPrEditor(props: {
   }, [props.prFileStatus]);
 
   const getFileContents = useMemo(() => {
-    console.log("here", showOriginal, "filestatus", fileStatusOnPr)
+    console.log("here", showOriginal, "filestatus", fileStatusOnPr);
     return showOriginal || fileStatusOnPr === FileStatusOnPr.DELETED
-      ? () => getTargetFileContents(props.prInfo, props.prFilePath)  // master
+      ? () => getTargetFileContents(props.prInfo, props.prFilePath) // master
       : () => getOriginFileContents(props.prInfo, props.prFilePath); // branch
   }, [showOriginal, fileStatusOnPr, props.prInfo, props.prFilePath]);
 
@@ -271,14 +305,22 @@ function toolbarContainer(id: string, prFileContainer: HTMLElement, container: H
 }
 
 function getTargetFileContents(prInfo: PrInfo, targetFilePath: string) {
-  console.log("target", prInfo, `https://bitbucket.org/${prInfo.targetOrg}/${prInfo.repo}/raw/${prInfo.targetGitRef}/${targetFilePath}`)
+  console.log(
+    "target",
+    prInfo,
+    `https://bitbucket.org/${prInfo.targetOrg}/${prInfo.repo}/raw/${prInfo.targetGitRef}/${targetFilePath}`
+  );
   return fetch(`https://bitbucket.org/${prInfo.targetOrg}/${prInfo.repo}/raw/${prInfo.targetGitRef}/${targetFilePath}`)
     .then(res => res.text())
     .then(res => res);
 }
 
 function getOriginFileContents(prInfo: PrInfo, originFilePath: string) {
-  console.log("origin", prInfo, `https://bitbucket.org/${prInfo.org}/${prInfo.repo}/raw/${prInfo.gitRef}/${originFilePath}`)
+  console.log(
+    "origin",
+    prInfo,
+    `https://bitbucket.org/${prInfo.org}/${prInfo.repo}/raw/${prInfo.gitRef}/${originFilePath}`
+  );
   return fetch(`https://bitbucket.org/${prInfo.org}/${prInfo.repo}/raw/${prInfo.gitRef}/${originFilePath}`)
     .then(res => res.text())
     .then(res => res);
