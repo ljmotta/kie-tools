@@ -59,6 +59,10 @@ export class OnlineEditorManager implements ExternalEditorManager {
         console.log(`URI changed. Restarting the extension.`);
         callback();
       }
+
+      if (request.messageId === "COMPLETED") {
+        console.log("completed");
+      }
     };
 
     chrome.runtime.onMessage.addListener(listener);

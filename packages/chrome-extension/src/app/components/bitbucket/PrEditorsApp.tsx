@@ -26,6 +26,7 @@ import { IsolatedEditorContext } from "../common/IsolatedEditorContext";
 import { KogitoEditorIframe } from "./KogitoEditorIframe";
 import { PrToolbar } from "./PrToolbar";
 import { useIsolatedEditorTogglingEffect } from "../common/customEffects";
+import { IsolatedPrEditor } from "./IsolatedPrEditor";
 
 export function PrEditorsApp(props: {
   id: string;
@@ -34,7 +35,7 @@ export function PrEditorsApp(props: {
   envelopeLocator: EditorEnvelopeLocator;
 }) {
   const [prFileContainers, setPrFileContainers] = useState<HTMLElement[]>([]);
-  console.log("e aaqui?");
+
   useEffect(() => {
     console.log("renderizado?");
     const observer = new MutationObserver(mutations => {
@@ -64,6 +65,7 @@ export function PrEditorsApp(props: {
   }, [prFileContainers, props]);
 
   useEffect(() => {
+    console.log("rendereizado primeiuto");
     setPrFileContainers(supportedPrFileElements(props.id, props.logger, props.envelopeLocator));
   }, []);
 
@@ -154,174 +156,4 @@ export function getUnprocessedFileStatus(prFileContainer: any): string {
 
 function isFileStatus(status: string) {
   return status === "Added" || status === "Modified" || status === "Deleted";
-}
-
-function IsolatedPrEditor(props: {
-  id: string;
-  prInfo: PrInfo;
-  prFileContainer: HTMLElement;
-  fileExtension: string;
-  contentPath: string;
-  bitbucketTextEditorToReplace: HTMLElement;
-  prFilePath: string;
-  prFileStatus: string;
-  envelopeLocator: EditorEnvelopeLocator;
-}) {
-  const [editorReady, setEditorReady] = useState(false);
-  const [showOriginal, setShowOriginal] = useState(false);
-  const [textMode, setTextMode] = useState(true);
-  const [fileStatusOnPr, setFileStatusOnPr] = useState(FileStatusOnPr.UNKNOWN);
-
-  useEffect(() => {
-    const fileContent = props.prFileContainer.querySelector("div[data-qa='bk-file__content']");
-    const iframe = props.prFileContainer.querySelector(`.${KOGITO_IFRAME_CONTAINER_PR_CLASS}.${props.id}`);
-    if (fileContent && iframe) {
-      if (!textMode) {
-        fileContent.classList.add("hidden");
-        iframe.classList.remove("hidden");
-      } else {
-        fileContent.classList.remove("hidden");
-        iframe.classList.add("hidden");
-      }
-    }
-  }, [props.prFileContainer, props.id, textMode]);
-
-  useEffect(() => {
-    setFileStatusOnPr(discoverFileStatusOnPr(props.prFileStatus));
-  }, [props.prFileStatus]);
-
-  const getFileContents = useMemo(() => {
-    console.log("here", showOriginal, "filestatus", fileStatusOnPr);
-    return showOriginal || fileStatusOnPr === FileStatusOnPr.DELETED
-      ? () => getTargetFileContents(props.prInfo, props.prFilePath) // master
-      : () => getOriginFileContents(props.prInfo, props.prFilePath); // branch
-  }, [showOriginal, fileStatusOnPr, props.prInfo, props.prFilePath]);
-
-  const repoInfo = useMemo(() => {
-    return {
-      owner: props.prInfo.org,
-      gitref: props.prInfo.gitRef,
-      repo: props.prInfo.repo
-    };
-  }, [props.prInfo]);
-
-  const onEditorReady = useCallback(() => {
-    setEditorReady(true);
-  }, []);
-
-  const toggleOriginal = useCallback(() => {
-    setShowOriginal(!showOriginal);
-  }, [showOriginal]);
-
-  const setDiagramMode = useCallback(() => {
-    setTextMode(false);
-  }, []);
-
-  const closeDiagram = useCallback(() => {
-    setTextMode(true);
-    setEditorReady(false);
-  }, []);
-
-  return (
-    <React.Fragment>
-      <IsolatedEditorContext.Provider
-        value={{
-          onEditorReady,
-          fullscreen: false,
-          textMode: false,
-          repoInfo
-        }}
-      >
-        {ReactDOM.createPortal(
-          <PrToolbar
-            showOriginalChangesToggle={editorReady}
-            fileStatusOnPr={fileStatusOnPr}
-            textMode={textMode}
-            originalDiagram={showOriginal}
-            toggleOriginal={toggleOriginal}
-            closeDiagram={closeDiagram}
-            onSeeAsDiagram={setDiagramMode}
-          />,
-          toolbarContainer(
-            props.id,
-            props.prFileContainer,
-            props.prFileContainer.querySelector("div[data-qa='bk-file__actions']")! as HTMLElement
-          )
-        )}
-        {!textMode &&
-          ReactDOM.createPortal(
-            <KogitoEditorIframe
-              getFileContents={getFileContents}
-              contentPath={props.contentPath}
-              openFileExtension={props.fileExtension}
-              readonly={true}
-              editorEnvelopeLocator={props.envelopeLocator}
-            />,
-            iframeContainer(props.id, props.prFileContainer)
-          )}
-      </IsolatedEditorContext.Provider>
-    </React.Fragment>
-  );
-}
-
-function discoverFileStatusOnPr(prFileStatus: string) {
-  if (prFileStatus === "Added") {
-    console.log("added");
-    return FileStatusOnPr.ADDED;
-  }
-
-  if (prFileStatus === "Modified") {
-    console.log("modified");
-    return FileStatusOnPr.CHANGED;
-  }
-
-  if (prFileStatus === "Deleted") {
-    console.log("deleted");
-    return FileStatusOnPr.DELETED;
-  }
-
-  console.log("impossibru");
-  throw new Error("Impossible status for file on PR");
-}
-
-function iframeContainer(id: string, container: HTMLElement) {
-  const element = () => container.querySelector(`.${KOGITO_IFRAME_CONTAINER_PR_CLASS}.${id}`);
-
-  if (!element()!) {
-    container.insertAdjacentHTML("beforeend", `<div class="${KOGITO_IFRAME_CONTAINER_PR_CLASS} ${id}"></div>`);
-  }
-
-  return element() as HTMLElement;
-}
-
-function toolbarContainer(id: string, prFileContainer: HTMLElement, container: HTMLElement) {
-  const element = () => prFileContainer.querySelector(`.${KOGITO_TOOLBAR_CONTAINER_PR_CLASS}.${id}`);
-
-  if (!element()) {
-    container.insertAdjacentHTML("beforebegin", `<div class="${KOGITO_TOOLBAR_CONTAINER_PR_CLASS} ${id}"></div>`);
-  }
-
-  return element()!;
-}
-
-function getTargetFileContents(prInfo: PrInfo, targetFilePath: string) {
-  console.log(
-    "target",
-    prInfo,
-    `https://bitbucket.org/${prInfo.targetOrg}/${prInfo.repo}/raw/${prInfo.targetGitRef}/${targetFilePath}`
-  );
-  return fetch(`https://bitbucket.org/${prInfo.targetOrg}/${prInfo.repo}/raw/${prInfo.targetGitRef}/${targetFilePath}`)
-    .then(res => res.text())
-    .then(res => res);
-}
-
-function getOriginFileContents(prInfo: PrInfo, originFilePath: string) {
-  console.log(
-    "origin",
-    prInfo,
-    `https://bitbucket.org/${prInfo.org}/${prInfo.repo}/raw/${prInfo.gitRef}/${originFilePath}`
-  );
-  return fetch(`https://bitbucket.org/${prInfo.org}/${prInfo.repo}/raw/${prInfo.gitRef}/${originFilePath}`)
-    .then(res => res.text())
-    .then(res => res);
 }

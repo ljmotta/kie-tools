@@ -57,21 +57,38 @@ export function startExtension(args: {
   const logger = new Logger(args.name);
   const resourceContentServiceFactory = new ResourceContentServiceFactory();
   const dependencies = new Dependencies();
-  const runInit = () =>
-    init({
-      id: chrome.runtime.id,
-      logger: logger,
-      dependencies: dependencies,
-      githubAuthTokenCookieName: args.githubAuthTokenCookieName,
-      extensionIconUrl: args.extensionIconUrl,
-      editorEnvelopeLocator: args.editorEnvelopeLocator,
-      resourceContentServiceFactory: resourceContentServiceFactory,
-      externalEditorManager: args.externalEditorManager
-    });
+  const gitManager = discoverCurrentGitManager();
 
-  // args.externalEditorManager!.listenToUrlUpdate(() => setTimeout(runInit, 0));
-  runAfterUriChange(logger, () => setTimeout(runInit, 0));
-  setTimeout(runInit, 0);
+  if (gitManager === GitManager.BITBUCKET) {
+    const runBitBucket = () =>
+      initBitBucket({
+        id: chrome.runtime.id,
+        logger: logger,
+        dependencies: dependencies,
+        githubAuthTokenCookieName: args.githubAuthTokenCookieName,
+        extensionIconUrl: args.extensionIconUrl,
+        editorEnvelopeLocator: args.editorEnvelopeLocator,
+        resourceContentServiceFactory: resourceContentServiceFactory,
+        externalEditorManager: args.externalEditorManager
+      });
+    args.externalEditorManager!.listenToUrlUpdate(() => setTimeout(runBitBucket, 0));
+    setTimeout(runBitBucket, 0);
+  }
+  if (gitManager === GitManager.GITHUB) {
+    const runGithub = () =>
+      initGithub({
+        id: chrome.runtime.id,
+        logger: logger,
+        dependencies: dependencies,
+        githubAuthTokenCookieName: args.githubAuthTokenCookieName,
+        extensionIconUrl: args.extensionIconUrl,
+        editorEnvelopeLocator: args.editorEnvelopeLocator,
+        resourceContentServiceFactory: resourceContentServiceFactory,
+        externalEditorManager: args.externalEditorManager
+      });
+    runAfterUriChange(logger, () => setTimeout(runGithub, 0));
+    setTimeout(runGithub, 0);
+  }
 }
 
 interface BitBucketFileInfo {
@@ -81,116 +98,114 @@ interface BitBucketFileInfo {
   path: string;
 }
 
-function init(args: Globals) {
+function initGithub(args: Globals) {
+  args.logger.log(`---`);
+  args.logger.log(`Starting GitHub extension.`);
+  unmountPreviouslyRenderedFeatures(args.id, args.logger, args.dependencies);
+
+  const fileInfo = extractFileInfoFromUrl();
+  const pageType = discoverCurrentGitHubPageType();
+
+  if (pageType === GitHubPageType.ANY) {
+    args.logger.log(`This GitHub page is not supported.`);
+    return;
+  }
+
+  if (pageType === GitHubPageType.EDIT) {
+    renderSingleEditorApp({
+      id: args.id,
+      logger: args.logger,
+      dependencies: args.dependencies,
+      editorEnvelopeLocator: args.editorEnvelopeLocator,
+      githubAuthTokenCookieName: args.githubAuthTokenCookieName,
+      extensionIconUrl: args.extensionIconUrl,
+      externalEditorManager: args.externalEditorManager,
+      resourceContentServiceFactory: args.resourceContentServiceFactory,
+      fileInfo: fileInfo
+    });
+  } else if (pageType === GitHubPageType.VIEW) {
+    renderSingleEditorReadonlyApp({
+      id: args.id,
+      logger: args.logger,
+      dependencies: args.dependencies,
+      editorEnvelopeLocator: args.editorEnvelopeLocator,
+      githubAuthTokenCookieName: args.githubAuthTokenCookieName,
+      extensionIconUrl: args.extensionIconUrl,
+      fileInfo: fileInfo,
+      resourceContentServiceFactory: args.resourceContentServiceFactory,
+      externalEditorManager: args.externalEditorManager
+    });
+  } else if (pageType === GitHubPageType.PR) {
+    renderPrEditorsApp({
+      githubAuthTokenCookieName: args.githubAuthTokenCookieName,
+      id: args.id,
+      logger: args.logger,
+      dependencies: args.dependencies,
+      editorEnvelopeLocator: args.editorEnvelopeLocator,
+      extensionIconUrl: args.extensionIconUrl,
+      resourceContentServiceFactory: args.resourceContentServiceFactory,
+      externalEditorManager: args.externalEditorManager,
+      contentPath: fileInfo.path
+    });
+  } else if (pageType === GitHubPageType.TREE) {
+    addExternalEditorLinks({
+      githubAuthTokenCookieName: args.githubAuthTokenCookieName,
+      id: args.id,
+      logger: args.logger,
+      editorEnvelopeLocator: args.editorEnvelopeLocator,
+      extensionIconUrl: args.extensionIconUrl,
+      resourceContentServiceFactory: args.resourceContentServiceFactory,
+      externalEditorManager: args.externalEditorManager,
+      dependencies: args.dependencies
+    });
+    return;
+  } else {
+    throw new Error(`Unknown GitHubPageType ${pageType}`);
+  }
+}
+
+function initBitBucket(args: Globals) {
   args.logger.log(`---`);
   args.logger.log(`Starting GitHub extension.`);
 
-  const gitManager = discoverCurrentGitManager();
+  const split = window.location.pathname.split("/");
+  const fileInfo = {
+    user: split[1],
+    repo: split[2],
+    branch: split[4],
+    path: split.slice(5).join("/")
+  };
+  const pageType = discoverCurrentBitbucketPageType(fileInfo);
 
-  if (gitManager === GitManager.BITBUCKET) {
-    const split = window.location.pathname.split("/");
-    const fileInfo = {
-      user: split[1],
-      repo: split[2],
-      branch: split[4],
-      path: split.slice(5).join("/")
-    };
-    const pageType = discoverCurrentBitbucketPageType(fileInfo);
-
-    if (pageType === BitBucketPageType.ANY) {
-      console.log("anyyyy");
-      args.logger.log(`This Bitbucket page is not supported.`);
-      return;
-    }
-
-    if (pageType === BitBucketPageType.PR) {
-      console.log("pr");
-      renderBitbucketPr({
-        id: args.id,
-        logger: args.logger,
-        editorEnvelopeLocator: args.editorEnvelopeLocator,
-        extensionIconUrl: args.extensionIconUrl,
-        externalEditorManager: args.externalEditorManager,
-        contentPath: fileInfo.path
-      });
-    }
-
-    if (pageType === BitBucketPageType.SINGLE) {
-      console.log("single");
-      renderBitbucket({
-        id: args.id,
-        logger: args.logger,
-        editorEnvelopeLocator: args.editorEnvelopeLocator,
-        githubAuthTokenCookieName: args.githubAuthTokenCookieName,
-        extensionIconUrl: args.extensionIconUrl,
-        externalEditorManager: args.externalEditorManager,
-        fileInfo: fileInfo
-      });
-    }
+  if (pageType === BitBucketPageType.ANY) {
+    console.log("anyyyy");
+    args.logger.log(`This Bitbucket page is not supported.`);
+    return;
   }
 
-  if (gitManager === GitManager.GITHUB) {
-    unmountPreviouslyRenderedFeatures(args.id, args.logger, args.dependencies);
+  if (pageType === BitBucketPageType.PR) {
+    console.log("pr");
+    renderBitbucketPr({
+      id: args.id,
+      logger: args.logger,
+      editorEnvelopeLocator: args.editorEnvelopeLocator,
+      extensionIconUrl: args.extensionIconUrl,
+      externalEditorManager: args.externalEditorManager,
+      contentPath: fileInfo.path
+    });
+  }
 
-    const fileInfo = extractFileInfoFromUrl();
-    const pageType = discoverCurrentGitHubPageType();
-
-    if (pageType === GitHubPageType.ANY) {
-      args.logger.log(`This GitHub page is not supported.`);
-      return;
-    }
-
-    if (pageType === GitHubPageType.EDIT) {
-      renderSingleEditorApp({
-        id: args.id,
-        logger: args.logger,
-        dependencies: args.dependencies,
-        editorEnvelopeLocator: args.editorEnvelopeLocator,
-        githubAuthTokenCookieName: args.githubAuthTokenCookieName,
-        extensionIconUrl: args.extensionIconUrl,
-        externalEditorManager: args.externalEditorManager,
-        resourceContentServiceFactory: args.resourceContentServiceFactory,
-        fileInfo: fileInfo
-      });
-    } else if (pageType === GitHubPageType.VIEW) {
-      renderSingleEditorReadonlyApp({
-        id: args.id,
-        logger: args.logger,
-        dependencies: args.dependencies,
-        editorEnvelopeLocator: args.editorEnvelopeLocator,
-        githubAuthTokenCookieName: args.githubAuthTokenCookieName,
-        extensionIconUrl: args.extensionIconUrl,
-        fileInfo: fileInfo,
-        resourceContentServiceFactory: args.resourceContentServiceFactory,
-        externalEditorManager: args.externalEditorManager
-      });
-    } else if (pageType === GitHubPageType.PR) {
-      renderPrEditorsApp({
-        githubAuthTokenCookieName: args.githubAuthTokenCookieName,
-        id: args.id,
-        logger: args.logger,
-        dependencies: args.dependencies,
-        editorEnvelopeLocator: args.editorEnvelopeLocator,
-        extensionIconUrl: args.extensionIconUrl,
-        resourceContentServiceFactory: args.resourceContentServiceFactory,
-        externalEditorManager: args.externalEditorManager,
-        contentPath: fileInfo.path
-      });
-    } else if (pageType === GitHubPageType.TREE) {
-      addExternalEditorLinks({
-        githubAuthTokenCookieName: args.githubAuthTokenCookieName,
-        id: args.id,
-        logger: args.logger,
-        editorEnvelopeLocator: args.editorEnvelopeLocator,
-        extensionIconUrl: args.extensionIconUrl,
-        resourceContentServiceFactory: args.resourceContentServiceFactory,
-        externalEditorManager: args.externalEditorManager,
-        dependencies: args.dependencies
-      });
-      return;
-    } else {
-      throw new Error(`Unknown GitHubPageType ${pageType}`);
-    }
+  if (pageType === BitBucketPageType.SINGLE) {
+    console.log("single");
+    renderBitbucket({
+      id: args.id,
+      logger: args.logger,
+      editorEnvelopeLocator: args.editorEnvelopeLocator,
+      githubAuthTokenCookieName: args.githubAuthTokenCookieName,
+      extensionIconUrl: args.extensionIconUrl,
+      externalEditorManager: args.externalEditorManager,
+      fileInfo: fileInfo
+    });
   }
 }
 

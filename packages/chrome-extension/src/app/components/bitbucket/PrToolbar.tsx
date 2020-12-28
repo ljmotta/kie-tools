@@ -31,6 +31,7 @@ export function PrToolbar(props: {
 
   const closeDiagram = useCallback(
     (e: any) => {
+      e.stopPropagation();
       e.preventDefault();
       props.closeDiagram();
     },
@@ -39,6 +40,7 @@ export function PrToolbar(props: {
 
   const seeAsDiagram = useCallback(
     (e: any) => {
+      e.stopPropagation();
       e.preventDefault();
       props.onSeeAsDiagram();
     },
@@ -47,55 +49,53 @@ export function PrToolbar(props: {
 
   const toggleOriginal = useCallback(
     (e: any) => {
+      e.stopPropagation();
       e.preventDefault();
       props.toggleOriginal();
     },
     [props.toggleOriginal]
   );
 
-  useEffect(() => {
-    console.log("showOriginalChangesToggle", props.showOriginalChangesToggle);
-    console.log("fileStatusOnPr", props.fileStatusOnPr);
-    console.log("textMode", props.textMode);
-  }, [props]);
-
   useLayoutEffect(() => {
-    setButtonStyle(
-      Array.from(document.getElementsByTagName("a"))
-        .filter((container: any) => container.outerText === "Edit")
-        .pop()!.classList.value
-    );
-  });
+    setButtonStyle(getParentButton(document.querySelector("span[aria-label='More']")!).classList.value);
+  }, []);
 
   return (
     <div style={{ display: "flex" }}>
       {!props.textMode && props.fileStatusOnPr === FileStatusOnPr.CHANGED && props.showOriginalChangesToggle && (
         <div style={{ margin: "5px" }}>
-          <a
+          <button
             className={buttonStyle}
             style={{ borderRight: "solid", borderRadius: "0px" }}
             tabIndex={0}
             type={"button"}
             onClick={toggleOriginal}
           >
-            <span>Original</span>
-          </a>
-          <a className={buttonStyle} tabIndex={0} type={"button"} onClick={toggleOriginal}>
-            <span>Changes</span>
-          </a>
+            Original
+          </button>
+          <button className={buttonStyle} tabIndex={0} type={"button"} onClick={toggleOriginal}>
+            Changes
+          </button>
         </div>
       )}
 
       {!props.textMode && (
-        <a className={buttonStyle} style={{ margin: "5px" }} tabIndex={0} type={"button"} onClick={closeDiagram}>
-          <span>Close Diagram</span>
-        </a>
+        <button className={buttonStyle} style={{ margin: "5px" }} tabIndex={0} type={"button"} onClick={closeDiagram}>
+          Close Diagram
+        </button>
       )}
       {props.textMode && (
-        <a className={buttonStyle} style={{ margin: "5px" }} tabIndex={0} type={"button"} onClick={seeAsDiagram}>
-          <span>See as Diagram</span>
-        </a>
+        <button className={buttonStyle} style={{ margin: "5px" }} tabIndex={0} type={"button"} onClick={seeAsDiagram}>
+          See as Diagram
+        </button>
       )}
     </div>
   );
+}
+
+function getParentButton(element: Element): Element {
+  if (element.tagName !== "BUTTON") {
+    return getParentButton(element.parentElement!);
+  }
+  return element;
 }

@@ -22,13 +22,6 @@ import { Logger } from "../../../Logger";
 import { ExternalEditorManager } from "../../../ExternalEditorManager";
 import { PrEditorsApp } from "./PrEditorsApp";
 
-export interface FileInfoBitBucket {
-  user: string;
-  repo: string;
-  branch: string;
-  path: string;
-}
-
 export interface Globals {
   id: string;
   editorEnvelopeLocator: EditorEnvelopeLocator;
@@ -40,7 +33,6 @@ export interface Globals {
 export function renderBitbucketPr(args: Globals & { contentPath: string }) {
   checkIfPageIsReady()
     .then(() => {
-      console.log("thennn");
       ReactDOM.render(
         <PrEditorsApp
           id={args.id}
@@ -52,10 +44,7 @@ export function renderBitbucketPr(args: Globals & { contentPath: string }) {
         () => args.logger.log("Mounted.")
       );
     })
-    .catch(err => {
-      console.error(err);
-      console.error("problem loading the PR extension");
-    });
+    .catch(args.logger.log);
 }
 
 function checkIfPageIsReady() {
@@ -63,11 +52,10 @@ function checkIfPageIsReady() {
     let tries = 0;
     const interval = setInterval(() => {
       const h2Elements = Array.from(document.getElementsByTagName("h2"));
-      if (tries > 50 || h2Elements.length === 0) {
+      if (tries > 20 && h2Elements.length === 0) {
         clearInterval(interval);
-        reject();
+        reject("Couldn't load the BitBucket Extension");
       }
-      console.log(h2Elements.length);
       if (h2Elements && h2Elements.length > 3) {
         resolve();
         clearInterval(interval);

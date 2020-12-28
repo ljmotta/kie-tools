@@ -81,6 +81,12 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(request => {
   });
 });
 
+chrome.webNavigation.onCompleted.addListener(request => {
+  chrome.tabs.sendMessage(request.tabId, {
+    messageId: "COMPLETED"
+  });
+});
+
 function openOnlineEditor(request: any, sender: chrome.runtime.MessageSender, sendResponse: (response: any) => void) {
   chrome.tabs.create(
     { url: "$_{WEBPACK_REPLACE__onlineEditor_url}/?ext#/editor/" + extractFileExtension(request.filePath) },
