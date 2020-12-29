@@ -30,6 +30,7 @@ import { ResourceContentServiceFactory } from "./app/components/common/ChromeRes
 import { addExternalEditorLinks } from "./app/components/tree/externalEditorLinkManager";
 import { renderBitbucket } from "./app/components/bitbucket/EditorView";
 import { renderBitbucketPr } from "./app/components/bitbucket/PrEditorView";
+import { renderGitlab } from "./app/components/gitlab/EditorView";
 
 enum GitManager {
   GITHUB,
@@ -88,6 +89,22 @@ export function startExtension(args: {
       });
     runAfterUriChange(logger, () => setTimeout(runGithub, 0));
     setTimeout(runGithub, 0);
+  }
+
+  if (gitManager === GitManager.GITLAB) {
+    const runGitlab = () =>
+      initGitlab({
+        id: chrome.runtime.id,
+        logger: logger,
+        dependencies: dependencies,
+        githubAuthTokenCookieName: args.githubAuthTokenCookieName,
+        extensionIconUrl: args.extensionIconUrl,
+        editorEnvelopeLocator: args.editorEnvelopeLocator,
+        resourceContentServiceFactory: resourceContentServiceFactory,
+        externalEditorManager: args.externalEditorManager
+      });
+    runAfterUriChange(logger, () => setTimeout(runGitlab, 0));
+    setTimeout(runGitlab, 0);
   }
 }
 
@@ -178,7 +195,6 @@ function initBitBucket(args: Globals) {
   const pageType = discoverCurrentBitbucketPageType(fileInfo);
 
   if (pageType === BitBucketPageType.ANY) {
-    console.log("anyyyy");
     args.logger.log(`This Bitbucket page is not supported.`);
     return;
   }
@@ -198,6 +214,51 @@ function initBitBucket(args: Globals) {
   if (pageType === BitBucketPageType.SINGLE) {
     console.log("single");
     renderBitbucket({
+      id: args.id,
+      logger: args.logger,
+      editorEnvelopeLocator: args.editorEnvelopeLocator,
+      githubAuthTokenCookieName: args.githubAuthTokenCookieName,
+      extensionIconUrl: args.extensionIconUrl,
+      externalEditorManager: args.externalEditorManager,
+      fileInfo: fileInfo
+    });
+  }
+}
+
+function initGitlab(args: Globals) {
+  args.logger.log(`---`);
+  args.logger.log(`Starting GitLab extension.`);
+
+  const split = window.location.pathname.split("/");
+  const fileInfo = {
+    user: split[1],
+    repo: split[2],
+    branch: split[5],
+    path: split.slice(6).join("/")
+  };
+  const pageType = discoverCurrentGitlabPageType(fileInfo);
+  console.log(fileInfo);
+  console.log(pageType);
+  if (pageType === GitLabPageType.ANY) {
+    args.logger.log(`This Bitbucket page is not supported.`);
+    return;
+  }
+
+  // if (pageType === GitLabPageType.PR) {
+  //   console.log("pr");
+  //   renderBitbucketPr({
+  //     id: args.id,
+  //     logger: args.logger,
+  //     editorEnvelopeLocator: args.editorEnvelopeLocator,
+  //     extensionIconUrl: args.extensionIconUrl,
+  //     externalEditorManager: args.externalEditorManager,
+  //     contentPath: fileInfo.path
+  //   });
+  // }
+
+  if (pageType === GitLabPageType.SINGLE) {
+    console.log("single");
+    renderGitlab({
       id: args.id,
       logger: args.logger,
       editorEnvelopeLocator: args.editorEnvelopeLocator,
@@ -253,6 +314,12 @@ enum BitBucketPageType {
   ANY
 }
 
+enum GitLabPageType {
+  SINGLE,
+  PR,
+  ANY
+}
+
 function extractFileExtension(fileName: string) {
   return fileName.match(/[\.]/)
     ? fileName
@@ -263,9 +330,23 @@ function extractFileExtension(fileName: string) {
     : undefined;
 }
 
+function discoverCurrentGitlabPageType(fileInfo: BitBucketFileInfo) {
+  const fileExtension = extractFileExtension(fileInfo.path);
+  if (
+    (fileExtension === "dmn" || fileExtension === "bpmn" || fileExtension === "bpmn2") &&
+    uriMatches(`.*/.*/blob/.*`)
+  ) {
+    return GitLabPageType.SINGLE;
+  }
+  if (uriMatches(`.*/.*/merge-requests/.+`)) {
+    return GitLabPageType.PR;
+  }
+
+  return GitLabPageType.ANY;
+}
+
 function discoverCurrentBitbucketPageType(fileInfo: BitBucketFileInfo) {
   const fileExtension = extractFileExtension(fileInfo.path);
-  console.log("fileExtension", fileExtension);
   if (
     (fileExtension === "dmn" || fileExtension === "bpmn" || fileExtension === "bpmn2") &&
     uriMatches(`.*/.*/src/.*`)

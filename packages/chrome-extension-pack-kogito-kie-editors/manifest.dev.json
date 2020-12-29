@@ -18,6 +18,12 @@
     },
     {
       "run_at": "document_idle",
+      "js": ["content_scripts/gitlab.js"],
+      "matches": ["https://gitlab.com/*"],
+      "all_frames": true
+    },
+    {
+      "run_at": "document_idle",
       "js": ["content_scripts/online-editor.js"],
       "matches": ["http://localhost/*"],
       "all_frames": true
