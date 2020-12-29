@@ -31,6 +31,7 @@ import { addExternalEditorLinks } from "./app/components/tree/externalEditorLink
 import { renderBitbucket } from "./app/components/bitbucket/EditorView";
 import { renderBitbucketPr } from "./app/components/bitbucket/PrEditorView";
 import { renderGitlab } from "./app/components/gitlab/EditorView";
+import { renderGitlabPr } from "./app/components/gitlab/PrEditorView";
 
 enum GitManager {
   GITHUB,
@@ -244,17 +245,17 @@ function initGitlab(args: Globals) {
     return;
   }
 
-  // if (pageType === GitLabPageType.PR) {
-  //   console.log("pr");
-  //   renderBitbucketPr({
-  //     id: args.id,
-  //     logger: args.logger,
-  //     editorEnvelopeLocator: args.editorEnvelopeLocator,
-  //     extensionIconUrl: args.extensionIconUrl,
-  //     externalEditorManager: args.externalEditorManager,
-  //     contentPath: fileInfo.path
-  //   });
-  // }
+  if (pageType === GitLabPageType.PR) {
+    console.log("pr");
+    renderGitlabPr({
+      id: args.id,
+      logger: args.logger,
+      editorEnvelopeLocator: args.editorEnvelopeLocator,
+      extensionIconUrl: args.extensionIconUrl,
+      externalEditorManager: args.externalEditorManager,
+      contentPath: fileInfo.path
+    });
+  }
 
   if (pageType === GitLabPageType.SINGLE) {
     console.log("single");

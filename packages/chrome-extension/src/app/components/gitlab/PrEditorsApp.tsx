@@ -37,6 +37,7 @@ export function PrEditorsApp(props: {
   const [prFileContainers, setPrFileContainers] = useState<HTMLElement[]>([]);
 
   useEffect(() => {
+    console.log("renderizado?");
     const observer = new MutationObserver(mutations => {
       const addedNodes = mutations.reduce((l, r) => [...l, ...Array.from(r.addedNodes)], []);
       if (addedNodes.length <= 0) {
@@ -64,6 +65,7 @@ export function PrEditorsApp(props: {
   }, [prFileContainers, props]);
 
   useEffect(() => {
+    console.log("rendereizado primeiro");
     setPrFileContainers(supportedPrFileElements(props.id, props.logger, props.envelopeLocator));
   }, []);
 
@@ -89,36 +91,19 @@ export function PrEditorsApp(props: {
 
 function parsePrInfo(): PrInfo {
   const repository = window.location.pathname.split("/")[2];
+  const targetOrg = window.location.pathname.split("/")[1];
 
-  const prInfos = Array.from(
-    document.querySelector("div[data-qa='pr-branches-and-state-styles']")!.getElementsByTagName("span")
-  )!.map((element: any) => element.outerText.trim(""));
+  const [origin, targetGitRef] = Array.from(document.querySelectorAll(".label-branch")).map(
+    (element: any) => element.outerText!
+  );
+  const [originOrg, originGitRef] = origin.split("/");
 
-  const [origin, , target] = prInfos;
-
-  // Cross Repo
-  if (origin.indexOf(":") > 0) {
-    const [originInfos, originGitRef] = origin.split(":");
-    const [originOrg] = originInfos.split("/");
-
-    const [targetInfos, targetGitRef] = target.split(":");
-    const [targetOrg] = targetInfos.split("/");
-    return {
-      repo: repository,
-      targetOrg: targetOrg,
-      targetGitRef: targetGitRef,
-      org: originOrg,
-      gitRef: originGitRef
-    };
-  }
-
-  const targetOrganization = window.location.pathname.split("/")[1];
   return {
     repo: repository,
-    targetOrg: targetOrganization,
-    targetGitRef: target,
-    org: targetOrganization,
-    gitRef: origin
+    targetOrg: targetOrg,
+    targetGitRef: targetGitRef,
+    org: originOrg,
+    gitRef: originGitRef
   };
 }
 
@@ -127,9 +112,7 @@ function supportedPrFileElements(id: string, logger: Logger, envelopeLocator: Ed
 }
 
 function prFileElements(id: string): HTMLElement[] {
-  const elements = Array.from(document.querySelectorAll("article[data-qa='pr-diff-file-styles']")).map(
-    e => e as HTMLElement
-  );
+  const elements = Array.from(document.querySelectorAll(".diff-file")).map(e => e as HTMLElement);
   return elements.length > 0 ? (elements as HTMLElement[]) : [];
 }
 
@@ -140,9 +123,10 @@ function getFileExtension(prFileContainer: HTMLElement): string {
 }
 
 export function getUnprocessedFilePath(prFileContainer: any) {
-  return prFileContainer.querySelector("h3[data-qa='bk-filepath']")!.outerText;
+  return prFileContainer.querySelector(".file-title-name")!.outerText;
 }
 
+// get the two files to check =/
 export function getUnprocessedFileStatus(prFileContainer: any): string {
   return (Array.from(
     prFileContainer.querySelector("div[data-qa='bk-file__header']").querySelectorAll("span[role='img']")
