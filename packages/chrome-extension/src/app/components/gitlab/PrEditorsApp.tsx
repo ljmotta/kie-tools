@@ -54,7 +54,7 @@ export function PrEditorsApp(props: {
       setPrFileContainers(newContainers);
     });
 
-    observer.observe((document.getElementsByTagName("main")[0] as HTMLElement | null)!, {
+    observer.observe((document.querySelector(".diffs") as HTMLElement | null)!, {
       childList: true,
       subtree: true
     });
@@ -80,7 +80,6 @@ export function PrEditorsApp(props: {
           prFileContainer={container}
           fileExtension={getFileExtension(container)}
           prFilePath={getUnprocessedFilePath(container)}
-          prFileStatus={getUnprocessedFileStatus(container)}
           envelopeLocator={props.envelopeLocator}
           bitbucketTextEditorToReplace={container}
         />
@@ -93,10 +92,11 @@ function parsePrInfo(): PrInfo {
   const repository = window.location.pathname.split("/")[2];
   const targetOrg = window.location.pathname.split("/")[1];
 
-  const [origin, targetGitRef] = Array.from(document.querySelectorAll(".label-branch")).map(
-    (element: any) => element.outerText!
-  );
-  const [originOrg, originGitRef] = origin.split("/");
+  const originOrg = (document.querySelector(".author-link")! as any).pathname.split("/").pop();
+  const originGitRef = (Array.from(document.getElementsByTagName("cite")).pop() as any).outerText;
+  const targetGitRef = (document
+    .querySelector(".mr-version-menus-container")!
+    .querySelector(".gl-new-dropdown-button-text")! as any).outerText;
 
   return {
     repo: repository,
@@ -112,30 +112,17 @@ function supportedPrFileElements(id: string, logger: Logger, envelopeLocator: Ed
 }
 
 function prFileElements(id: string): HTMLElement[] {
-  const elements = Array.from(document.querySelectorAll(".diff-file")).map(e => e as HTMLElement);
+  const elements = Array.from(document.querySelectorAll(".file-holder")).map(e => e as HTMLElement);
   return elements.length > 0 ? (elements as HTMLElement[]) : [];
 }
 
 function getFileExtension(prFileContainer: HTMLElement): string {
   return getUnprocessedFilePath(prFileContainer)
+    .trim()
     .split(".")
     .pop()!;
 }
 
 export function getUnprocessedFilePath(prFileContainer: any) {
   return prFileContainer.querySelector(".file-title-name")!.outerText;
-}
-
-// get the two files to check =/
-export function getUnprocessedFileStatus(prFileContainer: any): string {
-  return (Array.from(
-    prFileContainer.querySelector("div[data-qa='bk-file__header']").querySelectorAll("span[role='img']")
-  ) as HTMLElement[]).reduce(
-    (acc: string, container: any): string => (isFileStatus(container.ariaLabel) ? container.ariaLabel : acc),
-    ""
-  );
-}
-
-function isFileStatus(status: string) {
-  return status === "Added" || status === "Modified" || status === "Deleted";
 }

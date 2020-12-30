@@ -31,16 +31,38 @@ export interface Globals {
 }
 
 export function renderGitlabPr(args: Globals & { contentPath: string }) {
-  ReactDOM.render(
-    <PrEditorsApp
-      id={args.id}
-      contentPath={args.contentPath}
-      logger={args.logger}
-      envelopeLocator={args.editorEnvelopeLocator}
-    />,
-    createAndGetMainContainer(args.id, document.body),
-    () => args.logger.log("Mounted.")
-  );
+  checkIfPageIsReady()
+    .then(() => {
+      ReactDOM.render(
+        <PrEditorsApp
+          id={args.id}
+          contentPath={args.contentPath}
+          logger={args.logger}
+          envelopeLocator={args.editorEnvelopeLocator}
+        />,
+        createAndGetMainContainer(args.id, document.body),
+        () => args.logger.log("Mounted.")
+      );
+    })
+    .catch(args.logger.log);
+}
+
+function checkIfPageIsReady() {
+  return new Promise((resolve, reject) => {
+    let tries = 0;
+    const interval = setInterval(() => {
+      const diffsDiv = document.querySelector(".diffs");
+      if (tries > 20 && diffsDiv) {
+        clearInterval(interval);
+        reject("Couldn't load the GitLab Extension");
+      }
+      if (diffsDiv) {
+        resolve();
+        clearInterval(interval);
+      }
+      tries++;
+    }, 500);
+  });
 }
 
 export interface PrInfo {

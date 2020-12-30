@@ -241,7 +241,7 @@ function initGitlab(args: Globals) {
   console.log(fileInfo);
   console.log(pageType);
   if (pageType === GitLabPageType.ANY) {
-    args.logger.log(`This Bitbucket page is not supported.`);
+    args.logger.log(`This Gitlab page is not supported.`);
     return;
   }
 
@@ -339,7 +339,7 @@ function discoverCurrentGitlabPageType(fileInfo: BitBucketFileInfo) {
   ) {
     return GitLabPageType.SINGLE;
   }
-  if (uriMatches(`.*/.*/merge-requests/.+`)) {
+  if (uriMatches(`.*/.*/-/merge_requests/.*/diffs`)) {
     return GitLabPageType.PR;
   }
 
