@@ -51,12 +51,12 @@ function checkIfPageIsReady() {
   return new Promise((resolve, reject) => {
     let tries = 0;
     const interval = setInterval(() => {
-      const h2Elements = Array.from(document.getElementsByTagName("h2"));
-      if (tries > 20 && h2Elements.length === 0) {
+      const mainElement = document.getElementsByTagName("main")[0];
+      if (tries > 20) {
         clearInterval(interval);
         reject("Couldn't load the BitBucket Extension");
       }
-      if (h2Elements && h2Elements.length > 3) {
+      if (mainElement) {
         resolve();
         clearInterval(interval);
       }

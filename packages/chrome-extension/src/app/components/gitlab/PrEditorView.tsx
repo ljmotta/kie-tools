@@ -52,7 +52,7 @@ function checkIfPageIsReady() {
     let tries = 0;
     const interval = setInterval(() => {
       const diffsDiv = document.querySelector(".diffs");
-      if (tries > 20 && diffsDiv) {
+      if (tries > 20) {
         clearInterval(interval);
         reject("Couldn't load the GitLab Extension");
       }
