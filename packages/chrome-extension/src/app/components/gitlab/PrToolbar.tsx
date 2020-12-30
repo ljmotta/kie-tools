@@ -27,8 +27,6 @@ export function PrToolbar(props: {
   originalDiagram: boolean;
   fileStatusOnPr: FileStatusOnPr;
 }) {
-  const [buttonStyle, setButtonStyle] = useState("");
-
   const closeDiagram = useCallback(
     (e: any) => {
       e.stopPropagation();
@@ -56,46 +54,53 @@ export function PrToolbar(props: {
     [props.toggleOriginal]
   );
 
-  useLayoutEffect(() => {
-    setButtonStyle(getParentButton(document.querySelector("span[aria-label='More']")!).classList.value);
-  }, []);
-
   return (
     <div style={{ display: "flex" }}>
       {!props.textMode && props.fileStatusOnPr === FileStatusOnPr.CHANGED && props.showOriginalChangesToggle && (
         <div style={{ margin: "5px" }}>
           <button
-            className={buttonStyle}
-            style={{ borderRight: "solid", borderRadius: "0px" }}
+            className={"btn gl-mr-3 btn-default btn-md gl-button"}
+            style={{ borderRadius: "0.25rem 0px 0px 0.25rem", margin: "0px" }}
             tabIndex={0}
             type={"button"}
             onClick={toggleOriginal}
           >
             Original
           </button>
-          <button className={buttonStyle} tabIndex={0} type={"button"} onClick={toggleOriginal}>
+          <button
+            className={"btn gl-mr-3 btn-default btn-md gl-button"}
+            style={{ borderRadius: "0px 0.25rem 0.25rem 0px", margin: "0px" }}
+            tabIndex={0}
+            type={"button"}
+            onClick={toggleOriginal}
+          >
             Changes
           </button>
         </div>
       )}
 
       {!props.textMode && (
-        <button className={buttonStyle} style={{ margin: "5px" }} tabIndex={0} type={"button"} onClick={closeDiagram}>
+        <button
+          className={"btn gl-mr-3 btn-default btn-md gl-button"}
+          style={{ margin: "5px" }}
+          tabIndex={0}
+          type={"button"}
+          onClick={closeDiagram}
+        >
           Close Diagram
         </button>
       )}
       {props.textMode && (
-        <button className={buttonStyle} style={{ margin: "5px" }} tabIndex={0} type={"button"} onClick={seeAsDiagram}>
+        <button
+          className={"btn gl-mr-3 btn-default btn-md gl-button"}
+          style={{ margin: "5px" }}
+          tabIndex={0}
+          type={"button"}
+          onClick={seeAsDiagram}
+        >
           See as Diagram
         </button>
       )}
     </div>
   );
-}
-
-function getParentButton(element: Element): Element {
-  if (element.tagName !== "BUTTON") {
-    return getParentButton(element.parentElement!);
-  }
-  return element;
 }

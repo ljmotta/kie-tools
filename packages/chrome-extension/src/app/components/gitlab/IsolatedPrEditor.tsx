@@ -38,7 +38,7 @@ export function IsolatedPrEditor(props: {
 }) {
   const [editorReady, setEditorReady] = useState(false);
   const [showOriginal, setShowOriginal] = useState(false);
-  const [textMode, setTextMode] = useState(false);
+  const [textMode, setTextMode] = useState(true);
   const [fileStatusOnPr, setFileStatusOnPr] = useState(FileStatusOnPr.UNKNOWN);
 
   useEffect(() => {
@@ -112,40 +112,41 @@ export function IsolatedPrEditor(props: {
           repoInfo
         }}
       >
-        {/*{ReactDOM.createPortal(*/}
-        {/*  <PrToolbar*/}
-        {/*    showOriginalChangesToggle={editorReady}*/}
-        {/*    fileStatusOnPr={fileStatusOnPr}*/}
-        {/*    textMode={textMode}*/}
-        {/*    originalDiagram={showOriginal}*/}
-        {/*    toggleOriginal={toggleOriginal}*/}
-        {/*    closeDiagram={closeDiagram}*/}
-        {/*    onSeeAsDiagram={setDiagramMode}*/}
-        {/*  />,*/}
-        {/*  toolbarContainer(*/}
-        {/*    props.id,*/}
-        {/*    props.prFileContainer,*/}
-        {/*    props.prFileContainer.querySelector(".file-title")! as HTMLElement*/}
-        {/*  )*/}
-        {/*)}*/}
         {ReactDOM.createPortal(
-          <KogitoEditorIframe
-            getFileContents={getFileContents}
-            contentPath={props.contentPath}
-            openFileExtension={props.fileExtension}
-            readonly={true}
-            editorEnvelopeLocator={props.envelopeLocator}
+          <PrToolbar
+            showOriginalChangesToggle={editorReady}
+            fileStatusOnPr={fileStatusOnPr}
+            textMode={textMode}
+            originalDiagram={showOriginal}
+            toggleOriginal={toggleOriginal}
+            closeDiagram={closeDiagram}
+            onSeeAsDiagram={setDiagramMode}
           />,
-          iframeContainer(props.id, props.prFileContainer)
+          toolbarContainer(
+            props.id,
+            props.prFileContainer,
+            props.prFileContainer.querySelector(".diff-stats")! as HTMLElement
+          )
         )}
+        {!textMode &&
+          ReactDOM.createPortal(
+            <KogitoEditorIframe
+              getFileContents={getFileContents}
+              contentPath={props.contentPath}
+              openFileExtension={props.fileExtension}
+              readonly={true}
+              editorEnvelopeLocator={props.envelopeLocator}
+            />,
+            iframeContainer(props.id, props.prFileContainer)
+          )}
       </IsolatedEditorContext.Provider>
     </React.Fragment>
   );
 }
 
 async function discoverFileStatusOnPr(prInfo: PrInfo, prFilePath: string) {
-  const targetContent = await getTargetFileContents(prInfo, prFilePath);
-  const originContent = await getOriginFileContents(prInfo, prFilePath);
+  const targetContent = await getTargetFileStatus(prInfo, prFilePath);
+  const originContent = await getOriginFileStatus(prInfo, prFilePath);
 
   if (targetContent && originContent) {
     return FileStatusOnPr.CHANGED;
@@ -169,17 +170,28 @@ function iframeContainer(id: string, container: HTMLElement) {
 
   return element() as HTMLElement;
 }
-//
-// // TODO
-// function toolbarContainer(id: string, prFileContainer: HTMLElement, container: HTMLElement) {
-//   const element = () => prFileContainer.querySelector(`.${KOGITO_TOOLBAR_CONTAINER_PR_CLASS}.${id}`);
-//
-//   if (!element()) {
-//     container.insertAdjacentHTML("beforebegin", `<div class="${KOGITO_TOOLBAR_CONTAINER_PR_CLASS} ${id}"></div>`);
-//   }
-//
-//   return element()!;
-// }
+
+function toolbarContainer(id: string, prFileContainer: HTMLElement, container: HTMLElement) {
+  const element = () => prFileContainer.querySelector(`.${KOGITO_TOOLBAR_CONTAINER_PR_CLASS}.${id}`);
+
+  if (!element()) {
+    container.insertAdjacentHTML("beforebegin", `<div class="${KOGITO_TOOLBAR_CONTAINER_PR_CLASS} ${id}"></div>`);
+  }
+
+  return element()!;
+}
+
+function getTargetFileStatus(prInfo: PrInfo, targetFilePath: string) {
+  return fetch(
+    `https://gitlab.com/${prInfo.targetOrg}/${prInfo.repo}/-/raw/${prInfo.targetGitRef}/${targetFilePath}`
+  ).then(res => res.ok);
+}
+
+function getOriginFileStatus(prInfo: PrInfo, originFilePath: string) {
+  return fetch(`https://gitlab.com/${prInfo.org}/${prInfo.repo}/-/raw/${prInfo.gitRef}/${originFilePath}`).then(
+    res => res.ok
+  );
+}
 
 function getTargetFileContents(prInfo: PrInfo, targetFilePath: string) {
   return fetch(`https://gitlab.com/${prInfo.targetOrg}/${prInfo.repo}/-/raw/${prInfo.targetGitRef}/${targetFilePath}`)

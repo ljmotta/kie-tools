@@ -104,7 +104,7 @@ export function startExtension(args: {
         resourceContentServiceFactory: resourceContentServiceFactory,
         externalEditorManager: args.externalEditorManager
       });
-    runAfterUriChange(logger, () => setTimeout(runGitlab, 0));
+    args.externalEditorManager!.listenToUrlUpdate(() => setTimeout(runGitlab, 0));
     setTimeout(runGitlab, 0);
   }
 }
