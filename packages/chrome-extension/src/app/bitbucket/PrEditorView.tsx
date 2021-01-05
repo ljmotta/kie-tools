@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { createAndGetMainContainer } from "../../utils";
+import { createAndGetMainContainer } from "../utils";
 import * as ReactDOM from "react-dom";
 import * as React from "react";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
-import { Logger } from "../../../Logger";
-import { ExternalEditorManager } from "../../../ExternalEditorManager";
+import { Logger } from "../../Logger";
+import { ExternalEditorManager } from "../../ExternalEditorManager";
 import { PrEditorsApp } from "./PrEditorsApp";
 
 export interface Globals {
@@ -51,7 +51,7 @@ function checkIfPageIsReady() {
   return new Promise((resolve, reject) => {
     let tries = 0;
     const interval = setInterval(() => {
-      const mainElement = document.getElementsByTagName("main")[0];
+      const mainElement = document.querySelector("section[aria-label='Diffs']");
       if (tries > 20) {
         clearInterval(interval);
         reject("Couldn't load the BitBucket Extension");

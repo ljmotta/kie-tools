@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { createAndGetMainContainer } from "../../utils";
+import { createAndGetMainContainer } from "../utils";
 import * as ReactDOM from "react-dom";
 import * as React from "react";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
-import { Logger } from "../../../Logger";
-import { ExternalEditorManager } from "../../../ExternalEditorManager";
+import { Logger } from "../../Logger";
+import { ExternalEditorManager } from "../../ExternalEditorManager";
 import { PrEditorsApp } from "./PrEditorsApp";
 
 export interface Globals {

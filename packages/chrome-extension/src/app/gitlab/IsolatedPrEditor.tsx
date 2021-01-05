@@ -19,12 +19,12 @@ import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FileStatusOnPr } from "./FileStatusOnPr";
-import { KOGITO_IFRAME_CONTAINER_PR_CLASS, KOGITO_TOOLBAR_CONTAINER_PR_CLASS } from "../../constants";
-import { IsolatedEditorContext } from "../common/IsolatedEditorContext";
+import { KOGITO_IFRAME_CONTAINER_PR_CLASS, KOGITO_TOOLBAR_CONTAINER_PR_CLASS } from "../constants";
+import { IsolatedEditorContext } from "../components/common/IsolatedEditorContext";
 import * as ReactDOM from "react-dom";
 import { PrToolbar } from "./PrToolbar";
 import { KogitoEditorIframe } from "./KogitoEditorIframe";
-import { useInitialAsyncCallEffect } from "../common/customEffects";
+import { useInitialAsyncCallEffect } from "../components/common/customEffects";
 
 export function IsolatedPrEditor(props: {
   id: string;

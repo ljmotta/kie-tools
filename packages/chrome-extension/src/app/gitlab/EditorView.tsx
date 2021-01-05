@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { createAndGetMainContainer, extractOpenFileExtension, removeAllChildren } from "../../utils";
+import { createAndGetMainContainer, extractOpenFileExtension } from "../utils";
 import * as ReactDOM from "react-dom";
 import { EditorApp } from "./EditorApp";
 import * as React from "react";
 import { useCallback } from "react";
-import { KOGITO_IFRAME_CONTAINER_CLASS } from "../../constants";
+import { KOGITO_IFRAME_CONTAINER_CLASS } from "../constants";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
-import { Logger } from "../../../Logger";
-import { ExternalEditorManager } from "../../../ExternalEditorManager";
+import { Logger } from "../../Logger";
+import { ExternalEditorManager } from "../../ExternalEditorManager";
 
 export interface FileInfoBitBucket {
   user: string;
@@ -40,7 +40,7 @@ export interface Globals {
   externalEditorManager?: ExternalEditorManager;
 }
 
-export function renderBitbucket(args: Globals & { fileInfo: FileInfoBitBucket }) {
+export function renderGitlab(args: Globals & { fileInfo: FileInfoBitBucket }) {
   const openFileExtension = extractOpenFileExtension(window.location.href);
   if (!openFileExtension) {
     args.logger.log(`Unable to determine file extension from URL`);
@@ -73,7 +73,7 @@ function EditorViewApp(props: {
   const getFileContents = useCallback(
     () =>
       fetch(
-        `https://bitbucket.org/${props.fileInfo.user}/${props.fileInfo.repo}/raw/${props.fileInfo.branch}/${props.fileInfo.path}`
+        `https://gitlab.com/${props.fileInfo.user}/${props.fileInfo.repo}/-/raw/${props.fileInfo.branch}/${props.fileInfo.path}`
       )
         .then(res => res.text())
         .then(res => res),
@@ -97,18 +97,12 @@ function EditorViewApp(props: {
   );
 }
 
-function iframeContainer(id: string): Promise<HTMLElement> {
-  return new Promise((resolve, reject) => {
-    const interval = setInterval(() => {
-      const element = () => document.querySelector(`.${KOGITO_IFRAME_CONTAINER_CLASS}.${id}`)!;
-      const fileContent = document.querySelector("div[data-qa='bk-file__content']") as HTMLDivElement;
+function iframeContainer(id: string): HTMLElement {
+  const element = () => document.querySelector(`.${KOGITO_IFRAME_CONTAINER_CLASS}.${id}`)!;
+  const fileContent = document.querySelector(".blob-viewer") as HTMLDivElement;
+  if (!element() && fileContent !== null) {
+    fileContent.insertAdjacentHTML("afterend", `<div class="${KOGITO_IFRAME_CONTAINER_CLASS} ${id} view"></div>`);
+  }
 
-      if (!element() && fileContent !== null) {
-        fileContent.style.display = "none";
-        fileContent.insertAdjacentHTML("afterend", `<div class="${KOGITO_IFRAME_CONTAINER_CLASS} ${id} view"></div>`);
-        resolve(element() as HTMLElement);
-        clearInterval(interval);
-      }
-    }, 1000);
-  });
+  return element() as HTMLElement;
 }

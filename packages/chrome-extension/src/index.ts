@@ -28,10 +28,10 @@ import { Globals } from "./app/components/common/Main";
 import { ExternalEditorManager } from "./ExternalEditorManager";
 import { ResourceContentServiceFactory } from "./app/components/common/ChromeResourceContentService";
 import { addExternalEditorLinks } from "./app/components/tree/externalEditorLinkManager";
-import { renderBitbucket } from "./app/components/bitbucket/EditorView";
-import { renderBitbucketPr } from "./app/components/bitbucket/PrEditorView";
-import { renderGitlab } from "./app/components/gitlab/EditorView";
-import { renderGitlabPr } from "./app/components/gitlab/PrEditorView";
+import { renderBitbucket } from "./app/bitbucket/EditorView";
+import { renderBitbucketPr } from "./app/bitbucket/PrEditorView";
+import { renderGitlab } from "./app/gitlab/EditorView";
+import { renderGitlabPr } from "./app/gitlab/PrEditorView";
 
 enum GitManager {
   GITHUB,

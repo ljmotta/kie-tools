@@ -22,11 +22,7 @@ import { Logger } from "../Logger";
 import { Dependencies } from "../app/Dependencies";
 import { EditorEnvelopeLocator, EnvelopeMapping } from "@kogito-tooling/editor/dist/api";
 import { I18nDictionariesProvider, I18nDictionariesProviderProps } from "@kogito-tooling/i18n/dist/react-components";
-import {
-  ChromeExtensionI18nContext,
-  chromeExtensionI18nDictionaries,
-  chromeExtensionI18nDefaults
-} from "../app/i18n";
+import { ChromeExtensionI18nContext, chromeExtensionI18nDictionaries, chromeExtensionI18nDefaults } from "../app/i18n";
 import { ChromeExtensionI18n } from "../app/i18n";
 
 export function usingTestingGlobalContext(children: React.ReactElement, ctx?: Partial<GlobalContextType>) {

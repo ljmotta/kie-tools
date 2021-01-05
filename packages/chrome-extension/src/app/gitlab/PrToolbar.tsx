@@ -16,7 +16,7 @@
 
 import * as React from "react";
 import { FileStatusOnPr } from "./FileStatusOnPr";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback } from "react";
 
 export function PrToolbar(props: {
   onSeeAsDiagram: () => void;

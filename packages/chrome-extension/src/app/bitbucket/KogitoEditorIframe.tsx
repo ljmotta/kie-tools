@@ -18,7 +18,7 @@ import { ChannelType } from "@kogito-tooling/channel-common-api";
 import { EmbeddedEditor } from "@kogito-tooling/editor/dist/embedded";
 import * as React from "react";
 import { useContext, useMemo } from "react";
-import { IsolatedEditorContext } from "../common/IsolatedEditorContext";
+import { IsolatedEditorContext } from "../components/common/IsolatedEditorContext";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
 
 interface Props {

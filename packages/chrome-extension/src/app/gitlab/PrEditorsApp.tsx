@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { Logger } from "../../../Logger";
+import { useEffect, useState } from "react";
+import { Logger } from "../../Logger";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { FileStatusOnPr } from "./FileStatusOnPr";
-import { KOGITO_IFRAME_CONTAINER_PR_CLASS, KOGITO_TOOLBAR_CONTAINER_PR_CLASS } from "../../constants";
 import { PrInfo } from "./PrEditorView";
-import { IsolatedEditorContext } from "../common/IsolatedEditorContext";
-import { KogitoEditorIframe } from "./KogitoEditorIframe";
-import { PrToolbar } from "./PrToolbar";
-import { useIsolatedEditorTogglingEffect } from "../common/customEffects";
 import { IsolatedPrEditor } from "./IsolatedPrEditor";
 
 export function PrEditorsApp(props: {
