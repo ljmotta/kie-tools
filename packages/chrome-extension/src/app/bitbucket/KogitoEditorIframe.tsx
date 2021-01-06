@@ -15,11 +15,12 @@
  */
 
 import { ChannelType } from "@kogito-tooling/channel-common-api";
-import { EmbeddedEditor } from "@kogito-tooling/editor/dist/embedded";
+import { EmbeddedEditor, useEditorRef } from "@kogito-tooling/editor/dist/embedded";
 import * as React from "react";
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { IsolatedEditorContext } from "../components/common/IsolatedEditorContext";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
+import { runScriptOnPage } from "../utils";
 
 interface Props {
   openFileExtension: string;
@@ -31,6 +32,7 @@ interface Props {
 
 export function KogitoEditorIframe(props: Props) {
   const { fullscreen, onEditorReady } = useContext(IsolatedEditorContext);
+  const { editor, editorRef } = useEditorRef();
 
   const file = useMemo(() => {
     return {
@@ -41,10 +43,40 @@ export function KogitoEditorIframe(props: Props) {
     };
   }, [props.contentPath, props.openFileExtension, props.getFileContents, props.readonly]);
 
+  useEffect(() => {
+    if (props.readonly) {
+      return;
+    }
+
+    let task: number;
+    Promise.resolve()
+      .then(() => props.getFileContents())
+      .then(c => editor?.setContent(c ?? "", props.contentPath))
+      .then(() => {
+        task = window.setInterval(
+          () =>
+            editor?.getContent().then(c => {
+              if (props.readonly) {
+                return;
+              }
+
+              //keep line breaks
+              const content = c.split("\n").join("\\n");
+
+              runScriptOnPage(`document.querySelector(".CodeMirror").CodeMirror.setValue('${content}')`);
+            }),
+          1500
+        );
+      });
+
+    return () => clearInterval(task);
+  }, [props, editor]);
+
   return (
     <>
       <div className={`kogito-iframe ${fullscreen ? "fullscreen" : "not-fullscreen"}`}>
         <EmbeddedEditor
+          ref={editorRef}
           file={file}
           channelType={ChannelType.GITHUB}
           receive_ready={onEditorReady}

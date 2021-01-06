@@ -23,6 +23,7 @@ import { KOGITO_IFRAME_CONTAINER_CLASS } from "../constants";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
 import { Logger } from "../../Logger";
 import { ExternalEditorManager } from "../../ExternalEditorManager";
+import { EditorAppEdit } from "./EditorAppEdit";
 
 export interface FileInfoBitBucket {
   user: string;
@@ -40,7 +41,7 @@ export interface Globals {
   externalEditorManager?: ExternalEditorManager;
 }
 
-export function renderBitbucket(args: Globals & { fileInfo: FileInfoBitBucket }) {
+export function renderBitbucketEdit(args: Globals & { fileInfo: FileInfoBitBucket }) {
   const openFileExtension = extractOpenFileExtension(window.location.href);
   if (!openFileExtension) {
     args.logger.log(`Unable to determine file extension from URL`);
@@ -52,16 +53,20 @@ export function renderBitbucket(args: Globals & { fileInfo: FileInfoBitBucket })
     return;
   }
 
-  ReactDOM.render(
-    <EditorViewApp
-      fileInfo={args.fileInfo}
-      openFileExtension={openFileExtension}
-      id={args.id}
-      editorEnvelopeLocator={args.editorEnvelopeLocator}
-    />,
-    createAndGetMainContainer(args.id, document.body),
-    () => args.logger.log("Mounted.")
-  );
+  checkIfPageIsReady()
+    .then(() => {
+      ReactDOM.render(
+        <EditorViewApp
+          fileInfo={args.fileInfo}
+          openFileExtension={openFileExtension}
+          id={args.id}
+          editorEnvelopeLocator={args.editorEnvelopeLocator}
+        />,
+        createAndGetMainContainer(args.id, document.body),
+        () => args.logger.log("Mounted.")
+      );
+    })
+    .catch(args.logger.log);
 }
 
 function EditorViewApp(props: {
@@ -86,7 +91,7 @@ function EditorViewApp(props: {
   }, [props.fileInfo.path]);
 
   return (
-    <EditorApp
+    <EditorAppEdit
       editorEnvelopeLocator={props.editorEnvelopeLocator}
       openFileExtension={props.openFileExtension}
       getFileName={getFileName}
@@ -97,35 +102,32 @@ function EditorViewApp(props: {
   );
 }
 
-// TODO Add check on render instead of making a promise of the container. (See PrEditorView)
-function iframeContainer(id: string): Promise<HTMLElement> {
+function checkIfPageIsReady() {
   return new Promise((resolve, reject) => {
+    let tries = 0;
     const interval = setInterval(() => {
-      const element = () => document.querySelector(`.${KOGITO_IFRAME_CONTAINER_CLASS}.${id}`)!;
-      const fileContent = document.querySelector("div[data-qa='bk-file__content']") as HTMLDivElement;
-
-      if (!element() && fileContent !== null) {
-        fileContent.style.display = "none";
-        fileContent.insertAdjacentHTML("afterend", `<div class="${KOGITO_IFRAME_CONTAINER_CLASS} ${id} view"></div>`);
-        resolve(element() as HTMLElement);
+      const mainElement = document.getElementById("editor-container");
+      if (tries > 20) {
+        clearInterval(interval);
+        reject("Couldn't load the BitBucket Extension");
+      }
+      if (mainElement) {
+        resolve();
         clearInterval(interval);
       }
-    }, 1000);
+      tries++;
+    }, 500);
   });
 }
 
-function iframeContainerEdit(id: string): Promise<HTMLElement> {
-  return new Promise((resolve, reject) => {
-    const interval = setInterval(() => {
-      const element = () => document.querySelector(`.${KOGITO_IFRAME_CONTAINER_CLASS}.${id}`)!;
-      const fileContent = document.getElementById("editor-container") as HTMLDivElement;
+function iframeContainer(id: string): HTMLElement {
+  const element = () => document.querySelector(`.${KOGITO_IFRAME_CONTAINER_CLASS}.${id}`)!;
+  const fileContent = document.querySelector(".file-editor") as HTMLDivElement;
 
-      if (!element() && fileContent !== null) {
-        fileContent.style.display = "none";
-        fileContent.insertAdjacentHTML("afterend", `<div class="${KOGITO_IFRAME_CONTAINER_CLASS} ${id} view"></div>`);
-        resolve(element() as HTMLElement);
-        clearInterval(interval);
-      }
-    }, 1000);
-  });
+  if (!element() && fileContent !== null) {
+    fileContent.style.display = "none";
+    fileContent.insertAdjacentHTML("afterend", `<div class="${KOGITO_IFRAME_CONTAINER_CLASS} ${id} view"></div>`);
+  }
+
+  return element() as HTMLElement;
 }

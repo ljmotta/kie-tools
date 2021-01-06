@@ -22,21 +22,16 @@ import { FileInfoBitBucket } from "./EditorView";
 import { KogitoEditorIframe } from "./KogitoEditorIframe";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
 
-export function EditorApp(props: {
+export function EditorAppEdit(props: {
   openFileExtension: string;
   getFileName: () => string;
   getFileContents: () => Promise<string | undefined>;
-  iframeContainer: Promise<HTMLElement>;
+  iframeContainer: HTMLElement;
   fileInfo: FileInfoBitBucket;
   editorEnvelopeLocator: EditorEnvelopeLocator;
 }) {
-  const [container, setContainer] = useState<HTMLElement>();
-
   useLayoutEffect(() => {
-    props.iframeContainer.then(kogitoContainer => {
-      kogitoContainer.classList.remove("hidden");
-      setContainer(kogitoContainer);
-    });
+    props.iframeContainer.classList.remove("hidden");
   }, [props.iframeContainer]);
 
   return (
@@ -49,20 +44,20 @@ export function EditorApp(props: {
           repoInfo: { gitref: props.fileInfo.branch, owner: props.fileInfo.user, repo: props.fileInfo.repo }
         }}
       >
-        {container && (
+        {
           <>
             {ReactDOM.createPortal(
               <KogitoEditorIframe
                 contentPath={props.fileInfo.path}
                 openFileExtension={props.openFileExtension}
                 getFileContents={props.getFileContents}
-                readonly={true}
+                readonly={false}
                 editorEnvelopeLocator={props.editorEnvelopeLocator}
               />,
-              container
+              props.iframeContainer
             )}
           </>
-        )}
+        }
       </IsolatedEditorContext.Provider>
     </React.Fragment>
   );

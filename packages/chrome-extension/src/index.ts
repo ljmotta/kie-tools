@@ -32,6 +32,7 @@ import { renderBitbucket } from "./app/bitbucket/EditorView";
 import { renderBitbucketPr } from "./app/bitbucket/PrEditorView";
 import { renderGitlab } from "./app/gitlab/EditorView";
 import { renderGitlabPr } from "./app/gitlab/PrEditorView";
+import { renderBitbucketEdit } from "./app/bitbucket/EditorViewEdit";
 
 enum GitManager {
   GITHUB,
@@ -224,6 +225,19 @@ function initBitBucket(args: Globals) {
       fileInfo: fileInfo
     });
   }
+
+  if (pageType === BitBucketPageType.EDIT) {
+    console.log("edit");
+    renderBitbucketEdit({
+      id: args.id,
+      logger: args.logger,
+      editorEnvelopeLocator: args.editorEnvelopeLocator,
+      githubAuthTokenCookieName: args.githubAuthTokenCookieName,
+      extensionIconUrl: args.extensionIconUrl,
+      externalEditorManager: args.externalEditorManager,
+      fileInfo: fileInfo
+    });
+  }
 }
 
 function initGitlab(args: Globals) {
@@ -311,6 +325,7 @@ export function discoverCurrentGitManager() {
 
 enum BitBucketPageType {
   SINGLE,
+  EDIT,
   PR,
   ANY
 }
@@ -319,6 +334,17 @@ enum GitLabPageType {
   SINGLE,
   PR,
   ANY
+}
+
+function getSearchParams() {
+  return window.location.search
+    .substring(1)
+    .split("&")
+    .map(e => {
+      const a = e.split("=");
+      return { [a[0]]: a[1] };
+    })
+    .reduce((a, e) => ({ ...a, ...e }), {});
 }
 
 function extractFileExtension(fileName: string) {
@@ -348,6 +374,12 @@ function discoverCurrentGitlabPageType(fileInfo: BitBucketFileInfo) {
 
 function discoverCurrentBitbucketPageType(fileInfo: BitBucketFileInfo) {
   const fileExtension = extractFileExtension(fileInfo.path);
+  const searchParams = getSearchParams();
+
+  if (searchParams && Object.hasOwnProperty.call(searchParams, "mode") && searchParams.mode === "edit") {
+    return BitBucketPageType.EDIT;
+  }
+
   if (
     (fileExtension === "dmn" || fileExtension === "bpmn" || fileExtension === "bpmn2") &&
     uriMatches(`.*/.*/src/.*`)
