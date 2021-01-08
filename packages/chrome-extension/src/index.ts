@@ -33,6 +33,7 @@ import { renderBitbucketPr } from "./app/bitbucket/PrEditorView";
 import { renderGitlab } from "./app/gitlab/EditorView";
 import { renderGitlabPr } from "./app/gitlab/PrEditorView";
 import { renderBitbucketEdit } from "./app/bitbucket/EditorViewEdit";
+import { renderGitlabEdit } from "./app/gitlab/EditorViewEdit";
 
 enum GitManager {
   GITHUB,
@@ -283,6 +284,19 @@ function initGitlab(args: Globals) {
       fileInfo: fileInfo
     });
   }
+
+  if (pageType === GitLabPageType.EDIT) {
+    console.log("edit");
+    renderGitlabEdit({
+      id: args.id,
+      logger: args.logger,
+      editorEnvelopeLocator: args.editorEnvelopeLocator,
+      githubAuthTokenCookieName: args.githubAuthTokenCookieName,
+      extensionIconUrl: args.extensionIconUrl,
+      externalEditorManager: args.externalEditorManager,
+      fileInfo: fileInfo
+    });
+  }
 }
 
 export function extractFileInfoFromUrl() {
@@ -332,6 +346,7 @@ enum BitBucketPageType {
 
 enum GitLabPageType {
   SINGLE,
+  EDIT,
   PR,
   ANY
 }
@@ -364,6 +379,12 @@ function discoverCurrentGitlabPageType(fileInfo: BitBucketFileInfo) {
     uriMatches(`.*/.*/blob/.*`)
   ) {
     return GitLabPageType.SINGLE;
+  }
+  if (
+    (fileExtension === "dmn" || fileExtension === "bpmn" || fileExtension === "bpmn2") &&
+    uriMatches(`.*/.*/edit/.*`)
+  ) {
+    return GitLabPageType.EDIT;
   }
   if (uriMatches(`.*/.*/-/merge_requests/.*/diffs`)) {
     return GitLabPageType.PR;
