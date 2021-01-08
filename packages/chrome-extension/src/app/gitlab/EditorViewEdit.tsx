@@ -53,20 +53,16 @@ export function renderGitlabEdit(args: Globals & { fileInfo: FileInfoBitBucket }
     return;
   }
 
-  checkIfPageIsReady()
-    .then(() => {
-      ReactDOM.render(
-        <EditorViewApp
-          fileInfo={args.fileInfo}
-          openFileExtension={openFileExtension}
-          id={args.id}
-          editorEnvelopeLocator={args.editorEnvelopeLocator}
-        />,
-        createAndGetMainContainer(args.id, document.body),
-        () => args.logger.log("Mounted.")
-      );
-    })
-    .catch(err => args.logger.log(err));
+  ReactDOM.render(
+    <EditorViewApp
+      fileInfo={args.fileInfo}
+      openFileExtension={openFileExtension}
+      id={args.id}
+      editorEnvelopeLocator={args.editorEnvelopeLocator}
+    />,
+    createAndGetMainContainer(args.id, document.body),
+    () => args.logger.log("Mounted.")
+  );
 }
 
 function checkIfPageIsReady() {
