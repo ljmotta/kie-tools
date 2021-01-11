@@ -30,7 +30,6 @@ export function PrEditorsApp(props: {
   const [prFileContainers, setPrFileContainers] = useState<HTMLElement[]>([]);
 
   useEffect(() => {
-    console.log("renderizado?");
     const observer = new MutationObserver(mutations => {
       const addedNodes = mutations.reduce((l, r) => [...l, ...Array.from(r.addedNodes)], []);
       if (addedNodes.length <= 0) {
@@ -58,7 +57,6 @@ export function PrEditorsApp(props: {
   }, [prFileContainers, props]);
 
   useEffect(() => {
-    console.log("rendereizado primeiro");
     setPrFileContainers(supportedPrFileElements(props.id, props.logger, props.envelopeLocator));
   }, []);
 

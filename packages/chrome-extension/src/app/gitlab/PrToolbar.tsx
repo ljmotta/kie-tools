@@ -20,7 +20,7 @@ import { useCallback } from "react";
 
 export function PrToolbar(props: {
   onSeeAsDiagram: () => void;
-  toggleOriginal: () => void;
+  toggleOriginal: (original: boolean) => void;
   closeDiagram: () => void;
   textMode: boolean;
   showOriginalChangesToggle: boolean;
@@ -46,10 +46,10 @@ export function PrToolbar(props: {
   );
 
   const toggleOriginal = useCallback(
-    (e: any) => {
+    (e: any, original: boolean) => {
       e.stopPropagation();
       e.preventDefault();
-      props.toggleOriginal();
+      props.toggleOriginal(original);
     },
     [props.toggleOriginal]
   );
@@ -63,7 +63,7 @@ export function PrToolbar(props: {
             style={{ borderRadius: "0.25rem 0px 0px 0.25rem", margin: "0px" }}
             tabIndex={0}
             type={"button"}
-            onClick={toggleOriginal}
+            onClick={e => toggleOriginal(e, true)}
           >
             Original
           </button>
@@ -72,7 +72,7 @@ export function PrToolbar(props: {
             style={{ borderRadius: "0px 0.25rem 0.25rem 0px", margin: "0px" }}
             tabIndex={0}
             type={"button"}
-            onClick={toggleOriginal}
+            onClick={e => toggleOriginal(e, false)}
           >
             Changes
           </button>

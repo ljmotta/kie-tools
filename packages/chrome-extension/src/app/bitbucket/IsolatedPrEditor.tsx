@@ -77,9 +77,12 @@ export function IsolatedPrEditor(props: {
     setEditorReady(true);
   }, []);
 
-  const toggleOriginal = useCallback(() => {
-    setShowOriginal(!showOriginal);
-  }, [showOriginal]);
+  const toggleOriginal = useCallback(
+    (original: boolean) => {
+      setShowOriginal(original);
+    },
+    [showOriginal]
+  );
 
   const setDiagramMode = useCallback(() => {
     setTextMode(false);
@@ -134,21 +137,17 @@ export function IsolatedPrEditor(props: {
 
 function discoverFileStatusOnPr(prFileStatus: string) {
   if (prFileStatus === "Added") {
-    console.log("added");
     return FileStatusOnPr.ADDED;
   }
 
   if (prFileStatus === "Modified") {
-    console.log("modified");
     return FileStatusOnPr.CHANGED;
   }
 
   if (prFileStatus === "Deleted") {
-    console.log("deleted");
     return FileStatusOnPr.DELETED;
   }
 
-  console.log("impossibru");
   throw new Error("Impossible status for file on PR");
 }
 

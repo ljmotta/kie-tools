@@ -203,7 +203,6 @@ function initBitBucket(args: Globals) {
   }
 
   if (pageType === BitBucketPageType.PR) {
-    console.log("pr");
     renderBitbucketPr({
       id: args.id,
       logger: args.logger,
@@ -215,7 +214,6 @@ function initBitBucket(args: Globals) {
   }
 
   if (pageType === BitBucketPageType.SINGLE) {
-    console.log("single");
     renderBitbucket({
       id: args.id,
       logger: args.logger,
@@ -228,7 +226,6 @@ function initBitBucket(args: Globals) {
   }
 
   if (pageType === BitBucketPageType.EDIT) {
-    console.log("edit");
     renderBitbucketEdit({
       id: args.id,
       logger: args.logger,
@@ -253,15 +250,12 @@ function initGitlab(args: Globals) {
     path: split.slice(6).join("/")
   };
   const pageType = discoverCurrentGitlabPageType(fileInfo);
-  console.log(fileInfo);
-  console.log(pageType);
   if (pageType === GitLabPageType.ANY) {
     args.logger.log(`This Gitlab page is not supported.`);
     return;
   }
 
   if (pageType === GitLabPageType.PR) {
-    console.log("pr");
     renderGitlabPr({
       id: args.id,
       logger: args.logger,
@@ -273,7 +267,6 @@ function initGitlab(args: Globals) {
   }
 
   if (pageType === GitLabPageType.SINGLE) {
-    console.log("single");
     renderGitlab({
       id: args.id,
       logger: args.logger,
@@ -286,7 +279,6 @@ function initGitlab(args: Globals) {
   }
 
   if (pageType === GitLabPageType.EDIT) {
-    console.log("edit");
     renderGitlabEdit({
       id: args.id,
       logger: args.logger,

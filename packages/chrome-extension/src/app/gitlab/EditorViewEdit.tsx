@@ -16,7 +16,6 @@
 
 import { createAndGetMainContainer, extractOpenFileExtension, runScriptOnPage } from "../utils";
 import * as ReactDOM from "react-dom";
-import { EditorApp } from "./EditorApp";
 import * as React from "react";
 import { useCallback, useEffect } from "react";
 import { KOGITO_IFRAME_CONTAINER_CLASS } from "../constants";

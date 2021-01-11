@@ -89,9 +89,9 @@ export function IsolatedPrEditor(props: {
     setEditorReady(true);
   }, []);
 
-  const toggleOriginal = useCallback(() => {
-    setShowOriginal(!showOriginal);
-  }, [showOriginal]);
+  const toggleOriginal = useCallback((original: boolean) => {
+    setShowOriginal(original);
+  }, []);
 
   const setDiagramMode = useCallback(() => {
     setTextMode(false);

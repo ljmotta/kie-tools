@@ -46,7 +46,7 @@ export function PrEditorsApp(props: {
       setPrFileContainers(newContainers);
     });
 
-    observer.observe((document.getElementsByTagName("main")[0] as HTMLElement | null)!, {
+    observer.observe((document.querySelector("section[aria-label='Diffs']") as HTMLElement | null)!, {
       childList: true,
       subtree: true
     });

@@ -34,7 +34,6 @@ let lastUri = window.location.pathname;
 export function runAfterUriChange(logger: Logger, callback: () => void) {
   const checkUriThenCallback = () => {
     const currentUri = window.location.pathname;
-    console.log("CURRENT AND LAST", currentUri, lastUri);
 
     if (lastUri === currentUri) {
       return;
@@ -60,12 +59,10 @@ export function runAfterUriChange(logger: Logger, callback: () => void) {
 
   window.addEventListener("replaceState", () => {
     logger.log("replaceState event happened");
-    console.log("replaceState");
     checkUriThenCallback();
   });
   window.addEventListener("popstate", () => {
     logger.log("popstate event happened");
-    console.log("popstate");
     checkUriThenCallback();
   });
 }
