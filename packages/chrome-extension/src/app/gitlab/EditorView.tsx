@@ -23,13 +23,7 @@ import { KOGITO_IFRAME_CONTAINER_CLASS } from "../constants";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
 import { Logger } from "../../Logger";
 import { ExternalEditorManager } from "../../ExternalEditorManager";
-
-export interface FileInfoBitBucket {
-  user: string;
-  repo: string;
-  branch: string;
-  path: string;
-}
+import { GitLabFileInfo } from "../../index";
 
 export interface Globals {
   id: string;
@@ -40,7 +34,7 @@ export interface Globals {
   externalEditorManager?: ExternalEditorManager;
 }
 
-export function renderGitlab(args: Globals & { fileInfo: FileInfoBitBucket }) {
+export function renderGitlab(args: Globals & { fileInfo: GitLabFileInfo }) {
   const openFileExtension = extractOpenFileExtension(window.location.href);
   if (!openFileExtension) {
     args.logger.log(`Unable to determine file extension from URL`);
@@ -65,19 +59,25 @@ export function renderGitlab(args: Globals & { fileInfo: FileInfoBitBucket }) {
 }
 
 function EditorViewApp(props: {
-  fileInfo: FileInfoBitBucket;
+  fileInfo: GitLabFileInfo;
   openFileExtension: string;
   id: string;
   editorEnvelopeLocator: EditorEnvelopeLocator;
 }) {
   const getFileContents = useCallback(
     () =>
-      fetch(
-        `https://gitlab.com/${props.fileInfo.user}/${props.fileInfo.repo}/-/raw/${props.fileInfo.branch}/${props.fileInfo.path}`
-      )
+      fetch(`https://gitlab.com/api/v4/users/${props.fileInfo.user}/projects`, { method: "GET" })
+        .then(res => res.json())
+        .then(projects => projects.find((project: any) => project.name === props.fileInfo.repo).id)
+        .then(projectId => {
+          console.log(projectId);
+          return fetch(
+            `https://gitlab.com/api/v4/projects/${projectId}/repository/files/${props.fileInfo.path}/raw?ref=${props.fileInfo.branch}`,
+            { method: "GET" }
+          );
+        })
         .then(res => res.text())
         .then(res => res),
-
     [props.fileInfo]
   );
 

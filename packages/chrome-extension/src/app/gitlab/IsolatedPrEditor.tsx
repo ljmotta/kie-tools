@@ -73,8 +73,8 @@ export function IsolatedPrEditor(props: {
 
   const getFileContents = useMemo(() => {
     return showOriginal || fileStatusOnPr === FileStatusOnPr.DELETED
-      ? () => getTargetFileContents(props.prInfo, props.prFilePath) // master
-      : () => getOriginFileContents(props.prInfo, props.prFilePath); // branch
+      ? () => getTargetFileContents(props.prInfo, props.prFilePath.trim()) // master
+      : () => getOriginFileContents(props.prInfo, props.prFilePath.trim()); // branch
   }, [showOriginal, fileStatusOnPr, props.prInfo, props.prFilePath]);
 
   const repoInfo = useMemo(() => {
@@ -193,14 +193,36 @@ function getOriginFileStatus(prInfo: PrInfo, originFilePath: string) {
   );
 }
 
+function getProjectId(prInfo: PrInfo) {
+  return fetch(`https://gitlab.com/api/v4/users/${prInfo.org}/projects`, { method: "GET" })
+    .then(res => res.json())
+    .then(projects => projects.find((project: any) => project.name === prInfo.repo).id);
+}
+
 function getTargetFileContents(prInfo: PrInfo, targetFilePath: string) {
-  return fetch(`https://gitlab.com/${prInfo.targetOrg}/${prInfo.repo}/-/raw/${prInfo.targetGitRef}/${targetFilePath}`)
+  return getProjectId(prInfo)
+    .then(projectId =>
+      fetch(
+        `https://gitlab.com/api/v4/projects/${projectId}/repository/files/${targetFilePath}/raw?ref=${prInfo.targetGitRef}`
+      )
+    )
     .then(res => res.text())
     .then(res => res);
+  // return fetch(`https://gitlab.com/${prInfo.targetOrg}/${prInfo.repo}/-/raw/${prInfo.targetGitRef}/${targetFilePath}`)
+  //   .then(res => res.text())
+  //   .then(res => res);
 }
 
 function getOriginFileContents(prInfo: PrInfo, originFilePath: string) {
-  return fetch(`https://gitlab.com/${prInfo.org}/${prInfo.repo}/-/raw/${prInfo.gitRef}/${originFilePath}`)
+  return getProjectId(prInfo)
+    .then(projectId =>
+      fetch(
+        `https://gitlab.com/api/v4/projects/${projectId}/repository/files/${originFilePath}/raw?ref=${prInfo.gitRef}`
+      )
+    )
     .then(res => res.text())
     .then(res => res);
+  // return fetch(`https://gitlab.com/${prInfo.org}/${prInfo.repo}/-/raw/${prInfo.gitRef}/${originFilePath}`)
+  //   .then(res => res.text())
+  //   .then(res => res);
 }

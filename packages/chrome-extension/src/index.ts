@@ -118,6 +118,13 @@ interface BitBucketFileInfo {
   path: string;
 }
 
+export interface GitLabFileInfo {
+  user: string;
+  repo: string;
+  branch: string;
+  path: string;
+}
+
 function initGithub(args: Globals) {
   args.logger.log(`---`);
   args.logger.log(`Starting GitHub extension.`);
@@ -364,7 +371,7 @@ function extractFileExtension(fileName: string) {
     : undefined;
 }
 
-function discoverCurrentGitlabPageType(fileInfo: BitBucketFileInfo) {
+function discoverCurrentGitlabPageType(fileInfo: GitLabFileInfo) {
   const fileExtension = extractFileExtension(fileInfo.path);
   if (
     (fileExtension === "dmn" || fileExtension === "bpmn" || fileExtension === "bpmn2") &&

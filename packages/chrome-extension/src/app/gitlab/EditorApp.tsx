@@ -18,16 +18,16 @@ import * as React from "react";
 import { useLayoutEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
 import { IsolatedEditorContext } from "../components/common/IsolatedEditorContext";
-import { FileInfoBitBucket } from "./EditorView";
 import { KogitoEditorIframe } from "./KogitoEditorIframe";
 import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
+import { GitLabFileInfo } from "../../index";
 
 export function EditorApp(props: {
   openFileExtension: string;
   getFileName: () => string;
   getFileContents: () => Promise<string | undefined>;
   iframeContainer: HTMLElement;
-  fileInfo: FileInfoBitBucket;
+  fileInfo: GitLabFileInfo;
   editorEnvelopeLocator: EditorEnvelopeLocator;
 }) {
   const [container, setContainer] = useState<HTMLElement>();
