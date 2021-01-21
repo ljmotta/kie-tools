@@ -87,7 +87,7 @@ function parsePrInfo(): PrInfo {
     document.querySelector("div[data-qa='pr-branches-and-state-styles']")!.getElementsByTagName("span")
   )!.map((element: any) => element.outerText.trim(""));
 
-  const [origin, , target] = prInfos;
+  const [, , origin, , , , target] = prInfos;
 
   // Cross Repo
   if (origin.indexOf(":") > 0) {

@@ -193,14 +193,14 @@ function getOriginFileStatus(prInfo: PrInfo, originFilePath: string) {
   );
 }
 
-function getProjectId(prInfo: PrInfo) {
-  return fetch(`https://gitlab.com/api/v4/users/${prInfo.org}/projects`, { method: "GET" })
+function getProjectId(org: string, repo: string) {
+  return fetch(`https://gitlab.com/api/v4/users/${org}/projects`, { method: "GET" })
     .then(res => res.json())
-    .then(projects => projects.find((project: any) => project.name === prInfo.repo).id);
+    .then(projects => projects.find((project: any) => project.name === repo).id);
 }
 
 function getTargetFileContents(prInfo: PrInfo, targetFilePath: string) {
-  return getProjectId(prInfo)
+  return getProjectId(prInfo.targetOrg, prInfo.repo)
     .then(projectId =>
       fetch(
         `https://gitlab.com/api/v4/projects/${projectId}/repository/files/${targetFilePath}/raw?ref=${prInfo.targetGitRef}`
@@ -214,7 +214,7 @@ function getTargetFileContents(prInfo: PrInfo, targetFilePath: string) {
 }
 
 function getOriginFileContents(prInfo: PrInfo, originFilePath: string) {
-  return getProjectId(prInfo)
+  return getProjectId(prInfo.org, prInfo.repo)
     .then(projectId =>
       fetch(
         `https://gitlab.com/api/v4/projects/${projectId}/repository/files/${originFilePath}/raw?ref=${prInfo.gitRef}`

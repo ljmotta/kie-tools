@@ -171,14 +171,46 @@ function toolbarContainer(id: string, prFileContainer: HTMLElement, container: H
   return element()!;
 }
 
+function getBranchHash(org: string, repo: string, ref: string) {
+  return fetch(`https://bitbucket.org/api/2.0/repositories/${org}/${repo}/commits/${ref.trim()}`, {
+    method: "GET",
+    headers: {
+      "Cache-Control": "no-cache"
+    }
+  })
+    .then(res => res.json())
+    .then(res => res.values.shift().hash);
+}
+
 function getTargetFileContents(prInfo: PrInfo, targetFilePath: string) {
-  return fetch(`https://bitbucket.org/${prInfo.targetOrg}/${prInfo.repo}/raw/${prInfo.targetGitRef}/${targetFilePath}`)
-    .then(res => res.text())
-    .then(res => res);
+  console.log("prInfo", prInfo);
+  return getBranchHash(prInfo.targetOrg, prInfo.repo, prInfo.targetGitRef).then(refHash =>
+    fetch(
+      `https://bitbucket.org/api/2.0/repositories/${prInfo.targetOrg}/${prInfo.repo}/src/${refHash}/${targetFilePath}`,
+      {
+        method: "GET"
+      }
+    )
+      .then(res => res.text())
+      .then(res => res)
+  );
+
+  // fetch(`https://bitbucket.org/${prInfo.targetOrg}/${prInfo.repo}/raw/${prInfo.targetGitRef}/${targetFilePath}`)
+  //   .then(res => res.text())
+  //   .then(res => res);
 }
 
 function getOriginFileContents(prInfo: PrInfo, originFilePath: string) {
-  return fetch(`https://bitbucket.org/${prInfo.org}/${prInfo.repo}/raw/${prInfo.gitRef}/${originFilePath}`)
-    .then(res => res.text())
-    .then(res => res);
+  console.log("prInfo", prInfo);
+  return getBranchHash(prInfo.org, prInfo.repo, prInfo.gitRef).then(refHash =>
+    fetch(`https://bitbucket.org/api/2.0/repositories/${prInfo.org}/${prInfo.repo}/src/${refHash}/${originFilePath}`, {
+      method: "GET"
+    })
+      .then(res => res.text())
+      .then(res => res)
+  );
+
+  // return fetch(`https://bitbucket.org/${prInfo.org}/${prInfo.repo}/raw/${prInfo.gitRef}/${originFilePath}`)
+  //   .then(res => res.text())
+  //   .then(res => res);
 }

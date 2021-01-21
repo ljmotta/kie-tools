@@ -78,10 +78,24 @@ function EditorViewApp(props: {
   const getFileContents = useCallback(
     () =>
       fetch(
-        `https://bitbucket.org/${props.fileInfo.user}/${props.fileInfo.repo}/raw/${props.fileInfo.branch}/${props.fileInfo.path}`
+        `https://bitbucket.org/api/2.0/repositories/${props.fileInfo.user}/${props.fileInfo.repo}/commits/${props.fileInfo.branch}`,
+        {
+          method: "GET",
+          headers: {
+            "Cache-Control": "no-cache"
+          }
+        }
       )
-        .then(res => res.text())
-        .then(res => res),
+        .then(res => res.json())
+        .then(res => res.values.shift().hash)
+        .then(refHash =>
+          fetch(
+            `https://bitbucket.org/api/2.0/repositories/${props.fileInfo.user}/${props.fileInfo.repo}/src/${refHash}/${props.fileInfo.path}`,
+            { method: "GET" }
+          )
+            .then(res => res.text())
+            .then(res => res)
+        ),
 
     [props.fileInfo]
   );
