@@ -18,25 +18,33 @@ import { Actions, AllActions, DataDictionaryReducer } from "../../../editor/redu
 import { Reducer } from "react";
 import { HistoryService } from "../../../editor/history";
 
+const service = new HistoryService();
 const dataDictionary: DataDictionary = { DataField: [] };
-
-const reducer: Reducer<DataDictionary, AllActions> = DataDictionaryReducer(new HistoryService());
+const pmml = { version: "1.0", DataDictionary: dataDictionary, Header: {} };
+const reducer: Reducer<DataDictionary, AllActions> = DataDictionaryReducer(service);
 
 describe("DataDictionaryReducer::Valid actions", () => {
-  test("Actions.CreateDataField", () => {
-    const updated: DataDictionary = reducer(dataDictionary, {
-      type: Actions.CreateDataField,
+  test("Actions.AddDataDictionaryField", () => {
+    reducer(dataDictionary, {
+      type: Actions.AddDataDictionaryField,
       payload: {
-        name: "field1"
+        name: "field1",
+        type: "string",
+        optype: "categorical"
       }
     });
+
+    const updated = service.commit(pmml)?.DataDictionary as DataDictionary;
+
     expect(updated).not.toEqual(dataDictionary);
     expect(updated.DataField.length).toBe(1);
     expect(updated.DataField[0].name).toBe("field1");
+    expect(updated.DataField[0].dataType).toBe("string");
+    expect(updated.DataField[0].optype).toBe("categorical");
   });
 
-  test("Actions.DeleteDataField", () => {
-    const updated: DataDictionary = reducer(
+  test("Actions.DeleteDataDictionaryField", () => {
+    reducer(
       {
         DataField: [
           {
@@ -47,19 +55,22 @@ describe("DataDictionaryReducer::Valid actions", () => {
         ]
       },
       {
-        type: Actions.DeleteDataField,
+        type: Actions.DeleteDataDictionaryField,
         payload: {
           index: 0
         }
       }
     );
+
+    const updated = service.commit(pmml)?.DataDictionary as DataDictionary;
+
     expect(updated).toEqual(dataDictionary);
     expect(updated.DataField.length).toEqual(0);
   });
 
   test("Actions.DeleteDataField::Index out of bounds (less than 0)", () => {
     const updated: DataDictionary = reducer(dataDictionary, {
-      type: Actions.DeleteDataField,
+      type: Actions.DeleteDataDictionaryField,
       payload: {
         index: -1
       }
@@ -69,7 +80,7 @@ describe("DataDictionaryReducer::Valid actions", () => {
 
   test("Actions.DeleteDataField::Index out of bounds (greater than number of fields)", () => {
     const updated: DataDictionary = reducer(dataDictionary, {
-      type: Actions.DeleteDataField,
+      type: Actions.DeleteDataDictionaryField,
       payload: {
         index: 0
       }

@@ -14,47 +14,59 @@
  * limitations under the License.
  */
 import { DataField, FieldName } from "@kogito-tooling/pmml-editor-marshaller";
-import { Actions, AllActions, DataFieldReducer } from "../../../editor/reducers";
+import { Actions, AllActions, DataDictionaryFieldReducer } from "../../../editor/reducers";
 import { Reducer } from "react";
 import { HistoryService } from "../../../editor/history";
 
+const service = new HistoryService();
 const dataFields: DataField[] = [{ name: "field1" as FieldName, dataType: "boolean", optype: "categorical" }];
+const pmml = { version: "1.0", DataDictionary: { DataField: dataFields }, Header: {} };
+const reducer: Reducer<DataField[], AllActions> = DataDictionaryFieldReducer(service);
 
-const reducer: Reducer<DataField[], AllActions> = DataFieldReducer(new HistoryService());
-
-describe("DataFieldReducer::Valid actions", () => {
-  test("Actions.SetDataFieldName", () => {
-    const updated: DataField[] = reducer(dataFields, {
-      type: Actions.SetDataFieldName,
+describe("DataDictionaryFieldReducer::Valid actions", () => {
+  test("Actions.UpdateDataDictionaryField", () => {
+    reducer(dataFields, {
+      type: Actions.UpdateDataDictionaryField,
       payload: {
-        index: 0,
-        name: "updated" as FieldName
+        dataDictionaryIndex: 0,
+        dataField: { name: "updated" as FieldName, dataType: "string", optype: "ordinal" },
+        originalName: "field1" as FieldName
       }
     });
+    const updated = service.commit(pmml)?.DataDictionary.DataField as DataField[];
+
     expect(updated).not.toEqual(dataFields);
     expect(updated.length).toBe(1);
     expect(updated[0].name).toBe("updated");
+    expect(updated[0].dataType).toBe("string");
+    expect(updated[0].optype).toBe("ordinal");
   });
 
   test("Actions.SetDataFieldName::Index out of bounds (less than 0)", () => {
-    const updated: DataField[] = reducer(dataFields, {
-      type: Actions.SetDataFieldName,
+    reducer(dataFields, {
+      type: Actions.UpdateDataDictionaryField,
       payload: {
-        index: -1,
-        name: "updated" as FieldName
+        dataDictionaryIndex: -1,
+        dataField: { name: "updated" as FieldName, dataType: "boolean", optype: "categorical" },
+        originalName: "field1" as FieldName
       }
     });
+    const updated = service.commit(pmml)?.DataDictionary.DataField as DataField[];
+
     expect(updated).toEqual(dataFields);
   });
 
   test("Actions.SetDataFieldName::Index out of bounds (greater than number of fields)", () => {
-    const updated: DataField[] = reducer(dataFields, {
-      type: Actions.SetDataFieldName,
+    reducer(dataFields, {
+      type: Actions.UpdateDataDictionaryField,
       payload: {
-        index: 1,
-        name: "updated" as FieldName
+        dataDictionaryIndex: 1,
+        dataField: { name: "updated" as FieldName, dataType: "boolean", optype: "categorical" },
+        originalName: "field1" as FieldName
       }
     });
+    const updated = service.commit(pmml)?.DataDictionary.DataField as DataField[];
+
     expect(updated).toEqual(dataFields);
   });
 });
