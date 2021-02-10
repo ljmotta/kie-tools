@@ -12,6 +12,18 @@
     },
     {
       "run_at": "document_idle",
+      "js": ["content_scripts/bitbucket.js"],
+      "matches": ["https://bitbucket.org/*"],
+      "all_frames": true
+    },
+    {
+      "run_at": "document_idle",
+      "js": ["content_scripts/gitlab.js"],
+      "matches": ["https://gitlab.com/*"],
+      "all_frames": true
+    },
+    {
+      "run_at": "document_idle",
       "js": ["content_scripts/online-editor.js"],
       "matches": ["https://kiegroup.github.io/*"],
       "all_frames": true
@@ -28,16 +40,24 @@
   "permissions": [
     "https://*.github.com/*",
     "http://*.github.com/*",
+    "https://bitbucket.org/*",
+    "http://bitbucket.org/*",
+    "https://gitlab.com/*",
+    "http://gitlab.com/*",
     "webRequest",
-    "webRequestBlocking"
+    "webRequestBlocking",
+    "webNavigation"
   ],
   "content_security_policy": "script-src 'self' https://raw.githubusercontent.com; object-src 'self'",
   "externally_connectable": {
     "matches": [
       "https://*.github.com/*",
       "http://*.github.com/*",
-      "https://kiegroup.github.io/*",
-      "http://kiegroup.github.io/*"
+      "https://bitbucket.org/*",
+      "http://bitbucket.org/*",
+      "https://gitlab.com/*",
+      "http://gitlab.com/*",
+      "http://localhost/*"
     ]
   }
 }
