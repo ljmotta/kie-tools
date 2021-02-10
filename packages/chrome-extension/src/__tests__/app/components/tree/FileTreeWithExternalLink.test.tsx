@@ -32,7 +32,8 @@ const externalEditorManager = {
     return {
       stopListening: () => console.log("stopListening")
     };
-  }
+  },
+  listenToUrlUpdate: jest.fn()
 };
 
 describe("FileTreeWithExternalLink", () => {

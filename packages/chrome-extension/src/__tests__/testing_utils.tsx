@@ -24,6 +24,7 @@ import { EditorEnvelopeLocator, EnvelopeMapping } from "@kogito-tooling/editor/d
 import { I18nDictionariesProvider, I18nDictionariesProviderProps } from "@kogito-tooling/i18n/dist/react-components";
 import { ChromeExtensionI18nContext, chromeExtensionI18nDictionaries, chromeExtensionI18nDefaults } from "../app/i18n";
 import { ChromeExtensionI18n } from "../app/i18n";
+import { ExternalEditorManager } from "../ExternalEditorManager";
 
 export function usingTestingGlobalContext(children: React.ReactElement, ctx?: Partial<GlobalContextType>) {
   const txtEnvelopeMapping: EnvelopeMapping = {
@@ -48,7 +49,8 @@ export function usingTestingGlobalContext(children: React.ReactElement, ctx?: Pa
       name: "Test Online Editor",
       getLink: jest.fn(path => `https://external-editor-link/${path}`),
       listenToComeBack: jest.fn(),
-      open: jest.fn()
+      open: jest.fn(),
+      listenToUrlUpdate: jest.fn()
     },
     ...ctx
   };
