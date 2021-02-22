@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b89d2d91-9bde-4d3f-81cc-e992a8179c22" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/packages/online-editor/src/editor/DmnRunnerModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/online-editor/src/editor/DmnRunnerModal.tsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1lynUG9Ygr3tuMhZO7a0z0VoMSG" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="js.linters.configure.manually.selectedtslint" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../uniforms-patternfly" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.tslint" value="$USER_HOME$/.nvm/versions/node/v14.15.5/bin/node" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="yarn" />
+    <property name="prettierjs.PrettierConfiguration.NodeInterpreter" value="$USER_HOME$/.nvm/versions/node/v14.15.3/bin/node" />
+    <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
+    <property name="settings.editor.selected.configurable" value="settings.javascript.prettier" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/chrome-extension/src/app/components/gitlab" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/online-editor/src/common" />
+      <recent name="$PROJECT_DIR$/packages/chrome-extension/src/app" />
+      <recent name="$PROJECT_DIR$/packages/chrome-extension/src/app/github" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b89d2d91-9bde-4d3f-81cc-e992a8179c22" name="Default Changelist" comment="" />
+      <created>1608578214106</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1608578214106</updated>
+      <workItem from="1608578216156" duration="3964000" />
+      <workItem from="1608582842402" duration="32000" />
+      <workItem from="1608582883093" duration="726000" />
+      <workItem from="1608583629959" duration="901000" />
+      <workItem from="1608644125346" duration="599000" />
+      <workItem from="1608732098409" duration="11853000" />
+      <workItem from="1609157381154" duration="955000" />
+      <workItem from="1609161110114" duration="9715000" />
+      <workItem from="1609251539021" duration="10068000" />
+      <workItem from="1609337729351" duration="16827000" />
+      <workItem from="1609761905881" duration="2314000" />
+      <workItem from="1609856933193" duration="4381000" />
+      <workItem from="1609940042777" duration="8452000" />
+      <workItem from="1610026605372" duration="837000" />
+      <workItem from="1610115874535" duration="11755000" />
+      <workItem from="1610374673007" duration="73000" />
+      <workItem from="1610375102284" duration="1187000" />
+      <workItem from="1610380638826" duration="10031000" />
+      <workItem from="1610460645309" duration="681000" />
+      <workItem from="1610564027480" duration="8520000" />
+      <workItem from="1610635555906" duration="16154000" />
+      <workItem from="1610713237121" duration="18677000" />
+      <workItem from="1610975666963" duration="24702000" />
+      <workItem from="1611062995501" duration="6219000" />
+      <workItem from="1611148793304" duration="14641000" />
+      <workItem from="1611240918055" duration="14293000" />
+      <workItem from="1611318399032" duration="12886000" />
+      <workItem from="1611575477504" duration="7606000" />
+      <workItem from="1611667887253" duration="14812000" />
+      <workItem from="1611749779194" duration="4800000" />
+      <workItem from="1611843194741" duration="5473000" />
+      <workItem from="1612204094864" duration="6203000" />
+      <workItem from="1612271120777" duration="4862000" />
+      <workItem from="1612288181790" duration="633000" />
+      <workItem from="1612361545950" duration="16180000" />
+      <workItem from="1612444844453" duration="17468000" />
+      <workItem from="1612542120657" duration="6294000" />
+      <workItem from="1612789130530" duration="20294000" />
+      <workItem from="1612878347988" duration="7454000" />
+      <workItem from="1612970026669" duration="15044000" />
+      <workItem from="1613046080972" duration="14394000" />
+      <workItem from="1613138927384" duration="15888000" />
+      <workItem from="1613392541912" duration="2527000" />
+      <workItem from="1613410956195" duration="3604000" />
+      <workItem from="1613586496961" duration="6790000" />
+      <workItem from="1613660622539" duration="15870000" />
+      <workItem from="1613740837651" duration="19200000" />
+      <workItem from="1614011368781" duration="856000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+</project>

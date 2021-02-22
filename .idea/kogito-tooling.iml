@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/.tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/desktop/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/desktop/out" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/desktop/build" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/vscode-extension-pack-kogito-kie-editors/out" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/vscode-extension-pack-kogito-kie-editors/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/vscode-extension-pack-kogito-kie-editors/test-resources" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/online-editor/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/kie-editors-standalone/it-tests" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/hub/out" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/hub/build" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/chrome-extension-pack-kogito-kie-editors/it-tests" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/chrome-extension-pack-kogito-kie-editors/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/hub/dist" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
