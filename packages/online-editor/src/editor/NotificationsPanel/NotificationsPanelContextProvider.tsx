@@ -27,7 +27,7 @@ const NotificationsPanelContextProviderRefForwarding: React.RefForwardingCompone
   NotificationsPanelContextType,
   Props
 > = (props, forwardingRef) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<string>("");
   const tabs: Map<string, React.RefObject<NotificationsApi>> = useMemo(() => new Map(), []);
 
