@@ -19,12 +19,11 @@
   "dependencies": {
     "@kogito-tooling/i18n": "0.10.0",
     "@kogito-tooling/notifications": "0.10.0",
+    "@patternfly/react-table": "^4.29.0",
     "ajv": "^6.12.6",
     "ajv-errors": "^1.0.1",
-    "react-datasheet": "^1.4.9",
     "uniforms": "^3.5.1",
-    "uniforms-bridge-json-schema": "^3.5.1",
-    "uniforms-patternfly": "^4.6.1"
+    "uniforms-bridge-json-schema": "^3.5.1"
   },
   "devDependencies": {
     "lodash": "^4.14.2"
