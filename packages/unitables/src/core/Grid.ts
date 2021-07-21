@@ -95,6 +95,7 @@ export class Grid {
         insideProperties,
         colSpan: inputSize,
         rowSize: 2,
+        name: joinedName,
       };
     }
     return {
@@ -103,19 +104,19 @@ export class Grid {
       type: this.bridge.getType(joinedName),
       colSpan: 1,
       rowSize: 1,
+      name: joinedName,
     };
   }
 
   public generate() {
     const subfields = this.bridge.getSubfields();
     const inputs = subfields.reduce((acc: any[], fieldName: string) => [...acc, this.deepGenerate(fieldName)], []);
-    console.log([{ readOnly: true, emptyCell: true }, ...inputs]);
-    this.grid = [{ readOnly: true, emptyCell: true }, ...inputs];
-    const inputSize = inputs.reduce((acc, input) => {
+    if (inputs.length > 0) {
+      this.grid = [{ readOnly: true, emptyCell: true }, ...inputs];
+    }
+    this.inputSize = inputs.reduce((acc, input) => {
       acc += input.colSpan;
       return acc;
     }, 0);
-    console.log("input size ", inputSize);
-    this.inputSize = inputSize;
   }
 }

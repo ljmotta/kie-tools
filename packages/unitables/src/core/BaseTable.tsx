@@ -1,7 +1,8 @@
 import * as React from "react";
-import { BaseForm, BaseFormProps, BaseFormState, context } from "uniforms";
+import { BaseForm, BaseFormProps, BaseFormState } from "uniforms";
 import { Table } from "./Table";
 import { Grid } from "./Grid";
+import { context } from "./Context";
 
 interface Props<Model> extends BaseFormProps<Model> {
   grid: Grid;
@@ -14,9 +15,9 @@ export class BaseTable<Model> extends BaseForm<Model, Props<Model>, BaseFormStat
 
   render() {
     return (
-      <context.Provider value={this.getContext()}>
+      <context.Provider value={{ ...this.getContext(), grid: this.props.grid }}>
         <form {...this.getNativeFormProps()}>
-          <Table grid={this.props.grid} />
+          <Table />
         </form>
       </context.Provider>
     );

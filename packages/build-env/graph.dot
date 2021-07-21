@@ -33,6 +33,7 @@ digraph G {
   "@kogito-tooling/online-editor" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "@kogito-tooling/pmml-editor" [ style = "rounded", color = "blue", fontcolor = "blue" ];
   "@kie-tooling-core/run-script-if" [ style = "rounded", color = "purple", fontcolor = "purple" ];
+  "@kogito-tooling/unitables" [ style = "rounded", color = "blue", fontcolor = "blue" ];
   "@kie-tooling-core/vscode-extension" [ style = "rounded", color = "purple", fontcolor = "purple" ];
   "vscode-extension-backend" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "vscode-extension-pack-kogito-kie-editors" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
@@ -85,6 +86,7 @@ digraph G {
   "@kie-tooling-core/run-script-if" -> "@kogito-tooling/build-env" [ style = "dashed" ];
   "@kogito-tooling/uniforms-bootstrap4-codegen" -> "@kogito-tooling/build-env" [ style = "dashed" ];
   "@kogito-tooling/uniforms-patternfly-codegen" -> "@kogito-tooling/build-env" [ style = "dashed" ];
+  "@kogito-tooling/unitables" -> "kiegroup/kogito-tooling";
   "@kie-tooling-core/vscode-extension" -> "@kie-tooling-core/editor" [ style = "solid" ];
   "vscode-extension-backend" -> "@kie-tooling-core/vscode-extension" [ style = "solid" ];
   "vscode-extension-backend" -> "@kogito-tooling/backend-extended-services" [ style = "solid" ];
