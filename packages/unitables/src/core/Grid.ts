@@ -74,14 +74,14 @@ export class Grid {
     return fullName.match(/\./) ? fullName.split(".").slice(1).join(".") : fullName;
   }
 
-  public determineField(fieldName: any, parentName = ""): any {
+  public deepGenerate(fieldName: any, parentName = ""): any {
     const joinedName = joinName(parentName, fieldName);
     const field = this.bridge.getField(joinedName);
 
     if (field.type === "object") {
       let inputSize = 0;
       const insideProperties = this.bridge.getSubfields(joinedName).reduce((acc: any[], subField: string) => {
-        const field = this.determineField(subField, joinedName);
+        const field = this.deepGenerate(subField, joinedName);
         inputSize += field.colSpan;
         if (field.insideProperties) {
           return [...acc, ...field.insideProperties];
@@ -108,7 +108,7 @@ export class Grid {
 
   public generate() {
     const subfields = this.bridge.getSubfields();
-    const inputs = subfields.reduce((acc: any[], fieldName: string) => [...acc, this.determineField(fieldName)], []);
+    const inputs = subfields.reduce((acc: any[], fieldName: string) => [...acc, this.deepGenerate(fieldName)], []);
     console.log([{ readOnly: true, emptyCell: true }, ...inputs]);
     this.grid = [{ readOnly: true, emptyCell: true }, ...inputs];
     const inputSize = inputs.reduce((acc, input) => {
