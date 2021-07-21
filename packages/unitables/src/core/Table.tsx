@@ -20,8 +20,11 @@ export function Table(props: TableProps) {
   }, [schema, props.grid]);
 
   const tableBody = useMemo(() => {
-    return grid?.getGrid().map((row: any, index: number) => {
+    return grid?.getGrid().map((row: any, index: number, currentGrid: any) => {
       console.log(row);
+      const previousRow = currentGrid[index - 1];
+      const column = previousRow ? previousRow.columnEnd + 1 : index + 1;
+      row.columnEnd = previousRow ? previousRow.columnEnd + row.colSpan : column;
 
       if (row.emptyCell) {
         return (
@@ -30,7 +33,7 @@ export function Table(props: TableProps) {
             style={{
               border: "1px solid",
               backgroundColor: row?.readOnly ? "gray" : "white",
-              gridColumn: `${index + 1} / span 1`,
+              gridColumn: `${column} / span 1`,
               gridRow: `1 / span 2`,
             }}
           />
@@ -38,21 +41,34 @@ export function Table(props: TableProps) {
       }
 
       if (row.insideProperties) {
-        return row.insideProperties.map((cellProps: any, jndex: any) => {
-          return (
+        return (
+          <>
             <div
-              key={`auto-table-cell-${index}-${jndex}`}
+              key={`auto-table-cell-${index}`}
               style={{
                 border: "1px solid",
-                backgroundColor: cellProps.readOnly ? "gray" : "white",
-                gridColumn: `1 / span ${cellProps.colSpan ?? 1}`,
-                gridRow: `2 / span 1`,
+                backgroundColor: row.readOnly ? "gray" : "white",
+                gridColumn: `${column} / span ${row.colSpan ?? 1}`,
+                gridRow: `1 / span 1`,
               }}
             >
-              {!cellProps.emptyCell && <Cell {...cellProps} />}
+              {<Cell {...row} />}
             </div>
-          );
-        });
+            {row.insideProperties.map((cellProps: any, jndex: any) => (
+              <div
+                key={`auto-table-cell-${index}-${jndex}`}
+                style={{
+                  border: "1px solid",
+                  backgroundColor: cellProps.readOnly ? "gray" : "white",
+                  gridColumn: `${jndex + column} / span ${cellProps.colSpan ?? 1}`,
+                  gridRow: `2 / span 1`,
+                }}
+              >
+                {!cellProps.emptyCell && <Cell {...cellProps} />}
+              </div>
+            ))}
+          </>
+        );
       }
 
       return (
@@ -61,7 +77,7 @@ export function Table(props: TableProps) {
           style={{
             border: "1px solid",
             backgroundColor: row?.readOnly ? "gray" : "white",
-            gridColumn: `${index + 1} / span 1`,
+            gridColumn: `${column} / span 1`,
             gridRow: `1 / span 2`,
           }}
         >
