@@ -34,10 +34,10 @@ export class Grid {
   private footer: [];
   private inputSize: number;
   private outputSize: number;
-  private grid: any[][] = [[]];
+  private grid: any[][] | any[] = [[]];
 
   constructor(private readonly bridge: Bridge) {
-    this.test();
+    this.generate();
   }
 
   public getGrid() {
@@ -59,11 +59,19 @@ export class Grid {
   public fillGaps(): void {}
 
   public generateHeader() {
-    return [{ readOnly: true, colSpan: 1 + this.inputSize + this.outputSize, value: "DMN Runner" }];
+    return [{ readOnly: true, colSpan: this.getColumns(), value: "DMN Runner" }];
   }
 
   public generateFooter() {
     return [{}];
+  }
+
+  public getColumns() {
+    return this.inputSize + this.outputSize + 1;
+  }
+
+  public removeInputName(fullName: string) {
+    return fullName.match(/\./) ? fullName.split(".").slice(1).join(".") : fullName;
   }
 
   public determineField(fieldName: any, parentName = ""): any {
@@ -71,47 +79,42 @@ export class Grid {
     const field = this.bridge.getField(joinedName);
 
     if (field.type === "object") {
-      const subFields = this.bridge.getSubfields(joinedName);
-      const insideFields = subFields.reduce((acc: any[], subField: string) => {
+      let inputSize = 0;
+      const insideProperties = this.bridge.getSubfields(joinedName).reduce((acc: any[], subField: string) => {
         const field = this.determineField(subField, joinedName);
+        inputSize += field.colSpan;
+        if (field.insideProperties) {
+          return [...acc, ...field.insideProperties];
+        }
         return [...acc, field];
       }, []);
-      const headerSize = insideFields.length - 1 ? insideFields.length - 1 : 1;
-      const objectHeader = { readOnly: true, colSpan: headerSize, value: joinedName };
-      return [[objectHeader], insideFields];
-    }
 
-    return { readOnly: true, value: fieldName };
+      return {
+        readOnly: true,
+        value: this.removeInputName(joinedName),
+        insideProperties,
+        colSpan: inputSize,
+        rowSize: 2,
+      };
+    }
+    return {
+      readOnly: true,
+      value: this.removeInputName(joinedName),
+      type: this.bridge.getType(joinedName),
+      colSpan: 1,
+      rowSize: 1,
+    };
   }
 
-  public test() {
+  public generate() {
     const subfields = this.bridge.getSubfields();
-    const inputs = subfields.reduce((acc: any[], fieldName: string) => {
-      return [...acc, this.determineField(fieldName)];
-    }, []);
-    const something: any[] = inputs.reduce((acc, input) => acc.concat(input), []);
-    if (something.find((e: any) => Array.isArray(e))) {
-      const newGrid = something.map((row) => {
-        if (row.length > 0) {
-          return [{ readOnly: true, value: "" }, ...row];
-        }
-        return [...row];
-      });
-      console.log(newGrid);
-      this.grid = newGrid;
-    } else {
-      console.log(something);
-      const newGrid = [something].map((row) => {
-        if (row.length > 0) {
-          return [{ readOnly: true, value: "" }, ...row];
-        }
-        return [...row];
-      });
-      console.log(newGrid);
-      this.grid = newGrid;
-    }
-    console.log(something.length);
-    const inputSize = something.length - 1 > 0 ? something.length : 1;
+    const inputs = subfields.reduce((acc: any[], fieldName: string) => [...acc, this.determineField(fieldName)], []);
+    console.log([{ readOnly: true, emptyCell: true }, ...inputs]);
+    this.grid = [{ readOnly: true, emptyCell: true }, ...inputs];
+    const inputSize = inputs.reduce((acc, input) => {
+      acc += input.colSpan;
+      return acc;
+    }, 0);
     console.log("input size ", inputSize);
     this.inputSize = inputSize;
   }

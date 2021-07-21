@@ -1,13 +1,15 @@
 import * as React from "react";
 
 interface CellProps {
-  children: any;
+  readOnly?: boolean;
+  value?: string;
+  emptyCell?: boolean;
 }
 
 export function Cell(props: CellProps) {
   return (
     <div>
-      <p>{JSON.stringify(props.children)}</p>
+      <p>{props.value}</p>
     </div>
   );
 }
