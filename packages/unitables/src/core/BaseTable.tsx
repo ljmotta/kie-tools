@@ -17,7 +17,7 @@ export class BaseTable<Model> extends BaseForm<Model, Props<Model>, BaseFormStat
     return (
       <tableContext.Provider value={{ ...this.getContext(), grid: this.props.grid }}>
         <form {...this.getNativeFormProps()}>
-          <Table />
+          <Table grid={this.props.grid} />
         </form>
       </tableContext.Provider>
     );
