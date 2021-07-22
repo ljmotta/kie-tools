@@ -4,11 +4,11 @@ import { useForm } from "uniforms";
 import { Grid } from "./Grid";
 import { Cell } from "./Cell";
 import { TextInput } from "@patternfly/react-core/dist/js/components/TextInput";
-import { AutoField } from "uniforms-patternfly";
-import { context, TableContext } from "./Context";
+import { tableContext, TableContext } from "./Context";
+import { AutoField } from "./hooks";
 
 export function Table() {
-  const form = useContext<TableContext<any> | null>(context);
+  const form = useContext<TableContext<any> | null>(tableContext);
   const [grid, setGrid] = useState<Grid>();
 
   useEffect(() => {

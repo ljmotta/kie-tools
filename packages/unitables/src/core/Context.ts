@@ -6,4 +6,4 @@ export type TableContext<Model> = Context<Model> & {
   grid: Grid;
 };
 
-export const context = createContext<TableContext<any> | null>(null);
+export const tableContext = createContext<TableContext<any> | null>(null);
