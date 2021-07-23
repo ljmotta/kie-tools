@@ -13,18 +13,16 @@ interface DmnAutoTableProps {
 export function DmnAutoTable(props: DmnAutoTableProps) {
   const validator = useMemo(() => new DmnValidator(), []);
   const [bridge, setBridge] = useState<JSONSchemaBridge>();
-  const [grid, setGrid] = useState<Grid>();
 
   useEffect(() => {
     setBridge(validator.getBridge(props.schema ?? {}));
-    setGrid(new DmnGrid(validator, props.schema ?? {}));
   }, [props.schema, validator]);
 
   return (
     <div style={{ width: "100%" }}>
-      {bridge && grid && (
+      {bridge && (
         <AutoTable
-          grid={grid}
+          grid={new DmnGrid()}
           schema={bridge}
           autosave={true}
           autosaveDelay={1000}

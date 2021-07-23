@@ -17,6 +17,7 @@
 const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 const generate = require("@babel/generator").default;
+const prettier = require("prettier");
 
 module.exports = function webpackLoader(content, map, meta) {
   const transformations = [
@@ -60,5 +61,5 @@ module.exports = function webpackLoader(content, map, meta) {
   });
 
   const output = generate(ast, {}, content);
-  return output.code;
+  return prettier.format(output.code, { printWidth: 120, parser: "typescript" });
 };
