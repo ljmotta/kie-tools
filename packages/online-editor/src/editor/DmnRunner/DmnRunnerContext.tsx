@@ -30,7 +30,7 @@ export interface DmnRunnerContextType {
   formData: any;
   setFormData: React.Dispatch<any>;
   tableData: any[];
-  setTableData: React.Dispatch<any[]>;
+  setTableData: (model: (previous: any[]) => any[]) => void;
   port: string;
   saveNewPort: (value: string) => void;
   service: DmnRunnerService;

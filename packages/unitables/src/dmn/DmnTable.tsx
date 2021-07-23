@@ -1,12 +1,8 @@
 import * as React from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { AutoTable } from "../core";
 import { DmnGrid } from "./DmnGrid";
-import { DmnValidator } from "./DmnValidator";
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import JSONSchemaBridge from "uniforms-bridge-json-schema";
-import { Button } from "@patternfly/react-core/dist/js/components/Button";
 import { NotificationSeverity } from "@kie-tooling-core/notifications/dist/api";
-import { Bridge } from "uniforms";
 
 export enum EvaluationStatus {
   SUCCEEDED = "SUCCEEDED",
@@ -42,7 +38,7 @@ export interface DmnResult {
 export interface Something {
   grid: DmnGrid;
   model?: any[];
-  setModel: (model: any[]) => void;
+  setModel: (model: (previous: any[]) => any[]) => void;
 }
 
 interface DmnTableProps {
@@ -53,8 +49,8 @@ interface DmnTableProps {
 export function DmnTable(props: DmnTableProps) {
   const [inputLength, setInputLength] = useState<number>(0);
 
-  const onSubmit = useCallback((model: any, setModel: any, index) => {
-    setModel((previous: any) => {
+  const onSubmit = useCallback((model: any, setModel: (model: (previous: any[]) => any[]) => void, index) => {
+    setModel((previous: any[]) => {
       const newModel = previous ? [...previous] : [];
       newModel[index] = model;
       return newModel;
@@ -64,6 +60,14 @@ export function DmnTable(props: DmnTableProps) {
   const inputsTable = useMemo(() => {
     const inputs: ReactNode[] = [];
     props.inputs?.forEach((value, key) => {
+      // value.setModel((previous: any[]) => {
+      //   const newData = [...previous];
+      //   if (newData.length < value.grid.getInputLength()) {
+      //     newData.push({});
+      //   }
+      //   return newData;
+      // })
+
       if (key === 0) {
         setInputLength(value.grid.getInputLength());
         inputs.push(<AutoTable grid={value.grid} schema={value.grid.getBridge()} header={true} />);
@@ -73,7 +77,7 @@ export function DmnTable(props: DmnTableProps) {
             grid={value.grid}
             schema={value.grid.getBridge()}
             header={false}
-            model={value.model?.[key] ?? {}}
+            model={value.model ?? {}}
             autosave={true}
             autosaveDelay={500}
             onSubmit={(model: any) => onSubmit(model, value.setModel, key)}

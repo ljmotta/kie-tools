@@ -72,7 +72,7 @@ export function DmnRunnerTable(props: Props) {
         // inputs
         for (let i = 1; i <= inputSize; i++) {
           const grid = new DmnGrid(bridge, i);
-          newInputs.set(i, { grid, model: dmnRunner.tableData, setModel: dmnRunner.setTableData });
+          newInputs.set(i, { grid, model: dmnRunner.tableData[i], setModel: dmnRunner.setTableData });
         }
       }
       return newInputs;
@@ -80,9 +80,16 @@ export function DmnRunnerTable(props: Props) {
   }, [inputSize, bridge]);
 
   useEffect(() => {
-    console.log("formDatas", dmnRunner.tableData);
-    console.log("results", dmnRunnerResults);
-  }, [dmnRunner.tableData, dmnRunnerResults]);
+    dmnRunner.setTableData((previous) => {
+      const updatedTableData = [...previous];
+      for (let i = inputSize; i <= inputSize; i++) {
+        if (!updatedTableData[i]) {
+          updatedTableData[i] = {};
+        }
+      }
+      return updatedTableData;
+    });
+  }, [inputSize]);
 
   return (
     <>
