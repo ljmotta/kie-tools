@@ -26,11 +26,11 @@ import { useNotificationsPanel } from "./NotificationsPanelContext";
 import { NotificationPanelTabContent } from "./NotificationsPanelTabContent";
 import { NotificationsApi } from "@kie-tooling-core/notifications/dist/api";
 import { useOnlineI18n } from "../../common/i18n";
-import { DmnTable } from "@kogito-tooling/unitables";
+import { DmnRunnerTable } from "../DmnRunner/table/DmnRunnerTable";
 
 interface Props {
   tabNames: string[];
-  schema: any;
+  editor: any;
 }
 
 export function NotificationsPanel(props: Props) {
@@ -193,7 +193,7 @@ export function NotificationsPanel(props: Props) {
           {/*    </Tooltip>*/}
           {/*  </div>*/}
           {/*</div>*/}
-          <DmnTable schema={props.schema} />
+          <DmnRunnerTable editor={props.editor} />
           {/*<Tabs activeKey={notificationsPanel.activeTab} onSelect={onSelectTab}>*/}
           {/*  {[...tabsMap.entries()].map(([tabName, tabRef], index) => (*/}
           {/*    <Tab*/}

@@ -45,6 +45,7 @@ export function DmnRunnerContextProvider(props: Props) {
   const [isDrawerExpanded, setDrawerExpanded] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
+  const [tableData, setTableData] = useState({});
   const [outdated, setOutdated] = useState(false);
   const globalContext = useContext(GlobalContext);
   const [status, setStatus] = useState(() =>
@@ -173,6 +174,8 @@ export function DmnRunnerContextProvider(props: Props) {
         setModalOpen,
         formData,
         setFormData,
+        tableData,
+        setTableData,
         port,
         saveNewPort,
         service,

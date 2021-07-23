@@ -559,10 +559,7 @@ export function EditorPage(props: Props) {
                       >
                         <div style={{ width: "100%", minHeight: "calc(100vh - 210px)" }} ref={textEditorContainerRef} />
                       </Modal>
-                      <NotificationsPanel
-                        tabNames={notificationPanelTabNames(dmnRunner.status)}
-                        schema={dmnRunner.formSchema}
-                      />
+                      <NotificationsPanel tabNames={notificationPanelTabNames(dmnRunner.status)} editor={editor} />
                     </DrawerContentBody>
                   </DrawerContent>
                 </Drawer>

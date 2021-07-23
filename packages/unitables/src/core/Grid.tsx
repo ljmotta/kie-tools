@@ -4,13 +4,17 @@ import { AutoField } from "./AutoField";
 import { Cell } from "./Cell";
 
 export class Grid {
-  private inputSize: number;
+  private inputLength: number = 0;
   private outputSize: number;
   private inputsHeader: any[] = [];
   private inputsFields: any[] = [];
 
-  constructor(private readonly bridge: Bridge) {
+  constructor(private readonly bridge: Bridge, private readonly inputSize = 1) {
     this.buildTable();
+  }
+
+  public getBridge() {
+    return this.bridge;
   }
 
   public setHeader(header: []): void {
@@ -51,10 +55,10 @@ export class Grid {
               border: "1px solid",
               backgroundColor: row?.readOnly ? "gray" : "white",
               gridColumn: `${column} / span 1`,
-              gridRow: `3 / span 1`,
+              gridRow: `${2 + this.inputSize} / span 1`,
             }}
           >
-            <span>Input 1</span>
+            <span>Input {this.inputSize}</span>
           </div>
         );
         this.inputsHeader.push(
@@ -93,7 +97,7 @@ export class Grid {
               style={{
                 border: "1px solid",
                 gridColumn: `${jndex + column} / span ${cellProps.colSpan ?? 1}`,
-                gridRow: `3 / span 1`,
+                gridRow: `${2 + this.inputSize} / span 1`,
               }}
             >
               {cellProps.children}
@@ -124,7 +128,7 @@ export class Grid {
             border: "1px solid",
             backgroundColor: row?.readOnly ? "gray" : "white",
             gridColumn: `${column} / span 1`,
-            gridRow: `3 / span 1`,
+            gridRow: `${2 + this.inputSize} / span 1`,
           }}
         >
           {row.children}
@@ -189,7 +193,7 @@ export class Grid {
     if (inputs.length > 0) {
       myGrid = [{ readOnly: true, emptyCell: true }, ...inputs];
     }
-    this.inputSize = inputs.reduce((acc, input) => {
+    this.inputLength = inputs.reduce((acc, input) => {
       acc += input.colSpan;
       return acc;
     }, 0);

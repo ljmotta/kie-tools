@@ -2,31 +2,98 @@ import * as React from "react";
 import { AutoTable } from "../core";
 import { DmnGrid } from "./DmnGrid";
 import { DmnValidator } from "./DmnValidator";
-import { useEffect, useMemo, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import JSONSchemaBridge from "uniforms-bridge-json-schema";
-import { Grid } from "../core/Grid";
+import { Button } from "@patternfly/react-core/dist/js/components/Button";
+import { NotificationSeverity } from "@kie-tooling-core/notifications/dist/api";
+import { Bridge } from "uniforms";
+
+export enum EvaluationStatus {
+  SUCCEEDED = "SUCCEEDED",
+  SKIPPED = "SKIPPED",
+  FAILED = "FAILED",
+}
+
+export interface DecisionResultMessage {
+  severity: NotificationSeverity;
+  message: string;
+  messageType: string;
+  sourceId: string;
+  level: string;
+}
+
+export type Result = boolean | number | null | object | object[] | string;
+
+export interface DecisionResult {
+  decisionId: string;
+  decisionName: string;
+  result: Result;
+  messages: DecisionResultMessage[];
+  evaluationStatus: EvaluationStatus;
+}
+
+export interface DmnResult {
+  details?: string;
+  stack?: string;
+  decisionResults?: DecisionResult[];
+  messages: DecisionResultMessage[];
+}
+
+export interface Something {
+  grid: DmnGrid;
+  model?: any[];
+  setModel: (model: any[]) => void;
+}
 
 interface DmnTableProps {
-  schema: any;
+  inputs?: Map<number, Something>;
+  results?: Array<DecisionResult[] | undefined>;
 }
 
 export function DmnTable(props: DmnTableProps) {
-  const validator = useMemo(() => new DmnValidator(), []);
-  const [bridge, setBridge] = useState<JSONSchemaBridge>();
-  const [grid, setGrid] = useState<Grid>();
-  const [inputSize, setInputSzie] = useState<number>(1);
+  const onSubmit = useCallback((model: any, setModel: any, index) => {
+    setModel((previous: any) => {
+      const newModel = previous ? [...previous] : [];
+      newModel[index] = model;
+      return newModel;
+    });
+  }, []);
 
-  useEffect(() => {
-    setBridge(validator.getBridge(props.schema ?? {}));
-    setGrid(new DmnGrid(validator.getBridge(props.schema ?? {})));
-  }, [props.schema, validator]);
+  const inputsTable = useMemo(() => {
+    const inputs: ReactNode[] = [];
+    props.inputs?.forEach((value, key) => {
+      if (key === 0) {
+        inputs.push(<AutoTable grid={value.grid} schema={value.grid.getBridge()} header={true} />);
+      } else {
+        inputs.push(
+          <AutoTable
+            grid={value.grid}
+            schema={value.grid.getBridge()}
+            header={false}
+            model={value.model?.[key] ?? {}}
+            autosave={true}
+            autosaveDelay={500}
+            onSubmit={(model: any) => onSubmit(model, value.setModel, key)}
+          />
+        );
+      }
+    });
+    return inputs;
+  }, [props.inputs]);
 
-  if (bridge && grid) {
+  const outputTable = useCallback(() => {
+    console.log(props.results);
+    return <></>;
+  }, []);
+
+  if (true) {
     return (
-      <div style={{ width: "100%", display: "grid", gridTemplateColumns: "auto auto" }}>
-        <AutoTable grid={grid} header={true} schema={bridge} />
-        <AutoTable grid={grid} schema={bridge} />
-      </div>
+      <>
+        <div style={{ width: "100%", display: "grid", gridTemplateColumns: "auto auto" }}>
+          {inputsTable}
+          {outputTable()}
+        </div>
+      </>
     );
   }
 
