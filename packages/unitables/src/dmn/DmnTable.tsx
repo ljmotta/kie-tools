@@ -6,33 +6,29 @@ import { useEffect, useMemo, useState } from "react";
 import JSONSchemaBridge from "uniforms-bridge-json-schema";
 import { Grid } from "../core/Grid";
 
-interface DmnAutoTableProps {
+interface DmnTableProps {
   schema: any;
 }
 
-export function DmnAutoTable(props: DmnAutoTableProps) {
+export function DmnTable(props: DmnTableProps) {
   const validator = useMemo(() => new DmnValidator(), []);
   const [bridge, setBridge] = useState<JSONSchemaBridge>();
+  const [grid, setGrid] = useState<Grid>();
+  const [inputSize, setInputSzie] = useState<number>(1);
 
   useEffect(() => {
     setBridge(validator.getBridge(props.schema ?? {}));
+    setGrid(new DmnGrid(validator.getBridge(props.schema ?? {})));
   }, [props.schema, validator]);
 
-  return (
-    <div style={{ width: "100%" }}>
-      {bridge && (
-        <AutoTable
-          grid={new DmnGrid()}
-          schema={bridge}
-          autosave={true}
-          autosaveDelay={1000}
-          error={false}
-          label={false}
-          model={{}}
-          noValidate={false}
-          onSubmit={undefined}
-        />
-      )}
-    </div>
-  );
+  if (bridge && grid) {
+    return (
+      <div style={{ width: "100%", display: "grid", gridTemplateColumns: "auto auto" }}>
+        <AutoTable grid={grid} header={true} schema={bridge} />
+        <AutoTable grid={grid} schema={bridge} />
+      </div>
+    );
+  }
+
+  return <></>;
 }

@@ -4,6 +4,7 @@ import { Grid } from "./Grid";
 
 interface Props<Model> extends BaseFormProps<Model> {
   grid: Grid;
+  header: boolean;
 }
 
 export class BaseTable<Model> extends BaseForm<Model, Props<Model>, BaseFormState<Model>> {
@@ -14,7 +15,11 @@ export class BaseTable<Model> extends BaseForm<Model, Props<Model>, BaseFormStat
   render() {
     return (
       <context.Provider value={{ ...this.getContext() }}>
-        <form {...this.props.grid.myComponent(this.getContext().schema)} />
+        {this.props.header ? (
+          <form style={{ display: "contents" }} {...this.props.grid.getInputsHeader()} />
+        ) : (
+          <form style={{ display: "contents" }} {...this.props.grid.getInputsFields()} />
+        )}
       </context.Provider>
     );
   }

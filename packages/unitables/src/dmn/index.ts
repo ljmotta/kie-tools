@@ -1,1 +1,1 @@
-export * from "./DmnAutoTable";
+export * from "./DmnTable";

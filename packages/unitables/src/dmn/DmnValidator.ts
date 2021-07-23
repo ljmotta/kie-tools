@@ -19,6 +19,14 @@ export class DmnValidator {
   }
 
   public getBridge(formSchema: any) {
-    return new JSONSchemaBridge(formSchema, this.createValidator(formSchema));
+    return new DmnTableJsonSchemaBridge(formSchema, this.createValidator(formSchema));
+  }
+}
+
+class DmnTableJsonSchemaBridge extends JSONSchemaBridge {
+  public getProps(name: string, props: Record<string, any> = {}) {
+    const ready = super.getProps(name, props);
+    ready.label = "";
+    return ready;
   }
 }

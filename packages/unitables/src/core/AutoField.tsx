@@ -1,9 +1,3 @@
-// create useTable without invanraint
-
-// create createAutoTable... using createAutoField as base
-
-// create AutoFieldTable... using AutoField
-
 import {
   BoolField,
   DateField,
@@ -14,7 +8,38 @@ import {
   SelectField,
   TextField,
 } from "uniforms-patternfly";
-import { createAutoField } from "uniforms/es6";
+import { ComponentType, createContext, createElement, ReactElement, useContext } from "react";
+import { useField, connectField, Context } from "uniforms";
+import omit from "lodash/omit";
+
+type Component = ComponentType<any> | ReturnType<typeof connectField>;
+
+export type AutoFieldProps = {
+  component?: Component;
+  name: string;
+  [prop: string]: unknown;
+};
+
+type ComponentDetector = (props: ReturnType<typeof useField>[0], uniforms: Context<unknown>) => Component;
+
+function createAutoField(defaultComponentDetector: ComponentDetector) {
+  const context = createContext<ComponentDetector>(defaultComponentDetector);
+
+  function AutoField(rawProps: AutoFieldProps): ReactElement {
+    const [props, uniforms] = useField(rawProps.name, rawProps);
+    const componentDetector = useContext(context);
+    const component = props.component ?? componentDetector(props, uniforms);
+
+    return "options" in component && component.options?.kind === "leaf"
+      ? createElement(component.Component, { ...props, title: "" })
+      : createElement(component, { ...rawProps, title: "" });
+  }
+
+  return Object.assign(AutoField, {
+    componentDetectorContext: context,
+    defaultComponentDetector,
+  });
+}
 
 export const AutoField = createAutoField((props) => {
   if (props.allowedValues) {
