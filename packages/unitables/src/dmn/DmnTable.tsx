@@ -51,6 +51,8 @@ interface DmnTableProps {
 }
 
 export function DmnTable(props: DmnTableProps) {
+  const [inputLength, setInputLength] = useState<number>(0);
+
   const onSubmit = useCallback((model: any, setModel: any, index) => {
     setModel((previous: any) => {
       const newModel = previous ? [...previous] : [];
@@ -63,6 +65,7 @@ export function DmnTable(props: DmnTableProps) {
     const inputs: ReactNode[] = [];
     props.inputs?.forEach((value, key) => {
       if (key === 0) {
+        setInputLength(value.grid.getInputLength());
         inputs.push(<AutoTable grid={value.grid} schema={value.grid.getBridge()} header={true} />);
       } else {
         inputs.push(
@@ -81,17 +84,43 @@ export function DmnTable(props: DmnTableProps) {
     return inputs;
   }, [props.inputs]);
 
-  const outputTable = useCallback(() => {
-    console.log(props.results);
-    return <></>;
-  }, []);
+  const outputTable = useMemo(() => {
+    return props.results?.map((result: DecisionResult[] | undefined, index) => {
+      return result?.map((e) => {
+        return (
+          <>
+            <div
+              style={{
+                border: "1px solid",
+                backgroundColor: "gray",
+                gridColumn: `${inputLength + 1} / span 1`,
+                gridRow: `1 / span 2`,
+              }}
+            >
+              {e.decisionName}
+            </div>
+            <div
+              style={{
+                border: "1px solid",
+                backgroundColor: "gray",
+                gridColumn: `${inputLength + 1} / span 1`,
+                gridRow: `${2 + index} / span 1`,
+              }}
+            >
+              {e.result}
+            </div>
+          </>
+        );
+      });
+    });
+  }, [props.results]);
 
   if (true) {
     return (
       <>
         <div style={{ width: "100%", display: "grid", gridTemplateColumns: "auto auto" }}>
           {inputsTable}
-          {outputTable()}
+          {outputTable}
         </div>
       </>
     );

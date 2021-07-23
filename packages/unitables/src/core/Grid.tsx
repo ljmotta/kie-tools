@@ -9,7 +9,7 @@ export class Grid {
   private inputsHeader: any[] = [];
   private inputsFields: any[] = [];
 
-  constructor(private readonly bridge: Bridge, private readonly inputSize = 1) {
+  constructor(private readonly bridge: Bridge, private readonly input = 1) {
     this.buildTable();
   }
 
@@ -17,20 +17,16 @@ export class Grid {
     return this.bridge;
   }
 
-  public setHeader(header: []): void {
-    this.inputsHeader = header;
+  public getInputLength() {
+    return this.inputLength;
   }
 
   public generateHeader() {
     return [{ readOnly: true, colSpan: this.getColumns(), value: "DMN Runner" }];
   }
 
-  public generateFooter() {
-    return [{}];
-  }
-
   public getColumns() {
-    return this.inputSize + this.outputSize + 1;
+    return this.input + this.outputSize + 1;
   }
 
   public removeInputName(fullName: string) {
@@ -55,10 +51,10 @@ export class Grid {
               border: "1px solid",
               backgroundColor: row?.readOnly ? "gray" : "white",
               gridColumn: `${column} / span 1`,
-              gridRow: `${2 + this.inputSize} / span 1`,
+              gridRow: `${2 + this.input} / span 1`,
             }}
           >
-            <span>Input {this.inputSize}</span>
+            <span>Input {this.input}</span>
           </div>
         );
         this.inputsHeader.push(
@@ -97,7 +93,7 @@ export class Grid {
               style={{
                 border: "1px solid",
                 gridColumn: `${jndex + column} / span ${cellProps.colSpan ?? 1}`,
-                gridRow: `${2 + this.inputSize} / span 1`,
+                gridRow: `${2 + this.input} / span 1`,
               }}
             >
               {cellProps.children}
@@ -128,7 +124,7 @@ export class Grid {
             border: "1px solid",
             backgroundColor: row?.readOnly ? "gray" : "white",
             gridColumn: `${column} / span 1`,
-            gridRow: `${2 + this.inputSize} / span 1`,
+            gridRow: `${2 + this.input} / span 1`,
           }}
         >
           {row.children}
@@ -196,7 +192,7 @@ export class Grid {
     this.inputLength = inputs.reduce((acc, input) => {
       acc += input.colSpan;
       return acc;
-    }, 0);
+    }, 1);
     return myGrid;
   }
 

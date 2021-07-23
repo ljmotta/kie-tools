@@ -21,48 +21,41 @@ export function DmnRunnerTable(props: Props) {
   const [bridge, setBridge] = useState<JSONSchemaBridge>();
   const [inputSize, setInputSize] = useState<number>(1);
   const [dmnRunnerInputs, setDmnRunnerInputs] = useState<Map<number, Something>>(new Map());
-  const [formDatas, setFormData] = useState<any[]>();
 
   const updateDmnRunnerResults = useCallback(
-    (formDatas: any[]) => {
+    async (tableData: any[]) => {
       if (!props.editor?.isReady || dmnRunner.status !== DmnRunnerStatus.RUNNING) {
         return;
       }
 
-      setDmnRunnerResults(() => {
-        const results: Array<DecisionResult[] | undefined> = [];
-        formDatas.forEach((formData, index) => {
-          // header
-          if (index === 0) {
-            return;
+      const results = await Promise.all(
+        tableData.map(async (formData, index) => {
+          try {
+            // header
+            if (index === 0) {
+              return undefined;
+            }
+            const content = await props.editor.getContent();
+            const result = await dmnRunner.service.result({ context: formData, model: content });
+            if (Object.hasOwnProperty.call(result, "details") && Object.hasOwnProperty.call(result, "stack")) {
+              dmnRunner.setFormError(true);
+              return;
+            }
+            return result.decisionResults;
+          } catch (err) {
+            return undefined;
           }
-          props.editor
-            .getContent()
-            .then((content: any) => {
-              dmnRunner.service.result({ context: formData, model: content })?.then((result) => {
-                if (Object.hasOwnProperty.call(result, "details") && Object.hasOwnProperty.call(result, "stack")) {
-                  dmnRunner.setFormError(true);
-                  return;
-                }
+        })
+      );
 
-                results[index] = result?.decisionResults;
-              });
-            })
-            .catch(() => {
-              results[index] = undefined;
-            });
-        });
-        return results;
-      });
+      setDmnRunnerResults(results);
     },
     [props.editor, dmnRunner.status, dmnRunner.service]
   );
 
   useEffect(() => {
-    if (formDatas) {
-      updateDmnRunnerResults(formDatas);
-    }
-  }, [formDatas, updateDmnRunnerResults]);
+    updateDmnRunnerResults(dmnRunner.tableData);
+  }, [dmnRunner.tableData, updateDmnRunnerResults, bridge]);
 
   useEffect(() => {
     setBridge(validator.getBridge(dmnRunner.formSchema ?? {}));
@@ -74,12 +67,12 @@ export function DmnRunnerTable(props: Props) {
       if (bridge) {
         // header
         const grid = new DmnGrid(bridge);
-        newInputs.set(0, { grid, model: formDatas, setModel: setFormData });
+        newInputs.set(0, { grid, model: dmnRunner.tableData, setModel: dmnRunner.setTableData });
 
         // inputs
         for (let i = 1; i <= inputSize; i++) {
           const grid = new DmnGrid(bridge, i);
-          newInputs.set(i, { grid, model: formDatas, setModel: setFormData });
+          newInputs.set(i, { grid, model: dmnRunner.tableData, setModel: dmnRunner.setTableData });
         }
       }
       return newInputs;
@@ -87,9 +80,9 @@ export function DmnRunnerTable(props: Props) {
   }, [inputSize, bridge]);
 
   useEffect(() => {
-    console.log("formDatas", formDatas);
+    console.log("formDatas", dmnRunner.tableData);
     console.log("results", dmnRunnerResults);
-  }, [formDatas, dmnRunnerResults]);
+  }, [dmnRunner.tableData, dmnRunnerResults]);
 
   return (
     <>

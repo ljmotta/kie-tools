@@ -29,8 +29,8 @@ export interface DmnRunnerContextType {
   setModalOpen: React.Dispatch<boolean>;
   formData: any;
   setFormData: React.Dispatch<any>;
-  tableData: any;
-  setTableData: React.Dispatch<any>;
+  tableData: any[];
+  setTableData: React.Dispatch<any[]>;
   port: string;
   saveNewPort: (value: string) => void;
   service: DmnRunnerService;
