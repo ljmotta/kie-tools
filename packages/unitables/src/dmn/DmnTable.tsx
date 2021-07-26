@@ -3,6 +3,8 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { AutoTable } from "../core";
 import { DmnGrid } from "./DmnGrid";
 import { NotificationSeverity } from "@kie-tooling-core/notifications/dist/api";
+import JSONSchemaBridge from "uniforms-bridge-json-schema";
+import { DmnValidator } from "./DmnValidator";
 
 export enum EvaluationStatus {
   SUCCEEDED = "SUCCEEDED",
@@ -42,12 +44,17 @@ export interface Something {
 }
 
 interface DmnTableProps {
-  inputs?: Map<number, Something>;
+  schema: any;
+  tableData: any[];
+  setTableData: any;
+  inputSize?: number;
   results?: Array<DecisionResult[] | undefined>;
 }
 
 export function DmnTable(props: DmnTableProps) {
   const [inputLength, setInputLength] = useState<number>(0);
+  const [bridge, setBridge] = useState<JSONSchemaBridge>();
+  const [tableInputs, setTableInputs] = useState<any>();
 
   const onSubmit = useCallback((model: any, setModel: (model: (previous: any[]) => any[]) => void, index) => {
     setModel((previous: any[]) => {
@@ -57,47 +64,50 @@ export function DmnTable(props: DmnTableProps) {
     });
   }, []);
 
-  const inputsTable = useMemo(() => {
-    const inputs: ReactNode[] = [];
-    props.inputs?.forEach((value, key) => {
-      // value.setModel((previous: any[]) => {
-      //   const newData = [...previous];
-      //   if (newData.length < value.grid.getInputLength()) {
-      //     newData.push({});
-      //   }
-      //   return newData;
-      // })
+  useEffect(() => {
+    const validator = new DmnValidator();
+    setBridge(validator.getBridge(props.schema ?? {}));
+  }, [props.schema]);
 
-      if (key === 0) {
-        setInputLength(value.grid.getInputLength());
-        inputs.push(<AutoTable grid={value.grid} schema={value.grid.getBridge()} header={true} />);
-      } else {
-        inputs.push(
+  useEffect(() => {
+    const newInputs: ReactNode[] = [];
+
+    if (bridge) {
+      // header
+      const grid = new DmnGrid(bridge);
+      setInputLength(grid.getInputLength());
+      newInputs.push(<AutoTable grid={grid} schema={bridge} header={true} />);
+
+      // inputs
+      for (let i = 1; i <= (props.inputSize ?? 1); i++) {
+        const grid = new DmnGrid(bridge, i);
+        newInputs.push(
           <AutoTable
-            grid={value.grid}
-            schema={value.grid.getBridge()}
+            grid={grid}
+            schema={bridge}
             header={false}
-            model={value.model ?? {}}
+            model={props.tableData[i] ?? {}}
             autosave={true}
             autosaveDelay={500}
-            onSubmit={(model: any) => onSubmit(model, value.setModel, key)}
+            onSubmit={(model: any) => onSubmit(model, props.setTableData, i)}
+            placeholder={true}
           />
         );
       }
-    });
-    return inputs;
-  }, [props.inputs]);
+    }
+    setTableInputs(newInputs);
+  }, [props.tableData, bridge]);
 
-  const outputTable = useMemo(() => {
+  const tableOutputs = useMemo(() => {
     return props.results?.map((result: DecisionResult[] | undefined, index) => {
-      return result?.map((e) => {
+      return result?.map((e, jndex) => {
         return (
           <>
             <div
               style={{
                 border: "1px solid",
                 backgroundColor: "gray",
-                gridColumn: `${inputLength + 1} / span 1`,
+                gridColumn: `${inputLength + 1 + jndex} / span 1`,
                 gridRow: `1 / span 2`,
               }}
             >
@@ -107,7 +117,7 @@ export function DmnTable(props: DmnTableProps) {
               style={{
                 border: "1px solid",
                 backgroundColor: "gray",
-                gridColumn: `${inputLength + 1} / span 1`,
+                gridColumn: `${inputLength + 1 + jndex} / span 1`,
                 gridRow: `${2 + index} / span 1`,
               }}
             >
@@ -119,16 +129,12 @@ export function DmnTable(props: DmnTableProps) {
     });
   }, [props.results]);
 
-  if (true) {
-    return (
-      <>
-        <div style={{ width: "100%", display: "grid", gridTemplateColumns: "auto auto" }}>
-          {inputsTable}
-          {outputTable}
-        </div>
-      </>
-    );
-  }
-
-  return <></>;
+  return (
+    <>
+      <div style={{ width: "100%", display: "grid", gridTemplateColumns: "auto auto" }}>
+        {tableInputs}
+        {tableOutputs}
+      </div>
+    </>
+  );
 }

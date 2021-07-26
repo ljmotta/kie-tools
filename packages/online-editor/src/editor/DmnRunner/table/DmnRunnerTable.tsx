@@ -1,26 +1,30 @@
 import { useDmnRunner } from "../DmnRunnerContext";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { diff } from "deep-object-diff";
 import { DmnRunnerStatus } from "../DmnRunnerStatus";
-import { AutoTable, DmnGrid, DmnValidator } from "@kogito-tooling/unitables";
-import JSONSchemaBridge from "uniforms-bridge-json-schema";
 import { DecisionResult } from "../DmnRunnerService";
 import { DmnTable } from "@kogito-tooling/unitables";
 import { Button } from "@patternfly/react-core/dist/js/components/Button";
-import { Something } from "@kogito-tooling/unitables";
 
 interface Props {
   editor: any;
 }
 
+function usePrevious(value: any) {
+  const ref = useRef();
+
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+
+  return ref.current;
+}
+
 export function DmnRunnerTable(props: Props) {
   const dmnRunner = useDmnRunner();
   const [dmnRunnerResults, setDmnRunnerResults] = useState<Array<DecisionResult[] | undefined>>();
-  const validator = useMemo(() => new DmnValidator(), []);
-  const [bridge, setBridge] = useState<JSONSchemaBridge>();
   const [inputSize, setInputSize] = useState<number>(1);
-  const [dmnRunnerInputs, setDmnRunnerInputs] = useState<Map<number, Something>>(new Map());
 
   const updateDmnRunnerResults = useCallback(
     async (tableData: any[]) => {
@@ -55,29 +59,7 @@ export function DmnRunnerTable(props: Props) {
 
   useEffect(() => {
     updateDmnRunnerResults(dmnRunner.tableData);
-  }, [dmnRunner.tableData, updateDmnRunnerResults, bridge]);
-
-  useEffect(() => {
-    setBridge(validator.getBridge(dmnRunner.formSchema ?? {}));
-  }, [dmnRunner.formSchema, validator]);
-
-  useEffect(() => {
-    setDmnRunnerInputs(() => {
-      const newInputs = new Map<number, Something>();
-      if (bridge) {
-        // header
-        const grid = new DmnGrid(bridge);
-        newInputs.set(0, { grid, model: dmnRunner.tableData, setModel: dmnRunner.setTableData });
-
-        // inputs
-        for (let i = 1; i <= inputSize; i++) {
-          const grid = new DmnGrid(bridge, i);
-          newInputs.set(i, { grid, model: dmnRunner.tableData[i], setModel: dmnRunner.setTableData });
-        }
-      }
-      return newInputs;
-    });
-  }, [inputSize, bridge]);
+  }, [dmnRunner.tableData, updateDmnRunnerResults]);
 
   useEffect(() => {
     dmnRunner.setTableData((previous) => {
@@ -91,9 +73,43 @@ export function DmnRunnerTable(props: Props) {
     });
   }, [inputSize]);
 
+  const previousFormSchema: any = usePrevious(dmnRunner.formSchema);
+  useEffect(() => {
+    dmnRunner.setTableData((previousTableData) => {
+      const newTableData = [...previousTableData];
+      const propertiesDifference = diff(
+        previousFormSchema?.definitions?.InputSet?.properties ?? {},
+        dmnRunner.formSchema?.definitions?.InputSet?.properties ?? {}
+      );
+      return newTableData.map((tableData) => {
+        return Object.entries(propertiesDifference).reduce(
+          (form, [property, value]) => {
+            if (Object.keys(form).length === 0) {
+              return form;
+            }
+            if (!value || value.type || value.$ref) {
+              delete (form as any)[property];
+            }
+            if (value?.["x-dmn-type"]) {
+              (form as any)[property] = undefined;
+            }
+            return form;
+          },
+          { ...tableData }
+        );
+      });
+    });
+  }, [dmnRunner.formSchema, inputSize]);
+
   return (
     <>
-      <DmnTable inputs={dmnRunnerInputs} results={dmnRunnerResults} />
+      <DmnTable
+        schema={dmnRunner.formSchema}
+        tableData={dmnRunner.tableData}
+        setTableData={dmnRunner.setTableData}
+        inputSize={inputSize}
+        results={dmnRunnerResults}
+      />
       <Button onClick={() => setInputSize(inputSize + 1)}>Add input</Button>
     </>
   );
