@@ -33,8 +33,8 @@ digraph G {
   "@kie-tooling-core/workspace" [ style = "rounded", color = "purple", fontcolor = "purple" ];
   "@kogito-tooling/online-editor" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "@kogito-tooling/pmml-editor" [ style = "rounded", color = "blue", fontcolor = "blue" ];
-  "@kie-tooling-core/run-script-if" [ style = "rounded", color = "purple", fontcolor = "purple" ];
   "@kogito-tooling/unitables" [ style = "rounded", color = "blue", fontcolor = "blue" ];
+  "@kie-tooling-core/run-script-if" [ style = "rounded", color = "purple", fontcolor = "purple" ];
   "@kie-tooling-core/vscode-extension" [ style = "rounded", color = "purple", fontcolor = "purple" ];
   "vscode-extension-backend" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "vscode-extension-pack-kogito-kie-editors" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
@@ -79,6 +79,7 @@ digraph G {
   "@kogito-tooling/online-editor" -> "@kogito-tooling/form" [ style = "solid" ];
   "@kogito-tooling/online-editor" -> "@kogito-tooling/kie-bc-editors" [ style = "solid" ];
   "@kogito-tooling/online-editor" -> "@kogito-tooling/pmml-editor" [ style = "solid" ];
+  "@kogito-tooling/online-editor" -> "@kogito-tooling/unitables" [ style = "solid" ];
   "@kie-tooling-core/operating-system" -> "@kogito-tooling/build-env" [ style = "dashed" ];
   "@kie-tooling-core/patternfly-base" -> "@kogito-tooling/build-env" [ style = "dashed" ];
   "@kogito-tooling/pmml-editor" -> "@kie-tooling-core/editor" [ style = "solid" ];
@@ -89,6 +90,7 @@ digraph G {
   "@kogito-tooling/uniforms-bootstrap4-codegen" -> "@kogito-tooling/build-env" [ style = "dashed" ];
   "@kogito-tooling/uniforms-patternfly-codegen" -> "@kogito-tooling/build-env" [ style = "dashed" ];
   "@kogito-tooling/unitables" -> "@kogito-tooling/boxed-expression-component" [ style = "solid" ];
+  "@kogito-tooling/unitables" -> "@kie-tooling-core/notifications" [ style = "solid" ];
   "@kie-tooling-core/vscode-extension" -> "@kie-tooling-core/editor" [ style = "solid" ];
   "vscode-extension-backend" -> "@kie-tooling-core/vscode-extension" [ style = "solid" ];
   "vscode-extension-backend" -> "@kogito-tooling/backend-extended-services" [ style = "solid" ];

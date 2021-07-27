@@ -1620,11 +1620,6 @@
   resolved "https://registry.yarnpkg.com/@kogito-tooling/bpmn-editor-unpacked/-/bpmn-editor-unpacked-8.2.0.tgz#b97f2c84ff3ff91a8d0d54d02e5af1908f2e3aed"
   integrity sha512-JkGTU+CUnXKxEJk8uFGOEmVFM5+zN0fobVsdcDn/mq1QbomXePUtMaUiYx8ABuc4tWwbTRRbC8ErqA8Tjk0otw==
 
-"@kogito-tooling/channel-common-api@0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@kogito-tooling/channel-common-api/-/channel-common-api-0.10.0.tgz#5d14484047549a0459994417d8b7a84fd8e09003"
-  integrity sha512-HFJmkpqmNKtOtmF84/S3omk6wycvweuB/7/u6P5am6zH6rKPOmqf3/kUHYfcElIdYsI0CJdio/79fFu8mSdKRQ==
-
 "@kogito-tooling/dmn-editor-unpacked@^8.2.0":
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/@kogito-tooling/dmn-editor-unpacked/-/dmn-editor-unpacked-8.2.0.tgz#7ea4601b902cf315ac3b2d8d367937ba7b275be6"
@@ -1642,26 +1637,10 @@
   resolved "https://registry.yarnpkg.com/@kogito-tooling/i18n/-/i18n-0.10.0.tgz#3dfa4445c09b5ea01143e0640cbdca74f205d178"
   integrity sha512-A5oIDR6ndfe1FskPqUgVAEtJhdHQGMo52CLNzUx4Q3OMrtQ0kqug7X8IN5RDZzgDmSYBllOuWHy9kMpCWHEaeA==
 
-"@kogito-tooling/notifications@0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@kogito-tooling/notifications/-/notifications-0.10.0.tgz#2c81f19093da93262d3ef7b2b5e5664936f7d627"
-  integrity sha512-GpKSTSIWzp0araokItbyblzCrfpc/CkXd5tpTfmQ0J2cZe1nlEkdJbgOiSUr8PMrw8tzi2lOAD+WEIAuX4cBBg==
-  dependencies:
-    "@kogito-tooling/i18n" "0.10.0"
-    "@kogito-tooling/i18n-common-dictionary" "0.10.0"
-    "@kogito-tooling/workspace" "0.10.0"
-
 "@kogito-tooling/scesim-editor-unpacked@^8.2.0":
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/@kogito-tooling/scesim-editor-unpacked/-/scesim-editor-unpacked-8.2.0.tgz#51f4f209be43b3bf03e3a121013a0ebcc9d4b554"
   integrity sha512-Q86su1jrEQ3y7TslHWEKqG5kGD5dQQJkdJx/6XMHZ9rN+tl4nJFMeWQ9qCLvFwh0J+LPbCQE8frByY9QWWebtg==
-
-"@kogito-tooling/workspace@0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@kogito-tooling/workspace/-/workspace-0.10.0.tgz#0ff3b6c50fcd4e51b367dd542319527ee5253a8c"
-  integrity sha512-m7jT9SMRXT1+Wzv9cFZfqtethI5IuSpumFGYtf3LjJ/5mwZC5jl2YemKt7uvTwvJVQYvyW3+NrJCnsOoCT2mPg==
-  dependencies:
-    "@kogito-tooling/channel-common-api" "0.10.0"
 
 "@lerna/add@4.0.0":
   version "4.0.0"
