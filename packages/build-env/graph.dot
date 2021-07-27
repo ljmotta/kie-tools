@@ -7,13 +7,14 @@ digraph G {
   "@kie-tooling-core/notifications" [ style = "rounded", color = "purple", fontcolor = "purple" ];
   "@kogito-tooling/backend-extended-services" [ style = "rounded", color = "blue", fontcolor = "blue" ];
   "@kogito-tooling/build-env" [ style = "rounded", color = "blue", fontcolor = "blue" ];
+  "@kogito-tooling/boxed-expression-component" [ style = "rounded", color = "blue", fontcolor = "blue" ];
+  "@kogito-tooling/i18n-common-dictionary" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "@kie-tooling-core/chrome-extension" [ style = "rounded", color = "purple", fontcolor = "purple" ];
   "@kie-tooling-core/editor" [ style = "rounded", color = "purple", fontcolor = "purple" ];
   "chrome-extension-pack-kogito-kie-editors" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "@kogito-tooling/external-assets-base" [ style = "rounded", color = "blue", fontcolor = "blue" ];
   "@kogito-tooling/kie-bc-editors" [ style = "rounded", color = "blue", fontcolor = "blue" ];
   "@kogito-tooling/desktop" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
-  "@kogito-tooling/i18n-common-dictionary" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "@kie-tooling-core/envelope" [ style = "rounded", color = "purple", fontcolor = "purple" ];
   "@kie-tooling-core/guided-tour" [ style = "rounded", color = "purple", fontcolor = "purple" ];
   "@kie-tooling-core/keyboard-shortcuts" [ style = "rounded", color = "purple", fontcolor = "purple" ];
@@ -39,6 +40,7 @@ digraph G {
   "vscode-extension-pack-kogito-kie-editors" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "@kie-tooling-core/backend" -> "@kie-tooling-core/notifications" [ style = "solid" ];
   "@kogito-tooling/backend-extended-services" -> "@kogito-tooling/build-env" [ style = "dashed" ];
+  "@kogito-tooling/boxed-expression-component" -> "@kogito-tooling/i18n-common-dictionary" [ style = "solid" ];
   "@kogito-tooling/build-env" -> "kiegroup/kogito-tooling";
   "@kie-tooling-core/chrome-extension" -> "@kie-tooling-core/editor" [ style = "solid" ];
   "chrome-extension-pack-kogito-kie-editors" -> "@kie-tooling-core/chrome-extension" [ style = "solid" ];
@@ -86,7 +88,7 @@ digraph G {
   "@kie-tooling-core/run-script-if" -> "@kogito-tooling/build-env" [ style = "dashed" ];
   "@kogito-tooling/uniforms-bootstrap4-codegen" -> "@kogito-tooling/build-env" [ style = "dashed" ];
   "@kogito-tooling/uniforms-patternfly-codegen" -> "@kogito-tooling/build-env" [ style = "dashed" ];
-  "@kogito-tooling/unitables" -> "kiegroup/kogito-tooling";
+  "@kogito-tooling/unitables" -> "@kogito-tooling/boxed-expression-component" [ style = "solid" ];
   "@kie-tooling-core/vscode-extension" -> "@kie-tooling-core/editor" [ style = "solid" ];
   "vscode-extension-backend" -> "@kie-tooling-core/vscode-extension" [ style = "solid" ];
   "vscode-extension-backend" -> "@kogito-tooling/backend-extended-services" [ style = "solid" ];

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { diff } from "deep-object-diff";
 import { DmnRunnerStatus } from "../DmnRunnerStatus";
 import { DecisionResult } from "../DmnRunnerService";
-import { DmnTable } from "@kogito-tooling/unitables";
+import { DmnTable, BoxedExpressionDmnTable } from "@kogito-tooling/unitables";
 import { Button } from "@patternfly/react-core/dist/js/components/Button";
 
 interface Props {
@@ -103,14 +103,15 @@ export function DmnRunnerTable(props: Props) {
 
   return (
     <>
-      <DmnTable
-        schema={dmnRunner.formSchema}
-        tableData={dmnRunner.tableData}
-        setTableData={dmnRunner.setTableData}
-        inputSize={inputSize}
-        results={dmnRunnerResults}
-      />
-      <Button onClick={() => setInputSize(inputSize + 1)}>Add input</Button>
+      <BoxedExpressionDmnTable />
+      {/*<DmnTable*/}
+      {/*  schema={dmnRunner.formSchema}*/}
+      {/*  tableData={dmnRunner.tableData}*/}
+      {/*  setTableData={dmnRunner.setTableData}*/}
+      {/*  inputSize={inputSize}*/}
+      {/*  results={dmnRunnerResults}*/}
+      {/*/>*/}
+      {/*<Button onClick={() => setInputSize(inputSize + 1)}>Add input</Button>*/}
     </>
   );
 }

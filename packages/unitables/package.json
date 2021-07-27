@@ -17,9 +17,9 @@
     "url": "https://github.com/kiegroup/kogito-tooling.git"
   },
   "dependencies": {
+    "@kogito-tooling/boxed-expression-component": "0.10.0",
     "@kogito-tooling/i18n": "0.10.0",
     "@kogito-tooling/notifications": "0.10.0",
-    "@patternfly/react-table": "^4.29.0",
     "ajv": "^6.12.6",
     "ajv-errors": "^1.0.1",
     "uniforms": "^3.5.1",
