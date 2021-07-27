@@ -97,7 +97,7 @@ export class Cell {
   }
 
   private getHeaderType() {
-    const cssClasses = (this.getParent()?.classList || []) as DOMTokenList;
+    const cssClasses = (this.getParent()?.classList || []) as unknown as DOMTokenList;
 
     if (cssClasses.contains("input")) {
       return "input";

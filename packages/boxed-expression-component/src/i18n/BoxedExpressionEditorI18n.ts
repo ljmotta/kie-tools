@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { ReferenceDictionary } from "@kogito-tooling/i18n/dist/core";
+import { ReferenceDictionary } from "@kie-tooling-core/i18n/dist/core";
 import { CommonI18n } from "@kogito-tooling/i18n-common-dictionary";
 
-interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpressionEditorDictionary | unknown> {
+interface BoxedExpressionEditorDictionary extends ReferenceDictionary {
   addParameter: string;
   builtInAggregator: string;
   choose: string;

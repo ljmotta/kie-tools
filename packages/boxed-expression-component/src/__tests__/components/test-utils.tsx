@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { I18nDictionariesProvider, I18nDictionariesProviderProps } from "@kogito-tooling/i18n/dist/react-components";
+import { I18nDictionariesProvider, I18nDictionariesProviderProps } from "@kie-tooling-core/i18n/dist/react-components";
 import {
   boxedExpressionEditorDictionaries,
   BoxedExpressionEditorI18n,

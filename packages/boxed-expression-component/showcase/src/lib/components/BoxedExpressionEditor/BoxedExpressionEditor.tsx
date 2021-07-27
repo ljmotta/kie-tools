@@ -19,7 +19,7 @@ import { useMemo, useRef, useState } from "react";
 import "@patternfly/react-core/dist/styles/base-no-reset.css";
 import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import "./BoxedExpressionEditor.css";
-import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
+import { I18nDictionariesProvider } from "@kie-tooling-core/i18n/dist/react-components";
 import { ExpressionContainer, ExpressionContainerProps } from "../ExpressionContainer";
 import { hashfy, ResizerSupervisor } from "../Resizer";
 import {
