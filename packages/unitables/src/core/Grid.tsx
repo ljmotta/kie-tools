@@ -2,6 +2,7 @@ import { Bridge, joinName } from "uniforms";
 import * as React from "react";
 import { AutoField } from "./AutoField";
 import { Cell } from "./Cell";
+import { Clause, DataType } from "@kogito-tooling/boxed-expression-component";
 
 export class Grid {
   private inputLength: number = 0;
@@ -206,5 +207,72 @@ export class Grid {
     return {
       children: <>{this.inputsFields}</>,
     };
+  }
+
+  public determineDataType(type: string): DataType {
+    const extractedType = type.split("FEEL:").pop();
+    switch (extractedType) {
+      case "Any":
+        return DataType.Any;
+      case "boolean":
+        return DataType.Boolean;
+      case "context":
+        return DataType.Context;
+      case "date":
+        return DataType.Date;
+      case "date and time":
+        return DataType.DateTime;
+      case "days and time duration":
+        return DataType.DateTimeDuration;
+      case "number":
+        return DataType.Number;
+      case "string":
+        return DataType.String;
+      case "time":
+        return DataType.Time;
+      case "years and months duration":
+        return DataType.YearsMonthsDuration;
+      default:
+        return DataType.Undefined;
+    }
+  }
+
+  public deepGenerateBoxed(fieldName: any, parentName = ""): Clause[] {
+    const joinedName = joinName(parentName, fieldName);
+    const field = this.bridge.getField(joinedName);
+
+    if (field.type === "object") {
+      let inputSize = 0;
+      const insideProperties = this.bridge.getSubfields(joinedName).reduce((acc: any[], subField: string) => {
+        const field = this.deepGenerateBoxed(subField, joinedName);
+        return [...acc, ...field];
+      }, []);
+
+      return [
+        {
+          dataType: this.determineDataType(field["x-dmn-type"]),
+          name: joinedName,
+        },
+      ];
+    }
+    return [
+      {
+        dataType: this.determineDataType(field["x-dmn-type"]),
+        name: this.removeInputName(joinedName),
+      },
+    ];
+  }
+
+  public generateBoxedInputs(): Clause[] {
+    let myGrid: Clause[] = [];
+    const subfields = this.bridge.getSubfields();
+    const inputs = subfields.reduce(
+      (acc: Clause[], fieldName: string) => [...acc, ...this.deepGenerateBoxed(fieldName)],
+      [] as Clause[]
+    );
+    if (inputs.length > 0) {
+      myGrid = inputs;
+    }
+    return myGrid;
   }
 }

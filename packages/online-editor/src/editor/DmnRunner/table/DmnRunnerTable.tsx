@@ -103,14 +103,13 @@ export function DmnRunnerTable(props: Props) {
 
   return (
     <>
-      <BoxedExpressionDmnTable />
-      {/*<DmnTable*/}
-      {/*  schema={dmnRunner.formSchema}*/}
-      {/*  tableData={dmnRunner.tableData}*/}
-      {/*  setTableData={dmnRunner.setTableData}*/}
-      {/*  inputSize={inputSize}*/}
-      {/*  results={dmnRunnerResults}*/}
-      {/*/>*/}
+      <DmnTable
+        schema={dmnRunner.formSchema}
+        tableData={dmnRunner.tableData}
+        setTableData={dmnRunner.setTableData}
+        inputSize={inputSize}
+        results={dmnRunnerResults}
+      />
       {/*<Button onClick={() => setInputSize(inputSize + 1)}>Add input</Button>*/}
     </>
   );

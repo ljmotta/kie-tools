@@ -18,6 +18,7 @@ import "./LogicTypeSelector.css";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
+  Clause,
   ContextProps,
   DataType,
   DecisionTableProps,
@@ -76,14 +77,21 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
 
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
-  const expression = _.extend(selectedExpression, {
-    uid: selectedExpression.uid || nextId(),
-    isHeadless,
-    onUpdatingNameAndDataType,
-    onUpdatingRecursiveExpression,
-  });
+  const expression = useMemo(
+    () =>
+      _.extend(selectedExpression, {
+        uid: selectedExpression.uid || nextId(),
+        isHeadless,
+        onUpdatingNameAndDataType,
+        onUpdatingRecursiveExpression,
+      }),
+    [selectedExpression, isHeadless, onUpdatingNameAndDataType, onUpdatingRecursiveExpression]
+  );
 
-  const isLogicTypeSelected = (logicType?: LogicType) => !_.isEmpty(logicType) && logicType !== LogicType.Undefined;
+  const isLogicTypeSelected = useCallback(
+    (logicType?: LogicType) => !_.isEmpty(logicType) && logicType !== LogicType.Undefined,
+    []
+  );
 
   const [logicTypeSelected, setLogicTypeSelected] = useState(isLogicTypeSelected(expression.logicType));
 
@@ -121,39 +129,19 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       default:
         return expression.logicType;
     }
-    // logicType is enough for deciding when to re-execute this function
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expression.logicType]);
+  }, [expression]);
 
-  const getSelectableLogicTypes = useCallback(
-    () =>
-      Object.values(LogicType).filter(
-        (logicType) => !_.includes([LogicType.Undefined, LogicType.PMMLLiteralExpression], logicType)
-      ),
-    []
+  const getAppendToPlacement = useMemo(
+    () => globalContext.boxedExpressionEditorRef?.current ?? getPlacementRef,
+    [getPlacementRef]
   );
-
-  const renderLogicTypeItems = useCallback(
-    () =>
-      _.map(getSelectableLogicTypes(), (key) => (
-        <MenuItem key={key} itemId={key}>
-          {key}
-        </MenuItem>
-      )),
-    [getSelectableLogicTypes]
-  );
-
-  const getArrowPlacement = useCallback(() => getPlacementRef() as HTMLElement, [getPlacementRef]);
-
-  const getAppendToPlacement = useCallback(() => {
-    return globalContext.boxedExpressionEditorRef?.current ?? getArrowPlacement;
-  }, [getArrowPlacement, globalContext.boxedExpressionEditorRef]);
 
   const onLogicTypeSelect = useCallback(
-    (event?: React.MouseEvent, itemId?: string | number) => {
+    (event?: React.MouseEvent, itemId?: LogicType) => {
       setLogicTypeSelected(true);
-      const selectedLogicType = itemId as LogicType;
-      onLogicTypeUpdating(selectedLogicType);
+      if (itemId) {
+        onLogicTypeUpdating(itemId);
+      }
     },
     [onLogicTypeUpdating]
   );
@@ -162,25 +150,33 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     () => (
       <PopoverMenu
         title={i18n.selectLogicType}
-        arrowPlacement={getArrowPlacement}
-        appendTo={getAppendToPlacement()}
+        arrowPlacement={getPlacementRef}
+        appendTo={getAppendToPlacement}
         className="logic-type-popover"
         hasAutoWidth
         body={
           <Menu onSelect={onLogicTypeSelect}>
-            <MenuList>{renderLogicTypeItems()}</MenuList>
+            <MenuList>
+              {Object.values(LogicType)
+                .filter((logicType) => ![LogicType.Undefined, LogicType.PMMLLiteralExpression].includes(logicType))
+                .map((key) => (
+                  <MenuItem key={key} itemId={key}>
+                    {key}
+                  </MenuItem>
+                ))}
+            </MenuList>
           </Menu>
         }
       />
     ),
-    [i18n.selectLogicType, getArrowPlacement, getAppendToPlacement, onLogicTypeSelect, renderLogicTypeItems]
+    [i18n.selectLogicType, getAppendToPlacement, onLogicTypeSelect]
   );
 
   const executeClearAction = useCallback(() => {
     setLogicTypeSelected(false);
     setContextMenuVisibility(false);
     onLogicTypeResetting();
-  }, [onLogicTypeResetting, setContextMenuVisibility]);
+  }, [onLogicTypeResetting]);
 
   const buildContextMenu = useCallback(
     () => (

@@ -15,9 +15,9 @@
  */
 
 import * as React from "react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./ExpressionContainer.css";
-import { ExpressionProps, LogicType } from "../../api";
+import { Clause, ExpressionProps, LogicType } from "../../api";
 import { LogicTypeSelector } from "../LogicTypeSelector";
 
 export interface ExpressionContainerProps {
@@ -31,6 +31,10 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
   const expressionContainerRef = useRef<HTMLDivElement>(null);
 
   const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression);
+
+  useEffect(() => {
+    setSelectedExpression(props.selectedExpression);
+  }, [props.selectedExpression]);
 
   const updateExpressionNameAndDataType = useCallback((updatedName, updatedDataType) => {
     setSelectedExpression((previousSelectedExpression: ExpressionProps) => ({
@@ -50,6 +54,7 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
   const onLogicTypeResetting = useCallback(() => {
     setSelectedExpression((previousSelectedExpression: ExpressionProps) => {
       const updatedExpression = {
+        ...previousSelectedExpression,
         uid: previousSelectedExpression.uid,
         name: previousSelectedExpression.name,
         dataType: previousSelectedExpression.dataType,

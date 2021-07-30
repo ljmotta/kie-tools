@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as _ from "lodash";
+import groupBy from "lodash/groupBy";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { ColumnInstance, DataRecord } from "react-table";
@@ -37,6 +37,7 @@ import { hashfy } from "../Resizer";
 import { getColumnsAtLastLevel, Table } from "../Table";
 import "./DecisionTableExpression.css";
 import { HitPolicySelector } from "./HitPolicySelector";
+import { diff } from "deep-object-diff";
 
 enum DecisionTableColumnType {
   InputClause = "input",
@@ -57,10 +58,10 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
   onUpdatingNameAndDataType,
   hitPolicy = HitPolicy.Unique,
   aggregation = BuiltinAggregation["<None>"],
-  input = [{ name: "input-1", dataType: DataType.Undefined }],
-  output = [{ name: DECISION_NODE_DEFAULT_NAME, dataType: DataType.Undefined }],
-  annotations = [{ name: "annotation-1" }],
-  rules = [{ inputEntries: [DASH_SYMBOL], outputEntries: [EMPTY_SYMBOL], annotationEntries: [EMPTY_SYMBOL] }],
+  input,
+  output,
+  annotations,
+  rules,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
@@ -128,145 +129,146 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
     []
   );
 
-  const evaluateColumns = () => {
-    const inputColumns = _.map(
-      input,
-      (inputClause) =>
-        ({
-          label: inputClause.name,
-          accessor: inputClause.name,
-          dataType: inputClause.dataType,
-          width: inputClause.width,
-          groupType: DecisionTableColumnType.InputClause,
-          cssClasses: "decision-table--input",
-        } as ColumnInstance)
-    );
-    const outputColumns = _.map(
-      output,
-      (outputClause) =>
-        ({
-          label: outputClause.name,
-          accessor: outputClause.name,
-          dataType: outputClause.dataType,
-          width: outputClause.width,
-          groupType: DecisionTableColumnType.OutputClause,
-          cssClasses: "decision-table--output",
-        } as ColumnInstance)
-    );
-    const annotationColumns = _.map(
-      annotations,
-      (annotation) =>
-        ({
-          label: annotation.name,
-          accessor: annotation.name,
-          width: annotation.width,
-          inlineEditable: true,
-          groupType: DecisionTableColumnType.Annotation,
-          cssClasses: "decision-table--annotation",
-        } as ColumnInstance)
-    );
-
-    const inputSection = {
-      groupType: DecisionTableColumnType.InputClause,
-      label: "Input",
-      accessor: "Input",
-      cssClasses: "decision-table--input",
-      columns: inputColumns,
-    };
-    const outputSection = {
-      groupType: DecisionTableColumnType.OutputClause,
-      label: decisionName.current,
-      accessor: decisionName.current,
-      dataType: decisionDataType.current,
-      cssClasses: "decision-table--output",
-      columns: outputColumns,
-      appendColumnsOnChildren: true,
-    };
-    const annotationSection = {
-      groupType: DecisionTableColumnType.Annotation,
-      label: "Annotations",
-      accessor: "Annotations",
-      cssClasses: "decision-table--annotation",
-      columns: annotationColumns,
-      inlineEditable: true,
-    };
-
-    return [inputSection, outputSection, annotationSection];
-  };
-
-  const evaluateRows = () =>
-    _.map(rules, (rule) => {
-      const rowArray = [...rule.inputEntries, ...rule.outputEntries, ...rule.annotationEntries];
-      return _.reduce(
-        getColumnsAtLastLevel(columns.current),
-        (tableRow: DataRecord, column, columnIndex: number) => {
-          tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
-          return tableRow;
-        },
-        {}
-      );
-    });
-
   const decisionName = useRef(name);
   const decisionDataType = useRef(dataType);
   const singleOutputChildDataType = useRef(DataType.Undefined);
-  const columns = useRef<ColumnInstance[]>(evaluateColumns() as ColumnInstance[]);
-  const rows = useRef<DataRecord[]>(evaluateRows());
+  const [columns, setColumns] = useState<ColumnInstance[]>([]);
+  const [rows, setRows] = useState<DataRecord[]>([]);
 
-  const spreadDecisionTableExpressionDefinition = useCallback(() => {
-    const groupedColumns = _.groupBy(getColumnsAtLastLevel(columns.current), (column) => column.groupType);
-    const input: Clause[] = _.map(groupedColumns[DecisionTableColumnType.InputClause], (inputClause) => ({
-      name: inputClause.accessor,
-      dataType: inputClause.dataType,
-      width: inputClause.width,
-    }));
-    const output: Clause[] = _.map(groupedColumns[DecisionTableColumnType.OutputClause], (outputClause) => ({
-      name: outputClause.accessor,
-      dataType: outputClause.dataType,
-      width: outputClause.width,
-    }));
-    const annotations: Annotation[] = _.map(groupedColumns[DecisionTableColumnType.Annotation], (annotation) => ({
-      name: annotation.accessor,
-      width: annotation.width,
-    }));
-    const rules: DecisionTableRule[] = _.map(rows.current, (row: DataRecord) => ({
-      inputEntries: _.map(input, (inputClause) => row[inputClause.name] as string),
-      outputEntries: _.map(output, (outputClause) => row[outputClause.name] as string),
-      annotationEntries: _.map(annotations, (annotation) => row[annotation.name] as string),
-    }));
+  // update columns
+  const updateColumns = useCallback(
+    (updatedInput: Clause[], updatedOutput: Clause[], updatedAnnotation: Annotation[]): ColumnInstance[] => {
+      const inputColumns = (updatedInput ?? []).map(
+        (inputClause) =>
+          ({
+            label: inputClause.name,
+            accessor: inputClause.name,
+            dataType: inputClause.dataType,
+            width: inputClause.width,
+            groupType: DecisionTableColumnType.InputClause,
+            cssClasses: "decision-table--input",
+          } as ColumnInstance)
+      );
+      const outputColumns = (updatedOutput ?? []).map(
+        (outputClause) =>
+          ({
+            label: outputClause.name,
+            accessor: outputClause.name,
+            dataType: outputClause.dataType,
+            width: outputClause.width,
+            groupType: DecisionTableColumnType.OutputClause,
+            cssClasses: "decision-table--output",
+          } as ColumnInstance)
+      );
+      const annotationColumns = (updatedAnnotation ?? []).map(
+        (annotation) =>
+          ({
+            label: annotation.name,
+            accessor: annotation.name,
+            width: annotation.width,
+            inlineEditable: true,
+            groupType: DecisionTableColumnType.Annotation,
+            cssClasses: "decision-table--annotation",
+          } as ColumnInstance)
+      );
 
-    const expressionDefinition: DecisionTableProps = {
-      uid,
-      logicType: LogicType.DecisionTable,
-      name: decisionName.current,
-      dataType: decisionDataType.current,
-      hitPolicy: selectedHitPolicy,
-      aggregation: selectedAggregation,
-      input,
-      output,
-      annotations,
-      rules,
-    };
+      const inputSection = {
+        groupType: DecisionTableColumnType.InputClause,
+        label: "Input",
+        accessor: "Input",
+        cssClasses: "decision-table--input",
+        columns: inputColumns,
+      };
+      const outputSection = {
+        groupType: DecisionTableColumnType.OutputClause,
+        label: decisionName.current,
+        accessor: decisionName.current,
+        dataType: decisionDataType.current,
+        cssClasses: "decision-table--output",
+        columns: outputColumns,
+        appendColumnsOnChildren: true,
+      };
+      const annotationSection = {
+        groupType: DecisionTableColumnType.Annotation,
+        label: "Annotations",
+        accessor: "Annotations",
+        cssClasses: "decision-table--annotation",
+        columns: annotationColumns,
+        inlineEditable: true,
+      };
 
-    if (isHeadless) {
-      onUpdatingRecursiveExpression?.(expressionDefinition);
-    } else {
-      setSupervisorHash(hashfy(expressionDefinition));
-      window.beeApi?.broadcastDecisionTableExpressionDefinition?.(expressionDefinition);
-    }
-  }, [isHeadless, onUpdatingRecursiveExpression, selectedAggregation, selectedHitPolicy, setSupervisorHash, uid]);
+      return [inputSection, outputSection, annotationSection] as ColumnInstance[];
+    },
+    []
+  );
+
+  // update rows
+  const updateRows = useCallback((rules: DecisionTableRule[], columns: ColumnInstance[]): DataRecord[] => {
+    return rules.map((rule) => {
+      const rowArray = [...rule.inputEntries, ...rule.outputEntries, ...rule.annotationEntries];
+      return getColumnsAtLastLevel(columns).reduce((tableRow: DataRecord, column, columnIndex: number) => {
+        tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
+        return tableRow;
+      }, {});
+    });
+  }, []);
+
+  const spreadDecisionTableExpressionDefinition = useCallback(
+    (columns: ColumnInstance[], rows: DataRecord[]) => {
+      const groupedColumns = groupBy(getColumnsAtLastLevel(columns), (column) => column.groupType);
+      const newInput: Clause[] = (groupedColumns[DecisionTableColumnType.InputClause] ?? []).map((inputClause) => ({
+        name: inputClause.accessor,
+        dataType: inputClause.dataType,
+        width: inputClause.width,
+      }));
+      const newOutput: Clause[] = (groupedColumns[DecisionTableColumnType.OutputClause] ?? []).map((outputClause) => ({
+        name: outputClause.accessor,
+        dataType: outputClause.dataType,
+        width: outputClause.width,
+      }));
+      const newAnnotations: Annotation[] = (groupedColumns[DecisionTableColumnType.Annotation] ?? []).map(
+        (annotation) => ({
+          name: annotation.accessor,
+          width: annotation.width,
+        })
+      );
+      const newRules: DecisionTableRule[] = rows.map((row: DataRecord) => ({
+        inputEntries: newInput.map((inputClause) => row[inputClause.name] as string),
+        outputEntries: newOutput.map((outputClause) => row[outputClause.name] as string),
+        annotationEntries: newAnnotations.map((annotation) => row[annotation.name] as string),
+      }));
+
+      const expressionDefinition: DecisionTableProps = {
+        uid,
+        logicType: LogicType.DecisionTable,
+        name: decisionName.current,
+        dataType: decisionDataType.current,
+        hitPolicy: selectedHitPolicy,
+        aggregation: selectedAggregation,
+        rules: newRules,
+      };
+
+      if (isHeadless) {
+        onUpdatingRecursiveExpression?.(expressionDefinition);
+      } else {
+        setSupervisorHash(hashfy(expressionDefinition));
+        window.beeApi?.broadcastDecisionTableExpressionDefinition?.(expressionDefinition);
+      }
+    },
+    [isHeadless, onUpdatingRecursiveExpression, selectedAggregation, selectedHitPolicy, setSupervisorHash, uid]
+  );
 
   const synchronizeDecisionNodeDataTypeWithSingleOutputColumnDataType = useCallback(
     (decisionNodeColumn: ColumnInstance) => {
-      if (_.size(decisionNodeColumn.columns) === 1) {
-        const updatedSingleOutputChildDataType = (_.first(decisionNodeColumn.columns) as ColumnInstance).dataType;
+      if (decisionNodeColumn.columns?.length === 1) {
+        const updatedSingleOutputChildDataType = decisionNodeColumn.columns[0].dataType;
 
         if (updatedSingleOutputChildDataType !== singleOutputChildDataType.current) {
           singleOutputChildDataType.current = updatedSingleOutputChildDataType;
           decisionNodeColumn.dataType = updatedSingleOutputChildDataType;
         } else if (decisionNodeColumn.dataType !== decisionDataType.current) {
           singleOutputChildDataType.current = decisionNodeColumn.dataType;
-          (_.first(decisionNodeColumn.columns) as ColumnInstance).dataType = decisionNodeColumn.dataType;
+          decisionNodeColumn.columns[0].dataType = decisionNodeColumn.dataType;
         }
       }
     },
@@ -275,67 +277,81 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
 
   const onColumnsUpdate = useCallback(
     (updatedColumns) => {
-      const decisionNodeColumn = _.find(updatedColumns, { groupType: DecisionTableColumnType.OutputClause });
+      const decisionNodeColumn = updatedColumns.find({ groupType: DecisionTableColumnType.OutputClause });
 
       synchronizeDecisionNodeDataTypeWithSingleOutputColumnDataType(decisionNodeColumn);
 
-      columns.current = [...updatedColumns];
+      setColumns([...updatedColumns]);
       decisionName.current = decisionNodeColumn.label;
       decisionDataType.current = decisionNodeColumn.dataType;
       onUpdatingNameAndDataType?.(decisionNodeColumn.label, decisionNodeColumn.dataType);
-      spreadDecisionTableExpressionDefinition();
+      spreadDecisionTableExpressionDefinition([...updatedColumns], rows);
     },
     [
       onUpdatingNameAndDataType,
       spreadDecisionTableExpressionDefinition,
       synchronizeDecisionNodeDataTypeWithSingleOutputColumnDataType,
+      rows,
     ]
-  );
-
-  const fillMissingCellValues = useCallback(
-    (updatedRows: DataRecord[]) =>
-      _.map(updatedRows, (row) =>
-        _.reduce(
-          getColumnsAtLastLevel(columns.current),
-          (filledRow: DataRecord, column: ColumnInstance) => {
-            if (_.isNil(row[column.accessor])) {
-              filledRow[column.accessor] =
-                column.groupType === DecisionTableColumnType.InputClause ? DASH_SYMBOL : EMPTY_SYMBOL;
-            } else {
-              filledRow[column.accessor] = row[column.accessor];
-            }
-            return filledRow;
-          },
-          {}
-        )
-      ),
-    []
   );
 
   const onRowsUpdate = useCallback(
     (updatedRows) => {
-      rows.current = fillMissingCellValues(updatedRows);
-      spreadDecisionTableExpressionDefinition();
+      const newRows = updatedRows.map((row: any) =>
+        getColumnsAtLastLevel(columns).reduce((filledRow: DataRecord, column: ColumnInstance) => {
+          if (row[column.accessor] === null || row[column.accessor] === undefined) {
+            filledRow[column.accessor] =
+              column.groupType === DecisionTableColumnType.InputClause ? DASH_SYMBOL : EMPTY_SYMBOL;
+          } else {
+            filledRow[column.accessor] = row[column.accessor];
+          }
+          return filledRow;
+        }, {})
+      );
+      setRows(newRows);
+      spreadDecisionTableExpressionDefinition(columns, newRows);
     },
-    [fillMissingCellValues, spreadDecisionTableExpressionDefinition]
+    [spreadDecisionTableExpressionDefinition, columns]
   );
 
   const onRowAdding = useCallback(() => {
-    return _.reduce(
-      getColumnsAtLastLevel(columns.current),
-      (tableRow: DataRecord, column: ColumnInstance) => {
-        tableRow[column.accessor] =
-          column.groupType === DecisionTableColumnType.InputClause ? DASH_SYMBOL : EMPTY_SYMBOL;
-        return tableRow;
-      },
-      {} as DataRecord
-    );
-  }, []);
+    return getColumnsAtLastLevel(columns).reduce((tableRow: DataRecord, column: ColumnInstance) => {
+      tableRow[column.accessor] = column.groupType === DecisionTableColumnType.InputClause ? DASH_SYMBOL : EMPTY_SYMBOL;
+      return tableRow;
+    }, {} as DataRecord);
+  }, [columns]);
 
+  const previousInput = usePrevious(input);
+  const previousOutput = usePrevious(output);
+  const previousAnnotation = usePrevious(annotations);
+  const previousRules = usePrevious(rules);
   useEffect(() => {
     /** Function executed only the first time the component is loaded */
-    spreadDecisionTableExpressionDefinition();
-  }, [spreadDecisionTableExpressionDefinition]);
+    const inputDiff = diff(previousInput ?? [], input ?? []);
+    if (Object.keys(inputDiff).length === 0) {
+      return;
+    }
+    // const outputDiff = diff(previousOutput ?? [], output ?? []);
+    // if (Object.keys(outputDiff).length === 0) {
+    //   return;
+    // }
+    // const annotationDiff = diff(previousAnnotation ?? [], annotations ?? []);
+    // if (Object.keys(annotationDiff).length === 0) {
+    //   return;
+    // }
+    // const rulesDiff = diff(previousRules ?? [], rules ?? []);
+    // if (Object.keys(rulesDiff).length === 0) {
+    //   return;
+    // }
+    const updatedColumns = updateColumns(input ?? [], output ?? [], annotations ?? []);
+    const updatedRows = updateRows(
+      rules ?? [{ inputEntries: [DASH_SYMBOL], outputEntries: [EMPTY_SYMBOL], annotationEntries: [EMPTY_SYMBOL] }],
+      updatedColumns
+    );
+    spreadDecisionTableExpressionDefinition(updatedColumns, updatedRows);
+    setColumns(updatedColumns);
+    setRows(updatedRows);
+  }, [spreadDecisionTableExpressionDefinition, rules, input, output, annotations]);
 
   return (
     <div className={`decision-table-expression ${uid}`}>
@@ -345,8 +361,8 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
         getColumnPrefix={getColumnPrefix}
         editColumnLabel={getEditColumnLabel}
         handlerConfiguration={getHandlerConfiguration}
-        columns={columns.current}
-        rows={rows.current}
+        columns={columns}
+        rows={rows}
         onColumnsUpdate={onColumnsUpdate}
         onRowsUpdate={onRowsUpdate}
         onRowAdding={onRowAdding}
@@ -365,3 +381,13 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
     </div>
   );
 };
+
+function usePrevious<T>(value: T): T | undefined {
+  const ref = React.useRef<T>();
+
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+
+  return ref.current;
+}

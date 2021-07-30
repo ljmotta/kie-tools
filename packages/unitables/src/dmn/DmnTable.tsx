@@ -5,6 +5,8 @@ import { DmnGrid } from "./DmnGrid";
 import { NotificationSeverity } from "@kie-tooling-core/notifications/dist/api";
 import JSONSchemaBridge from "uniforms-bridge-json-schema";
 import { DmnValidator } from "./DmnValidator";
+import { BoxedExpressionDmnTable } from "./BoxedExpression";
+import { Clause } from "@kogito-tooling/boxed-expression-component";
 
 export enum EvaluationStatus {
   SUCCEEDED = "SUCCEEDED",
@@ -129,11 +131,20 @@ export function DmnTable(props: DmnTableProps) {
     });
   }, [props.results]);
 
+  const [inputs, setInput] = useState<Clause[]>([]);
+  useEffect(() => {
+    if (bridge) {
+      const grid = new DmnGrid(bridge);
+      setInput(grid.generateBoxedInputs());
+    }
+  }, [bridge]);
+
   return (
     <>
       <div style={{ width: "100%", display: "grid", gridTemplateColumns: "auto auto" }}>
-        {tableInputs}
-        {tableOutputs}
+        <BoxedExpressionDmnTable inputs={inputs} />
+
+        {/*{tableOutputs}*/}
       </div>
     </>
   );
