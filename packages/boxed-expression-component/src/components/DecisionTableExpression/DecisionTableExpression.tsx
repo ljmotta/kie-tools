@@ -15,6 +15,7 @@
  */
 
 import groupBy from "lodash/groupBy";
+import find from "lodash/find";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { ColumnInstance, DataRecord } from "react-table";
@@ -38,6 +39,9 @@ import { getColumnsAtLastLevel, Table } from "../Table";
 import "./DecisionTableExpression.css";
 import { HitPolicySelector } from "./HitPolicySelector";
 import { diff } from "deep-object-diff";
+import { AutoTable, DmnValidator } from "../../../../unitables/src";
+import { DmnGrid } from "@kogito-tooling/unitables";
+import { DmnTableJsonSchemaBridge } from "@kogito-tooling/unitables/dist/dmn/DmnTableJsonSchemaBridge";
 
 enum DecisionTableColumnType {
   InputClause = "input",
@@ -147,7 +151,8 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
             width: inputClause.width,
             groupType: DecisionTableColumnType.InputClause,
             cssClasses: "decision-table--input",
-          } as ColumnInstance)
+            component: inputClause.children,
+          } as any)
       );
       const outputColumns = (updatedOutput ?? []).map(
         (outputClause) =>
@@ -206,8 +211,9 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
   const updateRows = useCallback((rules: DecisionTableRule[], columns: ColumnInstance[]): DataRecord[] => {
     return rules.map((rule) => {
       const rowArray = [...rule.inputEntries, ...rule.outputEntries, ...rule.annotationEntries];
-      return getColumnsAtLastLevel(columns).reduce((tableRow: DataRecord, column, columnIndex: number) => {
+      return getColumnsAtLastLevel(columns).reduce((tableRow: any, column, columnIndex: number) => {
         tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
+        tableRow.controller = rule.controller;
         return tableRow;
       }, {});
     });
@@ -277,7 +283,7 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
 
   const onColumnsUpdate = useCallback(
     (updatedColumns) => {
-      const decisionNodeColumn = updatedColumns.find({ groupType: DecisionTableColumnType.OutputClause });
+      const decisionNodeColumn = find(updatedColumns, { groupType: DecisionTableColumnType.OutputClause });
 
       synchronizeDecisionNodeDataTypeWithSingleOutputColumnDataType(decisionNodeColumn);
 
@@ -344,10 +350,7 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
     //   return;
     // }
     const updatedColumns = updateColumns(input ?? [], output ?? [], annotations ?? []);
-    const updatedRows = updateRows(
-      rules ?? [{ inputEntries: [DASH_SYMBOL], outputEntries: [EMPTY_SYMBOL], annotationEntries: [EMPTY_SYMBOL] }],
-      updatedColumns
-    );
+    const updatedRows = updateRows(rules!, updatedColumns);
     spreadDecisionTableExpressionDefinition(updatedColumns, updatedRows);
     setColumns(updatedColumns);
     setRows(updatedRows);

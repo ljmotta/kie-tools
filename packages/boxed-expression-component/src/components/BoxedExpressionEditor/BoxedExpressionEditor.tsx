@@ -43,7 +43,7 @@ const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element 
 ) => {
   const [currentlyOpenedHandlerCallback, setCurrentlyOpenedHandlerCallback] = useState(() => _.identity);
   const boxedExpressionEditorRef = useRef<HTMLDivElement>(null);
-  const [supervisorHash, setSupervisorHash] = useState(hashfy(props.expressionDefinition));
+  const [supervisorHash, setSupervisorHash] = useState(hashfy({}));
 
   return useMemo(
     () => (

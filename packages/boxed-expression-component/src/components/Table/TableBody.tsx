@@ -15,11 +15,12 @@
  */
 
 import * as React from "react";
-import { useCallback, useMemo } from "react";
+import { cloneElement, createElement, useCallback, useMemo } from "react";
 import { Tbody, Td, Tr } from "@patternfly/react-table";
 import { TableHeaderVisibility, Column as IColumn } from "../../api";
 import { Cell, Column, Row, TableInstance } from "react-table";
 import { DEFAULT_MIN_WIDTH, Resizer } from "../Resizer";
+import { BaseTable } from "@kogito-tooling/unitables";
 
 export interface TableBodyProps {
   /** Table instance */
@@ -70,7 +71,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
           <>{rowIndex + 1}</>
         ) : (
           <Resizer width={getWidth()} onHorizontalResizeStop={onResize}>
-            <>{cell.render("Cell")}</>
+            <>{(cell.column as any).component ?? cell.render("Cell")}</>
           </Resizer>
         );
 
@@ -91,15 +92,33 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
   const renderBodyRow = useCallback(
     (row: Row, rowIndex: number) => {
       const rowProps = { ...row.getRowProps(), style: {} };
+      const controller: React.ReactElement = (row.original as any).controller;
       return (
-        <Tr
-          className="table-row"
-          {...rowProps}
-          key={`${getRowKey(row)}-${rowIndex}`}
-          ouiaId={"expression-row-" + rowIndex}
-        >
-          {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex))}
-        </Tr>
+        <>
+          {controller ? (
+            cloneElement(
+              controller,
+              { ...controller.props },
+              <Tr
+                className="table-row"
+                {...rowProps}
+                key={`${getRowKey(row)}-${rowIndex}`}
+                ouiaId={"expression-row-" + rowIndex}
+              >
+                {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex))}
+              </Tr>
+            )
+          ) : (
+            <Tr
+              className="table-row"
+              {...rowProps}
+              key={`${getRowKey(row)}-${rowIndex}`}
+              ouiaId={"expression-row-" + rowIndex}
+            >
+              {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex))}
+            </Tr>
+          )}
+        </>
       );
     },
     [getRowKey, renderCell]

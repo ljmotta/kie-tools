@@ -5,6 +5,7 @@ import {
   ContextProps,
   DataType,
   DecisionTableProps,
+  DecisionTableRule,
   ExpressionContainerProps,
   ExpressionProps,
   FunctionProps,
@@ -14,30 +15,94 @@ import {
   LogicType,
   RelationProps,
 } from "@kogito-tooling/boxed-expression-component";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { DmnTableJsonSchemaBridge } from "../../../dist/dmn/DmnTableJsonSchemaBridge";
+import { DmnValidator } from "../DmnValidator";
+import { DmnGrid } from "../../";
+import { AutoTable } from "../../core";
 
 interface Props {
-  inputs: Clause[];
+  schema: any;
 }
 
 export function BoxedExpressionDmnTable(props: Props) {
-  const [selectedExpression, setSelectedExpression] = useState<DecisionTableProps>({
-    name: "DMN Runner",
-    logicType: LogicType.DecisionTable,
-  });
-  const [updatedExpression, setUpdatedExpression] = useState(selectedExpression);
+  const [selectedExpression, setSelectedExpression] = useState<DecisionTableProps>();
+
+  const [bridge, setBridge] = useState<DmnTableJsonSchemaBridge>();
+  useEffect(() => {
+    const validator = new DmnValidator();
+    setBridge(validator.getBridge(props.schema ?? {}));
+  }, [props.schema]);
 
   useEffect(() => {
-    setSelectedExpression((previous) => {
-      return {
+    if (bridge) {
+      const grid = new DmnGrid(bridge);
+      const rules = [
+        {
+          inputEntries: ["-"],
+          outputEntries: [""],
+          annotationEntries: [""],
+          controller: (
+            <AutoTable
+              schema={bridge}
+              header={false}
+              // model={}
+              autosave={true}
+              autosaveDelay={500}
+              // onSubmit={(model: any) => onSubmit(model, props.setTableData, i)}
+              placeholder={true}
+            />
+          ),
+        },
+      ];
+
+      setSelectedExpression((previous) => ({
         ...previous,
-        input: props.inputs,
-        output: [],
-        annotation: [],
-        rules: updatedExpression.rules,
-      };
-    });
-  }, [props.inputs, updatedExpression]);
+        name: "DMN Runner",
+        logicType: LogicType.DecisionTable,
+        input: grid.generateBoxedInputs(),
+        rules: rules,
+      }));
+    }
+  }, [bridge]);
+
+  const updateExpression = useCallback(
+    (updatedExpression: DecisionTableProps) => {
+      if (bridge) {
+        setSelectedExpression((previous) => {
+          if (!previous) {
+            return;
+          }
+          // if (previous.input === selectedExpression.input) {
+          //   return previous;
+          // }
+          const rules = [...(updatedExpression.rules ?? [])].map((rule: DecisionTableRule) => {
+            const grid = new DmnGrid(bridge);
+            rule.controller = (
+              <AutoTable
+                schema={bridge}
+                // model={}
+                autosave={true}
+                autosaveDelay={500}
+                // onSubmit={(model: any) => onSubmit(model, props.setTableData, i)}
+                placeholder={true}
+              />
+            );
+            return rule;
+          });
+          const grid = new DmnGrid(bridge);
+          return {
+            ...previous,
+            input: grid.generateBoxedInputs(),
+            output: [],
+            annotation: [],
+            rules: rules,
+          };
+        });
+      }
+    },
+    [bridge]
+  );
 
   //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
   window.beeApi = {
@@ -48,15 +113,28 @@ export function BoxedExpressionDmnTable(props: Props) {
     broadcastLiteralExpressionDefinition(definition: LiteralExpressionProps): void {},
     broadcastRelationExpressionDefinition(definition: RelationProps): void {},
     resetExpressionDefinition(definition: ExpressionProps): void {},
-    broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => setUpdatedExpression(definition),
+    broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => updateExpression(definition),
   };
 
   return (
     <>
-      <BoxedExpressionEditor expressionDefinition={{ selectedExpression }} />
-      <div className="updated-json">
-        <pre>{JSON.stringify(updatedExpression, null, 2)}</pre>
-      </div>
+      {bridge && selectedExpression && (
+        <>
+          <BoxedExpressionEditor expressionDefinition={{ selectedExpression }} />
+          <div className="updated-json">
+            {/*<pre>*/}
+            {/*  {JSON.stringify(*/}
+            {/*    [...(selectedExpression.rules ?? [])].map((rule) => {*/}
+            {/*      delete rule.controller;*/}
+            {/*      return rule;*/}
+            {/*    }),*/}
+            {/*    null,*/}
+            {/*    2*/}
+            {/*  )}*/}
+            {/*</pre>*/}
+          </div>
+        </>
+      )}
     </>
   );
 }

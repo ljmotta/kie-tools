@@ -15,6 +15,7 @@
  */
 
 import { DataType } from "./DataType";
+import React from "react";
 
 export interface Clause {
   /** Clause name */
@@ -23,6 +24,8 @@ export interface Clause {
   dataType: DataType;
   /** Clause width */
   width?: number | string;
+  /** Custom component */
+  children?: React.ReactElement;
 }
 
 export interface Annotation {
@@ -39,4 +42,6 @@ export interface DecisionTableRule {
   outputEntries: string[];
   /** Values for the annotation columns */
   annotationEntries: string[];
+  /** custom rules controller */
+  controller?: React.ReactElement;
 }

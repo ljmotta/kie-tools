@@ -1,10 +1,8 @@
 import * as React from "react";
 import { BaseForm, BaseFormProps, BaseFormState, context } from "uniforms";
-import { Grid } from "./Grid";
 
 interface Props<Model> extends BaseFormProps<Model> {
-  grid: Grid;
-  header: boolean;
+  children: React.ReactElement;
 }
 
 export class BaseTable<Model> extends BaseForm<Model, Props<Model>, BaseFormState<Model>> {
@@ -15,11 +13,7 @@ export class BaseTable<Model> extends BaseForm<Model, Props<Model>, BaseFormStat
   render() {
     return (
       <context.Provider value={{ ...this.getContext() }}>
-        {this.props.header ? (
-          <form style={{ display: "contents" }} {...this.props.grid.getInputsHeader()} />
-        ) : (
-          <form style={{ display: "contents" }} {...this.props.grid.getInputsFields()} />
-        )}
+        <table style={{ display: "contents" }}>{this.props.children}</table>
       </context.Provider>
     );
   }

@@ -85,9 +85,7 @@ export function DmnTable(props: DmnTableProps) {
         const grid = new DmnGrid(bridge, i);
         newInputs.push(
           <AutoTable
-            grid={grid}
             schema={bridge}
-            header={false}
             model={props.tableData[i] ?? {}}
             autosave={true}
             autosaveDelay={500}
@@ -131,18 +129,10 @@ export function DmnTable(props: DmnTableProps) {
     });
   }, [props.results]);
 
-  const [inputs, setInput] = useState<Clause[]>([]);
-  useEffect(() => {
-    if (bridge) {
-      const grid = new DmnGrid(bridge);
-      setInput(grid.generateBoxedInputs());
-    }
-  }, [bridge]);
-
   return (
     <>
       <div style={{ width: "100%", display: "grid", gridTemplateColumns: "auto auto" }}>
-        <BoxedExpressionDmnTable inputs={inputs} />
+        <BoxedExpressionDmnTable schema={props.schema} />
 
         {/*{tableOutputs}*/}
       </div>

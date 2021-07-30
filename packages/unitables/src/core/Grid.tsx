@@ -237,6 +237,88 @@ export class Grid {
     }
   }
 
+  // private buildBoxedTable() {
+  //   this.generate().map((row: any, index: number, currentGrid: any) => {
+  //     if (row.length === 0) {
+  //       return;
+  //     }
+  //
+  //     // custom nested data type
+  //     if (row.insideProperties) {
+  //       this.inputsHeader.push(
+  //         <div
+  //           key={`auto-table-nested-cell-${index}`}
+  //           style={{
+  //             border: "1px solid",
+  //             backgroundColor: row.readOnly ? "gray" : "white",
+  //             gridColumn: `${column} / span ${row.colSpan ?? 1}`,
+  //             gridRow: `1 / span 1`,
+  //           }}
+  //         >
+  //           {<Cell {...row} />}
+  //         </div>
+  //       );
+  //       row.insideProperties.map((cellProps: any, jndex: any) => {
+  //         this.inputsFields.push(
+  //           <div
+  //             key={`auto-table-nested-input-${index}-${jndex}`}
+  //             style={{
+  //               border: "1px solid",
+  //               gridColumn: `${jndex + column} / span ${cellProps.colSpan ?? 1}`,
+  //               gridRow: `${2 + this.input} / span 1`,
+  //             }}
+  //           >
+  //             {cellProps.children}
+  //           </div>
+  //         );
+  //         this.inputsHeader.push(
+  //           <div
+  //             key={`auto-table-nested-cell-${index}-${jndex}`}
+  //             style={{
+  //               border: "1px solid",
+  //               backgroundColor: cellProps.readOnly ? "gray" : "white",
+  //               gridColumn: `${jndex + column} / span ${cellProps.colSpan ?? 1}`,
+  //               gridRow: `2 / span 1`,
+  //             }}
+  //           >
+  //             {!cellProps.emptyCell && <Cell {...cellProps} />}
+  //           </div>
+  //         );
+  //       });
+  //       return;
+  //     }
+  //
+  //     // simple data type
+  //     this.inputsFields.push(
+  //       <div
+  //         key={`auto-table-normal-input-${index}`}
+  //         style={{
+  //           border: "1px solid",
+  //           backgroundColor: row?.readOnly ? "gray" : "white",
+  //           gridColumn: `${column} / span 1`,
+  //           gridRow: `${2 + this.input} / span 1`,
+  //         }}
+  //       >
+  //         {row.children}
+  //       </div>
+  //     );
+  //
+  //     this.inputsHeader.push(
+  //       <div
+  //         key={`auto-table-normal-cell-${index}`}
+  //         style={{
+  //           border: "1px solid",
+  //           backgroundColor: row?.readOnly ? "gray" : "white",
+  //           gridColumn: `${column} / span 1`,
+  //           gridRow: `1 / span 2`,
+  //         }}
+  //       >
+  //         <Cell {...row} />
+  //       </div>
+  //     );
+  //   });
+  // }
+
   public deepGenerateBoxed(fieldName: any, parentName = ""): Clause[] {
     const joinedName = joinName(parentName, fieldName);
     const field = this.bridge.getField(joinedName);
@@ -252,6 +334,7 @@ export class Grid {
         {
           dataType: this.determineDataType(field["x-dmn-type"]),
           name: joinedName,
+          children: <AutoField key={joinedName} name={joinedName} />,
         },
       ];
     }
@@ -259,6 +342,7 @@ export class Grid {
       {
         dataType: this.determineDataType(field["x-dmn-type"]),
         name: this.removeInputName(joinedName),
+        children: <AutoField key={joinedName} name={joinedName} />,
       },
     ];
   }
