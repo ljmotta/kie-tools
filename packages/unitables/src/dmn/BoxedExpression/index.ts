@@ -1,1 +1,1 @@
-export * from "./BoxedDmnTable";
+export * from "./DmnAutoTable";

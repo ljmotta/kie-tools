@@ -4,8 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { diff } from "deep-object-diff";
 import { DmnRunnerStatus } from "../DmnRunnerStatus";
 import { DecisionResult } from "../DmnRunnerService";
-import { DmnTable, BoxedExpressionDmnTable } from "@kogito-tooling/unitables";
-import { Button } from "@patternfly/react-core/dist/js/components/Button";
+import { DmnTable } from "@kogito-tooling/unitables";
 
 interface Props {
   editor: any;

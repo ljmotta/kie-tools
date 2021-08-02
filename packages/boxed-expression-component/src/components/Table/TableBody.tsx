@@ -15,12 +15,12 @@
  */
 
 import * as React from "react";
-import { cloneElement, createElement, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Tbody, Td, Tr } from "@patternfly/react-table";
-import { TableHeaderVisibility, Column as IColumn } from "../../api";
+import { Column as IColumn, TableHeaderVisibility } from "../../api";
 import { Cell, Column, Row, TableInstance } from "react-table";
 import { DEFAULT_MIN_WIDTH, Resizer } from "../Resizer";
-import { BaseTable } from "@kogito-tooling/unitables";
+import { createPortal } from "react-dom";
 
 export interface TableBodyProps {
   /** Table instance */
@@ -71,7 +71,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
           <>{rowIndex + 1}</>
         ) : (
           <Resizer width={getWidth()} onHorizontalResizeStop={onResize}>
-            <>{(cell.column as any).component ?? cell.render("Cell")}</>
+            <>{(cell.column as any).component(`dmn-auto-form-${rowIndex}`) ?? cell.render("Cell")}</>
           </Resizer>
         );
 
@@ -89,16 +89,26 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
     [getColumnKey, onColumnsUpdate, tableInstance]
   );
 
-  const renderBodyRow = useCallback(
-    (row: Row, rowIndex: number) => {
-      const rowProps = { ...row.getRowProps(), style: {} };
-      const controller: React.ReactElement = (row.original as any).controller;
-      return (
-        <>
-          {controller ? (
-            cloneElement(
-              controller,
-              { ...controller.props },
+  const renderBodyRows = useCallback(
+    (rows: Row[]) => {
+      return rows.map((row: Row, rowIndex: number, rows: Row[]) => {
+        tableInstance.prepareRow(row);
+        const rowProps = { ...row.getRowProps(), style: {} };
+        const RowDelegate = (row.original as any).rowDelegate;
+        return (
+          <>
+            {RowDelegate ? (
+              <RowDelegate>
+                <Tr
+                  className="table-row"
+                  {...rowProps}
+                  key={`${getRowKey(row)}-${rowIndex}`}
+                  ouiaId={"expression-row-" + rowIndex}
+                >
+                  {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex))}
+                </Tr>
+              </RowDelegate>
+            ) : (
               <Tr
                 className="table-row"
                 {...rowProps}
@@ -107,19 +117,10 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
               >
                 {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex))}
               </Tr>
-            )
-          ) : (
-            <Tr
-              className="table-row"
-              {...rowProps}
-              key={`${getRowKey(row)}-${rowIndex}`}
-              ouiaId={"expression-row-" + rowIndex}
-            >
-              {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex))}
-            </Tr>
-          )}
-        </>
-      );
+            )}
+          </>
+        );
+      });
     },
     [getRowKey, renderCell]
   );
@@ -147,10 +148,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
       className={`${headerVisibility === TableHeaderVisibility.None ? "missing-header" : ""}`}
       {...(tableInstance.getTableBodyProps() as any)}
     >
-      {tableInstance.rows.map((row: Row, rowIndex: number) => {
-        tableInstance.prepareRow(row);
-        return renderBodyRow(row, rowIndex);
-      })}
+      {renderBodyRows(tableInstance.rows)}
       {children ? renderAdditiveRow : null}
     </Tbody>
   );

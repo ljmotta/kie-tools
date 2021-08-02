@@ -1,6 +1,6 @@
 import * as React from "react";
 import { AutoForm, QuickForm, ValidatedForm } from "uniforms";
-import { BaseTable } from "./BaseTable";
+import { BaseRow } from "./BaseRow";
 
 function Auto(parent: any): any {
   class _ extends AutoForm.Auto(ValidatedForm.Validated(QuickForm.Quick(parent))) {
@@ -9,4 +9,4 @@ function Auto(parent: any): any {
   return _;
 }
 
-export const AutoTable = Auto(BaseTable);
+export const AutoRow = Auto(BaseRow);

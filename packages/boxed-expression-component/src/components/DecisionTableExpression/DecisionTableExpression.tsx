@@ -39,9 +39,6 @@ import { getColumnsAtLastLevel, Table } from "../Table";
 import "./DecisionTableExpression.css";
 import { HitPolicySelector } from "./HitPolicySelector";
 import { diff } from "deep-object-diff";
-import { AutoTable, DmnValidator } from "../../../../unitables/src";
-import { DmnGrid } from "@kogito-tooling/unitables";
-import { DmnTableJsonSchemaBridge } from "@kogito-tooling/unitables/dist/dmn/DmnTableJsonSchemaBridge";
 
 enum DecisionTableColumnType {
   InputClause = "input",
@@ -213,7 +210,7 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
       const rowArray = [...rule.inputEntries, ...rule.outputEntries, ...rule.annotationEntries];
       return getColumnsAtLastLevel(columns).reduce((tableRow: any, column, columnIndex: number) => {
         tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
-        tableRow.controller = rule.controller;
+        tableRow.rowDelegate = rule.rowDelegate;
         return tableRow;
       }, {});
     });
@@ -323,6 +320,7 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
   const onRowAdding = useCallback(() => {
     return getColumnsAtLastLevel(columns).reduce((tableRow: DataRecord, column: ColumnInstance) => {
       tableRow[column.accessor] = column.groupType === DecisionTableColumnType.InputClause ? DASH_SYMBOL : EMPTY_SYMBOL;
+      // tableRow.component = (column as any).component;
       return tableRow;
     }, {} as DataRecord);
   }, [columns]);

@@ -334,7 +334,7 @@ export class Grid {
         {
           dataType: this.determineDataType(field["x-dmn-type"]),
           name: joinedName,
-          children: <AutoField key={joinedName} name={joinedName} />,
+          children: ({ formId }: any) => <AutoField key={joinedName} name={joinedName} form={formId} />,
         },
       ];
     }
@@ -342,7 +342,7 @@ export class Grid {
       {
         dataType: this.determineDataType(field["x-dmn-type"]),
         name: this.removeInputName(joinedName),
-        children: <AutoField key={joinedName} name={joinedName} />,
+        children: ({ formId }: any) => <AutoField key={joinedName} name={joinedName} form={formId} />,
       },
     ];
   }

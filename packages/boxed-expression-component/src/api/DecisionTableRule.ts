@@ -25,7 +25,7 @@ export interface Clause {
   /** Clause width */
   width?: number | string;
   /** Custom component */
-  children?: React.ReactElement;
+  children?: ({ formId }: any) => React.ReactElement;
 }
 
 export interface Annotation {
@@ -43,5 +43,5 @@ export interface DecisionTableRule {
   /** Values for the annotation columns */
   annotationEntries: string[];
   /** custom rules controller */
-  controller?: React.ReactElement;
+  rowDelegate?: ({ children }: any) => React.ReactElement;
 }

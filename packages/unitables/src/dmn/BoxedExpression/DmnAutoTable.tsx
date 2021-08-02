@@ -1,12 +1,10 @@
 import * as React from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   BoxedExpressionEditor,
-  Clause,
   ContextProps,
-  DataType,
   DecisionTableProps,
   DecisionTableRule,
-  ExpressionContainerProps,
   ExpressionProps,
   FunctionProps,
   InvocationProps,
@@ -15,17 +13,26 @@ import {
   LogicType,
   RelationProps,
 } from "@kogito-tooling/boxed-expression-component";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { DmnTableJsonSchemaBridge } from "../../../dist/dmn/DmnTableJsonSchemaBridge";
 import { DmnValidator } from "../DmnValidator";
-import { DmnGrid } from "../../";
-import { AutoTable } from "../../core";
+import { DecisionResult, DmnGrid } from "../../";
+import { AutoRow } from "../../core";
+import { createPortal } from "react-dom";
+import { context as UniformsContext } from "uniforms";
 
 interface Props {
   schema: any;
+  tableData?: any;
+  setTableData?: any;
+  results?: Array<DecisionResult[] | undefined>;
 }
 
-export function BoxedExpressionDmnTable(props: Props) {
+const FORMS_ID = "forms";
+
+// input length is controlled by the table.. so need to export data
+// [{ input1 }, { input2 }, ...]
+
+export function DmnAutoTable(props: Props) {
   const [selectedExpression, setSelectedExpression] = useState<DecisionTableProps>();
 
   const [bridge, setBridge] = useState<DmnTableJsonSchemaBridge>();
@@ -33,6 +40,14 @@ export function BoxedExpressionDmnTable(props: Props) {
     const validator = new DmnValidator();
     setBridge(validator.getBridge(props.schema ?? {}));
   }, [props.schema]);
+
+  const onSubmit = useCallback((model: any, index) => {
+    props.setTableData((previousTableData: any) => {
+      const newTableData = [...previousTableData];
+      newTableData[index] = model;
+      return newTableData;
+    });
+  }, []);
 
   useEffect(() => {
     if (bridge) {
@@ -42,17 +57,33 @@ export function BoxedExpressionDmnTable(props: Props) {
           inputEntries: ["-"],
           outputEntries: [""],
           annotationEntries: [""],
-          controller: (
-            <AutoTable
-              schema={bridge}
-              header={false}
-              // model={}
-              autosave={true}
-              autosaveDelay={500}
-              // onSubmit={(model: any) => onSubmit(model, props.setTableData, i)}
-              placeholder={true}
-            />
-          ),
+          rowDelegate: ({ children }: any) => {
+            return (
+              <>
+                <AutoRow
+                  schema={bridge}
+                  header={false}
+                  model={props.tableData[0]}
+                  autosave={true}
+                  autosaveDelay={500}
+                  onSubmit={(model: any) => onSubmit(model, 0)}
+                  placeholder={true}
+                >
+                  <UniformsContext.Consumer>
+                    {(ctx) => (
+                      <>
+                        {createPortal(
+                          <form id={"myfirstform"} onSubmit={ctx?.onSubmit} />,
+                          document.getElementById(FORMS_ID)!
+                        )}
+                        {children}
+                      </>
+                    )}
+                  </UniformsContext.Consumer>
+                </AutoRow>
+              </>
+            );
+          },
         },
       ];
 
@@ -68,25 +99,40 @@ export function BoxedExpressionDmnTable(props: Props) {
 
   const updateExpression = useCallback(
     (updatedExpression: DecisionTableProps) => {
+      // update input length;
+      // update rules
+      // update what was filled.
+      // expose get method?
       if (bridge) {
         setSelectedExpression((previous) => {
           if (!previous) {
             return;
           }
-          // if (previous.input === selectedExpression.input) {
-          //   return previous;
-          // }
-          const rules = [...(updatedExpression.rules ?? [])].map((rule: DecisionTableRule) => {
-            const grid = new DmnGrid(bridge);
-            rule.controller = (
-              <AutoTable
+          if (previous.input === selectedExpression?.input) {
+            return previous;
+          }
+          const rules = [...(updatedExpression.rules ?? [])].map((rule: DecisionTableRule, ruleIndex: number) => {
+            rule.rowDelegate = ({ children }: any) => (
+              <AutoRow
                 schema={bridge}
-                // model={}
+                model={props.tableData[ruleIndex]}
                 autosave={true}
                 autosaveDelay={500}
-                // onSubmit={(model: any) => onSubmit(model, props.setTableData, i)}
+                onSubmit={(model: any) => onSubmit(model, ruleIndex)}
                 placeholder={true}
-              />
+              >
+                <UniformsContext.Consumer>
+                  {(ctx) => (
+                    <>
+                      {createPortal(
+                        <form id={`dmn-auto-form-${ruleIndex}`} onSubmit={ctx?.onSubmit} />,
+                        document.getElementById(FORMS_ID)!
+                      )}
+                      {children}
+                    </>
+                  )}
+                </UniformsContext.Consumer>
+              </AutoRow>
             );
             return rule;
           });
@@ -101,7 +147,7 @@ export function BoxedExpressionDmnTable(props: Props) {
         });
       }
     },
-    [bridge]
+    [bridge, selectedExpression]
   );
 
   //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
@@ -121,20 +167,9 @@ export function BoxedExpressionDmnTable(props: Props) {
       {bridge && selectedExpression && (
         <>
           <BoxedExpressionEditor expressionDefinition={{ selectedExpression }} />
-          <div className="updated-json">
-            {/*<pre>*/}
-            {/*  {JSON.stringify(*/}
-            {/*    [...(selectedExpression.rules ?? [])].map((rule) => {*/}
-            {/*      delete rule.controller;*/}
-            {/*      return rule;*/}
-            {/*    }),*/}
-            {/*    null,*/}
-            {/*    2*/}
-            {/*  )}*/}
-            {/*</pre>*/}
-          </div>
         </>
       )}
+      <div id={FORMS_ID} />
     </>
   );
 }

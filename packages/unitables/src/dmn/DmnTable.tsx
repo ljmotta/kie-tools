@@ -1,11 +1,11 @@
 import * as React from "react";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { AutoTable } from "../core";
+import { AutoRow } from "../core";
 import { DmnGrid } from "./DmnGrid";
 import { NotificationSeverity } from "@kie-tooling-core/notifications/dist/api";
 import JSONSchemaBridge from "uniforms-bridge-json-schema";
 import { DmnValidator } from "./DmnValidator";
-import { BoxedExpressionDmnTable } from "./BoxedExpression";
+import { DmnAutoTable } from "./BoxedExpression";
 import { Clause } from "@kogito-tooling/boxed-expression-component";
 
 export enum EvaluationStatus {
@@ -78,13 +78,13 @@ export function DmnTable(props: DmnTableProps) {
       // header
       const grid = new DmnGrid(bridge);
       setInputLength(grid.getInputLength());
-      newInputs.push(<AutoTable grid={grid} schema={bridge} header={true} />);
+      newInputs.push(<AutoRow grid={grid} schema={bridge} header={true} />);
 
       // inputs
       for (let i = 1; i <= (props.inputSize ?? 1); i++) {
         const grid = new DmnGrid(bridge, i);
         newInputs.push(
-          <AutoTable
+          <AutoRow
             schema={bridge}
             model={props.tableData[i] ?? {}}
             autosave={true}
@@ -132,7 +132,7 @@ export function DmnTable(props: DmnTableProps) {
   return (
     <>
       <div style={{ width: "100%", display: "grid", gridTemplateColumns: "auto auto" }}>
-        <BoxedExpressionDmnTable schema={props.schema} />
+        <DmnAutoTable schema={props.schema} tableData={props.tableData} setTableData={props.setTableData} />
 
         {/*{tableOutputs}*/}
       </div>

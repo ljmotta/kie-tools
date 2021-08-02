@@ -1,2 +1,2 @@
-export * from "./AutoTable";
-export * from "./BaseTable";
+export * from "./AutoRow";
+export * from "./BaseRow";
