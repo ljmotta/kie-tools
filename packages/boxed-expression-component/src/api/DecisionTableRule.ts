@@ -25,7 +25,7 @@ export interface Clause {
   /** Clause width */
   width?: number | string;
   /** Custom component */
-  children?: ({ formId }: any) => React.ReactElement;
+  cellDelegate?: ({ formId }: any) => React.ReactElement;
 }
 
 export interface Annotation {

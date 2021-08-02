@@ -13,7 +13,7 @@ import {
   LogicType,
   RelationProps,
 } from "@kogito-tooling/boxed-expression-component";
-import { DmnTableJsonSchemaBridge } from "../../../dist/dmn/DmnTableJsonSchemaBridge";
+import { DmnTableJsonSchemaBridge } from "../DmnTableJsonSchemaBridge";
 import { DmnValidator } from "../DmnValidator";
 import { DecisionResult, DmnGrid } from "../../";
 import { AutoRow } from "../../core";
@@ -54,7 +54,7 @@ export function DmnAutoTable(props: Props) {
       const grid = new DmnGrid(bridge);
       const rules = [
         {
-          inputEntries: ["-"],
+          inputEntries: [""],
           outputEntries: [""],
           annotationEntries: [""],
           rowDelegate: ({ children }: any) => {
@@ -73,7 +73,7 @@ export function DmnAutoTable(props: Props) {
                     {(ctx) => (
                       <>
                         {createPortal(
-                          <form id={"myfirstform"} onSubmit={ctx?.onSubmit} />,
+                          <form id={`dmn-auto-form-0`} onSubmit={ctx?.onSubmit} />,
                           document.getElementById(FORMS_ID)!
                         )}
                         {children}
@@ -99,16 +99,15 @@ export function DmnAutoTable(props: Props) {
 
   const updateExpression = useCallback(
     (updatedExpression: DecisionTableProps) => {
-      // update input length;
-      // update rules
-      // update what was filled.
-      // expose get method?
       if (bridge) {
         setSelectedExpression((previous) => {
           if (!previous) {
             return;
           }
-          if (previous.input === selectedExpression?.input) {
+          if (
+            updatedExpression.rules?.length === previous.rules?.length &&
+            previous.input === selectedExpression?.input
+          ) {
             return previous;
           }
           const rules = [...(updatedExpression.rules ?? [])].map((rule: DecisionTableRule, ruleIndex: number) => {

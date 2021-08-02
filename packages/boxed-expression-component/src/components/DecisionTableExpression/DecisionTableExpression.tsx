@@ -148,7 +148,7 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
             width: inputClause.width,
             groupType: DecisionTableColumnType.InputClause,
             cssClasses: "decision-table--input",
-            component: inputClause.children,
+            cellDelegate: inputClause.cellDelegate,
           } as any)
       );
       const outputColumns = (updatedOutput ?? []).map(
@@ -223,6 +223,7 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
         name: inputClause.accessor,
         dataType: inputClause.dataType,
         width: inputClause.width,
+        cellDelegate: (inputClause as any)?.cellDelegate,
       }));
       const newOutput: Clause[] = (groupedColumns[DecisionTableColumnType.OutputClause] ?? []).map((outputClause) => ({
         name: outputClause.accessor,
@@ -236,7 +237,14 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
         })
       );
       const newRules: DecisionTableRule[] = rows.map((row: DataRecord) => ({
-        inputEntries: newInput.map((inputClause) => row[inputClause.name] as string),
+        inputEntries: newInput.map((inputClause) => {
+          const inputEntries: any = {};
+          if (row.rowDelegate) {
+            inputEntries.rowDelegate = row.rowDelegate;
+          }
+          inputEntries[inputClause.name] = row[inputClause.name] as string;
+          return inputEntries;
+        }),
         outputEntries: newOutput.map((outputClause) => row[outputClause.name] as string),
         annotationEntries: newAnnotations.map((annotation) => row[annotation.name] as string),
       }));
@@ -302,7 +310,10 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
     (updatedRows) => {
       const newRows = updatedRows.map((row: any) =>
         getColumnsAtLastLevel(columns).reduce((filledRow: DataRecord, column: ColumnInstance) => {
-          if (row[column.accessor] === null || row[column.accessor] === undefined) {
+          if (row.rowDelegate) {
+            filledRow[column.accessor] = row[column.accessor];
+            filledRow.rowDelegate = row.rowDelegate;
+          } else if (row[column.accessor] === null || row[column.accessor] === undefined) {
             filledRow[column.accessor] =
               column.groupType === DecisionTableColumnType.InputClause ? DASH_SYMBOL : EMPTY_SYMBOL;
           } else {
@@ -319,7 +330,10 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
 
   const onRowAdding = useCallback(() => {
     return getColumnsAtLastLevel(columns).reduce((tableRow: DataRecord, column: ColumnInstance) => {
-      tableRow[column.accessor] = column.groupType === DecisionTableColumnType.InputClause ? DASH_SYMBOL : EMPTY_SYMBOL;
+      tableRow[column.accessor] = "";
+      // create new controller for new row;
+      // return this new controller to the parent?
+      // with output, generate the output
       // tableRow.component = (column as any).component;
       return tableRow;
     }, {} as DataRecord);

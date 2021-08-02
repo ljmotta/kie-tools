@@ -46,7 +46,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
   onColumnsUpdate,
 }) => {
   const renderCell = useCallback(
-    (cellIndex: number, cell: Cell, rowIndex: number) => {
+    (cellIndex: number, cell: Cell, rowIndex: number, inAForm: boolean) => {
       const cellType = cellIndex === 0 ? "counter-cell" : "data-cell";
       const column = tableInstance.allColumns[cellIndex] as unknown as IColumn;
 
@@ -71,7 +71,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
           <>{rowIndex + 1}</>
         ) : (
           <Resizer width={getWidth()} onHorizontalResizeStop={onResize}>
-            <>{(cell.column as any).component(`dmn-auto-form-${rowIndex}`) ?? cell.render("Cell")}</>
+            <>{inAForm ? (cell.column as any).cellDelegate(`dmn-auto-form-${rowIndex}`) : cell.render("Cell")}</>
           </Resizer>
         );
 
@@ -105,7 +105,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
                   key={`${getRowKey(row)}-${rowIndex}`}
                   ouiaId={"expression-row-" + rowIndex}
                 >
-                  {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex))}
+                  {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex, true))}
                 </Tr>
               </RowDelegate>
             ) : (
@@ -115,7 +115,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
                 key={`${getRowKey(row)}-${rowIndex}`}
                 ouiaId={"expression-row-" + rowIndex}
               >
-                {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex))}
+                {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex, false))}
               </Tr>
             )}
           </>
