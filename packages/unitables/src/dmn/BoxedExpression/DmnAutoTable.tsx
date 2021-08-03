@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   BoxedExpressionEditor,
   ContextProps,
@@ -34,8 +34,8 @@ const FORMS_ID = "forms";
 
 export function DmnAutoTable(props: Props) {
   const [selectedExpression, setSelectedExpression] = useState<DecisionTableProps>();
-
   const [bridge, setBridge] = useState<DmnTableJsonSchemaBridge>();
+
   useEffect(() => {
     const validator = new DmnValidator();
     setBridge(validator.getBridge(props.schema ?? {}));
@@ -49,96 +49,76 @@ export function DmnAutoTable(props: Props) {
     });
   }, []);
 
-  useEffect(() => {
-    if (bridge) {
-      const grid = new DmnGrid(bridge);
-      const rules = [
-        {
-          inputEntries: [""],
-          outputEntries: [""],
-          annotationEntries: [""],
-          rowDelegate: ({ children }: any) => {
-            return (
-              <>
-                <AutoRow
-                  schema={bridge}
-                  header={false}
-                  model={props.tableData[0]}
-                  autosave={true}
-                  autosaveDelay={500}
-                  onSubmit={(model: any) => onSubmit(model, 0)}
-                  placeholder={true}
-                >
-                  <UniformsContext.Consumer>
-                    {(ctx) => (
-                      <>
-                        {createPortal(
-                          <form id={`dmn-auto-form-0`} onSubmit={ctx?.onSubmit} />,
-                          document.getElementById(FORMS_ID)!
-                        )}
-                        {children}
-                      </>
-                    )}
-                  </UniformsContext.Consumer>
-                </AutoRow>
-              </>
-            );
-          },
-        },
-      ];
-
-      setSelectedExpression((previous) => ({
-        ...previous,
-        name: "DMN Runner",
-        logicType: LogicType.DecisionTable,
-        input: grid.generateBoxedInputs(),
-        rules: rules,
-      }));
-    }
-  }, [bridge]);
+  const getAutoRow = useCallback((bridge: DmnTableJsonSchemaBridge, children: any, ruleIndex: number) => {
+    return (
+      <AutoRow
+        schema={bridge}
+        model={props.tableData[ruleIndex]}
+        autosave={true}
+        autosaveDelay={500}
+        onSubmit={(model: any) => onSubmit(model, ruleIndex)}
+        placeholder={true}
+      >
+        <UniformsContext.Consumer>
+          {(ctx) => (
+            <>
+              {createPortal(
+                <form id={`dmn-auto-form-${ruleIndex}`} onSubmit={ctx?.onSubmit} />,
+                document.getElementById(FORMS_ID)!
+              )}
+              {children}
+            </>
+          )}
+        </UniformsContext.Consumer>
+      </AutoRow>
+    );
+  }, []);
 
   const updateExpression = useCallback(
     (updatedExpression: DecisionTableProps) => {
       if (bridge) {
+        const grid = new DmnGrid(bridge);
+        const input = grid.generateBoxedInputs();
+
         setSelectedExpression((previous) => {
-          if (!previous) {
-            return;
+          let rules = [];
+          if (updatedExpression.rules) {
+            rules = updatedExpression.rules.map((rule: DecisionTableRule, ruleIndex: number) => {
+              rule.rowDelegate = ({ children }: any) => getAutoRow(bridge, children, ruleIndex);
+              return rule;
+            });
+          } else {
+            if (previous?.rules) {
+              rules = previous.rules.map((rule: DecisionTableRule, ruleIndex: number) => {
+                rule.rowDelegate = ({ children }: any) => getAutoRow(bridge, children, ruleIndex);
+                return rule;
+              });
+            } else {
+              const rule: DecisionTableRule = { inputEntries: [""], outputEntries: [""], annotationEntries: [""] };
+              rule.rowDelegate = ({ children }: any) => getAutoRow(bridge, children, 0);
+              rules = [rule];
+            }
+            // const rule: DecisionTableRule = { inputEntries: [""], outputEntries: [""], annotationEntries: [""] };
+            // rule.rowDelegate = ({ children }: any) => getAutoRow(bridge, children, 0);
+            // rules = [rule];
           }
-          if (
-            updatedExpression.rules?.length === previous.rules?.length &&
-            previous.input === selectedExpression?.input
-          ) {
+
+          if (input.length === previous?.input?.length && previous?.rules?.length === rules.length) {
             return previous;
           }
-          const rules = [...(updatedExpression.rules ?? [])].map((rule: DecisionTableRule, ruleIndex: number) => {
-            rule.rowDelegate = ({ children }: any) => (
-              <AutoRow
-                schema={bridge}
-                model={props.tableData[ruleIndex]}
-                autosave={true}
-                autosaveDelay={500}
-                onSubmit={(model: any) => onSubmit(model, ruleIndex)}
-                placeholder={true}
-              >
-                <UniformsContext.Consumer>
-                  {(ctx) => (
-                    <>
-                      {createPortal(
-                        <form id={`dmn-auto-form-${ruleIndex}`} onSubmit={ctx?.onSubmit} />,
-                        document.getElementById(FORMS_ID)!
-                      )}
-                      {children}
-                    </>
-                  )}
-                </UniformsContext.Consumer>
-              </AutoRow>
-            );
-            return rule;
-          });
-          const grid = new DmnGrid(bridge);
+
+          if (!previous) {
+            return {
+              ...updatedExpression,
+              input,
+              output: [],
+              annotation: [],
+              rules: rules,
+            };
+          }
           return {
             ...previous,
-            input: grid.generateBoxedInputs(),
+            input,
             output: [],
             annotation: [],
             rules: rules,
@@ -146,8 +126,15 @@ export function DmnAutoTable(props: Props) {
         });
       }
     },
-    [bridge, selectedExpression]
+    [bridge]
   );
+
+  useEffect(() => {
+    updateExpression({
+      name: "DMN Runner",
+      logicType: LogicType.DecisionTable,
+    });
+  }, [updateExpression]);
 
   //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
   window.beeApi = {
