@@ -3,7 +3,7 @@ import * as React from "react";
 import { AutoField } from "./AutoField";
 import { Cell } from "./Cell";
 import { Clause, DataType } from "@kogito-tooling/boxed-expression-component";
-import { DecisionResult } from "../dmn";
+import { DecisionResult, Result } from "../dmn";
 
 export class Grid {
   private inputLength: number = 0;
@@ -273,7 +273,10 @@ export class Grid {
     return myGrid;
   }
 
-  public generateBoxedOutputs(schema: any, results: Array<DecisionResult[] | undefined>): [Clause[], any[]] {
+  public generateBoxedOutputs(
+    schema: any,
+    results: Array<DecisionResult[] | undefined>
+  ): [Map<string, Clause>, Result[]] {
     const outputTypeMap = Object.entries(schema.definitions.OutputSet.properties ?? []).reduce(
       (acc: Map<string, DataType>, [name, properties]: [string, any]) => {
         acc.set(name, this.determineDataType(properties["x-dmn-type"]));
@@ -283,25 +286,31 @@ export class Grid {
       new Map<string, DataType>()
     );
 
-    const outputHeader = results.reduce((acc: Clause[], result: DecisionResult[] | undefined) => {
+    const outputSet = results.reduce((acc: Map<string, Clause>, result: DecisionResult[] | undefined) => {
       if (result) {
-        const clause: Clause[] = result.map(({ decisionName }) => ({
-          name: decisionName,
-          dataType: outputTypeMap.get(decisionName)!,
-        }));
-        return [...acc, ...clause];
+        result.forEach(({ decisionName }) => {
+          acc.set(decisionName, {
+            name: decisionName,
+            dataType: outputTypeMap.get(decisionName)!,
+          });
+        });
+      }
+      return acc;
+    }, new Map<string, Clause>());
+
+    const outputEntries = results.reduce((acc: Result[], result: DecisionResult[] | undefined) => {
+      if (result) {
+        const outputResults = result.map(({ result }) => {
+          if (result === null) {
+            return "null";
+          }
+          return result;
+        });
+        return [...acc, outputResults];
       }
       return acc;
     }, []);
 
-    const outputEntries = results.reduce((acc: any[], result: DecisionResult[] | undefined) => {
-      if (result) {
-        const outputResults = result.map(({ decisionName, result }) => ({ [`${decisionName}`]: result }));
-        return [...acc, ...outputResults];
-      }
-      return acc;
-    }, []);
-
-    return [outputHeader, outputEntries];
+    return [outputSet, outputEntries];
   }
 }

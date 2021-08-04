@@ -71,7 +71,11 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
           <>{rowIndex + 1}</>
         ) : (
           <Resizer width={getWidth()} onHorizontalResizeStop={onResize}>
-            <>{inAForm ? (cell.column as any).cellDelegate(`dmn-auto-form-${rowIndex}`) : cell.render("Cell")}</>
+            <>
+              {inAForm && (cell.column as any).groupType === "input"
+                ? (cell.column as any)?.cellDelegate(`dmn-auto-form-${rowIndex}`)
+                : cell.render("Cell")}
+            </>
           </Resizer>
         );
 

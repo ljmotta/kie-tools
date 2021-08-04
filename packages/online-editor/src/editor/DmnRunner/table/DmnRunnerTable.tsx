@@ -106,7 +106,7 @@ export function DmnRunnerTable(props: Props) {
         schema={dmnRunner.formSchema}
         tableData={dmnRunner.tableData}
         setTableData={dmnRunner.setTableData}
-        // results={dmnRunnerResults}
+        results={dmnRunnerResults}
       />
     </>
   );

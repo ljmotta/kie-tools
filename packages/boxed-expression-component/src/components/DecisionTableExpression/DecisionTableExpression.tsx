@@ -339,10 +339,10 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
   const previousRules = usePrevious(rules);
   useEffect(() => {
     /** Function executed only the first time the component is loaded */
-    const inputDiff = diff(previousInput ?? [], input ?? []);
-    if (Object.keys(inputDiff).length === 0) {
-      return;
-    }
+    // const inputDiff = diff(previousInput ?? [], input ?? []);
+    // if (Object.keys(inputDiff).length === 0) {
+    //   return;
+    // }
     // const outputDiff = diff(previousOutput ?? [], output ?? []);
     // if (Object.keys(outputDiff).length === 0) {
     //   return;

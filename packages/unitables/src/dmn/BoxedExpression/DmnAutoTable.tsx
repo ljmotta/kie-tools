@@ -26,7 +26,7 @@ interface Props {
   schema: any;
   tableData?: any;
   setTableData?: any;
-  // results?: Array<DecisionResult[] | undefined>;
+  results?: Array<DecisionResult[] | undefined>;
 }
 
 const FORMS_ID = "forms";
@@ -37,32 +37,35 @@ const FORMS_ID = "forms";
 export function DmnAutoTable(props: Props) {
   const [selectedExpression, setSelectedExpression] = useState<DecisionTableProps>();
   const [bridge, setBridge] = useState<DmnTableJsonSchemaBridge>();
+  const grid = useMemo(() => (bridge ? new DmnGrid(bridge) : undefined), [bridge]);
 
-  // useEffect(() => {
-  //   if (props.results && grid && props.schema) {
-  //     const [output, outputEntries] = grid.generateBoxedOutputs(props.schema, props.results);
-  //     if (!selectedExpression) {
-  //       return;
-  //     }
-  //     setSelectedExpression((previous: DecisionTableProps) => {
-  //       if (!previous.rules) {
-  //         return { ...previous, output };
-  //       }
-  //
-  //       const rules = outputEntries
-  //         ? [...previous.rules].map((rule, ruleIndex) => {
-  //             rule.outputEntries = [outputEntries[ruleIndex] ?? ""];
-  //             return rule;
-  //           })
-  //         : [...previous.rules];
-  //       return {
-  //         ...previous,
-  //         output,
-  //         rules,
-  //       };
-  //     });
-  //   }
-  // }, [grid, bridge, props.results, props.schema]);
+  useEffect(() => {
+    if (props.results && grid && props.schema) {
+      const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.schema, props.results);
+      if (!selectedExpression) {
+        return;
+      }
+
+      const output: Clause[] = Array.from(outputSet.values());
+      setSelectedExpression((previous: DecisionTableProps) => {
+        if (!previous.rules) {
+          return { ...previous, output };
+        }
+
+        const rules = outputEntries
+          ? [...previous.rules].map((rule, ruleIndex) => {
+              rule.outputEntries = (outputEntries[ruleIndex] as string[]) ?? [""];
+              return rule;
+            })
+          : [...previous.rules];
+        return {
+          ...previous,
+          output,
+          rules,
+        };
+      });
+    }
+  }, [grid, bridge, props.results, props.schema]);
 
   useEffect(() => {
     const validator = new DmnValidator();
@@ -107,8 +110,7 @@ export function DmnAutoTable(props: Props) {
 
   const updateExpression = useCallback(
     (updatedExpression: DecisionTableProps) => {
-      if (bridge) {
-        const grid = new DmnGrid(bridge);
+      if (bridge && grid) {
         const input = grid.generateBoxedInputs();
 
         setSelectedExpression((previous) => {
@@ -137,7 +139,10 @@ export function DmnAutoTable(props: Props) {
             input.map((i) => ({ ...i, cellDelegate: undefined })),
             previous?.input?.map((i) => ({ ...i, cellDelegate: undefined })) ?? {}
           );
-          const rulesDiff = diff(rules, previous?.rules ?? {});
+          const rulesDiff = diff(
+            rules.map((r) => ({ ...r, rowDelegate: undefined })),
+            previous?.rules?.map((r) => ({ ...r, rowDelegate: undefined })) ?? {}
+          );
           if (Object.keys(inputDiff).length === 0 && Object.keys(rulesDiff).length === 0) {
             return previous;
           }
@@ -159,7 +164,7 @@ export function DmnAutoTable(props: Props) {
         });
       }
     },
-    [bridge, getAutoRow]
+    [bridge, grid, getAutoRow]
   );
 
   useEffect(() => {
