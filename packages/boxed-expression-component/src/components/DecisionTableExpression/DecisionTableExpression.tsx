@@ -237,16 +237,10 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
         })
       );
       const newRules: DecisionTableRule[] = rows.map((row: DataRecord) => ({
-        inputEntries: newInput.map((inputClause) => {
-          const inputEntries: any = {};
-          if (row.rowDelegate) {
-            inputEntries.rowDelegate = row.rowDelegate;
-          }
-          inputEntries[inputClause.name] = row[inputClause.name] as string;
-          return inputEntries;
-        }),
+        inputEntries: newInput.map((inputClause) => row[inputClause.name] as string),
         outputEntries: newOutput.map((outputClause) => row[outputClause.name] as string),
         annotationEntries: newAnnotations.map((annotation) => row[annotation.name] as string),
+        rowDelegate: row.rowDelegate as any,
       }));
 
       const expressionDefinition: DecisionTableProps = {

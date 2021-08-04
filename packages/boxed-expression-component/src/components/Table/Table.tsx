@@ -125,8 +125,9 @@ export const Table: React.FunctionComponent<TableProps> = ({
     [generateNumberOfRowsSubColumnRecursively, headerLevels]
   );
 
-  const tableColumns = useRef<Column[]>(generateNumberOfRowsColumn(currentControllerCell, columns));
-  const tableRows = useRef<DataRecord[]>(rows);
+  const [tableColumns, setTableColumns] = useState<Column[]>(
+    generateNumberOfRowsColumn(currentControllerCell, columns)
+  );
   const [showTableHandler, setShowTableHandler] = useState(false);
   const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
   const [tableHandlerAllowedOperations, setTableHandlerAllowedOperations] = useState(
@@ -136,25 +137,21 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
   useEffect(() => {
-    tableColumns.current = generateNumberOfRowsColumn(controllerCell, tableColumns.current.slice(1));
+    setTableColumns((previousTableColumns) =>
+      generateNumberOfRowsColumn(controllerCell, previousTableColumns.slice(1))
+    );
     setCurrentControllerCell(controllerCell);
   }, [controllerCell, generateNumberOfRowsColumn]);
 
   useEffect(() => {
-    tableColumns.current = generateNumberOfRowsColumn(currentControllerCell, columns);
+    setTableColumns(generateNumberOfRowsColumn(currentControllerCell, columns));
     // Watching for external changes of the columns
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columns]);
 
-  useEffect(() => {
-    tableRows.current = rows;
-    // Watching for external changes of the rows
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows]);
-
   const onColumnsUpdateCallback = useCallback(
     (columns: Column[]) => {
-      tableColumns.current = columns;
+      setTableColumns(columns);
       onColumnsUpdate?.(columns.slice(1)); //Removing "# of rows" column
     },
     [onColumnsUpdate]
@@ -162,7 +159,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const onRowsUpdateCallback = useCallback(
     (rows: DataRecord[]) => {
-      tableRows.current = rows;
       onRowsUpdate?.(rows);
     },
     [onRowsUpdate]
@@ -170,20 +166,20 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const onCellUpdate = useCallback(
     (rowIndex: number, columnId: string, value: string) => {
-      const updatedTableCells = [...tableRows.current];
+      const updatedTableCells = [...rows];
       updatedTableCells[rowIndex][columnId] = value;
       onRowsUpdateCallback(updatedTableCells);
     },
-    [onRowsUpdateCallback]
+    [onRowsUpdateCallback, rows]
   );
 
   const onRowUpdate = useCallback(
     (rowIndex: number, updatedRow: DataRecord) => {
-      const updatedRows = [...tableRows.current];
+      const updatedRows = [...rows];
       updatedRows[rowIndex] = updatedRow;
       onRowsUpdateCallback(updatedRows);
     },
-    [onRowsUpdateCallback]
+    [onRowsUpdateCallback, rows]
   );
 
   const defaultColumn = {
@@ -214,12 +210,12 @@ export const Table: React.FunctionComponent<TableProps> = ({
   };
 
   const atLeastTwoColumnsOfTheSameGroupType = (columnIndex: number) => {
-    const columnsAtLastLevel = getColumnsAtLastLevel(tableColumns.current);
+    const columnsAtLastLevel = getColumnsAtLastLevel(tableColumns);
     const groupTypeForCurrentColumn = (columnsAtLastLevel[columnIndex] as ColumnInstance)?.groupType;
     const columnsByGroupType = _.groupBy(columnsAtLastLevel, (column: ColumnInstance) => column.groupType);
     return groupTypeForCurrentColumn
       ? columnsByGroupType[groupTypeForCurrentColumn].length > 1
-      : tableColumns.current.length > 2; // The total number of columns is counting also the # of rows column
+      : tableColumns.length > 2; // The total number of columns is counting also the # of rows column
   };
 
   const columnCanBeDeleted = (columnIndex: number) => {
@@ -238,7 +234,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const getThProps = (column: ColumnInstance) => ({
     onContextMenu: (e: ContextMenuEvent) => {
       const columnIndex = _.findIndex(
-        getColumnsAtLastLevel(tableColumns.current, column.depth),
+        getColumnsAtLastLevel(tableColumns, column.depth),
         getColumnSearchPredicate(column)
       );
       const target = e.target as HTMLElement;
@@ -260,7 +256,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           ...getColumnOperations(columnIndex),
           TableOperation.RowInsertAbove,
           TableOperation.RowInsertBelow,
-          ...(tableRows.current.length > 1 ? [TableOperation.RowDelete] : []),
+          ...(rows.length > 1 ? [TableOperation.RowDelete] : []),
           TableOperation.RowClear,
           TableOperation.RowDuplicate,
         ]);
@@ -272,8 +268,8 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const tableInstance = useTable(
     {
-      columns: tableColumns.current,
-      data: tableRows.current,
+      columns: tableColumns,
+      data: rows,
       defaultColumn,
       onCellUpdate,
       onRowUpdate,
@@ -292,7 +288,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           editColumnLabel={editColumnLabel}
           headerVisibility={headerVisibility}
           skipLastHeaderGroup={skipLastHeaderGroup}
-          tableRows={tableRows}
+          tableRows={rows}
           onRowsUpdate={onRowsUpdateCallback}
           tableColumns={tableColumns}
           getColumnKey={getColumnKey}
@@ -311,11 +307,12 @@ export const Table: React.FunctionComponent<TableProps> = ({
       {showTableHandler && handlerConfiguration ? (
         <TableHandler
           tableColumns={tableColumns}
+          setTableColumns={setTableColumns}
           getColumnPrefix={getColumnPrefix}
           handlerConfiguration={handlerConfiguration}
           lastSelectedColumn={lastSelectedColumn}
           lastSelectedRowIndex={lastSelectedRowIndex}
-          tableRows={tableRows}
+          tableRows={rows}
           onRowsUpdate={onRowsUpdateCallback}
           onRowAdding={onRowAdding}
           showTableHandler={showTableHandler}

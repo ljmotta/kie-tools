@@ -89,40 +89,38 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
     [getColumnKey, onColumnsUpdate, tableInstance]
   );
 
-  const renderBodyRows = useCallback(
-    (rows: Row[]) => {
-      return rows.map((row: Row, rowIndex: number, rows: Row[]) => {
-        tableInstance.prepareRow(row);
-        const rowProps = { ...row.getRowProps(), style: {} };
-        const RowDelegate = (row.original as any).rowDelegate;
-        return (
-          <>
-            {RowDelegate ? (
-              <RowDelegate>
-                <Tr
-                  className="table-row"
-                  {...rowProps}
-                  key={`${getRowKey(row)}-${rowIndex}`}
-                  ouiaId={"expression-row-" + rowIndex}
-                >
-                  {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex, true))}
-                </Tr>
-              </RowDelegate>
-            ) : (
+  const renderBodyRow = useCallback(
+    (row: Row, rowIndex: number) => {
+      tableInstance.prepareRow(row);
+      const rowProps = { ...row.getRowProps(), style: {} };
+      const RowDelegate = (row.original as any).rowDelegate;
+      return (
+        <>
+          {RowDelegate ? (
+            <RowDelegate>
               <Tr
                 className="table-row"
                 {...rowProps}
                 key={`${getRowKey(row)}-${rowIndex}`}
                 ouiaId={"expression-row-" + rowIndex}
               >
-                {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex, false))}
+                {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex, true))}
               </Tr>
-            )}
-          </>
-        );
-      });
+            </RowDelegate>
+          ) : (
+            <Tr
+              className="table-row"
+              {...rowProps}
+              key={`${getRowKey(row)}-${rowIndex}`}
+              ouiaId={"expression-row-" + rowIndex}
+            >
+              {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex, false))}
+            </Tr>
+          )}
+        </>
+      );
     },
-    [getRowKey, renderCell]
+    [getRowKey, renderCell, tableInstance]
   );
 
   const renderAdditiveRow = useMemo(
@@ -148,7 +146,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
       className={`${headerVisibility === TableHeaderVisibility.None ? "missing-header" : ""}`}
       {...(tableInstance.getTableBodyProps() as any)}
     >
-      {renderBodyRows(tableInstance.rows)}
+      {tableInstance.rows.map((row: Row, rowIndex: number) => renderBodyRow(row, rowIndex))}
       {children ? renderAdditiveRow : null}
     </Tbody>
   );

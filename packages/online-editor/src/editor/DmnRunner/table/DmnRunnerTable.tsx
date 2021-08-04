@@ -1,10 +1,10 @@
 import { useDmnRunner } from "../DmnRunnerContext";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { diff } from "deep-object-diff";
 import { DmnRunnerStatus } from "../DmnRunnerStatus";
 import { DecisionResult } from "../DmnRunnerService";
-import { DmnTable } from "@kogito-tooling/unitables";
+import { DmnAutoTable } from "@kogito-tooling/unitables";
 
 interface Props {
   editor: any;
@@ -34,8 +34,8 @@ export function DmnRunnerTable(props: Props) {
       const results = await Promise.all(
         tableData.map(async (formData, index) => {
           try {
-            // header
-            if (index === 0) {
+            // header/
+            if (Object.keys(formData).length === 0) {
               return undefined;
             }
             const content = await props.editor.getContent();
@@ -102,14 +102,12 @@ export function DmnRunnerTable(props: Props) {
 
   return (
     <>
-      <DmnTable
+      <DmnAutoTable
         schema={dmnRunner.formSchema}
         tableData={dmnRunner.tableData}
         setTableData={dmnRunner.setTableData}
-        inputSize={inputSize}
-        results={dmnRunnerResults}
+        // results={dmnRunnerResults}
       />
-      {/*<Button onClick={() => setInputSize(inputSize + 1)}>Add input</Button>*/}
     </>
   );
 }

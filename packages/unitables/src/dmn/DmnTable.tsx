@@ -132,7 +132,12 @@ export function DmnTable(props: DmnTableProps) {
   return (
     <>
       <div style={{ width: "100%", display: "grid", gridTemplateColumns: "auto auto" }}>
-        <DmnAutoTable schema={props.schema} tableData={props.tableData} setTableData={props.setTableData} />
+        {/*<DmnAutoTable*/}
+        {/*  schema={props.schema}*/}
+        {/*  tableData={props.tableData}*/}
+        {/*  setTableData={props.setTableData}*/}
+        {/*  results={props.results}*/}
+        {/*/>*/}
 
         {/*{tableOutputs}*/}
       </div>

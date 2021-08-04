@@ -2,6 +2,7 @@ import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   BoxedExpressionEditor,
+  Clause,
   ContextProps,
   DecisionTableProps,
   DecisionTableRule,
@@ -19,12 +20,13 @@ import { DecisionResult, DmnGrid } from "../../";
 import { AutoRow } from "../../core";
 import { createPortal } from "react-dom";
 import { context as UniformsContext } from "uniforms";
+import { diff } from "deep-object-diff";
 
 interface Props {
   schema: any;
   tableData?: any;
   setTableData?: any;
-  results?: Array<DecisionResult[] | undefined>;
+  // results?: Array<DecisionResult[] | undefined>;
 }
 
 const FORMS_ID = "forms";
@@ -35,6 +37,32 @@ const FORMS_ID = "forms";
 export function DmnAutoTable(props: Props) {
   const [selectedExpression, setSelectedExpression] = useState<DecisionTableProps>();
   const [bridge, setBridge] = useState<DmnTableJsonSchemaBridge>();
+
+  // useEffect(() => {
+  //   if (props.results && grid && props.schema) {
+  //     const [output, outputEntries] = grid.generateBoxedOutputs(props.schema, props.results);
+  //     if (!selectedExpression) {
+  //       return;
+  //     }
+  //     setSelectedExpression((previous: DecisionTableProps) => {
+  //       if (!previous.rules) {
+  //         return { ...previous, output };
+  //       }
+  //
+  //       const rules = outputEntries
+  //         ? [...previous.rules].map((rule, ruleIndex) => {
+  //             rule.outputEntries = [outputEntries[ruleIndex] ?? ""];
+  //             return rule;
+  //           })
+  //         : [...previous.rules];
+  //       return {
+  //         ...previous,
+  //         output,
+  //         rules,
+  //       };
+  //     });
+  //   }
+  // }, [grid, bridge, props.results, props.schema]);
 
   useEffect(() => {
     const validator = new DmnValidator();
@@ -49,30 +77,33 @@ export function DmnAutoTable(props: Props) {
     });
   }, []);
 
-  const getAutoRow = useCallback((bridge: DmnTableJsonSchemaBridge, children: any, ruleIndex: number) => {
-    return (
-      <AutoRow
-        schema={bridge}
-        model={props.tableData[ruleIndex]}
-        autosave={true}
-        autosaveDelay={500}
-        onSubmit={(model: any) => onSubmit(model, ruleIndex)}
-        placeholder={true}
-      >
-        <UniformsContext.Consumer>
-          {(ctx) => (
-            <>
-              {createPortal(
-                <form id={`dmn-auto-form-${ruleIndex}`} onSubmit={ctx?.onSubmit} />,
-                document.getElementById(FORMS_ID)!
-              )}
-              {children}
-            </>
-          )}
-        </UniformsContext.Consumer>
-      </AutoRow>
-    );
-  }, []);
+  const getAutoRow = useCallback(
+    (bridge: DmnTableJsonSchemaBridge, children: any, ruleIndex: number) => {
+      return (
+        <AutoRow
+          schema={bridge}
+          model={props.tableData[ruleIndex]}
+          autosave={true}
+          autosaveDelay={500}
+          onSubmit={(model: any) => onSubmit(model, ruleIndex)}
+          placeholder={true}
+        >
+          <UniformsContext.Consumer>
+            {(ctx) => (
+              <>
+                {createPortal(
+                  <form id={`dmn-auto-form-${ruleIndex}`} onSubmit={ctx?.onSubmit} />,
+                  document.getElementById(FORMS_ID)!
+                )}
+                {children}
+              </>
+            )}
+          </UniformsContext.Consumer>
+        </AutoRow>
+      );
+    },
+    [props.tableData, onSubmit]
+  );
 
   const updateExpression = useCallback(
     (updatedExpression: DecisionTableProps) => {
@@ -84,7 +115,9 @@ export function DmnAutoTable(props: Props) {
           let rules = [];
           if (updatedExpression.rules) {
             rules = updatedExpression.rules.map((rule: DecisionTableRule, ruleIndex: number) => {
-              rule.rowDelegate = ({ children }: any) => getAutoRow(bridge, children, ruleIndex);
+              if (!rule.rowDelegate) {
+                rule.rowDelegate = ({ children }: any) => getAutoRow(bridge, children, ruleIndex);
+              }
               return rule;
             });
           } else {
@@ -98,12 +131,14 @@ export function DmnAutoTable(props: Props) {
               rule.rowDelegate = ({ children }: any) => getAutoRow(bridge, children, 0);
               rules = [rule];
             }
-            // const rule: DecisionTableRule = { inputEntries: [""], outputEntries: [""], annotationEntries: [""] };
-            // rule.rowDelegate = ({ children }: any) => getAutoRow(bridge, children, 0);
-            // rules = [rule];
           }
 
-          if (input.length === previous?.input?.length && previous?.rules?.length === rules.length) {
+          const inputDiff = diff(
+            input.map((i) => ({ ...i, cellDelegate: undefined })),
+            previous?.input?.map((i) => ({ ...i, cellDelegate: undefined })) ?? {}
+          );
+          const rulesDiff = diff(rules, previous?.rules ?? {});
+          if (Object.keys(inputDiff).length === 0 && Object.keys(rulesDiff).length === 0) {
             return previous;
           }
 
@@ -111,7 +146,6 @@ export function DmnAutoTable(props: Props) {
             return {
               ...updatedExpression,
               input,
-              output: [],
               annotation: [],
               rules: rules,
             };
@@ -119,14 +153,13 @@ export function DmnAutoTable(props: Props) {
           return {
             ...previous,
             input,
-            output: [],
             annotation: [],
             rules: rules,
           };
         });
       }
     },
-    [bridge]
+    [bridge, getAutoRow]
   );
 
   useEffect(() => {

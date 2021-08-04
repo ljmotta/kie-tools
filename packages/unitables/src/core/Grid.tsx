@@ -3,6 +3,7 @@ import * as React from "react";
 import { AutoField } from "./AutoField";
 import { Cell } from "./Cell";
 import { Clause, DataType } from "@kogito-tooling/boxed-expression-component";
+import { DecisionResult } from "../dmn";
 
 export class Grid {
   private inputLength: number = 0;
@@ -237,99 +238,11 @@ export class Grid {
     }
   }
 
-  // private buildBoxedTable() {
-  //   this.generate().map((row: any, index: number, currentGrid: any) => {
-  //     if (row.length === 0) {
-  //       return;
-  //     }
-  //
-  //     // custom nested data type
-  //     if (row.insideProperties) {
-  //       this.inputsHeader.push(
-  //         <div
-  //           key={`auto-table-nested-cell-${index}`}
-  //           style={{
-  //             border: "1px solid",
-  //             backgroundColor: row.readOnly ? "gray" : "white",
-  //             gridColumn: `${column} / span ${row.colSpan ?? 1}`,
-  //             gridRow: `1 / span 1`,
-  //           }}
-  //         >
-  //           {<Cell {...row} />}
-  //         </div>
-  //       );
-  //       row.insideProperties.map((cellProps: any, jndex: any) => {
-  //         this.inputsFields.push(
-  //           <div
-  //             key={`auto-table-nested-input-${index}-${jndex}`}
-  //             style={{
-  //               border: "1px solid",
-  //               gridColumn: `${jndex + column} / span ${cellProps.colSpan ?? 1}`,
-  //               gridRow: `${2 + this.input} / span 1`,
-  //             }}
-  //           >
-  //             {cellProps.children}
-  //           </div>
-  //         );
-  //         this.inputsHeader.push(
-  //           <div
-  //             key={`auto-table-nested-cell-${index}-${jndex}`}
-  //             style={{
-  //               border: "1px solid",
-  //               backgroundColor: cellProps.readOnly ? "gray" : "white",
-  //               gridColumn: `${jndex + column} / span ${cellProps.colSpan ?? 1}`,
-  //               gridRow: `2 / span 1`,
-  //             }}
-  //           >
-  //             {!cellProps.emptyCell && <Cell {...cellProps} />}
-  //           </div>
-  //         );
-  //       });
-  //       return;
-  //     }
-  //
-  //     // simple data type
-  //     this.inputsFields.push(
-  //       <div
-  //         key={`auto-table-normal-input-${index}`}
-  //         style={{
-  //           border: "1px solid",
-  //           backgroundColor: row?.readOnly ? "gray" : "white",
-  //           gridColumn: `${column} / span 1`,
-  //           gridRow: `${2 + this.input} / span 1`,
-  //         }}
-  //       >
-  //         {row.children}
-  //       </div>
-  //     );
-  //
-  //     this.inputsHeader.push(
-  //       <div
-  //         key={`auto-table-normal-cell-${index}`}
-  //         style={{
-  //           border: "1px solid",
-  //           backgroundColor: row?.readOnly ? "gray" : "white",
-  //           gridColumn: `${column} / span 1`,
-  //           gridRow: `1 / span 2`,
-  //         }}
-  //       >
-  //         <Cell {...row} />
-  //       </div>
-  //     );
-  //   });
-  // }
-
   public deepGenerateBoxed(fieldName: any, parentName = ""): Clause[] {
     const joinedName = joinName(parentName, fieldName);
     const field = this.bridge.getField(joinedName);
 
     if (field.type === "object") {
-      let inputSize = 0;
-      const insideProperties = this.bridge.getSubfields(joinedName).reduce((acc: any[], subField: string) => {
-        const field = this.deepGenerateBoxed(subField, joinedName);
-        return [...acc, ...field];
-      }, []);
-
       return [
         {
           dataType: this.determineDataType(field["x-dmn-type"]),
@@ -358,5 +271,37 @@ export class Grid {
       myGrid = inputs;
     }
     return myGrid;
+  }
+
+  public generateBoxedOutputs(schema: any, results: Array<DecisionResult[] | undefined>): [Clause[], any[]] {
+    const outputTypeMap = Object.entries(schema.definitions.OutputSet.properties ?? []).reduce(
+      (acc: Map<string, DataType>, [name, properties]: [string, any]) => {
+        acc.set(name, this.determineDataType(properties["x-dmn-type"]));
+
+        return acc;
+      },
+      new Map<string, DataType>()
+    );
+
+    const outputHeader = results.reduce((acc: Clause[], result: DecisionResult[] | undefined) => {
+      if (result) {
+        const clause: Clause[] = result.map(({ decisionName }) => ({
+          name: decisionName,
+          dataType: outputTypeMap.get(decisionName)!,
+        }));
+        return [...acc, ...clause];
+      }
+      return acc;
+    }, []);
+
+    const outputEntries = results.reduce((acc: any[], result: DecisionResult[] | undefined) => {
+      if (result) {
+        const outputResults = result.map(({ decisionName, result }) => ({ [`${decisionName}`]: result }));
+        return [...acc, ...outputResults];
+      }
+      return acc;
+    }, []);
+
+    return [outputHeader, outputEntries];
   }
 }
