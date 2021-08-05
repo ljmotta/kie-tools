@@ -17,7 +17,7 @@
 import groupBy from "lodash/groupBy";
 import find from "lodash/find";
 import * as React from "react";
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ColumnInstance, DataRecord } from "react-table";
 import {
   Annotation,
@@ -133,88 +133,86 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
   const decisionName = useRef(name);
   const decisionDataType = useRef(dataType);
   const singleOutputChildDataType = useRef(DataType.Undefined);
-  const [columns, setColumns] = useState<ColumnInstance[]>([]);
-  const [rows, setRows] = useState<DataRecord[]>([]);
 
-  // update columns
-  const updateColumns = useCallback(
-    (updatedInput: Clause[], updatedOutput: Clause[], updatedAnnotation: Annotation[]): ColumnInstance[] => {
-      const inputColumns = (updatedInput ?? []).map(
-        (inputClause) =>
-          ({
-            label: inputClause.name,
-            accessor: inputClause.name,
-            dataType: inputClause.dataType,
-            width: inputClause.width,
-            groupType: DecisionTableColumnType.InputClause,
-            cssClasses: "decision-table--input",
-            cellDelegate: inputClause.cellDelegate,
-          } as any)
-      );
-      const outputColumns = (updatedOutput ?? []).map(
-        (outputClause) =>
-          ({
-            label: outputClause.name,
-            accessor: outputClause.name,
-            dataType: outputClause.dataType,
-            width: outputClause.width,
-            groupType: DecisionTableColumnType.OutputClause,
-            cssClasses: "decision-table--output",
-          } as ColumnInstance)
-      );
-      const annotationColumns = (updatedAnnotation ?? []).map(
-        (annotation) =>
-          ({
-            label: annotation.name,
-            accessor: annotation.name,
-            width: annotation.width,
-            inlineEditable: true,
-            groupType: DecisionTableColumnType.Annotation,
-            cssClasses: "decision-table--annotation",
-          } as ColumnInstance)
-      );
-
-      const inputSection = {
-        groupType: DecisionTableColumnType.InputClause,
-        label: "Input",
-        accessor: "Input",
-        cssClasses: "decision-table--input",
-        columns: inputColumns,
-      };
-      const outputSection = {
-        groupType: DecisionTableColumnType.OutputClause,
-        label: decisionName.current,
-        accessor: decisionName.current,
-        dataType: decisionDataType.current,
-        cssClasses: "decision-table--output",
-        columns: outputColumns,
-        appendColumnsOnChildren: true,
-      };
-      const annotationSection = {
-        groupType: DecisionTableColumnType.Annotation,
-        label: "Annotations",
-        accessor: "Annotations",
-        cssClasses: "decision-table--annotation",
-        columns: annotationColumns,
-        inlineEditable: true,
-      };
-
-      return [inputSection, outputSection, annotationSection] as ColumnInstance[];
-    },
-    []
-  );
-
-  // update rows
-  const updateRows = useCallback((rules: DecisionTableRule[], columns: ColumnInstance[]): DataRecord[] => {
-    return rules.map((rule) => {
-      const rowArray = [...rule.inputEntries, ...rule.outputEntries, ...rule.annotationEntries];
-      return getColumnsAtLastLevel(columns).reduce((tableRow: any, column, columnIndex: number) => {
-        tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
-        tableRow.rowDelegate = rule.rowDelegate;
-        return tableRow;
-      }, {});
-    });
-  }, []);
+  // // update columns
+  // const updateColumns = useCallback(
+  //   (updatedInput: Clause[], updatedOutput: Clause[], updatedAnnotation: Annotation[]): ColumnInstance[] => {
+  //     const inputColumns = (updatedInput ?? []).map(
+  //       (inputClause) =>
+  //         ({
+  //           label: inputClause.name,
+  //           accessor: inputClause.name,
+  //           dataType: inputClause.dataType,
+  //           width: inputClause.width,
+  //           groupType: DecisionTableColumnType.InputClause,
+  //           cssClasses: "decision-table--input",
+  //           cellDelegate: inputClause.cellDelegate,
+  //         } as any)
+  //     );
+  //     const outputColumns = (updatedOutput ?? []).map(
+  //       (outputClause) =>
+  //         ({
+  //           label: outputClause.name,
+  //           accessor: outputClause.name,
+  //           dataType: outputClause.dataType,
+  //           width: outputClause.width,
+  //           groupType: DecisionTableColumnType.OutputClause,
+  //           cssClasses: "decision-table--output",
+  //         } as ColumnInstance)
+  //     );
+  //     const annotationColumns = (updatedAnnotation ?? []).map(
+  //       (annotation) =>
+  //         ({
+  //           label: annotation.name,
+  //           accessor: annotation.name,
+  //           width: annotation.width,
+  //           inlineEditable: true,
+  //           groupType: DecisionTableColumnType.Annotation,
+  //           cssClasses: "decision-table--annotation",
+  //         } as ColumnInstance)
+  //     );
+  //
+  //     const inputSection = {
+  //       groupType: DecisionTableColumnType.InputClause,
+  //       label: "Input",
+  //       accessor: "Input",
+  //       cssClasses: "decision-table--input",
+  //       columns: inputColumns,
+  //     };
+  //     const outputSection = {
+  //       groupType: DecisionTableColumnType.OutputClause,
+  //       label: decisionName.current,
+  //       accessor: decisionName.current,
+  //       dataType: decisionDataType.current,
+  //       cssClasses: "decision-table--output",
+  //       columns: outputColumns,
+  //       appendColumnsOnChildren: true,
+  //     };
+  //     const annotationSection = {
+  //       groupType: DecisionTableColumnType.Annotation,
+  //       label: "Annotations",
+  //       accessor: "Annotations",
+  //       cssClasses: "decision-table--annotation",
+  //       columns: annotationColumns,
+  //       inlineEditable: true,
+  //     };
+  //
+  //     return [inputSection, outputSection, annotationSection] as ColumnInstance[];
+  //   },
+  //   []
+  // );
+  //
+  // // update rows
+  // const updateRows = useCallback((rules: DecisionTableRule[], columns: ColumnInstance[]): DataRecord[] => {
+  //   return rules.map((rule) => {
+  //     const rowArray = [...rule.inputEntries, ...rule.outputEntries, ...rule.annotationEntries];
+  //     return getColumnsAtLastLevel(columns).reduce((tableRow: any, column, columnIndex: number) => {
+  //       tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
+  //       tableRow.rowDelegate = rule.rowDelegate;
+  //       return tableRow;
+  //     }, {});
+  //   });
+  // }, []);
 
   const spreadDecisionTableExpressionDefinition = useCallback(
     (columns: ColumnInstance[], rows: DataRecord[]) => {
@@ -280,30 +278,105 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
     []
   );
 
+  const memoColumns = useMemo(() => {
+    const inputColumns = (input ?? []).map(
+      (inputClause) =>
+        ({
+          label: inputClause.name,
+          accessor: inputClause.name,
+          dataType: inputClause.dataType,
+          width: inputClause.width,
+          groupType: DecisionTableColumnType.InputClause,
+          cssClasses: "decision-table--input",
+          cellDelegate: inputClause.cellDelegate,
+        } as any)
+    );
+    const outputColumns = (output ?? []).map(
+      (outputClause) =>
+        ({
+          label: outputClause.name,
+          accessor: outputClause.name,
+          dataType: outputClause.dataType,
+          width: outputClause.width,
+          groupType: DecisionTableColumnType.OutputClause,
+          cssClasses: "decision-table--output",
+        } as ColumnInstance)
+    );
+    const annotationColumns = (annotations ?? []).map(
+      (annotation) =>
+        ({
+          label: annotation.name,
+          accessor: annotation.name,
+          width: annotation.width,
+          inlineEditable: true,
+          groupType: DecisionTableColumnType.Annotation,
+          cssClasses: "decision-table--annotation",
+        } as ColumnInstance)
+    );
+
+    const inputSection = {
+      groupType: DecisionTableColumnType.InputClause,
+      label: "Input",
+      accessor: "Input",
+      cssClasses: "decision-table--input",
+      columns: inputColumns,
+    };
+    const outputSection = {
+      groupType: DecisionTableColumnType.OutputClause,
+      label: decisionName.current,
+      accessor: decisionName.current,
+      dataType: decisionDataType.current,
+      cssClasses: "decision-table--output",
+      columns: outputColumns,
+      appendColumnsOnChildren: true,
+    };
+    const annotationSection = {
+      groupType: DecisionTableColumnType.Annotation,
+      label: "Annotations",
+      accessor: "Annotations",
+      cssClasses: "decision-table--annotation",
+      columns: annotationColumns,
+      inlineEditable: true,
+    };
+
+    return [inputSection, outputSection, annotationSection] as ColumnInstance[];
+  }, [input, output, annotations]);
+
+  const memoRows = useMemo(() => {
+    return (rules ?? []).map((rule) => {
+      const rowArray = [...rule.inputEntries, ...rule.outputEntries, ...rule.annotationEntries];
+      return getColumnsAtLastLevel(memoColumns).reduce((tableRow: any, column, columnIndex: number) => {
+        tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
+        tableRow.rowDelegate = rule.rowDelegate;
+        return tableRow;
+      }, {});
+    });
+  }, [rules]);
+
   const onColumnsUpdate = useCallback(
     (updatedColumns) => {
       const decisionNodeColumn = find(updatedColumns, { groupType: DecisionTableColumnType.OutputClause });
 
       synchronizeDecisionNodeDataTypeWithSingleOutputColumnDataType(decisionNodeColumn);
 
-      setColumns([...updatedColumns]);
+      // setColumns([...updatedColumns]);
       decisionName.current = decisionNodeColumn.label;
       decisionDataType.current = decisionNodeColumn.dataType;
       onUpdatingNameAndDataType?.(decisionNodeColumn.label, decisionNodeColumn.dataType);
-      spreadDecisionTableExpressionDefinition([...updatedColumns], rows);
+      spreadDecisionTableExpressionDefinition([...updatedColumns], memoRows);
     },
     [
       onUpdatingNameAndDataType,
       spreadDecisionTableExpressionDefinition,
       synchronizeDecisionNodeDataTypeWithSingleOutputColumnDataType,
-      rows,
+      memoRows,
     ]
   );
 
   const onRowsUpdate = useCallback(
     (updatedRows) => {
       const newRows = updatedRows.map((row: any) =>
-        getColumnsAtLastLevel(columns).reduce((filledRow: DataRecord, column: ColumnInstance) => {
+        getColumnsAtLastLevel(memoColumns).reduce((filledRow: DataRecord, column: ColumnInstance) => {
           if (row.rowDelegate) {
             filledRow[column.accessor] = row[column.accessor];
             filledRow.rowDelegate = row.rowDelegate;
@@ -316,51 +389,17 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
           return filledRow;
         }, {})
       );
-      setRows(newRows);
-      spreadDecisionTableExpressionDefinition(columns, newRows);
+      spreadDecisionTableExpressionDefinition(memoColumns, newRows);
     },
-    [spreadDecisionTableExpressionDefinition, columns]
+    [spreadDecisionTableExpressionDefinition, memoColumns]
   );
 
   const onRowAdding = useCallback(() => {
-    return getColumnsAtLastLevel(columns).reduce((tableRow: DataRecord, column: ColumnInstance) => {
-      tableRow[column.accessor] = "";
-      // create new controller for new row;
-      // return this new controller to the parent?
-      // with output, generate the output
-      // tableRow.component = (column as any).component;
+    return getColumnsAtLastLevel(memoColumns).reduce((tableRow: DataRecord, column: ColumnInstance) => {
+      tableRow[column.accessor] = EMPTY_SYMBOL;
       return tableRow;
     }, {} as DataRecord);
-  }, [columns]);
-
-  const previousInput = usePrevious(input);
-  const previousOutput = usePrevious(output);
-  const previousAnnotation = usePrevious(annotations);
-  const previousRules = usePrevious(rules);
-  useEffect(() => {
-    /** Function executed only the first time the component is loaded */
-    // const inputDiff = diff(previousInput ?? [], input ?? []);
-    // if (Object.keys(inputDiff).length === 0) {
-    //   return;
-    // }
-    // const outputDiff = diff(previousOutput ?? [], output ?? []);
-    // if (Object.keys(outputDiff).length === 0) {
-    //   return;
-    // }
-    // const annotationDiff = diff(previousAnnotation ?? [], annotations ?? []);
-    // if (Object.keys(annotationDiff).length === 0) {
-    //   return;
-    // }
-    // const rulesDiff = diff(previousRules ?? [], rules ?? []);
-    // if (Object.keys(rulesDiff).length === 0) {
-    //   return;
-    // }
-    const updatedColumns = updateColumns(input ?? [], output ?? [], annotations ?? []);
-    const updatedRows = updateRows(rules!, updatedColumns);
-    spreadDecisionTableExpressionDefinition(updatedColumns, updatedRows);
-    setColumns(updatedColumns);
-    setRows(updatedRows);
-  }, [spreadDecisionTableExpressionDefinition, rules, input, output, annotations]);
+  }, [memoColumns]);
 
   return (
     <div className={`decision-table-expression ${uid}`}>
@@ -370,33 +409,20 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
         getColumnPrefix={getColumnPrefix}
         editColumnLabel={getEditColumnLabel}
         handlerConfiguration={getHandlerConfiguration}
-        columns={columns}
-        rows={rows}
+        columns={memoColumns}
+        rows={memoRows}
         onColumnsUpdate={onColumnsUpdate}
         onRowsUpdate={onRowsUpdate}
         onRowAdding={onRowAdding}
-        controllerCell={useMemo(
-          () => (
-            <HitPolicySelector
-              selectedHitPolicy={selectedHitPolicy}
-              selectedBuiltInAggregator={selectedAggregation}
-              onHitPolicySelect={onHitPolicySelect}
-              onBuiltInAggregatorSelect={onBuiltInAggregatorSelect}
-            />
-          ),
-          [onBuiltInAggregatorSelect, onHitPolicySelect, selectedAggregation, selectedHitPolicy]
-        )}
+        controllerCell={
+          <HitPolicySelector
+            selectedHitPolicy={selectedHitPolicy}
+            selectedBuiltInAggregator={selectedAggregation}
+            onHitPolicySelect={onHitPolicySelect}
+            onBuiltInAggregatorSelect={onBuiltInAggregatorSelect}
+          />
+        }
       />
     </div>
   );
 };
-
-function usePrevious<T>(value: T): T | undefined {
-  const ref = React.useRef<T>();
-
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
-
-  return ref.current;
-}

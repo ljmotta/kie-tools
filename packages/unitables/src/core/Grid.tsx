@@ -277,7 +277,7 @@ export class Grid {
     schema: any,
     results: Array<DecisionResult[] | undefined>
   ): [Map<string, Clause>, Result[]] {
-    const outputTypeMap = Object.entries(schema.definitions.OutputSet.properties ?? []).reduce(
+    const outputTypeMap = Object.entries(schema?.definitions?.OutputSet?.properties ?? []).reduce(
       (acc: Map<string, DataType>, [name, properties]: [string, any]) => {
         acc.set(name, this.determineDataType(properties["x-dmn-type"]));
 

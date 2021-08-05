@@ -20,7 +20,6 @@ import { Tbody, Td, Tr } from "@patternfly/react-table";
 import { Column as IColumn, TableHeaderVisibility } from "../../api";
 import { Cell, Column, Row, TableInstance } from "react-table";
 import { DEFAULT_MIN_WIDTH, Resizer } from "../Resizer";
-import { createPortal } from "react-dom";
 
 export interface TableBodyProps {
   /** Table instance */
@@ -35,6 +34,7 @@ export interface TableBodyProps {
   getColumnKey: (column: Column) => string;
   /** Function to be executed when columns are modified */
   onColumnsUpdate?: (columns: Column[]) => void;
+  tdProps: (cellIndex: number, rowIndex: number) => any;
 }
 
 export const TableBody: React.FunctionComponent<TableBodyProps> = ({
@@ -44,6 +44,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
   getRowKey,
   getColumnKey,
   onColumnsUpdate,
+  tdProps,
 }) => {
   const renderCell = useCallback(
     (cellIndex: number, cell: Cell, rowIndex: number, inAForm: boolean) => {
@@ -81,7 +82,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
 
       return (
         <Td
-          {...tableInstance.getTdProps(cellIndex, rowIndex)}
+          {...tdProps(cellIndex, rowIndex)}
           key={`${getColumnKey(cell.column)}-${cellIndex}`}
           data-ouia-component-id={"expression-column-" + cellIndex}
           className={`${cellType}`}
@@ -99,29 +100,19 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
       const rowProps = { ...row.getRowProps(), style: {} };
       const RowDelegate = (row.original as any).rowDelegate;
       return (
-        <>
+        <React.Fragment key={`${getRowKey(row)}-${rowIndex}`}>
           {RowDelegate ? (
             <RowDelegate>
-              <Tr
-                className="table-row"
-                {...rowProps}
-                key={`${getRowKey(row)}-${rowIndex}`}
-                ouiaId={"expression-row-" + rowIndex}
-              >
+              <Tr className="table-row" {...rowProps} ouiaId={"expression-row-" + rowIndex}>
                 {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex, true))}
               </Tr>
             </RowDelegate>
           ) : (
-            <Tr
-              className="table-row"
-              {...rowProps}
-              key={`${getRowKey(row)}-${rowIndex}`}
-              ouiaId={"expression-row-" + rowIndex}
-            >
+            <Tr className="table-row" {...rowProps} ouiaId={"expression-row-" + rowIndex}>
               {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex, false))}
             </Tr>
           )}
-        </>
+        </React.Fragment>
       );
     },
     [getRowKey, renderCell, tableInstance]
@@ -150,7 +141,10 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
       className={`${headerVisibility === TableHeaderVisibility.None ? "missing-header" : ""}`}
       {...(tableInstance.getTableBodyProps() as any)}
     >
-      {tableInstance.rows.map((row: Row, rowIndex: number) => renderBodyRow(row, rowIndex))}
+      {(() => {
+        console.log(tableInstance.rows);
+        return tableInstance.rows.map((row: Row, rowIndex: number) => renderBodyRow(row, rowIndex));
+      })()}
       {children ? renderAdditiveRow : null}
     </Tbody>
   );

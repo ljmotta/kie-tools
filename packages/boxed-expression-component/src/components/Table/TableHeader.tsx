@@ -43,6 +43,8 @@ export interface TableHeaderProps {
   tableColumns: Column[];
   /** Function to be executed when columns are modified */
   onColumnsUpdate: (columns: Column[]) => void;
+  /** */
+  thProps: (column: ColumnInstance) => any;
 }
 
 export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
@@ -55,6 +57,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   getColumnKey,
   tableColumns,
   onColumnsUpdate,
+  thProps,
 }) => {
   const getColumnLabel: (groupType: string) => string | undefined = useCallback(
     (groupType) => {
@@ -177,9 +180,8 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
         ...column.getHeaderProps(),
         style: {},
       };
-      const thProps = tableInstance.getThProps(column, columnIndex);
       const width = column.width || DEFAULT_MIN_WIDTH;
-      const isColspan = column.columns?.length > 0 || false;
+      const isColspan = (column.columns?.length ?? 0) > 0 || false;
 
       const getCssClass = () => {
         const cssClasses = [];
@@ -199,7 +201,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
       };
 
       return (
-        <Th {...headerProps} {...thProps} className={getCssClass()} key={computeColumnKey(column, columnIndex)}>
+        <Th {...headerProps} {...thProps(column)} className={getCssClass()} key={computeColumnKey(column, columnIndex)}>
           <Resizer width={width} onHorizontalResizeStop={(columnWidth) => onHorizontalResizeStop(column, columnWidth)}>
             <div className="header-cell" data-ouia-component-type="expression-column-header">
               {column.dataType ? (
@@ -227,6 +229,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
       onHorizontalResizeStop,
       renderHeaderCellInfo,
       tableInstance,
+      thProps,
     ]
   );
 
