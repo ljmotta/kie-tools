@@ -50,13 +50,8 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
     (cellIndex: number, cell: Cell, rowIndex: number, inAForm: boolean) => {
       const cellType = cellIndex === 0 ? "counter-cell" : "data-cell";
       const column = tableInstance.allColumns[cellIndex] as unknown as IColumn;
+      const width = typeof column?.width === "number" ? column?.width : DEFAULT_MIN_WIDTH;
 
-      const getWidth = (): number => {
-        if (typeof column?.width === "number") {
-          return column?.width;
-        }
-        return DEFAULT_MIN_WIDTH;
-      };
       const setWidth = (width: number) => {
         column?.setWidth?.(width);
         tableInstance.allColumns[cellIndex].width = width;
@@ -71,7 +66,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
         cellIndex === 0 ? (
           <>{rowIndex + 1}</>
         ) : (
-          <Resizer width={getWidth()} onHorizontalResizeStop={onResize}>
+          <Resizer width={width} onHorizontalResizeStop={onResize}>
             <>
               {inAForm && (cell.column as any).groupType === "input"
                 ? (cell.column as any)?.cellDelegate(`dmn-auto-form-${rowIndex}`)

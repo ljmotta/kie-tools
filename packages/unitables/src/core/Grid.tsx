@@ -210,31 +210,36 @@ export class Grid {
     };
   }
 
-  public determineDataType(type: string): DataType {
-    const extractedType = type.split("FEEL:").pop();
+  public getDataTypeProps(type: string | undefined) {
+    let extractedType = (type ?? "").split("FEEL:").pop();
+    if ((extractedType?.length ?? 0) > 1) {
+      extractedType = (type ?? "").split(":").pop()?.split("}").join("").trim();
+    }
     switch (extractedType) {
+      case "<Undefined>":
+        return { dataType: DataType.Undefined, width: 150 };
       case "Any":
-        return DataType.Any;
+        return { dataType: DataType.Any, width: 150 };
       case "boolean":
-        return DataType.Boolean;
+        return { dataType: DataType.Boolean, width: 50 };
       case "context":
-        return DataType.Context;
+        return { dataType: DataType.Context, width: 150 };
       case "date":
-        return DataType.Date;
+        return { dataType: DataType.Date, width: 180 };
       case "date and time":
-        return DataType.DateTime;
+        return { dataType: DataType.DateTime, width: 300 };
       case "days and time duration":
-        return DataType.DateTimeDuration;
+        return { dataType: DataType.DateTimeDuration, width: 150 };
       case "number":
-        return DataType.Number;
+        return { dataType: DataType.Number, width: 150 };
       case "string":
-        return DataType.String;
+        return { dataType: DataType.String, width: 150 };
       case "time":
-        return DataType.Time;
+        return { dataType: DataType.Time, width: 180 };
       case "years and months duration":
-        return DataType.YearsMonthsDuration;
+        return { dataType: DataType.YearsMonthsDuration, width: 150 };
       default:
-        return DataType.Undefined;
+        return { dataType: extractedType as DataType, width: 150 };
     }
   }
 
@@ -245,7 +250,7 @@ export class Grid {
     if (field.type === "object") {
       return [
         {
-          dataType: this.determineDataType(field["x-dmn-type"]),
+          ...this.getDataTypeProps(field["x-dmn-type"]),
           name: joinedName,
           cellDelegate: ({ formId }: any) => <AutoField key={joinedName} name={joinedName} form={formId} />,
         },
@@ -253,7 +258,7 @@ export class Grid {
     }
     return [
       {
-        dataType: this.determineDataType(field["x-dmn-type"]),
+        ...this.getDataTypeProps(field["x-dmn-type"]),
         name: this.removeInputName(joinedName),
         cellDelegate: ({ formId }: any) => <AutoField key={joinedName} name={joinedName} form={formId} />,
       },
@@ -279,7 +284,7 @@ export class Grid {
   ): [Map<string, Clause>, Result[]] {
     const outputTypeMap = Object.entries(schema?.definitions?.OutputSet?.properties ?? []).reduce(
       (acc: Map<string, DataType>, [name, properties]: [string, any]) => {
-        acc.set(name, this.determineDataType(properties["x-dmn-type"]));
+        acc.set(name, this.getDataTypeProps(properties["x-dmn-type"]).dataType);
 
         return acc;
       },

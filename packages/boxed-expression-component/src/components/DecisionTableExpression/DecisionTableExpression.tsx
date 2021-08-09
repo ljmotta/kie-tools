@@ -287,7 +287,7 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
           dataType: inputClause.dataType,
           width: inputClause.width,
           groupType: DecisionTableColumnType.InputClause,
-          cssClasses: "decision-table--input",
+          cssClasses: "decision-table--output",
           cellDelegate: inputClause.cellDelegate,
         } as any)
     );

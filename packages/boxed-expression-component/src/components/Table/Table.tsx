@@ -110,6 +110,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
     [currentControllerCell, headerVisibility]
   );
 
+  // adds row number
   const generateNumberOfRowsColumn = useCallback(
     (currentControllerCell: string | JSX.Element, columns: Column[]) => {
       const numberOfRowsColumn = {
@@ -135,7 +136,8 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
   const memoTableColumns = useMemo(() => {
-    return generateNumberOfRowsColumn(currentControllerCell, columns);
+    const columnsa = generateNumberOfRowsColumn(currentControllerCell, columns);
+    return columnsa;
   }, [columns]);
 
   useEffect(() => {
@@ -197,7 +199,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
       },
     }),
-    [defaultCell, onCellUpdate]
+    [defaultCell]
   );
 
   const contextMenuIsAvailable = useCallback((target: HTMLElement) => {

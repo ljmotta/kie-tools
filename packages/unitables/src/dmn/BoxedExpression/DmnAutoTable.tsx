@@ -38,9 +38,6 @@ interface Props {
 
 const FORMS_ID = "forms";
 
-// input length is controlled by the table.. so need to export data
-// [{ input1 }, { input2 }, ...]
-
 export function DmnAutoTable(props: Props) {
   // const [selectedExpression, setSelectedExpression] = useState<DecisionTableProps>();
   const bridge = useMemo(() => new DmnValidator().getBridge(props.schema ?? {}), [props.schema]);
@@ -55,7 +52,17 @@ export function DmnAutoTable(props: Props) {
     });
   }, []);
 
+  // const onValidate = useCallback((model: any, error: any, index) => {
+  //   props.setTableData((previousTableData: any) => {
+  //     const newTableData = [...previousTableData];
+  //     newTableData[index] = model;
+  //     return newTableData;
+  //   });
+  // }, []);
+
   const [inputSize, setInputSize] = useState<number>(1);
+
+  const shouldRender = useMemo(() => (grid?.generateBoxedInputs().length ?? 0) > 0, [grid]);
 
   const selectedExpression = useMemo(() => {
     if (grid && props.results) {
@@ -63,7 +70,6 @@ export function DmnAutoTable(props: Props) {
       const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.schema ?? {}, props.results);
       const output: Clause[] = Array.from(outputSet.values());
 
-      console.log(`aaaaaa`, input);
       let rules = [];
       for (let i = 0; i < inputSize; i++) {
         const rule: DecisionTableRule = {
@@ -78,6 +84,7 @@ export function DmnAutoTable(props: Props) {
             autosave={true}
             autosaveDelay={500}
             onSubmit={(model: any) => onSubmit(model, i)}
+            // onValidate={(model: any, error: any) => onValidate(model, error, i)}
             placeholder={true}
           >
             <UniformsContext.Consumer>
@@ -108,83 +115,8 @@ export function DmnAutoTable(props: Props) {
     }
   }, [grid, bridge, onSubmit, props.tableData, props.schema, props.results, inputSize]);
 
-  // const updateExpression = useCallback(
-  //   (updatedExpression: DecisionTableProps) => {
-  //     if (grid && props.results) {
-  //       const input = grid.generateBoxedInputs();
-  //       const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.schema ?? {}, props.results);
-  //       const output: Clause[] = Array.from(outputSet.values());
-  //       setSelectedExpression((previous) => {
-  //         console.log(`aaaaaa`, input);
-  //         let rules;
-  //         if (updatedExpression.rules) {
-  //           rules = [...updatedExpression.rules].map((rule: DecisionTableRule, ruleIndex: number) => {
-  //             const newRule = { ...rule };
-  //             if (!newRule.rowDelegate) {
-  //               newRule.rowDelegate = ({ children }: any) => getAutoRow(bridge!, children, ruleIndex);
-  //             }
-  //             return newRule;
-  //           });
-  //         } else {
-  //           if (previous?.rules) {
-  //             rules = [...previous.rules].map((rule: DecisionTableRule, ruleIndex: number) => {
-  //               const newRule = { ...rule };
-  //               newRule.rowDelegate = ({ children }: any) => getAutoRow(bridge!, children, ruleIndex);
-  //               newRule.outputEntries = (outputEntries[ruleIndex] as string[]) ?? rule.outputEntries;
-  //               return newRule;
-  //             });
-  //           } else {
-  //             const rule: DecisionTableRule = { inputEntries: [], outputEntries: [], annotationEntries: [] };
-  //             rule.rowDelegate = ({ children }: any) => getAutoRow(bridge!, children, 0);
-  //             rules = [rule];
-  //           }
-  //         }
-  //
-  //         const inputDiff = diff(
-  //           input.map((i) => ({ ...i, cellDelegate: undefined })),
-  //           previous?.input?.map((i) => ({ ...i, cellDelegate: undefined })) ?? {}
-  //         );
-  //         const rulesDiff = diff(
-  //           rules.map((r) => ({ ...r, rowDelegate: undefined })),
-  //           previous?.rules?.map((r) => ({ ...r, rowDelegate: undefined })) ?? {}
-  //         );
-  //         const outputDiff = diff(output, previous?.output ?? []);
-  //         if (
-  //           Object.keys(inputDiff).length === 0 &&
-  //           Object.keys(rulesDiff).length === 0 &&
-  //           Object.keys(outputDiff).length === 0
-  //         ) {
-  //           return previous;
-  //         }
-  //
-  //         if (!previous) {
-  //           return {
-  //             ...updatedExpression,
-  //             input,
-  //             output,
-  //             annotation: [],
-  //             rules,
-  //           };
-  //         }
-  //         return {
-  //           ...previous,
-  //           input,
-  //           output,
-  //           annotation: [],
-  //           rules,
-  //         };
-  //       });
-  //     }
-  //   },
-  //   [bridge, grid, props.results, getAutoRow]
-  // );
-
   useEffect(() => {
     errorBoundaryRef.current?.reset();
-    // updateExpression({
-    //   name: "DMN Runner",
-    //   logicType: LogicType.DecisionTable,
-    // });
   }, [props.formError]);
 
   //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
@@ -224,7 +156,7 @@ export function DmnAutoTable(props: Props) {
 
   return (
     <>
-      {bridge && selectedExpression && (
+      {shouldRender && bridge && selectedExpression && (
         <ErrorBoundary ref={errorBoundaryRef} setHasError={props.setFormError} error={formErrorMessage}>
           <BoxedExpressionEditor expressionDefinition={{ selectedExpression }} />
         </ErrorBoundary>
