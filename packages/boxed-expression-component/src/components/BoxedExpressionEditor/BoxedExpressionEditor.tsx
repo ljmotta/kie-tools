@@ -15,12 +15,12 @@
  */
 
 import * as React from "react";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 // import "@patternfly/react-core/dist/styles/base-no-reset.css";
 // import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import "./BoxedExpressionEditor.css";
 import { I18nDictionariesProvider } from "@kie-tooling-core/i18n/dist/react-components";
-import { ExpressionContainer, ExpressionContainerProps } from "../ExpressionContainer";
+import { ExpressionContainer } from "../ExpressionContainer";
 import { hashfy, ResizerSupervisor } from "../Resizer";
 import {
   boxedExpressionEditorDictionaries,
@@ -29,11 +29,11 @@ import {
 } from "../../i18n";
 import { BoxedExpressionGlobalContext } from "../../context";
 import * as _ from "lodash";
-import { PMMLParams } from "../../api";
+import { ExpressionProps, PMMLParams } from "../../api";
 
 export interface BoxedExpressionEditorProps {
   /** All expression properties used to define it */
-  expressionDefinition: ExpressionContainerProps;
+  selectedExpression: ExpressionProps;
   /** PMML parameters */
   pmmlParams?: PMMLParams;
 }
@@ -45,34 +45,30 @@ const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element 
   const boxedExpressionEditorRef = useRef<HTMLDivElement>(null);
   const [supervisorHash, setSupervisorHash] = useState(hashfy({}));
 
-  return useMemo(
-    () => (
-      <I18nDictionariesProvider
-        defaults={boxedExpressionEditorI18nDefaults}
-        dictionaries={boxedExpressionEditorDictionaries}
-        initialLocale={navigator.language}
-        ctx={BoxedExpressionEditorI18nContext}
+  return (
+    <I18nDictionariesProvider
+      defaults={boxedExpressionEditorI18nDefaults}
+      dictionaries={boxedExpressionEditorDictionaries}
+      initialLocale={navigator.language}
+      ctx={BoxedExpressionEditorI18nContext}
+    >
+      <BoxedExpressionGlobalContext.Provider
+        value={{
+          pmmlParams: props.pmmlParams,
+          supervisorHash,
+          setSupervisorHash,
+          boxedExpressionEditorRef,
+          currentlyOpenedHandlerCallback,
+          setCurrentlyOpenedHandlerCallback,
+        }}
       >
-        <BoxedExpressionGlobalContext.Provider
-          value={{
-            pmmlParams: props.pmmlParams,
-            supervisorHash,
-            setSupervisorHash,
-            boxedExpressionEditorRef,
-            currentlyOpenedHandlerCallback,
-            setCurrentlyOpenedHandlerCallback,
-          }}
-        >
-          <ResizerSupervisor>
-            <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
-              <ExpressionContainer {...props.expressionDefinition} />
-            </div>
-          </ResizerSupervisor>
-        </BoxedExpressionGlobalContext.Provider>
-      </I18nDictionariesProvider>
-    ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.expressionDefinition]
+        <ResizerSupervisor>
+          <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
+            <ExpressionContainer selectedExpression={props.selectedExpression} />
+          </div>
+        </ResizerSupervisor>
+      </BoxedExpressionGlobalContext.Provider>
+    </I18nDictionariesProvider>
   );
 };
 

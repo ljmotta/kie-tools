@@ -43,18 +43,6 @@ declare module "react-table" {
   export interface TableOptions<D extends object> {
     onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
     onRowUpdate: (rowIndex: number, updatedRow: DataRecord) => void;
-    // getThProps: (
-    //   column: ColumnInstance,
-    //   columnIndex: number
-    // ) => {
-    //   onContextMenu: (event: ContextMenuEvent) => void;
-    // };
-    // getTdProps: (
-    //   columnIndex: number,
-    //   rowIndex: number
-    // ) => {
-    //   onContextMenu: (event: ContextMenuEvent) => void;
-    // };
   }
 
   export interface ColumnInstance {
@@ -92,8 +80,5 @@ declare module "react-table" {
 }
 
 window.renderBoxedExpressionEditor = (selector: string, definition: ExpressionProps) => {
-  ReactDOM.render(
-    <BoxedExpressionEditor expressionDefinition={{ selectedExpression: definition }} />,
-    document.getElementById(selector)
-  );
+  ReactDOM.render(<BoxedExpressionEditor selectedExpression={definition} />, document.getElementById(selector));
 };

@@ -158,7 +158,7 @@ export function DmnAutoTable(props: Props) {
     <>
       {shouldRender && bridge && selectedExpression && (
         <ErrorBoundary ref={errorBoundaryRef} setHasError={props.setFormError} error={formErrorMessage}>
-          <BoxedExpressionEditor expressionDefinition={{ selectedExpression }} />
+          <BoxedExpressionEditor selectedExpression={selectedExpression} />
         </ErrorBoundary>
       )}
       <div id={FORMS_ID} />

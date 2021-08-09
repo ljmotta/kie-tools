@@ -17,7 +17,7 @@
 import * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import "./ExpressionContainer.css";
-import { Clause, ExpressionProps, LogicType } from "../../api";
+import { ExpressionProps, LogicType } from "../../api";
 import { LogicTypeSelector } from "../LogicTypeSelector";
 
 export interface ExpressionContainerProps {
@@ -72,8 +72,8 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
   return (
     <div className="expression-container">
       <div className="expression-name-and-logic-type">
-        <span className="expression-title">{selectedExpression.name}</span>
-        <span className="expression-type">({selectedExpression.logicType || LogicType.Undefined})</span>
+        <span className="expression-title">{props.selectedExpression.name}</span>
+        <span className="expression-type">({props.selectedExpression.logicType || LogicType.Undefined})</span>
       </div>
 
       <div

@@ -52,7 +52,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   tableRows,
   onRowsUpdate,
   editColumnLabel,
-  headerVisibility = TableHeaderVisibility.Full,
+  headerVisibility,
   skipLastHeaderGroup,
   getColumnKey,
   tableColumns,
@@ -239,27 +239,17 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
     [renderCountColumn, renderResizableHeaderCell]
   );
 
-  const getHeaderGroups = useCallback(
-    (tableInstance) => {
-      return skipLastHeaderGroup ? _.dropRight(tableInstance.headerGroups) : tableInstance.headerGroups;
-    },
-    [skipLastHeaderGroup]
-  );
-
-  const renderHeaderGroups = useMemo(
-    () =>
-      getHeaderGroups(tableInstance).map((headerGroup: HeaderGroup) => {
-        const { key, ...props } = { ...headerGroup.getHeaderGroupProps(), style: {} };
-        return (
-          <Tr key={key} {...props}>
-            {headerGroup.headers.map((column: ColumnInstance, columnIndex: number) =>
-              renderColumn(column, columnIndex)
-            )}
-          </Tr>
-        );
-      }),
-    [getHeaderGroups, renderColumn, tableInstance]
-  );
+  const renderHeaderGroups = useMemo(() => {
+    const headerGroups = skipLastHeaderGroup ? _.dropRight(tableInstance.headerGroups) : tableInstance.headerGroups;
+    return headerGroups.map((headerGroup: HeaderGroup) => {
+      const { key, ...props } = { ...headerGroup.getHeaderGroupProps(), style: {} };
+      return (
+        <Tr key={key} {...props}>
+          {headerGroup.headers.map((column: ColumnInstance, columnIndex: number) => renderColumn(column, columnIndex))}
+        </Tr>
+      );
+    });
+  }, [skipLastHeaderGroup, renderColumn, tableInstance]);
 
   const renderAtLevelInHeaderGroups = useCallback(
     (level: number) => (

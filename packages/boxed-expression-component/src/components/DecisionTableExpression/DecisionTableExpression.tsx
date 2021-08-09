@@ -134,86 +134,6 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
   const decisionDataType = useRef(dataType);
   const singleOutputChildDataType = useRef(DataType.Undefined);
 
-  // // update columns
-  // const updateColumns = useCallback(
-  //   (updatedInput: Clause[], updatedOutput: Clause[], updatedAnnotation: Annotation[]): ColumnInstance[] => {
-  //     const inputColumns = (updatedInput ?? []).map(
-  //       (inputClause) =>
-  //         ({
-  //           label: inputClause.name,
-  //           accessor: inputClause.name,
-  //           dataType: inputClause.dataType,
-  //           width: inputClause.width,
-  //           groupType: DecisionTableColumnType.InputClause,
-  //           cssClasses: "decision-table--input",
-  //           cellDelegate: inputClause.cellDelegate,
-  //         } as any)
-  //     );
-  //     const outputColumns = (updatedOutput ?? []).map(
-  //       (outputClause) =>
-  //         ({
-  //           label: outputClause.name,
-  //           accessor: outputClause.name,
-  //           dataType: outputClause.dataType,
-  //           width: outputClause.width,
-  //           groupType: DecisionTableColumnType.OutputClause,
-  //           cssClasses: "decision-table--output",
-  //         } as ColumnInstance)
-  //     );
-  //     const annotationColumns = (updatedAnnotation ?? []).map(
-  //       (annotation) =>
-  //         ({
-  //           label: annotation.name,
-  //           accessor: annotation.name,
-  //           width: annotation.width,
-  //           inlineEditable: true,
-  //           groupType: DecisionTableColumnType.Annotation,
-  //           cssClasses: "decision-table--annotation",
-  //         } as ColumnInstance)
-  //     );
-  //
-  //     const inputSection = {
-  //       groupType: DecisionTableColumnType.InputClause,
-  //       label: "Input",
-  //       accessor: "Input",
-  //       cssClasses: "decision-table--input",
-  //       columns: inputColumns,
-  //     };
-  //     const outputSection = {
-  //       groupType: DecisionTableColumnType.OutputClause,
-  //       label: decisionName.current,
-  //       accessor: decisionName.current,
-  //       dataType: decisionDataType.current,
-  //       cssClasses: "decision-table--output",
-  //       columns: outputColumns,
-  //       appendColumnsOnChildren: true,
-  //     };
-  //     const annotationSection = {
-  //       groupType: DecisionTableColumnType.Annotation,
-  //       label: "Annotations",
-  //       accessor: "Annotations",
-  //       cssClasses: "decision-table--annotation",
-  //       columns: annotationColumns,
-  //       inlineEditable: true,
-  //     };
-  //
-  //     return [inputSection, outputSection, annotationSection] as ColumnInstance[];
-  //   },
-  //   []
-  // );
-  //
-  // // update rows
-  // const updateRows = useCallback((rules: DecisionTableRule[], columns: ColumnInstance[]): DataRecord[] => {
-  //   return rules.map((rule) => {
-  //     const rowArray = [...rule.inputEntries, ...rule.outputEntries, ...rule.annotationEntries];
-  //     return getColumnsAtLastLevel(columns).reduce((tableRow: any, column, columnIndex: number) => {
-  //       tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
-  //       tableRow.rowDelegate = rule.rowDelegate;
-  //       return tableRow;
-  //     }, {});
-  //   });
-  // }, []);
-
   const spreadDecisionTableExpressionDefinition = useCallback(
     (columns: ColumnInstance[], rows: DataRecord[]) => {
       const groupedColumns = groupBy(getColumnsAtLastLevel(columns), (column) => column.groupType);
@@ -316,16 +236,16 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
 
     const inputSection = {
       groupType: DecisionTableColumnType.InputClause,
-      label: "Input",
-      accessor: "Input",
-      cssClasses: "decision-table--input",
+      label: "Test",
+      accessor: "Something",
+      cssClasses: "decision-table--output",
       columns: inputColumns,
+      appendColumnsOnChildren: true,
     };
     const outputSection = {
       groupType: DecisionTableColumnType.OutputClause,
-      label: decisionName.current,
-      accessor: decisionName.current,
-      dataType: decisionDataType.current,
+      label: " ",
+      accessor: " ",
       cssClasses: "decision-table--output",
       columns: outputColumns,
       appendColumnsOnChildren: true,
@@ -414,14 +334,6 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
         onColumnsUpdate={onColumnsUpdate}
         onRowsUpdate={onRowsUpdate}
         onRowAdding={onRowAdding}
-        controllerCell={
-          <HitPolicySelector
-            selectedHitPolicy={selectedHitPolicy}
-            selectedBuiltInAggregator={selectedAggregation}
-            onHitPolicySelect={onHitPolicySelect}
-            onBuiltInAggregatorSelect={onBuiltInAggregatorSelect}
-          />
-        }
       />
     </div>
   );

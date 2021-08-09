@@ -35,8 +35,6 @@ export interface TableHandlerProps {
   getColumnPrefix: (groupType?: string) => string;
   /** Columns instance */
   tableColumns: Column[];
-  /** Columns setter */
-  setTableColumns: React.Dispatch<React.SetStateAction<Column[]>>;
   /** Last selected column */
   lastSelectedColumn: ColumnInstance;
   /** Last selected row index */
@@ -66,7 +64,6 @@ export interface TableHandlerProps {
 export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   getColumnPrefix,
   tableColumns,
-  setTableColumns,
   lastSelectedColumn,
   lastSelectedRowIndex,
   tableRows,
@@ -183,13 +180,13 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
       if (selectedColumn.appendColumnsOnChildren && _.isArray(selectedColumn.columns)) {
         appendOnColumnChildren(operation);
       } else {
-        setTableColumns((previousTableColumns: Column[]) => {
-          return operation(
-            previousTableColumns,
-            _.findIndex(previousTableColumns, getColumnSearchPredicate(selectedColumn)),
-            generateNextAvailableColumn()
-          );
-        });
+        // setTableColumns((previousTableColumns: Column[]) => {
+        //   return operation(
+        //     previousTableColumns,
+        //     _.findIndex(previousTableColumns, getColumnSearchPredicate(selectedColumn)),
+        //     generateNextAvailableColumn()
+        //   );
+        // });
       }
     }
     updateColumnsThenRows();
@@ -248,36 +245,25 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     return handlerConfiguration[selectedColumn?.groupType || ""];
   }, [handlerConfiguration, selectedColumn?.groupType]);
 
-  return useMemo(
-    () => (
-      <Popover
-        className="table-handler"
-        hasNoPadding
-        showClose={false}
-        distance={5}
-        position={"right"}
-        isVisible={showTableHandler}
-        shouldClose={() => setShowTableHandler(false)}
-        shouldOpen={(showFunction) => showFunction?.()}
-        reference={() => tableHandlerTarget}
-        appendTo={globalContext.boxedExpressionEditorRef?.current ?? undefined}
-        bodyContent={
-          <TableHandlerMenu
-            handlerConfiguration={getHandlerConfiguration}
-            allowedOperations={tableHandlerAllowedOperations}
-            onOperation={handlingOperation}
-          />
-        }
-      />
-    ),
-    [
-      showTableHandler,
-      globalContext.boxedExpressionEditorRef,
-      getHandlerConfiguration,
-      tableHandlerAllowedOperations,
-      handlingOperation,
-      setShowTableHandler,
-      tableHandlerTarget,
-    ]
+  return (
+    <Popover
+      className="table-handler"
+      hasNoPadding
+      showClose={false}
+      distance={5}
+      position={"right"}
+      isVisible={showTableHandler}
+      shouldClose={() => setShowTableHandler(false)}
+      shouldOpen={(showFunction) => showFunction?.()}
+      reference={() => tableHandlerTarget}
+      appendTo={globalContext.boxedExpressionEditorRef?.current ?? undefined}
+      bodyContent={
+        <TableHandlerMenu
+          handlerConfiguration={getHandlerConfiguration}
+          allowedOperations={tableHandlerAllowedOperations}
+          onOperation={handlingOperation}
+        />
+      }
+    />
   );
 };
