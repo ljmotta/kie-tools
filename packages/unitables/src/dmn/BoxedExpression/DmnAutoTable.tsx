@@ -128,8 +128,8 @@ export function DmnAutoTable(props: Props) {
     broadcastLiteralExpressionDefinition(definition: LiteralExpressionProps): void {},
     broadcastRelationExpressionDefinition(definition: RelationProps): void {},
     resetExpressionDefinition(definition: ExpressionProps): void {},
-    broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) =>
-      setInputSize(definition?.rules?.length ?? 1),
+    broadcastDecisionTableExpressionDefinition(definition: DecisionTableProps): void {},
+    broadcastDmnRunnerTable: (rows: number) => setInputSize(rows ?? 1),
   };
 
   const formErrorMessage = useMemo(

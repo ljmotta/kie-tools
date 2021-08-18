@@ -161,22 +161,7 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
         rowDelegate: row.rowDelegate as any,
       }));
 
-      const expressionDefinition: DecisionTableProps = {
-        uid,
-        logicType: LogicType.DecisionTable,
-        name: decisionName.current,
-        dataType: decisionDataType.current,
-        hitPolicy: selectedHitPolicy,
-        aggregation: selectedAggregation,
-        rules: newRules,
-      };
-
-      if (isHeadless) {
-        onUpdatingRecursiveExpression?.(expressionDefinition);
-      } else {
-        setSupervisorHash(hashfy(expressionDefinition));
-        window.beeApi?.broadcastDecisionTableExpressionDefinition?.(expressionDefinition);
-      }
+      window.beeApi?.broadcastDmnRunnerTable?.(newRules.length);
     },
     [isHeadless, onUpdatingRecursiveExpression, selectedAggregation, selectedHitPolicy, setSupervisorHash, uid]
   );
@@ -273,26 +258,6 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
     });
   }, [rules]);
 
-  const onColumnsUpdate = useCallback(
-    (updatedColumns) => {
-      const decisionNodeColumn = find(updatedColumns, { groupType: DecisionTableColumnType.OutputClause });
-
-      synchronizeDecisionNodeDataTypeWithSingleOutputColumnDataType(decisionNodeColumn);
-
-      // setColumns([...updatedColumns]);
-      decisionName.current = decisionNodeColumn.label;
-      decisionDataType.current = decisionNodeColumn.dataType;
-      onUpdatingNameAndDataType?.(decisionNodeColumn.label, decisionNodeColumn.dataType);
-      spreadDecisionTableExpressionDefinition([...updatedColumns], memoRows);
-    },
-    [
-      onUpdatingNameAndDataType,
-      spreadDecisionTableExpressionDefinition,
-      synchronizeDecisionNodeDataTypeWithSingleOutputColumnDataType,
-      memoRows,
-    ]
-  );
-
   const onRowsUpdate = useCallback(
     (updatedRows) => {
       const newRows = updatedRows.map((row: any) =>
@@ -331,7 +296,6 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
         handlerConfiguration={getHandlerConfiguration}
         columns={memoColumns}
         rows={memoRows}
-        onColumnsUpdate={onColumnsUpdate}
         onRowsUpdate={onRowsUpdate}
         onRowAdding={onRowAdding}
       />

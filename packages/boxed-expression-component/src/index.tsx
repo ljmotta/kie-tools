@@ -79,6 +79,6 @@ declare module "react-table" {
   }
 }
 
-window.renderBoxedExpressionEditor = (selector: string, definition: ExpressionProps) => {
-  ReactDOM.render(<BoxedExpressionEditor selectedExpression={definition} />, document.getElementById(selector));
-};
+// window.renderBoxedExpressionEditor = (selector: string, definition: ExpressionProps) => {
+//   ReactDOM.render(<BoxedExpressionEditor selectedExpression={definition} />, document.getElementById(selector));
+// };

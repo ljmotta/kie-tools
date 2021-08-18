@@ -217,29 +217,29 @@ export class Grid {
     }
     switch (extractedType) {
       case "<Undefined>":
-        return { dataType: DataType.Undefined, width: 150 };
+        return { dataType: DataType.Undefined, width: undefined }; // 150
       case "Any":
-        return { dataType: DataType.Any, width: 150 };
+        return { dataType: DataType.Any, width: undefined }; // 150
       case "boolean":
-        return { dataType: DataType.Boolean, width: 50 };
+        return { dataType: DataType.Boolean, width: undefined }; // 50
       case "context":
-        return { dataType: DataType.Context, width: 150 };
+        return { dataType: DataType.Context, width: undefined }; // 150
       case "date":
-        return { dataType: DataType.Date, width: 180 };
+        return { dataType: DataType.Date, width: undefined }; // 180
       case "date and time":
-        return { dataType: DataType.DateTime, width: 300 };
+        return { dataType: DataType.DateTime, width: undefined }; // 300
       case "days and time duration":
-        return { dataType: DataType.DateTimeDuration, width: 150 };
+        return { dataType: DataType.DateTimeDuration, width: undefined };
       case "number":
-        return { dataType: DataType.Number, width: 150 };
+        return { dataType: DataType.Number, width: undefined };
       case "string":
-        return { dataType: DataType.String, width: 150 };
+        return { dataType: DataType.String, width: undefined };
       case "time":
-        return { dataType: DataType.Time, width: 180 };
+        return { dataType: DataType.Time, width: undefined };
       case "years and months duration":
-        return { dataType: DataType.YearsMonthsDuration, width: 150 };
+        return { dataType: DataType.YearsMonthsDuration, width: undefined };
       default:
-        return { dataType: extractedType as DataType, width: 150 };
+        return { dataType: extractedType as DataType, width: undefined };
     }
   }
 
