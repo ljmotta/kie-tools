@@ -66,26 +66,44 @@ export function PrToolbar(props: {
         <div style={{ margin: "5px" }}>
           <button
             className={buttonStyle}
-            style={{ borderRight: "solid", borderRadius: "0px" }}
+            style={{ borderRight: "solid 1px", borderRadius: "0px", paddingRight: "5px" }}
             tabIndex={0}
             type={"button"}
             onClick={e => toggleOriginal(e, true)}
           >
             Original
           </button>
-          <button className={buttonStyle} tabIndex={0} type={"button"} onClick={e => toggleOriginal(e, false)}>
+          <button
+            className={buttonStyle}
+            style={{ paddingLeft: "5px" }}
+            tabIndex={0}
+            type={"button"}
+            onClick={e => toggleOriginal(e, false)}
+          >
             Changes
           </button>
         </div>
       )}
 
       {!props.textMode && (
-        <button className={buttonStyle} style={{ margin: "5px" }} tabIndex={0} type={"button"} onClick={closeDiagram}>
+        <button
+          className={buttonStyle}
+          style={{ margin: "5px", paddingLeft: "5px", paddingRight: "5px" }}
+          tabIndex={0}
+          type={"button"}
+          onClick={closeDiagram}
+        >
           Close Diagram
         </button>
       )}
       {props.textMode && (
-        <button className={buttonStyle} style={{ margin: "5px" }} tabIndex={0} type={"button"} onClick={seeAsDiagram}>
+        <button
+          className={buttonStyle}
+          style={{ margin: "5px", paddingLeft: "5px", paddingRight: "5px" }}
+          tabIndex={0}
+          type={"button"}
+          onClick={seeAsDiagram}
+        >
           See as Diagram
         </button>
       )}
