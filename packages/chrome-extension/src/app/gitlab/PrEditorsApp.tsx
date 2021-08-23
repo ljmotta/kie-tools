@@ -84,7 +84,7 @@ function parsePrInfo(): PrInfo {
   const targetOrg = window.location.pathname.split("/")[1];
 
   const originOrg = (document.querySelector(".author-link")! as any).pathname.split("/").pop();
-  const originGitRef = (Array.from(document.getElementsByTagName("cite")).pop() as any).outerText;
+  const originGitRef = (document.querySelector('[data-testid="ref-name"]') as any)!.outerText;
   const targetGitRef = (document
     .querySelector(".mr-version-menus-container")!
     .querySelector(".gl-new-dropdown-button-text")! as any).outerText;

@@ -33,13 +33,12 @@ export function IsolatedPrEditor(props: {
   contentPath: string;
   bitbucketTextEditorToReplace: HTMLElement;
   prFilePath: string;
-  prFileStatus: string;
+  prFileStatus: FileStatusOnPr;
   envelopeLocator: EditorEnvelopeLocator;
 }) {
   const [editorReady, setEditorReady] = useState(false);
   const [showOriginal, setShowOriginal] = useState(false);
   const [textMode, setTextMode] = useState(true);
-  const [fileStatusOnPr, setFileStatusOnPr] = useState(FileStatusOnPr.UNKNOWN);
 
   useEffect(() => {
     const fileContent = props.prFileContainer.querySelector("div[data-qa='bk-file__content']");
@@ -55,15 +54,11 @@ export function IsolatedPrEditor(props: {
     }
   }, [props.prFileContainer, props.id, textMode]);
 
-  useEffect(() => {
-    setFileStatusOnPr(discoverFileStatusOnPr(props.prFileStatus));
-  }, [props.prFileStatus]);
-
   const getFileContents = useMemo(() => {
-    return showOriginal || fileStatusOnPr === FileStatusOnPr.DELETED
+    return showOriginal || props.prFileStatus === FileStatusOnPr.DELETED
       ? () => getTargetFileContents(props.prInfo, props.prFilePath) // master
       : () => getOriginFileContents(props.prInfo, props.prFilePath); // branch
-  }, [showOriginal, fileStatusOnPr, props.prInfo, props.prFilePath]);
+  }, [showOriginal, props.prFileStatus, props.prInfo, props.prFilePath]);
 
   const repoInfo = useMemo(() => {
     return {
@@ -106,7 +101,7 @@ export function IsolatedPrEditor(props: {
         {ReactDOM.createPortal(
           <PrToolbar
             showOriginalChangesToggle={editorReady}
-            fileStatusOnPr={fileStatusOnPr}
+            fileStatusOnPr={props.prFileStatus}
             textMode={textMode}
             originalDiagram={showOriginal}
             toggleOriginal={toggleOriginal}
@@ -133,22 +128,6 @@ export function IsolatedPrEditor(props: {
       </IsolatedEditorContext.Provider>
     </React.Fragment>
   );
-}
-
-function discoverFileStatusOnPr(prFileStatus: string) {
-  if (prFileStatus === "Added") {
-    return FileStatusOnPr.ADDED;
-  }
-
-  if (prFileStatus === "Modified") {
-    return FileStatusOnPr.CHANGED;
-  }
-
-  if (prFileStatus === "Deleted") {
-    return FileStatusOnPr.DELETED;
-  }
-
-  throw new Error("Impossible status for file on PR");
 }
 
 function iframeContainer(id: string, container: HTMLElement) {

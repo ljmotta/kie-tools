@@ -20,6 +20,7 @@ import { EditorEnvelopeLocator } from "@kogito-tooling/editor/dist/api";
 import * as React from "react";
 import { PrInfo } from "./PrEditorView";
 import { IsolatedPrEditor } from "./IsolatedPrEditor";
+import { FileStatusOnPr } from "./FileStatusOnPr";
 
 export function PrEditorsApp(props: {
   id: string;
@@ -136,15 +137,23 @@ export function getUnprocessedFilePath(prFileContainer: any) {
   return prFileContainer.querySelector("h3[data-qa='bk-filepath']")!.outerText;
 }
 
-export function getUnprocessedFileStatus(prFileContainer: any): string {
-  return (Array.from(
-    prFileContainer.querySelector("div[data-qa='bk-file__header']").querySelectorAll("span[role='img']")
-  ) as HTMLElement[]).reduce(
-    (acc: string, container: any): string => (isFileStatus(container.ariaLabel) ? container.ariaLabel : acc),
-    ""
-  );
+export function getUnprocessedFileStatus(prFileContainer: any): FileStatusOnPr {
+  const container = prFileContainer.querySelector("div[data-qa='bk-file__header']")
+  return discoverFileStatusOnPr(container.outerText);
 }
 
-function isFileStatus(status: string) {
-  return status === "Added" || status === "Modified" || status === "Deleted";
+function discoverFileStatusOnPr(prFileStatus: string) {
+  if (prFileStatus.includes("Added")) {
+    return FileStatusOnPr.ADDED;
+  }
+
+  if (prFileStatus.includes("Modified")) {
+    return FileStatusOnPr.CHANGED;
+  }
+
+  if (prFileStatus.includes("Deleted")) {
+    return FileStatusOnPr.DELETED;
+  }
+
+  throw new Error("Impossible status for file on PR");
 }
