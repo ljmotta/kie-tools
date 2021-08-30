@@ -41,7 +41,7 @@ function getRouterArgs(argv) {
 
   if (argv.mode === "production") {
     targetOrigin = targetOrigin || "https://kiegroup.github.io";
-    relativePath = relativePath || `kogito-online/editors/${getLatestGitTag()}/`;
+    relativePath = relativePath || `kogito-online/editors/0.8.3`;
   } else {
     targetOrigin = targetOrigin || "https://localhost:9000";
     relativePath = relativePath || "";
