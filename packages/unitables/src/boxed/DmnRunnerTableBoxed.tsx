@@ -183,7 +183,7 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
           dataType: props.output?.[outputIndex]?.dataType,
           cssClasses: "decision-table--output",
           appendColumnsOnChildren: true,
-        } as ColumnInstance,
+        },
       ];
     });
 
@@ -278,7 +278,7 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
   return (
     <div className="expression-container">
       <div className="expression-name-and-logic-type">
-        <span className="expression-title">{props?.name ?? ""}</span>
+        {/*<span className="expression-title">{props?.name ?? ""}</span>*/}
       </div>
 
       <div className="expression-container-box" data-ouia-component-id="expression-container">
