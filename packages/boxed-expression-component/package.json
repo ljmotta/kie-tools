@@ -7,6 +7,7 @@
   "source": "dist/index.d.ts",
   "scripts": {
     "build:dev": "rimraf dist && yarn copy:css && tsc -p tsconfig.json",
+    "build:prod": "yarn build:dev",
     "build:watch": "rimraf dist && yarn copy:css && tsc -p tsconfig.json --watch",
     "copy:css": "copyfiles -u 1 \"src/**/*.{sass,scss,css}\" dist/",
     "test": "jest --collect-coverage",

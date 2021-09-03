@@ -10,8 +10,9 @@
     "test": "run-script-if --env KOGITO_TOOLING_BUILD_test -c 'jest --silent --verbose'",
     "test:clearCache": "jest --clearCache",
     "build:dev": "rimraf dist && yarn copy:css && tsc -p tsconfig.dev.json",
+    "build:prod": "yarn build:dev",
     "build:watch": "rimraf dist && yarn copy:css && tsc -p tsconfig.dev.json --watch",
-    "copy:css": "copyfiles -u 1 'src/**/*.{sass,scss,css}' dist/"
+    "copy:css": "copyfiles -u 1 \"src/**/*.{sass,scss,css}\" dist/"
   },
   "repository": {
     "type": "git",
