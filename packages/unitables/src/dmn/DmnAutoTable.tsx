@@ -10,7 +10,7 @@ import { EmptyState, EmptyStateBody, EmptyStateIcon } from "@patternfly/react-co
 import { ExclamationIcon } from "@patternfly/react-icons/dist/js/icons/exclamation-icon";
 import { Text, TextContent } from "@patternfly/react-core/dist/js/components/Text";
 import { DmnGrid } from "./DmnGrid";
-import { DmnRunnerRule, DmnRunnerTable, DmnRunnerTableProps } from "../boxed";
+import { DmnRunnerRule, DmnRunnerTableBoxed, DmnRunnerTableProps } from "../boxed";
 import { NotificationSeverity } from "@kie-tooling-core/notifications/dist/api";
 import { dmnAutoTableDictionaries, DmnAutoTableI18nContext, dmnAutoTableI18nDefaults } from "../i18n";
 import { I18nDictionariesProvider } from "@kie-tooling-core/i18n/dist/react-components";
@@ -63,7 +63,7 @@ interface Props {
   setFormError: React.Dispatch<any>;
 }
 
-const FORMS_ID = "forms";
+const FORMS_ID = "unitable-forms";
 
 export function DmnAutoTable(props: Props) {
   const errorBoundaryRef = useRef<ErrorBoundary>(null);
@@ -176,9 +176,10 @@ export function DmnAutoTable(props: Props) {
 
   let selectedExpression: DmnRunnerTableProps | undefined = undefined;
   selectedExpression = useMemo(() => {
-    if (grid && props.results) {
+    const filteredResults = props.results?.filter((result) => result !== undefined);
+    if (grid && filteredResults) {
       const input = grid.generateBoxedInputs();
-      const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.schema ?? {}, props.results);
+      const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.schema ?? {}, filteredResults);
       const output: Clause[] = Array.from(outputSet.values());
 
       const rules = [];
@@ -218,10 +219,6 @@ export function DmnAutoTable(props: Props) {
     getAutoRow,
   ]);
 
-  useEffect(() => {
-    errorBoundaryRef.current?.reset();
-  }, [props.formError]);
-
   const formErrorMessage = useMemo(
     () => (
       <div>
@@ -255,7 +252,7 @@ export function DmnAutoTable(props: Props) {
             ctx={DmnAutoTableI18nContext}
           >
             <BoxedExpressionProvider expressionDefinition={selectedExpression} isRunnerTable={true}>
-              <DmnRunnerTable {...selectedExpression} />
+              <DmnRunnerTableBoxed {...selectedExpression} />
             </BoxedExpressionProvider>
           </I18nDictionariesProvider>
         </ErrorBoundary>

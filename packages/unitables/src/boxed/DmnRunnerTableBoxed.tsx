@@ -16,18 +16,18 @@
 
 import * as React from "react";
 import { useCallback, useEffect, useMemo } from "react";
-import "boxed-expression-component/dist";
+import "@kogito-tooling/boxed-expression-component";
 import { ColumnInstance, DataRecord } from "react-table";
 import {
   ExpressionProps,
   GroupOperations,
   TableHeaderVisibility,
   TableOperation,
-} from "boxed-expression-component/dist/api";
-import { getColumnsAtLastLevel, Table } from "boxed-expression-component/dist/components";
+} from "@kogito-tooling/boxed-expression-component/dist/api";
+import { getColumnsAtLastLevel, Table } from "@kogito-tooling/boxed-expression-component/dist/components";
 import "./DmnRunnerTable.css";
 import { DmnRunnerClause, DmnRunnerRule } from "./DmnRunnerTableTypes";
-import { useDmnAutoTableI18n } from "../unitables";
+import { useDmnAutoTableI18n } from "../i18n";
 
 enum DecisionTableColumnType {
   InputClause = "input",
@@ -49,7 +49,7 @@ export interface DmnRunnerTableProps extends ExpressionProps {
   onRowNumberUpdated: (rowNumber: number, operation?: TableOperation, updatedRowIndex?: number) => void;
 }
 
-export function DmnRunnerTable(props: DmnRunnerTableProps) {
+export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
   const { i18n } = useDmnAutoTableI18n();
 
   const getColumnPrefix = useCallback((groupType?: string) => {
@@ -187,7 +187,14 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
       ];
     });
 
-    return [...inputSection, ...outputSection] as ColumnInstance[];
+    const updatedColumns: ColumnInstance[] = [];
+    if (inputSection) {
+      updatedColumns.push(...(inputSection as any));
+    }
+    if (outputSection) {
+      updatedColumns.push(...(outputSection as any));
+    }
+    return updatedColumns;
   }, [props.input, props.output, props.rules]);
 
   const memoRows = useMemo(() => {
@@ -243,6 +250,9 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
   }, [memoColumns]);
 
   const searchRecursively = useCallback((child: any) => {
+    if (!child) {
+      return;
+    }
     if (child.tagName === "svg") {
       return;
     }
