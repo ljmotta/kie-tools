@@ -91,6 +91,7 @@ export class Grid {
     schema: any,
     decisionResults: Array<DecisionResult[] | undefined>
   ): [Map<string, DmnRunnerClause>, Result[]] {
+    // fix output recursion. make it like the inputs
     const outputTypeMap = Object.entries(schema?.definitions?.OutputSet?.properties ?? []).reduce(
       (acc: Map<string, DataType>, [name, properties]: [string, any]) => {
         if (properties["x-dmn-type"]) {
