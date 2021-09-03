@@ -153,15 +153,24 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
         });
       }
       if (outputEntry !== null && typeof outputEntry === "object") {
-        const columns = Object.keys(outputEntry).map(
-          (entryName) =>
-            ({
-              groupType: DecisionTableColumnType.OutputClause,
-              label: entryName,
-              accessor: `output-${entryName}`,
-              cssClasses: "decision-table--output",
-            } as ColumnInstance)
-        );
+        const columns = Object.entries(outputEntry).map(([entryKey, entryValue]) => {
+          if (typeof entryValue === "object") {
+            return Object.keys(entryValue as any).map((entrySubKey) => {
+              return {
+                groupType: DecisionTableColumnType.OutputClause,
+                label: `${entryKey}.${entrySubKey}`,
+                accessor: `output-${entryKey}.${entrySubKey}`,
+                cssClasses: "decision-table--output",
+              } as ColumnInstance;
+            });
+          }
+          return {
+            groupType: DecisionTableColumnType.OutputClause,
+            label: entryKey,
+            accessor: `output-${entryKey}`,
+            cssClasses: "decision-table--output",
+          } as ColumnInstance;
+        });
 
         return [
           {
