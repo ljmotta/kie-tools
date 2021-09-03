@@ -26,9 +26,11 @@ import { useNotificationsPanel } from "./NotificationsPanelContext";
 import { NotificationPanelTabContent } from "./NotificationsPanelTabContent";
 import { NotificationsApi } from "@kie-tooling-core/notifications/dist/api";
 import { useOnlineI18n } from "../../common/i18n";
+import { DmnRunnerTable } from "../DmnRunner/DmnRunnerTable";
 
 interface Props {
   tabNames: string[];
+  editor: any;
 }
 
 export function NotificationsPanel(props: Props) {
@@ -179,41 +181,42 @@ export function NotificationsPanel(props: Props) {
       >
         <div onMouseDown={onMouseDown} className={"kogito--editor__notifications-panel-resizable-div"} />
         <div ref={notificationsPanelDivRef} className={"kogito--editor__notifications-panel-div"}>
-          <div className={"kogito--editor__notifications-panel-icon-position"}>
-            <div onClick={() => onRetractAll()}>
-              <Tooltip content={i18n.notificationsPanel.tooltip.retractAll}>
-                <AngleUpIcon />
-              </Tooltip>
-            </div>
-            <div onClick={() => onExpandAll()}>
-              <Tooltip content={i18n.notificationsPanel.tooltip.expandAll}>
-                <AngleDownIcon />
-              </Tooltip>
-            </div>
-          </div>
-          <Tabs activeKey={notificationsPanel.activeTab} onSelect={onSelectTab}>
-            {[...tabsMap.entries()].map(([tabName, tabRef], index) => (
-              <Tab
-                key={`tab-${index}`}
-                eventKey={tabName}
-                title={
-                  <TabTitleText>
-                    {tabName} <Badge isRead={true}>{tabsNotifications.get(tabName)}</Badge>
-                  </TabTitleText>
-                }
-              >
-                <div>
-                  <NotificationPanelTabContent
-                    name={tabName}
-                    ref={tabRef}
-                    onNotificationsLengthChange={onNotificationsLengthChange}
-                    expandAll={expandAll}
-                    setExpandAll={setExpandAll}
-                  />
-                </div>
-              </Tab>
-            ))}
-          </Tabs>
+          <DmnRunnerTable editor={props.editor} />
+          {/*<div className={"kogito--editor__notifications-panel-icon-position"}>*/}
+          {/*  <div onClick={() => onRetractAll()}>*/}
+          {/*    <Tooltip content={i18n.notificationsPanel.tooltip.retractAll}>*/}
+          {/*      <AngleUpIcon />*/}
+          {/*    </Tooltip>*/}
+          {/*  </div>*/}
+          {/*  <div onClick={() => onExpandAll()}>*/}
+          {/*    <Tooltip content={i18n.notificationsPanel.tooltip.expandAll}>*/}
+          {/*      <AngleDownIcon />*/}
+          {/*    </Tooltip>*/}
+          {/*  </div>*/}
+          {/*</div>*/}
+          {/*<Tabs activeKey={notificationsPanel.activeTab} onSelect={onSelectTab}>*/}
+          {/*  {[...tabsMap.entries()].map(([tabName, tabRef], index) => (*/}
+          {/*    <Tab*/}
+          {/*      key={`tab-${index}`}*/}
+          {/*      eventKey={tabName}*/}
+          {/*      title={*/}
+          {/*        <TabTitleText>*/}
+          {/*          {tabName} <Badge isRead={true}>{tabsNotifications.get(tabName)}</Badge>*/}
+          {/*        </TabTitleText>*/}
+          {/*      }*/}
+          {/*    >*/}
+          {/*      <div>*/}
+          {/*        <NotificationPanelTabContent*/}
+          {/*          name={tabName}*/}
+          {/*          ref={tabRef}*/}
+          {/*          onNotificationsLengthChange={onNotificationsLengthChange}*/}
+          {/*          expandAll={expandAll}*/}
+          {/*          setExpandAll={setExpandAll}*/}
+          {/*        />*/}
+          {/*      </div>*/}
+          {/*    </Tab>*/}
+          {/*  ))}*/}
+          {/*</Tabs>*/}
         </div>
       </div>
     </>

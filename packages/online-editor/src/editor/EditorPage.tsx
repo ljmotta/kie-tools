@@ -570,7 +570,7 @@ export function EditorPage(props: Props) {
                               ref={textEditorContainerRef}
                             />
                           </Modal>
-                          <NotificationsPanel tabNames={notificationPanelTabNames(dmnRunner.status)} />
+                          <NotificationsPanel editor={editor} tabNames={notificationPanelTabNames(dmnRunner.status)} />
                         </DrawerContentBody>
                       </DrawerContent>
                     </Drawer>

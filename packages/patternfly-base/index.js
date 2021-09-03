@@ -41,6 +41,8 @@ module.exports = {
       // only process modules with this loader
       // if they live under a 'fonts' or 'pficon' directory
       include: [
+        path.resolve(__dirname, nodeModulesDir + "/monaco-editor/esm/vs/base/browser/ui/codicons/codicon"),
+        path.resolve(__dirname, nodeModulesDir + "/monaco-editor/dev/vs/base/browser/ui/codicons/codicon"),
         path.resolve(__dirname, nodeModulesDir + "/patternfly/dist/fonts"),
         path.resolve(__dirname, nodeModulesDir + "/@patternfly/react-core/dist/styles/assets/fonts"),
         path.resolve(__dirname, nodeModulesDir + "/@patternfly/react-core/dist/styles/assets/pficon"),

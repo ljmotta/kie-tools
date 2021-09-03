@@ -1,0 +1,27 @@
+{
+  "name": "@kogito-tooling/feel-input-component",
+  "version": "0.0.0",
+  "description": "FEEL (Friendly Enough Expression Language) input component (with code-completion/highlight support)",
+  "license": "Apache-2.0",
+  "main": "src/index.tsx",
+  "source": "src/index.tsx",
+  "scripts": {
+    "build:dev": "rimraf dist && yarn copy:css && tsc -p tsconfig.json",
+    "build:watch": "rimraf dist && yarn copy:css && tsc -p tsconfig.json --watch",
+    "copy:css": "copyfiles -u 1 \"src/**/*.{sass,scss,css}\" dist/",
+    "test": "jest --collect-coverage",
+    "lint": "eslint --ext .ts,.tsx,.js ./src/",
+    "type-check": "tsc --noEmit",
+    "quality-checks": "yarn run type-check && yarn run lint && yarn run test"
+  },
+  "peerDependencies": {
+    "@kogito-tooling/i18n": "0.10.0",
+    "@kogito-tooling/i18n-common-dictionary": "0.10.0",
+    "@patternfly/react-core": "^4.115.2",
+    "@patternfly/react-icons": "^4.10.2",
+    "@patternfly/react-styles": "^4.7.8",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "monaco-editor": "^0.26.1"
+  }
+}
