@@ -130,7 +130,7 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
       };
     });
 
-    const [outputSection] = (props.rules?.[0].outputEntries ?? []).map((outputEntry, outputIndex) => {
+    const outputSection = (props.rules?.[0].outputEntries ?? []).map((outputEntry, outputIndex) => {
       if (Array.isArray(outputEntry)) {
         return outputEntry.map((entry, entryIndex) => {
           const columns = Object.keys(entry).map((keys) => {
@@ -192,7 +192,8 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
       updatedColumns.push(...(inputSection as any));
     }
     if (outputSection) {
-      updatedColumns.push(...(outputSection as any));
+      const flattenOutput = outputSection.reduce((acc, outp) => [...acc, ...outp], []);
+      updatedColumns.push(...(flattenOutput as any));
     }
     return updatedColumns;
   }, [props.input, props.output, props.rules]);
