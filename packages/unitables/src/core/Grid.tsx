@@ -13,7 +13,7 @@ export class Grid {
   }
 
   public removeInputName(fullName: string) {
-    return fullName.match(/\./) ? fullName.split(".").slice(1).join(".") : fullName;
+    return fullName.match(/\./) ? fullName.split(".").slice(1).join("-") : fullName;
   }
 
   public getDataTypeProps(type: string | undefined) {
@@ -93,7 +93,7 @@ export class Grid {
       if (typeof deepValue === "object" && deepValue !== null) {
         this.deepFlattenOutput(acc, deepEntry, deepValue);
       }
-      acc[`${entry}.${deepEntry}`] = deepValue;
+      acc[`${entry}-${deepEntry}`] = deepValue;
       return acc;
     });
   }

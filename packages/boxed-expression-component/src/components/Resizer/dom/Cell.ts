@@ -120,7 +120,7 @@ export class Cell {
     if (colSpan > 1) {
       const firstReact = children[0].getBoundingClientRect();
       const lastReact = children[colSpan - 1].getBoundingClientRect();
-      this.setWidth(lastReact.width + firstReact.width - BORDER * 2);
+      this.setWidth(lastReact.right - firstReact.x - BORDER * 2);
     } else {
       const childrenRects = children[(index - headerSize) % children.length]?.getBoundingClientRect();
       if (childrenRects) {
