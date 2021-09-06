@@ -106,7 +106,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
       return (
         <React.Fragment key={`${getRowKey(row)}-${rowIndex}`}>
           {RowDelegate ? (
-            <RowDelegate id={"bunda"}>
+            <RowDelegate>
               <Tr className="table-row" {...rowProps} ouiaId={"expression-row-" + rowIndex}>
                 {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex, true))}
               </Tr>

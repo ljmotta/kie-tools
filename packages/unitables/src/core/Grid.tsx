@@ -87,6 +87,17 @@ export class Grid {
     return myGrid;
   }
 
+  private deepFlattenOutput(acc: any, entry: string, value: object) {
+    // entry.value.value2.value3 = value3;
+    return Object.entries(value).map(([deepEntry, deepValue]) => {
+      if (typeof deepValue === "object" && deepValue !== null) {
+        this.deepFlattenOutput(acc, deepEntry, deepValue);
+      }
+      acc[`${entry}.${deepEntry}`] = deepValue;
+      return acc;
+    });
+  }
+
   public generateBoxedOutputs(
     schema: any,
     decisionResults: Array<DecisionResult[] | undefined>
@@ -133,6 +144,16 @@ export class Grid {
           }
           if (result === false) {
             return "false";
+          }
+          if (typeof result === "object") {
+            return Object.entries(result).reduce((acc: any, [entry, value]) => {
+              if (typeof value === "object" && value !== null) {
+                this.deepFlattenOutput(acc, entry, value);
+              } else {
+                acc[entry] = value;
+              }
+              return acc;
+            }, {});
           }
           return result;
         });
