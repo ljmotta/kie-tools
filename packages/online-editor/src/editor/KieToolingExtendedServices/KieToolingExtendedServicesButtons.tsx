@@ -52,7 +52,7 @@ export function KieToolingExtendedServicesButtons() {
   const onToggleDmnRunner = useCallback(() => {
     kieToolingExtendedServices.closeDmnTour();
     if (isKieToolingExtendedServicesRunning) {
-      dmnRunner.setDrawerExpanded(!dmnRunner.isDrawerExpanded);
+      dmnRunner.setExpanded(!dmnRunner.isExpanded);
       return;
     }
     kieToolingExtendedServices.setInstallTriggeredBy(DependentFeature.DMN_RUNNER);
@@ -195,7 +195,7 @@ export function KieToolingExtendedServicesButtons() {
           position={DropdownPosition.right}
           isOpen={false}
           style={
-            dmnRunner.isDrawerExpanded
+            dmnRunner.isExpanded
               ? { marginRight: "2px", borderBottom: "solid var(--pf-global--palette--blue-300) 2px", paddingBottom: 0 }
               : { marginRight: "2px" }
           }

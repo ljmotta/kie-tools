@@ -264,7 +264,7 @@ export function DmnRunnerDrawer(props: Props) {
                     <Text component={"h2"}>{i18n.terms.inputs}</Text>
                   </TextContent>
                   {dmnRunnerStylesConfig.buttonPosition === ButtonPosition.INPUT && (
-                    <DrawerCloseButton onClick={(e: any) => dmnRunner.setDrawerExpanded(false)} />
+                    <DrawerCloseButton onClick={(e: any) => dmnRunner.setExpanded(false)} />
                   )}
                 </PageSection>
                 <div className={"kogito--editor__dmn-runner-drawer-content-body"}>
@@ -304,7 +304,7 @@ export function DmnRunnerDrawer(props: Props) {
                     <Text component={"h2"}>{i18n.terms.outputs}</Text>
                   </TextContent>
                   {dmnRunnerStylesConfig.buttonPosition === ButtonPosition.OUTPUT && (
-                    <DrawerCloseButton onClick={(e: any) => dmnRunner.setDrawerExpanded(false)} />
+                    <DrawerCloseButton onClick={(e: any) => dmnRunner.setExpanded(false)} />
                   )}
                 </PageSection>
                 <div className={"kogito--editor__dmn-runner-drawer-content-body"}>

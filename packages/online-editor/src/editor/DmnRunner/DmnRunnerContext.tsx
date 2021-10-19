@@ -19,19 +19,21 @@ import * as React from "react";
 import { useContext } from "react";
 import { jsonParseWithDate } from "../../common/utils";
 import { DmnRunnerService } from "./DmnRunnerService";
-import { DmnRunnerStatus } from "./DmnRunnerStatus";
+import { DmnRunnerMode, DmnRunnerStatus } from "./DmnRunnerStatus";
 
 export interface DmnRunnerContextType {
   status: DmnRunnerStatus;
   setStatus: React.Dispatch<DmnRunnerStatus>;
   formSchema?: DmnFormSchema;
-  isDrawerExpanded: boolean;
-  setDrawerExpanded: React.Dispatch<boolean>;
+  isExpanded: boolean;
+  setExpanded: React.Dispatch<boolean>;
   formData: any;
   setFormData: React.Dispatch<any>;
   service: DmnRunnerService;
   formError: boolean;
   setFormError: React.Dispatch<boolean>;
+  mode: DmnRunnerMode;
+  setMode: React.Dispatch<DmnRunnerMode>;
 }
 
 export const DmnRunnerContext = React.createContext<DmnRunnerContextType>({

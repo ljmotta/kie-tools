@@ -25,7 +25,7 @@ import { DmnFormSchema } from "@kogito-tooling/form/dist/dmn";
 import { DmnRunnerContext, extractFormInputsFromUrlParams } from "./DmnRunnerContext";
 import { DmnRunnerService } from "./DmnRunnerService";
 import { EmbeddedEditorRef } from "@kie-tooling-core/editor/dist/embedded";
-import { DmnRunnerStatus } from "./DmnRunnerStatus";
+import { DmnRunnerMode, DmnRunnerStatus } from "./DmnRunnerStatus";
 import { useNotificationsPanel } from "../NotificationsPanel/NotificationsPanelContext";
 import { useOnlineI18n } from "../../common/i18n";
 import { NotificationType } from "@kie-tooling-core/notifications/dist/api";
@@ -43,10 +43,11 @@ export function DmnRunnerContextProvider(props: Props) {
   const formInputsFromUrlParams = useMemo(() => extractFormInputsFromUrlParams() ?? {}, []);
   const kieToolingExtendedServices = useKieToolingExtendedServices();
   const notificationsPanel = useNotificationsPanel();
-  const [isDrawerExpanded, setDrawerExpanded] = useState(false);
+  const [isExpanded, setExpanded] = useState(false);
   const [formData, setFormData] = useState(formInputsFromUrlParams);
   const [formSchema, setFormSchema] = useState<DmnFormSchema>();
   const [formError, setFormError] = useState(false);
+  const [mode, setMode] = useState(DmnRunnerMode.DRAWER);
   const [status, setStatus] = useState(
     kieToolingExtendedServices.status === KieToolingExtendedServicesStatus.UNAVAILABLE
       ? DmnRunnerStatus.UNAVAILABLE
@@ -70,7 +71,7 @@ export function DmnRunnerContextProvider(props: Props) {
               (kieToolingExtendedServices.isModalOpen &&
                 kieToolingExtendedServices.installTriggeredBy === DependentFeature.DMN_RUNNER))
           ) {
-            setDrawerExpanded(true);
+            setExpanded(true);
           }
         })
         .catch((err) => {
@@ -90,7 +91,7 @@ export function DmnRunnerContextProvider(props: Props) {
   useEffect(() => {
     if (kieToolingExtendedServices.status !== KieToolingExtendedServicesStatus.RUNNING) {
       setStatus(DmnRunnerStatus.UNAVAILABLE);
-      setDrawerExpanded(false);
+      setExpanded(false);
       return;
     }
 
@@ -149,13 +150,15 @@ export function DmnRunnerContextProvider(props: Props) {
         status,
         setStatus,
         formSchema,
-        isDrawerExpanded,
-        setDrawerExpanded,
+        isExpanded,
+        setExpanded,
         formData,
         setFormData,
         service,
         formError,
         setFormError,
+        mode,
+        setMode,
       }}
     >
       {props.children}

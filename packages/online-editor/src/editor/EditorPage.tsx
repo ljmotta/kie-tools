@@ -34,7 +34,7 @@ import { DmnRunnerContext } from "./DmnRunner/DmnRunnerContext";
 import { DmnRunnerContextProvider } from "./DmnRunner/DmnRunnerContextProvider";
 import { KieToolingExtendedServicesContextProvider } from "./KieToolingExtendedServices/KieToolingExtendedServicesContextProvider";
 import { NotificationsPanel } from "./NotificationsPanel/NotificationsPanel";
-import { DmnRunnerStatus } from "./DmnRunner/DmnRunnerStatus";
+import { DmnRunnerMode, DmnRunnerStatus } from "./DmnRunner/DmnRunnerStatus";
 import { NotificationsPanelContextProvider } from "./NotificationsPanel/NotificationsPanelContextProvider";
 import { NotificationsPanelContextType } from "./NotificationsPanel/NotificationsPanelContext";
 import { Alert, AlertActionCloseButton, AlertActionLink } from "@patternfly/react-core/dist/js/components/Alert";
@@ -42,6 +42,7 @@ import { Button } from "@patternfly/react-core/dist/js/components/Button";
 import { Page, PageSection } from "@patternfly/react-core/dist/js/components/Page";
 import { Modal } from "@patternfly/react-core/dist/js/components/Modal";
 import { DmnDevSandboxContextProvider } from "./DmnDevSandbox/DmnDevSandboxContextProvider";
+import { DmnRunnerTabular } from "./DmnRunner/DmnRunnerTabular";
 
 const importMonacoEditor = () => import(/* webpackChunkName: "monaco-editor" */ "@kie-tooling-core/monaco-editor");
 
@@ -414,10 +415,13 @@ export function EditorPage(props: Props) {
                     padding={{ default: "noPadding" }}
                     className={"kogito--editor__page-section"}
                   >
-                    <Drawer isInline={true} isExpanded={dmnRunner.isDrawerExpanded}>
+                    <Drawer
+                      isInline={true}
+                      isExpanded={dmnRunner.isExpanded && dmnRunner.mode === DmnRunnerMode.DRAWER}
+                    >
                       <DrawerContent
                         className={
-                          !dmnRunner.isDrawerExpanded
+                          !dmnRunner.isExpanded
                             ? "kogito--editor__drawer-content-close"
                             : "kogito--editor__drawer-content-open"
                         }
@@ -570,6 +574,7 @@ export function EditorPage(props: Props) {
                               ref={textEditorContainerRef}
                             />
                           </Modal>
+                          {dmnRunner.isExpanded && dmnRunner.mode === DmnRunnerMode.TABULAR && <DmnRunnerTabular />}
                           <NotificationsPanel tabNames={notificationPanelTabNames(dmnRunner.status)} />
                         </DrawerContentBody>
                       </DrawerContent>
