@@ -19,6 +19,7 @@ import { useCallback, useContext, useEffect } from "react";
 
 export interface ResizablePanelProperties {
   title: string;
+  onClick: () => void;
   height: number;
   icon?: React.ReactNode;
   info?: React.ReactNode;
@@ -43,16 +44,21 @@ export function useResizable() {
 export function useConnectResizable(
   id: ResizablePanelId,
   title: string,
+  onClick: () => void,
   height = 360,
   icon?: React.ReactNode,
   info?: React.ReactNode
-): [(newHeight: number) => void, ResizablePanelContext] {
+): { resizable: ResizablePanelContext; setHeight: (newHeight: number) => void } {
   const resizable = useResizable();
 
   useEffect(() => {
-    resizable.setResizablePanels((previousResizablePanels) =>
-      new Map(previousResizablePanels).set(id, { title, height, icon, info })
-    );
+    resizable.setResizablePanels((previousResizablePanels) => {
+      const previousProperties = previousResizablePanels.get(id);
+      if (previousProperties) {
+        return new Map(previousResizablePanels).set(id, { ...previousProperties, onClick, title, icon, info });
+      }
+      return new Map(previousResizablePanels).set(id, { title, onClick, height, icon, info });
+    });
 
     return () => {
       resizable.setResizablePanels((previousResizablePanels) => {
@@ -61,7 +67,7 @@ export function useConnectResizable(
         return newResizablePanels;
       });
     };
-  }, []);
+  }, [title, onClick, icon, info]);
 
   const setHeight = useCallback((newHeight) => {
     resizable.setResizablePanels((previousResizablePanels) => {
@@ -70,5 +76,5 @@ export function useConnectResizable(
     });
   }, []);
 
-  return [setHeight, resizable];
+  return { resizable, setHeight };
 }

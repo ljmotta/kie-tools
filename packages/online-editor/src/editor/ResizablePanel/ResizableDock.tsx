@@ -16,9 +16,9 @@
 
 import * as React from "react";
 import { useCallback, useMemo, useState } from "react";
-import { Tab, Tabs, TabTitleText } from "@patternfly/react-core/dist/js/components/Tabs";
+import { ToggleGroup, ToggleGroupItem } from "@patternfly/react-core/dist/js/components/ToggleGroup";
 import { KeyboardIcon } from "@patternfly/react-icons/dist/js/icons/keyboard-icon";
-import { ResizablePanelId, useResizable } from "./ResizablePanelContext";
+import { ResizablePanelId, ResizablePanelProperties, useResizable } from "./ResizablePanelContext";
 
 interface ResizableDockProps {
   isEditorReady: boolean;
@@ -26,7 +26,7 @@ interface ResizableDockProps {
 
 export function ResizableDock(props: ResizableDockProps) {
   const resizable = useResizable();
-  const [currentTab, setCurrentTab] = useState<ResizablePanelId>(ResizablePanelId.NOTIFICATIONS_PANEL);
+  const [currentTab, setCurrentTab] = useState<ResizablePanelId>();
 
   const envelopeKeyboardIcon = useMemo(() => {
     const envelope = document.getElementById("kogito-iframe");
@@ -41,13 +41,49 @@ export function ResizableDock(props: ResizableDockProps) {
     envelopeKeyboardIcon?.click();
   }, [envelopeKeyboardIcon]);
 
-  const onTabSelect = useCallback((event, tabIndex) => {
-    setCurrentTab(tabIndex);
+  const onClick = useCallback((id: ResizablePanelId, callback?: () => void) => {
+    setCurrentTab((previous) => {
+      if (previous === id) {
+        return undefined;
+      }
+      return id;
+    });
+    callback?.();
   }, []);
 
-  const resizablePanelEntries = useMemo(
-    () => Array.from(resizable.resizablePanels.entries()).reverse(),
-    [resizable.resizablePanels]
+  const dmnRunnerProperties = useMemo(() => {
+    return resizable.resizablePanels.get(ResizablePanelId.DMN_RUNNER_TABULAR);
+  }, [resizable.resizablePanels]);
+
+  const notificationsProperties = useMemo(() => {
+    return resizable.resizablePanels.get(ResizablePanelId.NOTIFICATIONS_PANEL);
+  }, [resizable.resizablePanels]);
+
+  const renderToggleItem = useCallback(
+    (id: ResizablePanelId, properties: ResizablePanelProperties) => {
+      return (
+        <ToggleGroupItem
+          style={{
+            borderLeft: "solid 1px",
+            borderRadius: 0,
+            borderColor: "rgb(211, 211, 211)",
+            padding: "1px",
+          }}
+          key={id}
+          buttonId={id}
+          isSelected={currentTab === id}
+          onChange={() => onClick(id, properties.onClick)}
+          text={
+            <div style={{ display: "flex" }}>
+              {properties.icon && <div style={{ paddingRight: "5px", width: "30px" }}>{properties.icon}</div>}
+              {properties.title}
+              {properties.info && <div style={{ paddingLeft: "5px", width: "30px" }}>{properties.info}</div>}
+            </div>
+          }
+        />
+      );
+    },
+    [currentTab]
   );
 
   return (
@@ -55,29 +91,18 @@ export function ResizableDock(props: ResizableDockProps) {
       <div onClick={onKeyboardIconClick} className={"kogito-tooling--keyboard-shortcuts-icon"}>
         <KeyboardIcon />
       </div>
-      <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
-        <Tabs activeKey={currentTab} onSelect={onTabSelect}>
-          {/* Fix overflow bug */}
-          {resizablePanelEntries.length === 0 ? (
-            <Tab eventKey={0} title={""} />
-          ) : (
-            resizablePanelEntries.map(([id, properties]) => (
-              <Tab
-                key={id}
-                eventKey={id}
-                title={
-                  <TabTitleText>
-                    <>
-                      {properties.icon}
-                      {properties.title}
-                      {properties.info}
-                    </>
-                  </TabTitleText>
-                }
-              />
-            ))
-          )}
-        </Tabs>
+      <div
+        style={{
+          borderTop: "rgb(221, 221, 221) solid 1px",
+          width: "100%",
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <ToggleGroup>
+          {dmnRunnerProperties && renderToggleItem(ResizablePanelId.DMN_RUNNER_TABULAR, dmnRunnerProperties)}
+          {notificationsProperties && renderToggleItem(ResizablePanelId.NOTIFICATIONS_PANEL, notificationsProperties)}
+        </ToggleGroup>
       </div>
     </>
   );

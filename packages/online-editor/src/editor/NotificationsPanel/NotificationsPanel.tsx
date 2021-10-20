@@ -36,7 +36,6 @@ export function NotificationsPanel(props: Props) {
   const notificationsPanel = useNotificationsPanel();
   const [tabsNotifications, setTabsNotifications] = useState<Map<string, number>>(new Map());
   const { i18n } = useOnlineI18n();
-  const [setHeight, resizable] = useConnectResizable(ResizablePanelId.NOTIFICATIONS_PANEL, "Notifications");
 
   const tabsMap: Map<string, React.RefObject<NotificationsApi>> = useMemo(
     () => new Map(props.tabNames.map((tabName) => [tabName, React.createRef<NotificationsApi>()])),
@@ -47,7 +46,7 @@ export function NotificationsPanel(props: Props) {
     notificationsPanel.setTabsMap([...tabsMap.entries()]);
   }, [notificationsPanel, tabsMap]);
 
-  const onNotificationsPanelButtonClick = useCallback(() => {
+  const onNotificationsPanelClick = useCallback(() => {
     notificationsPanel.setIsOpen(!notificationsPanel.isOpen);
   }, [notificationsPanel]);
 
@@ -71,24 +70,18 @@ export function NotificationsPanel(props: Props) {
     updatedResult?.classList.remove("kogito--editor__notifications-panel-error-count-updated");
   }, []);
 
-  const onSelectTab = useCallback(
-    (event, tabName) => {
-      notificationsPanel.setActiveTab(tabName);
-    },
-    [notificationsPanel]
-  );
+  const onSelectTab = useCallback((event, tabName) => {
+    notificationsPanel.setActiveTab(tabName);
+  }, []);
 
   useEffect(() => {
     notificationsPanel.setActiveTab(props.tabNames[0]);
-  }, [notificationsPanel, props.tabNames]);
+  }, []);
 
   const totalNotifications = useMemo(
     () => [...tabsNotifications.values()].reduce((acc, value) => acc + value, 0),
     [tabsNotifications]
   );
-
-  // const [notificationsPanelIconPlace, setNotificationsPanelIconPlace] = useState<number>();
-  // const notificationsPanelIconRef = useRef<HTMLDivElement>(null);
 
   const [expandAll, setExpandAll] = useState<boolean>();
   const onExpandAll = useCallback(() => {
@@ -99,61 +92,26 @@ export function NotificationsPanel(props: Props) {
     setExpandAll(false);
   }, []);
 
-  // useEffect(() => {
-  //   if (notificationsPanel.isOpen) {
-  //     notificationsPanelIconRef.current?.style?.setProperty("bottom", `${notificationsPanelIconPlace ?? 360}px`);
-  //   } else {
-  //     notificationsPanelIconRef.current?.style?.setProperty("bottom", `5px`);
-  //   }
-  // }, [notificationsPanel.isOpen, notificationsPanelIconPlace]);
-  //
-  // useEffect(() => {
-  //   setNotificationsPanelIconPlace(
-  //     Array.from(resizable.resizablePanels.values()).reduce(
-  //       (acc, resizableProperties) => acc + resizableProperties.height + 12,
-  //       0
-  //     )
-  //   );
-  // }, [resizable.resizablePanels]);
+  const icon = useMemo(() => <ExclamationCircleIcon />, []);
+  const info = useMemo(() => {
+    return (
+      <span id={"total-notifications"} onAnimationEnd={onAnimationEnd}>
+        {totalNotifications}
+      </span>
+    );
+  }, [totalNotifications, onAnimationEnd]);
+
+  const { setHeight } = useConnectResizable(
+    ResizablePanelId.NOTIFICATIONS_PANEL,
+    "Notifications",
+    onNotificationsPanelClick,
+    undefined,
+    icon,
+    info
+  );
 
   return (
     <>
-      {/*<div*/}
-      {/*  ref={notificationsPanelIconRef}*/}
-      {/*  className={*/}
-      {/*    notificationsPanel.isOpen*/}
-      {/*      ? "kogito--editor__notifications-panel-button open"*/}
-      {/*      : "kogito--editor__notifications-panel-button"*/}
-      {/*  }*/}
-      {/*  onClick={onNotificationsPanelButtonClick}*/}
-      {/*>*/}
-      {/*  {totalNotifications === 0 ? (*/}
-      {/*    <Tooltip*/}
-      {/*      key={"without-notifications"}*/}
-      {/*      content={i18n.notificationsPanel.name}*/}
-      {/*      flipBehavior={["left"]}*/}
-      {/*      distance={20}*/}
-      {/*    >*/}
-      {/*      <ExclamationCircleIcon />*/}
-      {/*    </Tooltip>*/}
-      {/*  ) : (*/}
-      {/*    <Tooltip*/}
-      {/*      key={"with-notifications"}*/}
-      {/*      content={i18n.notificationsPanel.name}*/}
-      {/*      flipBehavior={["left"]}*/}
-      {/*      distance={20}*/}
-      {/*    >*/}
-      {/*      <div className={"kogito--editor__notifications-panel-with-notifications-tooltip "}>*/}
-      {/*        <span id={"total-notifications"} onAnimationEnd={onAnimationEnd}>*/}
-      {/*          {totalNotifications}*/}
-      {/*        </span>*/}
-      {/*        <ExclamationCircleIcon*/}
-      {/*          className={"kogito--editor__notifications-panel-with-notifications-tooltip-exclamation-icon"}*/}
-      {/*        />*/}
-      {/*      </div>*/}
-      {/*    </Tooltip>*/}
-      {/*  )}*/}
-      {/*</div>*/}
       <ResizablePanel isOpen={notificationsPanel.isOpen} setHeight={setHeight}>
         <div className={"kogito--editor__notifications-panel-icon-position"}>
           <div onClick={() => onRetractAll()}>

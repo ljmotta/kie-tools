@@ -314,6 +314,10 @@
   }
 }
 
+.pf-c-toggle-group__button::before {
+  border: 0;
+}
+
 .kogito--editor__dmn-runner-content-header {
   display: flex;
   justify-content: space-between;
@@ -560,7 +564,7 @@
   user-select: none;
   z-index: 999;
   left: 0;
-  bottom: 5px;
+  bottom: 0;
   position: fixed;
   padding: 7px;
   display: flex;
@@ -573,7 +577,7 @@
   line-height: 22px;
 }
 
-.success-icon {
+. .success-icon {
   color: var(--pf-global--success-color--100);
 }
 

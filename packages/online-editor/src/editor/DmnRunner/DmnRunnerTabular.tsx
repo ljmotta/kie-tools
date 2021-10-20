@@ -19,11 +19,13 @@ import { useDmnRunner } from "./DmnRunnerContext";
 import { DmnRunnerMode } from "./DmnRunnerStatus";
 import { Button } from "@patternfly/react-core";
 import { ResizablePanel, ResizablePanelId, useConnectResizable } from "../ResizablePanel";
+import { useCallback } from "react";
 
 interface Props {}
 
 export function DmnRunnerTabular(props: Props) {
-  const [setHeight] = useConnectResizable(ResizablePanelId.DMN_RUNNER_TABULAR, "DMN Runner");
+  const onClick = useCallback(() => undefined, []);
+  const { setHeight } = useConnectResizable(ResizablePanelId.DMN_RUNNER_TABULAR, "DMN Runner", onClick);
   const dmnRunner = useDmnRunner();
 
   return (
