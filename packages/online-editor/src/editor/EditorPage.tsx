@@ -43,7 +43,7 @@ import { Page, PageSection } from "@patternfly/react-core/dist/js/components/Pag
 import { Modal } from "@patternfly/react-core/dist/js/components/Modal";
 import { DmnDevSandboxContextProvider } from "./DmnDevSandbox/DmnDevSandboxContextProvider";
 import { DmnRunnerTabular } from "./DmnRunner/DmnRunnerTabular";
-import { ResizablePanelContextProvider } from "../common/Resizable";
+import { ResizablePanelContextProvider } from "./ResizablePanel";
 
 const importMonacoEditor = () => import(/* webpackChunkName: "monaco-editor" */ "@kie-tooling-core/monaco-editor");
 
@@ -575,7 +575,7 @@ export function EditorPage(props: Props) {
                               ref={textEditorContainerRef}
                             />
                           </Modal>
-                          <ResizablePanelContextProvider>
+                          <ResizablePanelContextProvider isEditorReady={isEditorReady}>
                             {dmnRunner.isExpanded && dmnRunner.mode === DmnRunnerMode.TABULAR && <DmnRunnerTabular />}
                             <NotificationsPanel tabNames={notificationPanelTabNames(dmnRunner.status)} />
                           </ResizablePanelContextProvider>

@@ -17,9 +17,21 @@
 import * as React from "react";
 import { useCallback, useContext, useEffect } from "react";
 
+export interface ResizablePanelProperties {
+  title: string;
+  height: number;
+  icon?: React.ReactNode;
+  info?: React.ReactNode;
+}
+
+export enum ResizablePanelId {
+  DMN_RUNNER_TABULAR = "dmn-runner-tabular",
+  NOTIFICATIONS_PANEL = "notifications-panel",
+}
+
 export interface ResizablePanelContext {
-  resizablePanels: Map<ResizablePanelId, number>;
-  setResizablePanels: React.Dispatch<React.SetStateAction<Map<ResizablePanelId, number>>>;
+  resizablePanels: Map<ResizablePanelId, ResizablePanelProperties>;
+  setResizablePanels: React.Dispatch<React.SetStateAction<Map<ResizablePanelId, ResizablePanelProperties>>>;
 }
 
 export const ResizablePanelContext = React.createContext<ResizablePanelContext>({} as any);
@@ -28,19 +40,19 @@ export function useResizable() {
   return useContext(ResizablePanelContext);
 }
 
-export enum ResizablePanelId {
-  DMN_RUNNER_TABULAR = "dmn-runner-tabular",
-  NOTIFICATIONS_PANEL = "notifications-panel",
-}
-
-export function useResizableConnect(
+export function useConnectResizable(
   id: ResizablePanelId,
-  initialWidth = 360
+  title: string,
+  height = 360,
+  icon?: React.ReactNode,
+  info?: React.ReactNode
 ): [(newHeight: number) => void, ResizablePanelContext] {
   const resizable = useResizable();
 
   useEffect(() => {
-    resizable.setResizablePanels((previousResizablePanels) => new Map(previousResizablePanels).set(id, initialWidth));
+    resizable.setResizablePanels((previousResizablePanels) =>
+      new Map(previousResizablePanels).set(id, { title, height, icon, info })
+    );
 
     return () => {
       resizable.setResizablePanels((previousResizablePanels) => {
@@ -52,7 +64,10 @@ export function useResizableConnect(
   }, []);
 
   const setHeight = useCallback((newHeight) => {
-    resizable.setResizablePanels((previousResizablePanels) => new Map(previousResizablePanels).set(id, newHeight));
+    resizable.setResizablePanels((previousResizablePanels) => {
+      const previousProperties = previousResizablePanels.get(id)!;
+      return new Map(previousResizablePanels).set(id, { ...previousProperties, height: newHeight });
+    });
   }, []);
 
   return [setHeight, resizable];

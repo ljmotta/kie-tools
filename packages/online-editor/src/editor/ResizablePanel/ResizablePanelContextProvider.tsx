@@ -16,15 +16,22 @@
 
 import * as React from "react";
 import { PropsWithChildren, useState } from "react";
-import { ResizablePanelContext, ResizablePanelId } from "./ResizablePanelContext";
+import { ResizablePanelContext, ResizablePanelId, ResizablePanelProperties } from "./ResizablePanelContext";
+import { ResizableDock } from "./ResizableDock";
+import { DmnRunnerContext } from "../../editor/DmnRunner/DmnRunnerContext";
 
-export function ResizablePanelContextProvider(props: PropsWithChildren<any>) {
+interface ResizablePanelContextProviderProps {
+  isEditorReady: boolean;
+}
+
+export function ResizablePanelContextProvider(props: PropsWithChildren<ResizablePanelContextProviderProps>) {
   // a struct to save an id and the panel height
-  const [resizablePanels, setResizablePanels] = useState<Map<ResizablePanelId, number>>(new Map());
+  const [resizablePanels, setResizablePanels] = useState<Map<ResizablePanelId, ResizablePanelProperties>>(new Map());
 
   return (
     <ResizablePanelContext.Provider value={{ resizablePanels, setResizablePanels }}>
       {props.children}
+      <ResizableDock isEditorReady={props.isEditorReady} />
     </ResizablePanelContext.Provider>
   );
 }

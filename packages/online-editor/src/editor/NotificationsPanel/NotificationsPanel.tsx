@@ -26,7 +26,7 @@ import { useNotificationsPanel } from "./NotificationsPanelContext";
 import { NotificationPanelTabContent } from "./NotificationsPanelTabContent";
 import { NotificationsApi } from "@kie-tooling-core/notifications/dist/api";
 import { useOnlineI18n } from "../../common/i18n";
-import { ResizablePanel, ResizablePanelId, useResizableConnect } from "../../common/Resizable";
+import { ResizablePanel, ResizablePanelId, useConnectResizable } from "../ResizablePanel";
 
 interface Props {
   tabNames: string[];
@@ -36,7 +36,7 @@ export function NotificationsPanel(props: Props) {
   const notificationsPanel = useNotificationsPanel();
   const [tabsNotifications, setTabsNotifications] = useState<Map<string, number>>(new Map());
   const { i18n } = useOnlineI18n();
-  const [setHeight, resizable] = useResizableConnect(ResizablePanelId.NOTIFICATIONS_PANEL);
+  const [setHeight, resizable] = useConnectResizable(ResizablePanelId.NOTIFICATIONS_PANEL, "Notifications");
 
   const tabsMap: Map<string, React.RefObject<NotificationsApi>> = useMemo(
     () => new Map(props.tabNames.map((tabName) => [tabName, React.createRef<NotificationsApi>()])),
@@ -87,8 +87,8 @@ export function NotificationsPanel(props: Props) {
     [tabsNotifications]
   );
 
-  const [notificationsPanelIconPlace, setNotificationsPanelIconPlace] = useState<number>();
-  const notificationsPanelIconRef = useRef<HTMLDivElement>(null);
+  // const [notificationsPanelIconPlace, setNotificationsPanelIconPlace] = useState<number>();
+  // const notificationsPanelIconRef = useRef<HTMLDivElement>(null);
 
   const [expandAll, setExpandAll] = useState<boolean>();
   const onExpandAll = useCallback(() => {
@@ -99,58 +99,61 @@ export function NotificationsPanel(props: Props) {
     setExpandAll(false);
   }, []);
 
-  useEffect(() => {
-    if (notificationsPanel.isOpen) {
-      notificationsPanelIconRef.current?.style?.setProperty("bottom", `${notificationsPanelIconPlace ?? 360}px`);
-    } else {
-      notificationsPanelIconRef.current?.style?.setProperty("bottom", `5px`);
-    }
-  }, [notificationsPanel.isOpen, notificationsPanelIconPlace]);
-
-  useEffect(() => {
-    setNotificationsPanelIconPlace(
-      Array.from(resizable.resizablePanels.values()).reduce((acc, height) => acc + height + 12, 0)
-    );
-  }, [resizable.resizablePanels]);
+  // useEffect(() => {
+  //   if (notificationsPanel.isOpen) {
+  //     notificationsPanelIconRef.current?.style?.setProperty("bottom", `${notificationsPanelIconPlace ?? 360}px`);
+  //   } else {
+  //     notificationsPanelIconRef.current?.style?.setProperty("bottom", `5px`);
+  //   }
+  // }, [notificationsPanel.isOpen, notificationsPanelIconPlace]);
+  //
+  // useEffect(() => {
+  //   setNotificationsPanelIconPlace(
+  //     Array.from(resizable.resizablePanels.values()).reduce(
+  //       (acc, resizableProperties) => acc + resizableProperties.height + 12,
+  //       0
+  //     )
+  //   );
+  // }, [resizable.resizablePanels]);
 
   return (
     <>
-      <div
-        ref={notificationsPanelIconRef}
-        className={
-          notificationsPanel.isOpen
-            ? "kogito--editor__notifications-panel-button open"
-            : "kogito--editor__notifications-panel-button"
-        }
-        onClick={onNotificationsPanelButtonClick}
-      >
-        {totalNotifications === 0 ? (
-          <Tooltip
-            key={"without-notifications"}
-            content={i18n.notificationsPanel.name}
-            flipBehavior={["left"]}
-            distance={20}
-          >
-            <ExclamationCircleIcon />
-          </Tooltip>
-        ) : (
-          <Tooltip
-            key={"with-notifications"}
-            content={i18n.notificationsPanel.name}
-            flipBehavior={["left"]}
-            distance={20}
-          >
-            <div className={"kogito--editor__notifications-panel-with-notifications-tooltip "}>
-              <span id={"total-notifications"} onAnimationEnd={onAnimationEnd}>
-                {totalNotifications}
-              </span>
-              <ExclamationCircleIcon
-                className={"kogito--editor__notifications-panel-with-notifications-tooltip-exclamation-icon"}
-              />
-            </div>
-          </Tooltip>
-        )}
-      </div>
+      {/*<div*/}
+      {/*  ref={notificationsPanelIconRef}*/}
+      {/*  className={*/}
+      {/*    notificationsPanel.isOpen*/}
+      {/*      ? "kogito--editor__notifications-panel-button open"*/}
+      {/*      : "kogito--editor__notifications-panel-button"*/}
+      {/*  }*/}
+      {/*  onClick={onNotificationsPanelButtonClick}*/}
+      {/*>*/}
+      {/*  {totalNotifications === 0 ? (*/}
+      {/*    <Tooltip*/}
+      {/*      key={"without-notifications"}*/}
+      {/*      content={i18n.notificationsPanel.name}*/}
+      {/*      flipBehavior={["left"]}*/}
+      {/*      distance={20}*/}
+      {/*    >*/}
+      {/*      <ExclamationCircleIcon />*/}
+      {/*    </Tooltip>*/}
+      {/*  ) : (*/}
+      {/*    <Tooltip*/}
+      {/*      key={"with-notifications"}*/}
+      {/*      content={i18n.notificationsPanel.name}*/}
+      {/*      flipBehavior={["left"]}*/}
+      {/*      distance={20}*/}
+      {/*    >*/}
+      {/*      <div className={"kogito--editor__notifications-panel-with-notifications-tooltip "}>*/}
+      {/*        <span id={"total-notifications"} onAnimationEnd={onAnimationEnd}>*/}
+      {/*          {totalNotifications}*/}
+      {/*        </span>*/}
+      {/*        <ExclamationCircleIcon*/}
+      {/*          className={"kogito--editor__notifications-panel-with-notifications-tooltip-exclamation-icon"}*/}
+      {/*        />*/}
+      {/*      </div>*/}
+      {/*    </Tooltip>*/}
+      {/*  )}*/}
+      {/*</div>*/}
       <ResizablePanel isOpen={notificationsPanel.isOpen} setHeight={setHeight}>
         <div className={"kogito--editor__notifications-panel-icon-position"}>
           <div onClick={() => onRetractAll()}>

@@ -82,6 +82,7 @@ export function KeyBindingsHelpOverlay() {
   return (
     <>
       <div
+        style={{ display: "none" }}
         onClick={() => setShowing(!showing)}
         className={"kogito-tooling--keyboard-shortcuts kogito-tooling--keyboard-shortcuts-icon"}
         data-testid={"keyboard-shortcuts-help-overlay-icon"}
