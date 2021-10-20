@@ -22,7 +22,7 @@ import { DrawerCloseButton, DrawerPanelContent } from "@patternfly/react-core/di
 import { useDmnRunner } from "./DmnRunnerContext";
 import { useNotificationsPanel } from "../NotificationsPanel/NotificationsPanelContext";
 import { Notification } from "@kie-tooling-core/notifications/dist/api";
-import { DmnRunnerStatus } from "./DmnRunnerStatus";
+import { DmnRunnerMode, DmnRunnerStatus } from "./DmnRunnerStatus";
 import { EmbeddedEditorRef } from "@kie-tooling-core/editor/dist/embedded";
 import { useOnlineI18n } from "../../common/i18n";
 import {
@@ -38,6 +38,7 @@ import { ErrorBoundary } from "../../common/ErrorBoundary";
 import { EmptyState, EmptyStateBody, EmptyStateIcon } from "@patternfly/react-core/dist/js/components/EmptyState";
 import { I18nWrapped } from "@kie-tooling-core/i18n/dist/react-components";
 import { ExclamationTriangleIcon } from "@patternfly/react-icons/dist/js/icons/exclamation-triangle-icon";
+import { Button } from "@patternfly/react-core";
 
 const KOGITO_JIRA_LINK = "https://issues.jboss.org/projects/KOGITO";
 
@@ -264,7 +265,10 @@ export function DmnRunnerDrawer(props: Props) {
                     <Text component={"h2"}>{i18n.terms.inputs}</Text>
                   </TextContent>
                   {dmnRunnerStylesConfig.buttonPosition === ButtonPosition.INPUT && (
-                    <DrawerCloseButton onClick={(e: any) => dmnRunner.setExpanded(false)} />
+                    <>
+                      <Button onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)}>Tabular</Button>
+                      <DrawerCloseButton onClick={(e: any) => dmnRunner.setExpanded(false)} />
+                    </>
                   )}
                 </PageSection>
                 <div className={"kogito--editor__dmn-runner-drawer-content-body"}>
@@ -304,7 +308,10 @@ export function DmnRunnerDrawer(props: Props) {
                     <Text component={"h2"}>{i18n.terms.outputs}</Text>
                   </TextContent>
                   {dmnRunnerStylesConfig.buttonPosition === ButtonPosition.OUTPUT && (
-                    <DrawerCloseButton onClick={(e: any) => dmnRunner.setExpanded(false)} />
+                    <>
+                      <Button onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)}>Tabular</Button>
+                      <DrawerCloseButton onClick={(e: any) => dmnRunner.setExpanded(false)} />
+                    </>
                   )}
                 </PageSection>
                 <div className={"kogito--editor__dmn-runner-drawer-content-body"}>

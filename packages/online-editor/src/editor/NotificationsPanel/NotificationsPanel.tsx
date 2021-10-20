@@ -26,6 +26,7 @@ import { useNotificationsPanel } from "./NotificationsPanelContext";
 import { NotificationPanelTabContent } from "./NotificationsPanelTabContent";
 import { NotificationsApi } from "@kie-tooling-core/notifications/dist/api";
 import { useOnlineI18n } from "../../common/i18n";
+import { ResizablePanel, ResizablePanelId, useResizableConnect } from "../../common/Resizable";
 
 interface Props {
   tabNames: string[];
@@ -35,6 +36,7 @@ export function NotificationsPanel(props: Props) {
   const notificationsPanel = useNotificationsPanel();
   const [tabsNotifications, setTabsNotifications] = useState<Map<string, number>>(new Map());
   const { i18n } = useOnlineI18n();
+  const [setHeight, resizable] = useResizableConnect(ResizablePanelId.NOTIFICATIONS_PANEL);
 
   const tabsMap: Map<string, React.RefObject<NotificationsApi>> = useMemo(
     () => new Map(props.tabNames.map((tabName) => [tabName, React.createRef<NotificationsApi>()])),
@@ -43,11 +45,11 @@ export function NotificationsPanel(props: Props) {
 
   useEffect(() => {
     notificationsPanel.setTabsMap([...tabsMap.entries()]);
-  }, [tabsMap]);
+  }, [notificationsPanel, tabsMap]);
 
   const onNotificationsPanelButtonClick = useCallback(() => {
     notificationsPanel.setIsOpen(!notificationsPanel.isOpen);
-  }, [notificationsPanel.isOpen, notificationsPanel.setIsOpen]);
+  }, [notificationsPanel]);
 
   const onNotificationsLengthChange = useCallback((name: string, newQtt: number) => {
     setTabsNotifications((previousTabsNotifications) => {
@@ -69,51 +71,24 @@ export function NotificationsPanel(props: Props) {
     updatedResult?.classList.remove("kogito--editor__notifications-panel-error-count-updated");
   }, []);
 
-  const onSelectTab = useCallback((event, tabName) => {
-    notificationsPanel.setActiveTab(tabName);
-  }, []);
+  const onSelectTab = useCallback(
+    (event, tabName) => {
+      notificationsPanel.setActiveTab(tabName);
+    },
+    [notificationsPanel]
+  );
 
   useEffect(() => {
     notificationsPanel.setActiveTab(props.tabNames[0]);
-  }, []);
+  }, [notificationsPanel, props.tabNames]);
 
   const totalNotifications = useMemo(
     () => [...tabsNotifications.values()].reduce((acc, value) => acc + value, 0),
     [tabsNotifications]
   );
 
-  const notificationsPanelDivRef = useRef<HTMLDivElement>(null);
   const [notificationsPanelIconPlace, setNotificationsPanelIconPlace] = useState<number>();
   const notificationsPanelIconRef = useRef<HTMLDivElement>(null);
-
-  const onMouseMove = useCallback((e: MouseEvent) => {
-    const iframe = document.getElementById("kogito-iframe");
-    if (iframe) {
-      iframe.style.pointerEvents = "none";
-    }
-
-    const notificationsPanelDiv = notificationsPanelDivRef.current?.getBoundingClientRect();
-    const newNotificationsPanelSize = notificationsPanelDiv!.bottom - e.clientY;
-    notificationsPanelDivRef.current?.style?.setProperty("height", `${newNotificationsPanelSize}px`);
-    notificationsPanelDivRef.current?.style?.setProperty("user-select", "none");
-    setNotificationsPanelIconPlace(newNotificationsPanelSize + 12);
-  }, []);
-
-  const onMouseUp = useCallback((e: MouseEvent) => {
-    const iframe = document.getElementById("kogito-iframe");
-    if (iframe) {
-      iframe.style.pointerEvents = "";
-    }
-
-    notificationsPanelDivRef.current?.style?.setProperty("user-select", "");
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUp);
-  }, []);
-
-  const onMouseDown = useCallback(() => {
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-  }, []);
 
   const [expandAll, setExpandAll] = useState<boolean>();
   const onExpandAll = useCallback(() => {
@@ -131,6 +106,12 @@ export function NotificationsPanel(props: Props) {
       notificationsPanelIconRef.current?.style?.setProperty("bottom", `5px`);
     }
   }, [notificationsPanel.isOpen, notificationsPanelIconPlace]);
+
+  useEffect(() => {
+    setNotificationsPanelIconPlace(
+      Array.from(resizable.resizablePanels.values()).reduce((acc, height) => acc + height + 12, 0)
+    );
+  }, [resizable.resizablePanels]);
 
   return (
     <>
@@ -170,52 +151,43 @@ export function NotificationsPanel(props: Props) {
           </Tooltip>
         )}
       </div>
-      <div
-        className={
-          notificationsPanel.isOpen
-            ? "kogito--editor__notifications-panel-open"
-            : "kogito--editor__notifications-panel-close"
-        }
-      >
-        <div onMouseDown={onMouseDown} className={"kogito--editor__notifications-panel-resizable-div"} />
-        <div ref={notificationsPanelDivRef} className={"kogito--editor__notifications-panel-div"}>
-          <div className={"kogito--editor__notifications-panel-icon-position"}>
-            <div onClick={() => onRetractAll()}>
-              <Tooltip content={i18n.notificationsPanel.tooltip.retractAll}>
-                <AngleUpIcon />
-              </Tooltip>
-            </div>
-            <div onClick={() => onExpandAll()}>
-              <Tooltip content={i18n.notificationsPanel.tooltip.expandAll}>
-                <AngleDownIcon />
-              </Tooltip>
-            </div>
+      <ResizablePanel isOpen={notificationsPanel.isOpen} setHeight={setHeight}>
+        <div className={"kogito--editor__notifications-panel-icon-position"}>
+          <div onClick={() => onRetractAll()}>
+            <Tooltip content={i18n.notificationsPanel.tooltip.retractAll}>
+              <AngleUpIcon />
+            </Tooltip>
           </div>
-          <Tabs activeKey={notificationsPanel.activeTab} onSelect={onSelectTab}>
-            {[...tabsMap.entries()].map(([tabName, tabRef], index) => (
-              <Tab
-                key={`tab-${index}`}
-                eventKey={tabName}
-                title={
-                  <TabTitleText>
-                    {tabName} <Badge isRead={true}>{tabsNotifications.get(tabName)}</Badge>
-                  </TabTitleText>
-                }
-              >
-                <div>
-                  <NotificationPanelTabContent
-                    name={tabName}
-                    ref={tabRef}
-                    onNotificationsLengthChange={onNotificationsLengthChange}
-                    expandAll={expandAll}
-                    setExpandAll={setExpandAll}
-                  />
-                </div>
-              </Tab>
-            ))}
-          </Tabs>
+          <div onClick={() => onExpandAll()}>
+            <Tooltip content={i18n.notificationsPanel.tooltip.expandAll}>
+              <AngleDownIcon />
+            </Tooltip>
+          </div>
         </div>
-      </div>
+        <Tabs activeKey={notificationsPanel.activeTab} onSelect={onSelectTab}>
+          {[...tabsMap.entries()].map(([tabName, tabRef], index) => (
+            <Tab
+              key={`tab-${index}`}
+              eventKey={tabName}
+              title={
+                <TabTitleText>
+                  {tabName} <Badge isRead={true}>{tabsNotifications.get(tabName)}</Badge>
+                </TabTitleText>
+              }
+            >
+              <div>
+                <NotificationPanelTabContent
+                  name={tabName}
+                  ref={tabRef}
+                  onNotificationsLengthChange={onNotificationsLengthChange}
+                  expandAll={expandAll}
+                  setExpandAll={setExpandAll}
+                />
+              </div>
+            </Tab>
+          ))}
+        </Tabs>
+      </ResizablePanel>
     </>
   );
 }

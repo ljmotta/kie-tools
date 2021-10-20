@@ -15,24 +15,16 @@
  */
 
 import * as React from "react";
-import { useDmnRunner } from "./DmnRunnerContext";
-import { ResizablePanel, ResizablePanelId, useResizableConnect } from "../../common/Resizable";
-import { DmnRunnerMode } from "./DmnRunnerStatus";
-import { Button } from "@patternfly/react-core";
+import { PropsWithChildren, useState } from "react";
+import { ResizablePanelContext, ResizablePanelId } from "./ResizablePanelContext";
 
-interface Props {}
-
-export function DmnRunnerTabular(props: Props) {
-  const [setHeight] = useResizableConnect(ResizablePanelId.DMN_RUNNER_TABULAR);
-  const dmnRunner = useDmnRunner();
+export function ResizablePanelContextProvider(props: PropsWithChildren<any>) {
+  // a struct to save an id and the panel height
+  const [resizablePanels, setResizablePanels] = useState<Map<ResizablePanelId, number>>(new Map());
 
   return (
-    <div>
-      <ResizablePanel isOpen={dmnRunner.isExpanded} setHeight={setHeight}>
-        <Button onClick={() => dmnRunner.setMode(DmnRunnerMode.DRAWER)}>Drawer</Button>
-
-        <div>test</div>
-      </ResizablePanel>
-    </div>
+    <ResizablePanelContext.Provider value={{ resizablePanels, setResizablePanels }}>
+      {props.children}
+    </ResizablePanelContext.Provider>
   );
 }

@@ -474,23 +474,23 @@
   margin-top: 1px;
 }
 
-.kogito--editor__notifications-panel-open {
+.kogito--editor__resizable-panel-open {
   display: flex;
   flex-direction: column;
   border-top: solid 1px #ddd;
 }
 
-.kogito--editor__notifications-panel-close {
+.kogito--editor__resizable-panel-close {
   display: none;
 }
 
-.kogito--editor__notifications-panel-resizable-div {
+.kogito--editor__resizable-panel-div {
   height: 10px;
   border-bottom: solid 1px #ddd;
   cursor: row-resize;
 }
 
-.kogito--editor__notifications-panel-div {
+.kogito--editor__resizable-panel {
   height: 350px;
   width: 100%;
   position: relative;
