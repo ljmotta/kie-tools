@@ -45,6 +45,7 @@ export function DmnRunnerContextProvider(props: Props) {
   const notificationsPanel = useNotificationsPanel();
   const [isExpanded, setExpanded] = useState(false);
   const [formData, setFormData] = useState(formInputsFromUrlParams);
+  const [tableData, setTableData] = useState([{}]);
   const [formSchema, setFormSchema] = useState<DmnFormSchema>();
   const [formError, setFormError] = useState(false);
   const [mode, setMode] = useState(DmnRunnerMode.DRAWER);
@@ -154,6 +155,8 @@ export function DmnRunnerContextProvider(props: Props) {
         setExpanded,
         formData,
         setFormData,
+        tableData,
+        setTableData,
         service,
         formError,
         setFormError,

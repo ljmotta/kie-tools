@@ -576,7 +576,9 @@ export function EditorPage(props: Props) {
                             />
                           </Modal>
                           <ResizablePanelContextProvider isEditorReady={isEditorReady}>
-                            {dmnRunner.isExpanded && dmnRunner.mode === DmnRunnerMode.TABULAR && <DmnRunnerTabular />}
+                            {dmnRunner.isExpanded && dmnRunner.mode === DmnRunnerMode.TABULAR && (
+                              <DmnRunnerTabular editor={editor} />
+                            )}
                             <NotificationsPanel tabNames={notificationPanelTabNames(dmnRunner.status)} />
                           </ResizablePanelContextProvider>
                         </DrawerContentBody>

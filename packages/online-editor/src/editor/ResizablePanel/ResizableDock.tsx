@@ -41,7 +41,7 @@ export function ResizableDock(props: ResizableDockProps) {
     envelopeKeyboardIcon?.click();
   }, [envelopeKeyboardIcon]);
 
-  const onClick = useCallback((id: ResizablePanelId, callback?: () => void) => {
+  const onChange = useCallback((id: ResizablePanelId, callback?: () => void) => {
     setCurrentTab((previous) => {
       if (previous === id) {
         return undefined;
@@ -72,7 +72,7 @@ export function ResizableDock(props: ResizableDockProps) {
           key={id}
           buttonId={id}
           isSelected={currentTab === id}
-          onChange={() => onClick(id, properties.onClick)}
+          onChange={() => onChange(id, properties.onClick)}
           text={
             <div style={{ display: "flex" }}>
               {properties.icon && <div style={{ paddingRight: "5px", width: "30px" }}>{properties.icon}</div>}

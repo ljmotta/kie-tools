@@ -38,6 +38,7 @@ import { ErrorBoundary } from "../../common/ErrorBoundary";
 import { EmptyState, EmptyStateBody, EmptyStateIcon } from "@patternfly/react-core/dist/js/components/EmptyState";
 import { I18nWrapped } from "@kie-tooling-core/i18n/dist/react-components";
 import { ExclamationTriangleIcon } from "@patternfly/react-icons/dist/js/icons/exclamation-triangle-icon";
+import { ColumnsIcon } from "@patternfly/react-icons/dist/js/icons/columns-icon";
 import { Button } from "@patternfly/react-core";
 
 const KOGITO_JIRA_LINK = "https://issues.jboss.org/projects/KOGITO";
@@ -262,11 +263,24 @@ export function DmnRunnerDrawer(props: Props) {
               <Page className={"kogito--editor__dmn-runner-content-page"}>
                 <PageSection className={"kogito--editor__dmn-runner-content-header"}>
                   <TextContent>
-                    <Text component={"h2"}>{i18n.terms.inputs}</Text>
+                    <div style={{ display: "flex" }}>
+                      <Text component={"h2"}>{i18n.terms.inputs}</Text>
+                      <Button
+                        style={{ border: 0, marginLeft: "5px" }}
+                        variant={"tertiary"}
+                        onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)}
+                        icon={<ColumnsIcon />}
+                      />
+                    </div>
                   </TextContent>
                   {dmnRunnerStylesConfig.buttonPosition === ButtonPosition.INPUT && (
                     <>
-                      <Button onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)}>Tabular</Button>
+                      <Button
+                        variant={"tertiary"}
+                        style={{ border: 0, marginLeft: "5px" }}
+                        onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)}
+                        icon={<ColumnsIcon />}
+                      />
                       <DrawerCloseButton onClick={(e: any) => dmnRunner.setExpanded(false)} />
                     </>
                   )}
@@ -309,7 +323,6 @@ export function DmnRunnerDrawer(props: Props) {
                   </TextContent>
                   {dmnRunnerStylesConfig.buttonPosition === ButtonPosition.OUTPUT && (
                     <>
-                      <Button onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)}>Tabular</Button>
                       <DrawerCloseButton onClick={(e: any) => dmnRunner.setExpanded(false)} />
                     </>
                   )}

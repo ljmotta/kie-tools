@@ -25,11 +25,11 @@ interface ResizablePanelContextProviderProps {
 }
 
 export function ResizablePanelContextProvider(props: PropsWithChildren<ResizablePanelContextProviderProps>) {
-  // a struct to save an id and the panel height
+  const [isOpen, setOpen] = useState<boolean>(false);
   const [resizablePanels, setResizablePanels] = useState<Map<ResizablePanelId, ResizablePanelProperties>>(new Map());
 
   return (
-    <ResizablePanelContext.Provider value={{ resizablePanels, setResizablePanels }}>
+    <ResizablePanelContext.Provider value={{ resizablePanels, setResizablePanels, isOpen, setOpen }}>
       {props.children}
       <ResizableDock isEditorReady={props.isEditorReady} />
     </ResizablePanelContext.Provider>

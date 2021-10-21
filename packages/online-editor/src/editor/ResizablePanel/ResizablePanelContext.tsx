@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 export interface ResizablePanelProperties {
   title: string;
@@ -33,6 +33,8 @@ export enum ResizablePanelId {
 export interface ResizablePanelContext {
   resizablePanels: Map<ResizablePanelId, ResizablePanelProperties>;
   setResizablePanels: React.Dispatch<React.SetStateAction<Map<ResizablePanelId, ResizablePanelProperties>>>;
+  isOpen: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ResizablePanelContext = React.createContext<ResizablePanelContext>({} as any);
@@ -50,6 +52,7 @@ export function useConnectResizable(
   info?: React.ReactNode
 ): { resizable: ResizablePanelContext; setHeight: (newHeight: number) => void } {
   const resizable = useResizable();
+  const [isOpen, setOpen] = useState<boolean>();
 
   useEffect(() => {
     resizable.setResizablePanels((previousResizablePanels) => {

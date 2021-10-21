@@ -29,6 +29,8 @@ export interface DmnRunnerContextType {
   setExpanded: React.Dispatch<boolean>;
   formData: any;
   setFormData: React.Dispatch<any>;
+  tableData: any;
+  setTableData: React.Dispatch<React.SetStateAction<any>>;
   service: DmnRunnerService;
   formError: boolean;
   setFormError: React.Dispatch<boolean>;
