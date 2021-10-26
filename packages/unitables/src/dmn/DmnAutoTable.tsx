@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Clause, LogicType, TableOperation } from "@kogito-tooling/boxed-expression-component/dist/api";
+import { TableOperation } from "@kogito-tooling/boxed-expression-component/dist/api";
 import { DmnValidator } from "./DmnValidator";
 import { AutoRow } from "../core";
 import { createPortal } from "react-dom";
@@ -10,13 +10,12 @@ import { EmptyState, EmptyStateBody, EmptyStateIcon } from "@patternfly/react-co
 import { ExclamationIcon } from "@patternfly/react-icons/dist/js/icons/exclamation-icon";
 import { Text, TextContent } from "@patternfly/react-core/dist/js/components/Text";
 import { DmnGrid } from "./DmnGrid";
-import { DmnRunnerRule, DmnRunnerTabular, DmnRunnerTabularProps } from "../boxed";
+import { DmnRunnerRule, DmnRunnerTabular } from "../boxed";
 import { NotificationSeverity } from "@kie-tooling-core/notifications/dist/api";
 import { dmnAutoTableDictionaries, DmnAutoTableI18nContext, dmnAutoTableI18nDefaults } from "../i18n";
 import { I18nDictionariesProvider } from "@kie-tooling-core/i18n/dist/react-components";
 import nextId from "react-id-generator";
 import { BoxedExpressionProvider } from "@kogito-tooling/boxed-expression-component/dist/components";
-import { DmnTableJsonSchemaBridge } from "./DmnTableJsonSchemaBridge";
 import { ColumnInstance } from "react-table";
 
 export enum EvaluationStatus {
@@ -54,7 +53,7 @@ interface Props {
   schema: any;
   tableData?: any;
   setTableData?: React.Dispatch<React.SetStateAction<any>>;
-  results?: Array<DecisionResult[] | undefined>;
+  results: Array<DecisionResult[] | undefined>;
   formError: boolean;
   setFormError: React.Dispatch<any>;
 }
@@ -77,12 +76,14 @@ export function DmnAutoTable(props: Props) {
   grid = useMemo(() => {
     return bridge ? (grid ? grid : new DmnGrid(bridge)) : undefined;
   }, [bridge]);
-  const shouldRender = useMemo(() => (grid?.getInput().length ?? 0) > 0, [grid]);
 
   // grid should be updated everytime the bridge is updated
-  useEffect(() => {
+  const { input } = useMemo(() => {
     grid?.updateBridge(bridge);
+    return { input: grid?.getInput() };
   }, [bridge]);
+
+  const shouldRender = useMemo(() => (input?.length ?? 0) > 0, [input]);
 
   // columns are saved in the grid instance, so some values can be used to improve re-renders (e.g. cell width)
   const onColumnsUpdate = useCallback((columns: ColumnInstance[]) => {
@@ -162,7 +163,7 @@ export function DmnAutoTable(props: Props) {
   // every input row is managed by an AutoRow. Each row is a form, and inside of it, cell are auto generated
   // using the uniforms library
   const getAutoRow = useCallback(
-    (data, rowIndex: number, bridge: DmnTableJsonSchemaBridge) =>
+    (data, rowIndex: number) =>
       ({ children }: any) =>
         (
           <AutoRow
@@ -187,40 +188,41 @@ export function DmnAutoTable(props: Props) {
             </UniformsContext.Consumer>
           </AutoRow>
         ),
-    [onSubmit, onValidate]
+    [bridge, onSubmit, onValidate]
   );
 
-  const [selectedExpression, setExpression] = useState<Partial<DmnRunnerTabularProps>>();
-  useEffect(() => {
-    const filteredResults = props.results?.filter((result) => result !== undefined);
-    if (grid && filteredResults) {
-      const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.schema ?? {}, filteredResults);
-      // generate output
+  const uid = useMemo(() => nextId(), []);
+  const inputRules: Partial<DmnRunnerRule>[] = useMemo(() => {
+    if (input && formsDivRendered) {
+      const inputEntriesLength = input.reduce(
+        (acc, i) => (i.insideProperties ? acc + i.insideProperties.length : acc + 1),
+        0
+      );
+      const inputEntries = new Array(inputEntriesLength);
+      return Array.from(Array(rowQuantity)).map(
+        (e, i) =>
+          ({
+            inputEntries,
+            rowDelegate: getAutoRow(props.tableData[i], i),
+          } as Partial<DmnRunnerRule>)
+      );
+    }
+    return [] as Partial<DmnRunnerRule>[];
+  }, [input, formsDivRendered, getAutoRow, props.tableData, rowQuantity]);
+
+  const { output, rules: outputRules } = useMemo(() => {
+    if (grid) {
+      const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.results);
       const output: any[] = Array.from(outputSet.values());
 
-      // generate rules
-      const rules: any[] = [];
-      const inputEntriesLength = grid
-        .getInput()
-        .reduce((acc, i) => (i.insideProperties ? acc + i.insideProperties.length : acc + 1), 0);
-      const inputEntries = new Array(inputEntriesLength);
-      for (let i = 0; i < rowQuantity; i++) {
-        const rule: DmnRunnerRule = {
-          inputEntries,
-          outputEntries: (outputEntries?.[i] as string[]) ?? [],
-        };
-        if (formsDivRendered) {
-          rule.rowDelegate = getAutoRow(props.tableData[i], i, bridge);
-        }
-        rules.push(rule);
-      }
-      // clone without references an array that maybe contains an object
+      const rules: Partial<DmnRunnerRule>[] = Array.from(Array(rowQuantity)).map((e, i) => ({
+        outputEntries: (outputEntries?.[i] as string[]) ?? [],
+      }));
+      // remove references
       output.forEach((o, i) => {
-        const filteredOutputEntries = rules[i]?.outputEntries.filter(
-          (outputEntry: any[]) => typeof outputEntry === "object"
-        );
-        if (filteredOutputEntries?.length > 0) {
-          o.insideProperties = filteredOutputEntries?.reduce((acc: any[], outputEntry: any[]) => {
+        const filteredOutputEntries = rules[i]?.outputEntries?.filter((outputEntry) => typeof outputEntry === "object");
+        if (filteredOutputEntries?.length ?? 0 > 0) {
+          o.insideProperties = filteredOutputEntries?.reduce((acc: any[], outputEntry) => {
             if (Array.isArray(outputEntry)) {
               acc.push([...outputEntry]);
               return acc;
@@ -234,24 +236,13 @@ export function DmnAutoTable(props: Props) {
         }
       });
       grid?.updateWidth(output, rules);
-      setExpression({
-        input: grid.getInput(),
+      return {
         output,
         rules,
-        uid: selectedExpression?.uid ?? nextId(),
-      });
+      };
     }
-  }, [
-    bridge,
-    formsDivRendered,
-    getAutoRow,
-    grid,
-    props.results,
-    props.schema,
-    props.tableData,
-    rowQuantity,
-    selectedExpression?.uid,
-  ]);
+    return { output: [], rules: [] };
+  }, [rowQuantity, props.results]);
 
   const formErrorMessage = useMemo(
     () => (
@@ -275,26 +266,36 @@ export function DmnAutoTable(props: Props) {
     errorBoundaryRef.current?.reset();
   }, [bridge]);
 
+  const expressionDefinition = useMemo(() => {
+    const rules = Array.from(Array(rowQuantity)).map((e, i) => {
+      return {
+        ...(inputRules?.[i] ?? { inputEntries: [] }),
+        ...(outputRules?.[i] ?? { outputEntries: [] }),
+      } as DmnRunnerRule;
+    });
+    return { input, uid, output, rules };
+  }, [input, uid, output, inputRules, outputRules, rowQuantity]);
+
   return (
     <>
-      {shouldRender && bridge && selectedExpression && (
-        <ErrorBoundary ref={errorBoundaryRef} setHasError={props.setFormError} error={formErrorMessage}>
-          <I18nDictionariesProvider
-            defaults={dmnAutoTableI18nDefaults}
-            dictionaries={dmnAutoTableDictionaries}
-            initialLocale={navigator.language}
-            ctx={DmnAutoTableI18nContext}
-          >
-            <BoxedExpressionProvider expressionDefinition={selectedExpression} isRunnerTable={true}>
+      {shouldRender && bridge && expressionDefinition && (
+        <I18nDictionariesProvider
+          defaults={dmnAutoTableI18nDefaults}
+          dictionaries={dmnAutoTableDictionaries}
+          initialLocale={navigator.language}
+          ctx={DmnAutoTableI18nContext}
+        >
+          <BoxedExpressionProvider expressionDefinition={expressionDefinition} isRunnerTable={true}>
+            <ErrorBoundary ref={errorBoundaryRef} setHasError={props.setFormError} error={formErrorMessage}>
               <DmnRunnerTabular
                 name={"DMN Runner"}
                 onRowNumberUpdated={onRowNumberUpdated}
                 onColumnsUpdate={onColumnsUpdate}
-                {...selectedExpression}
+                {...expressionDefinition}
               />
-            </BoxedExpressionProvider>
-          </I18nDictionariesProvider>
-        </ErrorBoundary>
+            </ErrorBoundary>
+          </BoxedExpressionProvider>
+        </I18nDictionariesProvider>
       )}
       <div ref={() => setFormsDivRendered(true)} id={FORMS_ID} />
     </>

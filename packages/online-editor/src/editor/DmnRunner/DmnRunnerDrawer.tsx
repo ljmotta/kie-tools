@@ -265,12 +265,8 @@ export function DmnRunnerDrawer(props: Props) {
                   <TextContent>
                     <div style={{ display: "flex" }}>
                       <Text component={"h2"}>{i18n.terms.inputs}</Text>
-                      <Button
-                        style={{ border: 0, marginLeft: "5px" }}
-                        variant={"tertiary"}
-                        onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)}
-                        icon={<ColumnsIcon />}
-                      />
+                      <div style={{ marginLeft: "5px" }} onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)} />
+                      <ColumnsIcon />
                     </div>
                   </TextContent>
                   {dmnRunnerStylesConfig.buttonPosition === ButtonPosition.INPUT && (

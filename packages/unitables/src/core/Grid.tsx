@@ -1,4 +1,4 @@
-import { Bridge, joinName } from "uniforms";
+import { joinName } from "uniforms";
 import * as React from "react";
 import { AutoField } from "./AutoField";
 import { DataType } from "@kogito-tooling/boxed-expression-component/dist/api";
@@ -11,7 +11,7 @@ export class Grid {
   private input: DmnRunnerClause[];
   private columns: ColumnInstance[];
 
-  constructor(private bridge: Bridge) {
+  constructor(private bridge: DmnTableJsonSchemaBridge) {
     this.input = this.generateBoxedInputs();
   }
 
@@ -156,7 +156,7 @@ export class Grid {
     return {
       ...this.getDataTypeProps(field["x-dmn-type"]),
       name: this.removeInputName(joinedName),
-      cellDelegate: ({ formId }: any) => <AutoField key={joinedName} name={joinedName} form={formId} />,
+      cellDelegate: (formId: any) => <AutoField key={joinedName} name={joinedName} form={formId} />,
     };
   }
 
@@ -184,16 +184,15 @@ export class Grid {
   }
 
   public generateBoxedOutputs(
-    schema: any,
     decisionResults: Array<DecisionResult[] | undefined>
   ): [Map<string, DmnRunnerClause>, Result[]] {
-    const outputTypeMap = Object.entries(schema?.definitions?.OutputSet?.properties ?? []).reduce(
+    const outputTypeMap = Object.entries((this.bridge as any).schema?.definitions?.OutputSet?.properties ?? []).reduce(
       (acc: Map<string, DataType>, [name, properties]: [string, any]) => {
         if (properties["x-dmn-type"]) {
           acc.set(name, this.getDataTypeProps(properties["x-dmn-type"]).dataType);
         } else {
           const path = properties.$ref.split("/").slice(1); // remove #
-          const type = path.reduce((acc: any, property: string) => acc[property], schema);
+          const type = path.reduce((acc: any, property: string) => acc[property], (this.bridge as any).schema);
           acc.set(name, this.getDataTypeProps(type["x-dmn-type"]).dataType);
         }
 

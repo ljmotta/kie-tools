@@ -206,7 +206,7 @@ export function DmnRunnerTabular(props: DmnRunnerTabularProps) {
 
   const rows = useMemo(() => {
     return (props.rules ?? []).map((rule) => {
-      const rowArray = [...rule.inputEntries, ...rule.outputEntries].reduce((acc, entry) => {
+      const rowArray = [...(rule?.inputEntries ?? []), ...(rule?.outputEntries ?? [])].reduce((acc, entry) => {
         if (Array.isArray(entry)) {
           return [
             ...acc,

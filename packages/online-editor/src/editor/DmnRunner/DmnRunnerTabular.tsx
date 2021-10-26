@@ -78,7 +78,7 @@ export function DmnRunnerTabular(props: Props) {
 
   useEffect(() => {
     updateDmnRunnerResults(dmnRunner.tableData);
-  }, [dmnRunner.tableData, updateDmnRunnerResults]);
+  }, [dmnRunner.tableData]);
 
   useEffect(() => {
     dmnRunner.setTableData((previous: any) => {
@@ -125,14 +125,16 @@ export function DmnRunnerTabular(props: Props) {
       <ResizablePanel isOpen={dmnRunner.isExpanded} setHeight={setHeight}>
         <Button onClick={() => dmnRunner.setMode(DmnRunnerMode.DRAWER)}>Drawer</Button>
 
-        <DmnAutoTable
-          schema={dmnRunner.formSchema}
-          tableData={dmnRunner.tableData}
-          setTableData={dmnRunner.setTableData}
-          results={dmnRunnerResults}
-          formError={dmnRunner.formError}
-          setFormError={dmnRunner.setFormError}
-        />
+        {dmnRunnerResults && (
+          <DmnAutoTable
+            schema={dmnRunner.formSchema}
+            tableData={dmnRunner.tableData}
+            setTableData={dmnRunner.setTableData}
+            results={dmnRunnerResults}
+            formError={dmnRunner.formError}
+            setFormError={dmnRunner.setFormError}
+          />
+        )}
       </ResizablePanel>
     </div>
   );
