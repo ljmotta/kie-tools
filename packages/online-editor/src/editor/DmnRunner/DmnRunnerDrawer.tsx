@@ -38,8 +38,9 @@ import { ErrorBoundary } from "../../common/ErrorBoundary";
 import { EmptyState, EmptyStateBody, EmptyStateIcon } from "@patternfly/react-core/dist/js/components/EmptyState";
 import { I18nWrapped } from "@kie-tooling-core/i18n/dist/react-components";
 import { ExclamationTriangleIcon } from "@patternfly/react-icons/dist/js/icons/exclamation-triangle-icon";
-import { ColumnsIcon } from "@patternfly/react-icons/dist/js/icons/columns-icon";
+import { TableIcon } from "@patternfly/react-icons/dist/js/icons/table-icon";
 import { Button } from "@patternfly/react-core";
+import { EditorPageResizablePanelId } from "../EditorPage";
 
 const KOGITO_JIRA_LINK = "https://issues.jboss.org/projects/KOGITO";
 
@@ -50,6 +51,7 @@ enum ButtonPosition {
 
 interface Props {
   editor?: EmbeddedEditorRef;
+  setPanelOpen: React.Dispatch<React.SetStateAction<EditorPageResizablePanelId>>;
 }
 
 const DMN_RUNNER_MIN_WIDTH_TO_ROW_DIRECTION = 711;
@@ -270,9 +272,13 @@ export function DmnRunnerDrawer(props: Props) {
                           <Button
                             variant={"plain"}
                             style={{ border: 0, marginLeft: "5px" }}
-                            onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)}
+                            onClick={() => {
+                              dmnRunner.setMode(DmnRunnerMode.TABULAR);
+                              dmnRunner.setExpanded(false);
+                              props.setPanelOpen(EditorPageResizablePanelId.DMN_RUNNER_TABULAR);
+                            }}
                           >
-                            <ColumnsIcon />
+                            <TableIcon />
                           </Button>
                         </>
                       </Text>

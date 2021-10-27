@@ -264,7 +264,7 @@ export function DmnRunnerTabular(props: DmnRunnerTabularProps) {
       return;
     }
     if (child.style) {
-      child.style.height = "100%";
+      child.style.height = "62px";
     }
     if (!child.childNodes) {
       return;

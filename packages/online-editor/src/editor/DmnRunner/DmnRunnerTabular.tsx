@@ -22,9 +22,12 @@ import { Button } from "@patternfly/react-core";
 import { DmnAutoTable } from "@kogito-tooling/unitables/dist";
 import { DecisionResult } from "@kogito-tooling/form/dist/dmn";
 import { diff } from "deep-object-diff";
+import { EditorPageResizablePanelId } from "../EditorPage";
+import { ListIcon } from "@patternfly/react-icons/dist/js/icons/list-icon";
 
 interface Props {
   editor: any;
+  setPanelOpen: React.Dispatch<React.SetStateAction<EditorPageResizablePanelId>>;
 }
 
 function usePrevious(value: any) {
@@ -106,7 +109,16 @@ export function DmnRunnerTabular(props: Props) {
 
   return (
     <div>
-      <Button onClick={() => dmnRunner.setMode(DmnRunnerMode.DRAWER)}>Drawer</Button>
+      <Button
+        variant={"plain"}
+        onClick={() => {
+          dmnRunner.setMode(DmnRunnerMode.DRAWER);
+          dmnRunner.setExpanded(true);
+          props.setPanelOpen(EditorPageResizablePanelId.NONE);
+        }}
+      >
+        <ListIcon />
+      </Button>
       {dmnRunnerResults && (
         <DmnAutoTable
           schema={dmnRunner.formSchema}

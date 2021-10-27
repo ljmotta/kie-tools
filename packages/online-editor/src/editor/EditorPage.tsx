@@ -425,7 +425,7 @@ export function EditorPage(props: Props) {
                             ? "kogito--editor__drawer-content-close"
                             : "kogito--editor__drawer-content-open"
                         }
-                        panelContent={<DmnRunnerDrawer editor={editor} />}
+                        panelContent={<DmnRunnerDrawer editor={editor} setPanelOpen={setPanelOpen} />}
                       >
                         <Drawer
                           isInline={true}
@@ -440,6 +440,7 @@ export function EditorPage(props: Props) {
                                 tabsNotifications={tabsNotifications}
                                 setTabsNotifications={setTabsNotifications}
                                 panelOpen={panelOpen}
+                                setPanelOpen={setPanelOpen}
                               />
                             }
                           >
@@ -637,6 +638,7 @@ interface EditorPageResizablePanelProps {
   tabsNotifications: Map<string, number>;
   setTabsNotifications: React.Dispatch<React.SetStateAction<Map<string, number>>>;
   panelOpen: EditorPageResizablePanelId;
+  setPanelOpen: React.Dispatch<React.SetStateAction<EditorPageResizablePanelId>>;
 }
 
 function EditorPageResizablePanel(props: EditorPageResizablePanelProps) {
@@ -663,10 +665,14 @@ function EditorPageResizablePanel(props: EditorPageResizablePanelProps) {
         />,
       ],
     ]);
-    if (dmnRunner.isExpanded && dmnRunner.mode === DmnRunnerMode.TABULAR) {
+    if (dmnRunner.mode === DmnRunnerMode.TABULAR) {
       panelMap.set(
         EditorPageResizablePanelId.DMN_RUNNER_TABULAR,
-        <DmnRunnerTabular key={EditorPageResizablePanelId.DMN_RUNNER_TABULAR} editor={props.editor} />
+        <DmnRunnerTabular
+          key={EditorPageResizablePanelId.DMN_RUNNER_TABULAR}
+          editor={props.editor}
+          setPanelOpen={props.setPanelOpen}
+        />
       );
     }
     return panelMap;
@@ -743,7 +749,7 @@ function EditorPageDock(props: EditorPageDockProps) {
         },
       ],
     ]);
-    if (dmnRunner.isExpanded && dmnRunner.mode === DmnRunnerMode.TABULAR) {
+    if (dmnRunner.mode === DmnRunnerMode.TABULAR) {
       dockMap.set(EditorPageResizablePanelId.DMN_RUNNER_TABULAR, {
         title: "DMN Runner",
         onClick: onDmnRunnerTabularClick,

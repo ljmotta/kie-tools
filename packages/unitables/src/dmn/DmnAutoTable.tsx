@@ -13,10 +13,17 @@ import { DmnGrid } from "./DmnGrid";
 import { DmnRunnerRule, DmnRunnerTabular } from "../boxed";
 import { NotificationSeverity } from "@kie-tooling-core/notifications/dist/api";
 import { dmnAutoTableDictionaries, DmnAutoTableI18nContext, dmnAutoTableI18nDefaults } from "../i18n";
-import { I18nDictionariesProvider } from "@kie-tooling-core/i18n/dist/react-components";
+import { I18nDictionariesProvider, I18nWrapped } from "@kie-tooling-core/i18n/dist/react-components";
 import nextId from "react-id-generator";
 import { BoxedExpressionProvider } from "@kogito-tooling/boxed-expression-component/dist/components";
 import { ColumnInstance } from "react-table";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerContentBody,
+  DrawerPanelContent,
+} from "@patternfly/react-core/dist/js/components/Drawer";
+import { CubeIcon } from "@patternfly/react-icons/dist/js/icons/cube-icon";
 
 export enum EvaluationStatus {
   SUCCEEDED = "SUCCEEDED",
@@ -191,7 +198,7 @@ export function DmnAutoTable(props: Props) {
     [bridge, onSubmit, onValidate]
   );
 
-  const uid = useMemo(() => nextId(), []);
+  const inputUid = useMemo(() => nextId(), []);
   const inputRules: Partial<DmnRunnerRule>[] = useMemo(() => {
     if (input && formsDivRendered) {
       const inputEntriesLength = input.reduce(
@@ -210,9 +217,11 @@ export function DmnAutoTable(props: Props) {
     return [] as Partial<DmnRunnerRule>[];
   }, [input, formsDivRendered, getAutoRow, props.tableData, rowQuantity]);
 
+  const outputUid = useMemo(() => nextId(), []);
   const { output, rules: outputRules } = useMemo(() => {
-    if (grid) {
-      const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.results);
+    const filteredResults = props.results.filter((result) => result !== undefined);
+    if (grid && filteredResults) {
+      const [outputSet, outputEntries] = grid.generateBoxedOutputs(filteredResults);
       const output: any[] = Array.from(outputSet.values());
 
       const rules: Partial<DmnRunnerRule>[] = Array.from(Array(rowQuantity)).map((e, i) => ({
@@ -266,35 +275,63 @@ export function DmnAutoTable(props: Props) {
     errorBoundaryRef.current?.reset();
   }, [bridge]);
 
-  const expressionDefinition = useMemo(() => {
-    const rules = Array.from(Array(rowQuantity)).map((e, i) => {
-      return {
-        ...(inputRules?.[i] ?? { inputEntries: [] }),
-        ...(outputRules?.[i] ?? { outputEntries: [] }),
-      } as DmnRunnerRule;
-    });
-    return { input, uid, output, rules };
-  }, [input, uid, output, inputRules, outputRules, rowQuantity]);
+  const outputEntries = useMemo(() => {
+    const a = outputRules.reduce((acc, rules) => acc + (rules.outputEntries?.length ?? 0), 0);
+    return a;
+  }, [outputRules]);
 
   return (
     <>
-      {shouldRender && bridge && expressionDefinition && (
+      {shouldRender && bridge && inputRules && outputRules && (
         <I18nDictionariesProvider
           defaults={dmnAutoTableI18nDefaults}
           dictionaries={dmnAutoTableDictionaries}
           initialLocale={navigator.language}
           ctx={DmnAutoTableI18nContext}
         >
-          <BoxedExpressionProvider expressionDefinition={expressionDefinition} isRunnerTable={true}>
-            <ErrorBoundary ref={errorBoundaryRef} setHasError={props.setFormError} error={formErrorMessage}>
-              <DmnRunnerTabular
-                name={"DMN Runner"}
-                onRowNumberUpdated={onRowNumberUpdated}
-                onColumnsUpdate={onColumnsUpdate}
-                {...expressionDefinition}
-              />
-            </ErrorBoundary>
-          </BoxedExpressionProvider>
+          <ErrorBoundary ref={errorBoundaryRef} setHasError={props.setFormError} error={formErrorMessage}>
+            <Drawer isInline={true} isExpanded={true}>
+              <DrawerContent
+                panelContent={
+                  <DrawerPanelContent isResizable={true} widths={{ default: "width_100" }}>
+                    {outputEntries > 0 ? (
+                      <BoxedExpressionProvider expressionDefinition={{ uid: outputUid }} isRunnerTable={true}>
+                        <DmnRunnerTabular
+                          name={"DMN Runner Output"}
+                          onRowNumberUpdated={onRowNumberUpdated}
+                          onColumnsUpdate={onColumnsUpdate}
+                          output={output}
+                          rules={outputRules as DmnRunnerRule[]}
+                          uid={outputUid}
+                        />
+                      </BoxedExpressionProvider>
+                    ) : (
+                      <EmptyState>
+                        <EmptyStateIcon icon={CubeIcon} />
+                        <TextContent>
+                          <Text component={"h2"}>Without Responses Yet</Text>
+                        </TextContent>
+                        <EmptyStateBody>
+                          <TextContent>Add decision nodes and fill the input nodes!</TextContent>
+                        </EmptyStateBody>
+                      </EmptyState>
+                    )}
+                  </DrawerPanelContent>
+                }
+              >
+                <BoxedExpressionProvider expressionDefinition={{ uid: inputUid }} isRunnerTable={true}>
+                  <DmnRunnerTabular
+                    name={"DMN Runner Input"}
+                    onRowNumberUpdated={onRowNumberUpdated}
+                    onColumnsUpdate={onColumnsUpdate}
+                    input={input}
+                    rules={inputRules as DmnRunnerRule[]}
+                    uid={inputUid}
+                  />
+                </BoxedExpressionProvider>
+              </DrawerContent>
+            </Drawer>
+          </ErrorBoundary>
         </I18nDictionariesProvider>
       )}
       <div ref={() => setFormsDivRendered(true)} id={FORMS_ID} />
