@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { JSONSchemaBridge } from "uniforms-bridge-json-schema";
+import { JSONSchemaBridge } from "uniforms-bridge-json-schema/esm";
 
 export enum Duration {
   DaysAndTimeDuration,
