@@ -15,6 +15,3 @@
  */
 
 export * from "./ResizableDock";
-export * from "./ResizablePanel";
-export * from "./ResizablePanelContext";
-export * from "./ResizablePanelContextProvider";

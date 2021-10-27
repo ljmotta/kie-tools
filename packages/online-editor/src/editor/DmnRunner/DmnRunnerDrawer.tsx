@@ -264,21 +264,22 @@ export function DmnRunnerDrawer(props: Props) {
                 <PageSection className={"kogito--editor__dmn-runner-content-header"}>
                   <TextContent>
                     <div style={{ display: "flex" }}>
-                      <Text component={"h2"}>{i18n.terms.inputs}</Text>
-                      <div style={{ marginLeft: "5px" }} onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)} />
-                      <ColumnsIcon />
+                      <Text component={"h2"}>
+                        <>
+                          {i18n.terms.inputs}
+                          <Button
+                            variant={"plain"}
+                            style={{ border: 0, marginLeft: "5px" }}
+                            onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)}
+                          >
+                            <ColumnsIcon />
+                          </Button>
+                        </>
+                      </Text>
                     </div>
                   </TextContent>
                   {dmnRunnerStylesConfig.buttonPosition === ButtonPosition.INPUT && (
-                    <>
-                      <Button
-                        variant={"tertiary"}
-                        style={{ border: 0, marginLeft: "5px" }}
-                        onClick={() => dmnRunner.setMode(DmnRunnerMode.TABULAR)}
-                        icon={<ColumnsIcon />}
-                      />
-                      <DrawerCloseButton onClick={(e: any) => dmnRunner.setExpanded(false)} />
-                    </>
+                    <DrawerCloseButton onClick={(e: any) => dmnRunner.setExpanded(false)} />
                   )}
                 </PageSection>
                 <div className={"kogito--editor__dmn-runner-drawer-content-body"}>

@@ -48,7 +48,7 @@ export function DmnRunnerContextProvider(props: Props) {
   const [tableData, setTableData] = useState([{}]);
   const [formSchema, setFormSchema] = useState<DmnFormSchema>();
   const [formError, setFormError] = useState(false);
-  const [mode, setMode] = useState(DmnRunnerMode.TABULAR);
+  const [mode, setMode] = useState(DmnRunnerMode.DRAWER);
   const [status, setStatus] = useState(
     kieToolingExtendedServices.status === KieToolingExtendedServicesStatus.UNAVAILABLE
       ? DmnRunnerStatus.UNAVAILABLE

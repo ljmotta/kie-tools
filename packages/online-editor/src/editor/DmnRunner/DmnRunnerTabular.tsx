@@ -15,11 +15,10 @@
  */
 
 import * as React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDmnRunner } from "./DmnRunnerContext";
 import { DmnRunnerMode } from "./DmnRunnerStatus";
 import { Button } from "@patternfly/react-core";
-import { ResizablePanel, ResizablePanelId, useConnectResizable } from "../ResizablePanel";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { DmnAutoTable } from "@kogito-tooling/unitables/dist";
 import { DecisionResult } from "@kogito-tooling/form/dist/dmn";
 import { diff } from "deep-object-diff";
@@ -39,11 +38,8 @@ function usePrevious(value: any) {
 }
 
 export function DmnRunnerTabular(props: Props) {
-  const onClick = useCallback(() => undefined, []);
-  const { setHeight } = useConnectResizable(ResizablePanelId.DMN_RUNNER_TABULAR, "DMN Runner", onClick);
   const dmnRunner = useDmnRunner();
   const [dmnRunnerResults, setDmnRunnerResults] = useState<Array<DecisionResult[] | undefined>>();
-  const [inputSize, setInputSize] = useState<number>(1);
 
   const updateDmnRunnerResults = useCallback(
     async (tableData: any[]) => {
@@ -80,18 +76,6 @@ export function DmnRunnerTabular(props: Props) {
     updateDmnRunnerResults(dmnRunner.tableData);
   }, [dmnRunner.tableData]);
 
-  useEffect(() => {
-    dmnRunner.setTableData((previous: any) => {
-      const updatedTableData = [...previous];
-      for (let i = inputSize; i <= inputSize; i++) {
-        if (!updatedTableData[i]) {
-          updatedTableData[i] = {};
-        }
-      }
-      return updatedTableData;
-    });
-  }, [inputSize]);
-
   const previousFormSchema: any = usePrevious(dmnRunner.formSchema);
   useEffect(() => {
     dmnRunner.setTableData((previousTableData: any) => {
@@ -118,24 +102,21 @@ export function DmnRunnerTabular(props: Props) {
         );
       });
     });
-  }, [dmnRunner.formSchema, inputSize]);
+  }, [dmnRunner.formSchema]);
 
   return (
     <div>
-      <ResizablePanel isOpen={dmnRunner.isExpanded} setHeight={setHeight}>
-        <Button onClick={() => dmnRunner.setMode(DmnRunnerMode.DRAWER)}>Drawer</Button>
-
-        {dmnRunnerResults && (
-          <DmnAutoTable
-            schema={dmnRunner.formSchema}
-            tableData={dmnRunner.tableData}
-            setTableData={dmnRunner.setTableData}
-            results={dmnRunnerResults}
-            formError={dmnRunner.formError}
-            setFormError={dmnRunner.setFormError}
-          />
-        )}
-      </ResizablePanel>
+      <Button onClick={() => dmnRunner.setMode(DmnRunnerMode.DRAWER)}>Drawer</Button>
+      {dmnRunnerResults && (
+        <DmnAutoTable
+          schema={dmnRunner.formSchema}
+          tableData={dmnRunner.tableData}
+          setTableData={dmnRunner.setTableData}
+          results={dmnRunnerResults}
+          formError={dmnRunner.formError}
+          setFormError={dmnRunner.setFormError}
+        />
+      )}
     </div>
   );
 }
