@@ -279,6 +279,12 @@ module.exports = {
     },
   },
 
+  importJavaClassesComponent: {
+    dev: {
+      port: 3017,
+    },
+  },
+
   chromeExtension: {
     dev: {
       port: 9000,
