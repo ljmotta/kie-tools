@@ -40,8 +40,8 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 Cypress.Commands.add("ouiaId", { prevSubject: "optional" }, (subject, id: string, options = {}) => {
-  var idSelector = id ? `[data-ouia-component-id='${id}']` : "";
-  var el;
+  const idSelector = id ? `[data-ouia-component-id='${id}']` : "";
+  let el;
   if (subject) {
     el = cy.wrap(subject, options).find(idSelector, options);
   } else {
@@ -50,8 +50,8 @@ Cypress.Commands.add("ouiaId", { prevSubject: "optional" }, (subject, id: string
 });
 
 Cypress.Commands.add("ouiaType", { prevSubject: "optional" }, (subject, type: string, options = {}) => {
-  var typeSelector = type ? `[data-ouia-component-type='${type}']` : "";
-  var el;
+  const typeSelector = type ? `[data-ouia-component-type='${type}']` : "";
+  let el;
   if (subject) {
     el = cy.wrap(subject, options).find(typeSelector, options);
   } else {

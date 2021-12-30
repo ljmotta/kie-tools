@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/// <reference types="Cypress" />
 import * as buildEnv from "@kogito-tooling/build-env";
 
 describe("List Expression Tests", () => {

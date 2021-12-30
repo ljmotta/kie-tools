@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-/// <reference types="Cypress" />
 /// <reference types="./commands" />
-
-import "./commands";
