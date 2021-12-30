@@ -268,7 +268,14 @@ module.exports = {
 
   boxedExpressionComponent: {
     dev: {
-      port: 3000,
+      port: 3015,
+    },
+  },
+
+  feelInputComponent: {
+    dev: {
+      port: 3016,
+      REACT_APP_FEEL_SERVER: "",
     },
   },
 
