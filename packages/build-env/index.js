@@ -266,6 +266,12 @@ module.exports = {
     },
   },
 
+  boxedExpressionComponent: {
+    dev: {
+      port: 3000,
+    },
+  },
+
   chromeExtension: {
     dev: {
       port: 9000,
