@@ -4,17 +4,20 @@ import { openWidget } from "../widgets";
 import { ServerlessWorkflowEditorChannelApi } from "../../../editor";
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import { SwfServiceCatalogService } from "@kie-tools/serverless-workflow-service-catalog/dist/api";
+import ReactDOM from "react-dom";
+import { pingPongEnvelopViewRenderDiv } from "@kie-tools-examples/ping-pong-view-react/dist/div";
+import { EmbeddedDivPingPong } from "@kie-tools-examples/ping-pong-view/dist/embedded";
 
 // Part of an example
 //
-// const pingPongChannelApiImpl = {
-//   pingPongView__ping(source: string) {
-//     console.info(`Received PING from '${source}'`);
-//   },
-//   pingPongView__pong(source: string, replyingTo: string) {
-//     console.info(`Received PONG from '${source}' in reply to '${replyingTo}'`);
-//   },
-// };
+const pingPongChannelApiImpl = {
+  pingPongView__ping(source: string) {
+    console.info(`Received PING from '${source}'`);
+  },
+  pingPongView__pong(source: string, replyingTo: string) {
+    console.info(`Received PONG from '${source}' in reply to '${replyingTo}'`);
+  },
+};
 
 export type SwfMonacoEditorCommandTypes =
   | "LogInToRhhcc"
@@ -82,20 +85,20 @@ export function initAugmentationCommands(
             console.info("Opening functions widget..");
             // Part of an example
             //
-            // ReactDOM.render(
-            //   <EmbeddedDivPingPong
-            //     apiImpl={pingPongChannelApiImpl}
-            //     name={"React " + Math.random()}
-            //     targetOrigin={window.location.origin}
-            //     renderView={renderPingPongReact}
-            //   />,
-            //   container
-            // );
+            ReactDOM.render(
+              <EmbeddedDivPingPong
+                apiImpl={pingPongChannelApiImpl}
+                name={"React " + Math.random()}
+                targetOrigin={window.location.origin}
+                renderView={pingPongEnvelopViewRenderDiv}
+              />,
+              container
+            );
           },
           onClose: ({ container }) => {
             // Part of an example
             //
-            // return ReactDOM.unmountComponentAtNode(container);
+            return ReactDOM.unmountComponentAtNode(container);
           },
         });
       }
@@ -112,20 +115,20 @@ export function initAugmentationCommands(
             console.info("Opening states widget..");
             // Part of an example
             //
-            // ReactDOM.render(
-            //   <EmbeddedDivPingPong
-            //     apiImpl={pingPongChannelApiImpl}
-            //     name={"React " + Math.random()}
-            //     targetOrigin={window.location.origin}
-            //     renderView={renderPingPongReact}
-            //   />,
-            //   container
-            // );
+            ReactDOM.render(
+              <EmbeddedDivPingPong
+                apiImpl={pingPongChannelApiImpl}
+                name={"React " + Math.random()}
+                targetOrigin={window.location.origin}
+                renderView={pingPongEnvelopViewRenderDiv}
+              />,
+              container
+            );
           },
           onClose: ({ container }) => {
             // Part of an example
             //
-            // return ReactDOM.unmountComponentAtNode(container);
+            return ReactDOM.unmountComponentAtNode(container);
           },
         });
       }
