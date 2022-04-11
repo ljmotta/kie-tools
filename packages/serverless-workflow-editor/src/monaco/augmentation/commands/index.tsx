@@ -5,8 +5,8 @@ import { ServerlessWorkflowEditorChannelApi } from "../../../editor";
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import { SwfServiceCatalogService } from "@kie-tools/serverless-workflow-service-catalog/dist/api";
 import ReactDOM from "react-dom";
-import { pingPongEnvelopViewRenderDiv } from "@kie-tools-examples/ping-pong-view-react/dist/div";
 import { EmbeddedDivPingPong } from "@kie-tools-examples/ping-pong-view/dist/embedded";
+import { pingPongEnvelopViewRenderDiv } from "@kie-tools-examples/ping-pong-view-react";
 
 // Part of an example
 //
