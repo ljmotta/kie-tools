@@ -21,5 +21,5 @@
  */
 export interface FormApi {
   onSubmit(): void;
-  onValidate(): Promise<number>;
+  onValidate(): void;
 }
