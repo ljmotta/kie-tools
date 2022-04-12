@@ -18,7 +18,7 @@ import * as React from "react";
 import { useMemo } from "react";
 import { FormBase } from "./FormBase";
 import { FormHook, useForm } from "./FormHook";
-import { formI18n } from "./i18n";
+import { FormI18n, formI18n } from "./i18n";
 
 export interface FormProps<Input, Schema> {
   id?: string;
@@ -40,9 +40,10 @@ export interface FormProps<Input, Schema> {
   formInputs: Input;
   setFormInputs: React.Dispatch<React.SetStateAction<Input>>;
   formSchema?: Schema;
+  i18n?: FormI18n;
 }
 
-export type FormComponentProps<Input, Schema> = FormProps<Input, Schema> & FormHook<Input, Schema>;
+export type FormComponentProps<Input, Schema> = FormProps<Input, Schema> & Omit<FormHook<Input, Schema>, "i18n">;
 
 export function FormComponent(props: React.PropsWithChildren<FormComponentProps<object, object>>) {
   const i18n = useMemo(

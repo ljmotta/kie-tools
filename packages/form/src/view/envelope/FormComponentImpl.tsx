@@ -18,15 +18,63 @@ import * as React from "react";
 import { FormComponent, FormComponentProps } from "../../FormComponent";
 import { FormApi, FormChannelApi } from "../api";
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
-import { useImperativeHandle } from "react";
+import { useImperativeHandle, useState } from "react";
+import { Validator } from "../../Validator";
+import { FormI18n } from "../../i18n";
 
 export interface FormProps<Input, Schema> {
   initArgs: FormComponentProps<Input, Schema>;
   channelApi: MessageBusClientApi<FormChannelApi>;
 }
 
+// export interface FormProps<Input, Schema> {
+//   id?: string;
+//   name?: string;
+//   locale: string;
+//   formRef?: React.RefObject<HTMLFormElement>;
+//   showInlineError?: boolean;
+//   autoSave?: boolean;
+//   autoSaveDelay?: number;
+//   placeholder?: boolean;
+//   onSubmit?: (model: object) => void;
+//   onValidate?: (model: object, error: object) => void;
+//   errorsField?: () => React.ReactNode;
+//   submitField?: () => React.ReactNode;
+//   notificationsPanel: boolean;
+//   openValidationTab?: () => void;
+//   formError: boolean;
+//   setFormError: React.Dispatch<React.SetStateAction<boolean>>;
+//   formInputs: Input;
+//   setFormInputs: React.Dispatch<React.SetStateAction<Input>>;
+//   formSchema?: Schema;
+// }
+//
+// export interface FormHook<Input extends Record<string, any>, Schema extends Record<string, any>> {
+//   name?: string;
+//   formError: boolean;
+//   setFormError: React.Dispatch<React.SetStateAction<boolean>>;
+//   formInputs: Input;
+//   setFormInputs: React.Dispatch<React.SetStateAction<Input>>;
+//   formSchema?: Schema;
+//   onSubmit?: (model: object) => void;
+//   onValidate?: (model: object, error: object) => void;
+//   propertiesEntryPath?: string;
+//   validator?: Validator;
+//   removeRequired?: boolean;
+//   i18n: FormI18n;
+// }
+
+/**
+ * Form receive schema
+ * Fill form retrieves model/inputs
+ */
+
 export const FormComponentImpl = React.forwardRef<FormApi, React.PropsWithChildren<FormProps<object, object>>>(
   (props, forwardedRef) => {
+    const [formError, setFormError] = useState<boolean>(false);
+    const [formSchema, setFormSchema] = useState<object>();
+    const [formInputs, setFormInputs] = useState<object>({});
+
     useImperativeHandle(
       forwardedRef,
       () => {
@@ -39,7 +87,17 @@ export const FormComponentImpl = React.forwardRef<FormApi, React.PropsWithChildr
 
     return (
       <>
-        <FormComponent {...props.initArgs}>{props.children}</FormComponent>
+        <FormComponent
+          locale={window.navigator.language}
+          notificationsPanel={false}
+          formError={formError}
+          setFormError={setFormError}
+          formSchema={formSchema}
+          formInputs={formInputs}
+          setFormInputs={setFormInputs}
+        >
+          {props.children}
+        </FormComponent>
       </>
     );
   }

@@ -45,6 +45,7 @@ export const EmbeddedForm = React.forwardRef<FormApi, EmbeddedFormProps>((props,
         renderLock.current = true;
       }
 
+      // initial props to render a form;
       return envelopeServer.envelopeApi.requests.formView__init(
         { origin: envelopeServer.origin, envelopeServerId: envelopeServer.id },
         {}
