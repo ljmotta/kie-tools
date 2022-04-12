@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
+import { FormComponentProps } from "../../FormComponent";
+
 /**
  * Methods provided by the Envelope that can be consumed by the Channel.
  */
 export interface FormEnvelopeApi {
-  formView__init(association: Association, initArgs: FormInitArgs): Promise<void>;
-  formView__onSubmit(model: object): void;
-  formView__onValidate(model: object, error: object): void;
+  formView__init(association: Association, initArgs: FormComponentProps<any, any>): Promise<void>;
 }
 
 export interface Association {
   origin: string;
   envelopeServerId: string;
-}
-
-export interface FormInitArgs {
-  name: string;
 }

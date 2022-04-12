@@ -24,21 +24,19 @@ import { ContainerType } from "@kie-tools-core/envelope/dist/api";
 export type EmbeddedFormProps = {
   apiImpl: FormChannelApi;
   targetOrigin: string;
-  name: string;
   renderView: (container: HTMLDivElement, envelopeId?: string) => Promise<void>;
 };
 
 export const EmbeddedForm = React.forwardRef<FormApi, EmbeddedFormProps>((props, forwardedRef) => {
   const refDelegate = useCallback(
-    (envelopeServer: EnvelopeServer<FormChannelApi, FormEnvelopeApi>): FormApi => ({
-      onSubmit: () => envelopeServer.envelopeApi.requests.formView__onSubmit(),
-      onValidate: () => envelopeServer.envelopeApi.requests.formView__onValidate(),
+    (envelopeServer: EnvelopeServer<FormChannelApi, FormEnvelopeApi>) => ({
+      onSubmit: (model: object) => envelopeServer.envelopeApi,
     }),
     []
   );
 
   const renderLock = useRef(false);
-  const { renderView, name } = props;
+  const { renderView } = props;
 
   const pollInit = useCallback(
     async (envelopeServer: EnvelopeServer<FormChannelApi, FormEnvelopeApi>, container: () => HTMLDivElement) => {
@@ -49,10 +47,10 @@ export const EmbeddedForm = React.forwardRef<FormApi, EmbeddedFormProps>((props,
 
       return envelopeServer.envelopeApi.requests.formView__init(
         { origin: envelopeServer.origin, envelopeServerId: envelopeServer.id },
-        { name }
+        {}
       );
     },
-    [name, renderView]
+    [renderView]
   );
 
   return (

@@ -20,6 +20,5 @@
  * These methods are what the "external world" knows about this component.
  */
 export interface FormApi {
-  onSubmit(): void;
-  onValidate(): void;
+  onSubmit(model: object): void;
 }

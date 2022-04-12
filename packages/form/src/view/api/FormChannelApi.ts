@@ -19,5 +19,4 @@
  */
 export interface FormChannelApi {
   formView__onSubmit(model: object): void;
-  formView__onValidate(model: object, error: object): void;
 }

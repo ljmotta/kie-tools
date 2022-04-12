@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Envelope, EnvelopeDivConfig } from "@kie-tools-core/envelope";
+import { Envelope, EnvelopeDivConfig, EnvelopeIFrameConfig } from "@kie-tools-core/envelope";
 import { EnvelopeBus } from "@kie-tools-core/envelope-bus/dist/api";
 import { FormFactory } from "./FormFactory";
 import { FormChannelApi, FormEnvelopeApi } from "../api";
@@ -22,7 +22,11 @@ import { FormEnvelopeApiImpl } from "./FormEnvelopeApiImpl";
 
 export type FormViewType = HTMLElement | void;
 
-export function init(args: { config: EnvelopeDivConfig; bus: EnvelopeBus; formFactory: FormFactory }) {
+export function init(args: {
+  config: EnvelopeDivConfig | EnvelopeIFrameConfig;
+  bus: EnvelopeBus;
+  formFactory: FormFactory;
+}) {
   const envelope = new Envelope<FormEnvelopeApi, FormChannelApi, FormViewType, {}>(args.bus, args.config);
 
   return envelope.start(
