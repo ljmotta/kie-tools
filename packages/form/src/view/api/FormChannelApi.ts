@@ -17,4 +17,4 @@
 /**
  * Methods provided by the Channel that can be consumed by the Envelope.
  */
-export interface FormChannelApi {}
+// export interface FormChannelApi {}

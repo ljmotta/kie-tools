@@ -15,60 +15,14 @@
  */
 
 import * as React from "react";
-import { FormComponent, FormComponentProps } from "../../FormComponent";
-import { FormApi, FormChannelApi, FormInitArgs } from "../api";
-import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import { useImperativeHandle, useState } from "react";
-import { Validator } from "../../Validator";
-import { FormI18n } from "../../i18n";
-import { EnvelopeDivConfig, EnvelopeIFrameConfig } from "@kie-tools-core/envelope";
+import { FormComponent } from "../../FormComponent";
+import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 
 export interface FormProps {
-  initArgs: FormInitArgs;
-  channelApi: MessageBusClientApi<FormChannelApi>;
+  channelApi: MessageBusClientApi<{}>;
+  initArgs: {};
 }
-
-// export interface FormProps<Input, Schema> {
-//   id?: string;
-//   name?: string;
-//   locale: string;
-//   formRef?: React.RefObject<HTMLFormElement>;
-//   showInlineError?: boolean;
-//   autoSave?: boolean;
-//   autoSaveDelay?: number;
-//   placeholder?: boolean;
-//   onSubmit?: (model: object) => void;
-//   onValidate?: (model: object, error: object) => void;
-//   errorsField?: () => React.ReactNode;
-//   submitField?: () => React.ReactNode;
-//   notificationsPanel: boolean;
-//   openValidationTab?: () => void;
-//   formError: boolean;
-//   setFormError: React.Dispatch<React.SetStateAction<boolean>>;
-//   formInputs: Input;
-//   setFormInputs: React.Dispatch<React.SetStateAction<Input>>;
-//   formSchema?: Schema;
-// }
-//
-// export interface FormHook<Input extends Record<string, any>, Schema extends Record<string, any>> {
-//   name?: string;
-//   formError: boolean;
-//   setFormError: React.Dispatch<React.SetStateAction<boolean>>;
-//   formInputs: Input;
-//   setFormInputs: React.Dispatch<React.SetStateAction<Input>>;
-//   formSchema?: Schema;
-//   onSubmit?: (model: object) => void;
-//   onValidate?: (model: object, error: object) => void;
-//   propertiesEntryPath?: string;
-//   validator?: Validator;
-//   removeRequired?: boolean;
-//   i18n: FormI18n;
-// }
-
-/**
- * Form receive schema
- * Fill form retrieves model/inputs
- */
 
 export interface FormEnvelopeViewApi {
   updateFormSchema(schema: object): void;
@@ -76,10 +30,22 @@ export interface FormEnvelopeViewApi {
   getFormError(): boolean;
 }
 
+const example = {
+  title: "Address",
+  type: "object",
+  properties: {
+    city: { type: "string" },
+    state: { type: "string" },
+    street: { type: "string" },
+    zip: { type: "string", pattern: "[0-9]{5}" },
+  },
+  required: ["street", "zip", "state"],
+};
+
 export const FormEnvelopeView = React.forwardRef<FormEnvelopeViewApi, React.PropsWithChildren<FormProps>>(
   (props, forwardedRef) => {
     const [formError, setFormError] = useState<boolean>(false);
-    const [formSchema, setFormSchema] = useState<object>();
+    const [formSchema, setFormSchema] = useState<object>(example);
     const [formInputs, setFormInputs] = useState<object>({});
 
     useImperativeHandle(

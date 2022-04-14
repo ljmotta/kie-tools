@@ -4,18 +4,15 @@ import { openWidget } from "../widgets";
 import { ServerlessWorkflowEditorChannelApi } from "../../../editor";
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import { SwfServiceCatalogService } from "@kie-tools/serverless-workflow-service-catalog/dist/api";
-import ReactDOM from "react-dom";
-import { EmbeddedDivPingPong } from "@kie-tools-examples/ping-pong-view/dist/embedded";
-import { pingPongEnvelopViewRenderDiv } from "@kie-tools-examples/ping-pong-view-react";
+import * as ReactDOM from "react-dom";
+import { EmbeddedForm } from "@kie-tools/form/dist/view/embedded";
+import { EmbeddedFormRef } from "@kie-tools/form/src/view/embedded";
 
 // Part of an example
 //
-const pingPongChannelApiImpl = {
-  pingPongView__ping(source: string) {
-    console.info(`Received PING from '${source}'`);
-  },
-  pingPongView__pong(source: string, replyingTo: string) {
-    console.info(`Received PONG from '${source}' in reply to '${replyingTo}'`);
+const formChannelApiImpl = {
+  formView__updateFormSchema(schema: object) {
+    console.info(`Received PING from`);
   },
 };
 
@@ -44,6 +41,8 @@ export function initAugmentationCommands(
   editorInstance: editor.IStandaloneCodeEditor,
   channelApi: MessageBusClientApi<ServerlessWorkflowEditorChannelApi>
 ): SwfMonacoEditorCommandIds {
+  const ref = React.createRef<EmbeddedFormRef>();
+
   return {
     SetupServiceRegistryUrl: editorInstance.addCommand(
       0,
@@ -86,12 +85,7 @@ export function initAugmentationCommands(
             // Part of an example
             //
             ReactDOM.render(
-              <EmbeddedDivPingPong
-                apiImpl={pingPongChannelApiImpl}
-                name={"React " + Math.random()}
-                targetOrigin={window.location.origin}
-                renderView={pingPongEnvelopViewRenderDiv}
-              />,
+              <EmbeddedForm ref={ref} apiImpl={{}} targetOrigin={window.location.origin} container={container} />,
               container
             );
           },
@@ -113,23 +107,8 @@ export function initAugmentationCommands(
           domNodeHolder: {},
           onReady: ({ container }) => {
             console.info("Opening states widget..");
-            // Part of an example
-            //
-            ReactDOM.render(
-              <EmbeddedDivPingPong
-                apiImpl={pingPongChannelApiImpl}
-                name={"React " + Math.random()}
-                targetOrigin={window.location.origin}
-                renderView={pingPongEnvelopViewRenderDiv}
-              />,
-              container
-            );
           },
-          onClose: ({ container }) => {
-            // Part of an example
-            //
-            return ReactDOM.unmountComponentAtNode(container);
-          },
+          onClose: ({ container }) => {},
         });
       }
     )!,

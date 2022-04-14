@@ -170,6 +170,7 @@ digraph G {
   "@kie-tools/serverless-workflow-diagram-editor" -> "@kie-tools/build-env" [ style = "dashed", color = "black" ];
   "@kie-tools/serverless-workflow-editor" -> "@kie-tools-core/editor" [ style = "solid", color = "blue" ];
   "@kie-tools/serverless-workflow-editor" -> "@kie-tools/serverless-workflow-service-catalog" [ style = "solid", color = "blue" ];
+  "@kie-tools/serverless-workflow-editor" -> "@kie-tools/form" [ style = "dashed", color = "blue" ];
   "@kie-tools/serverless-workflow-editor" -> "@kie-tools-examples/ping-pong-view-react" [ style = "dashed", color = "blue" ];
   "@kie-tools/serverless-workflow-service-catalog" -> "@kie-tools-core/envelope-bus" [ style = "solid", color = "blue" ];
   "@kie-tools/stunner-editors" -> "@kie-tools/stunner-editors-dmn-loader" [ style = "solid", color = "black" ];

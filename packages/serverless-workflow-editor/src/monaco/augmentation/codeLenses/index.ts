@@ -52,7 +52,7 @@ export function initJsonCodeLenses(
         },
       });
 
-      const openPing = createCodeLenses({
+      const openForm = createCodeLenses({
         model,
         rootNode,
         jsonPath: ["functions"],
@@ -63,22 +63,6 @@ export function initJsonCodeLenses(
               id: commandIds["OpenFunctionsWidget"],
               title: `◎ Discover`,
               arguments: [{ position, node } as SwfMonacoEditorCommandArgs["OpenFunctionsWidget"]],
-            },
-          ];
-        },
-      });
-
-      const openPong = createCodeLenses({
-        model,
-        rootNode,
-        jsonPath: ["functions"],
-        positionLensAt: "begin",
-        commandDelegates: ({ position, node }) => {
-          return [
-            {
-              id: commandIds["OpenStatesWidget"],
-              title: `◎ Another`,
-              arguments: [{ position, node } as SwfMonacoEditorCommandArgs["OpenStatesWidget"]],
             },
           ];
         },
@@ -175,8 +159,7 @@ export function initJsonCodeLenses(
         ...(displayRhhccIntegration ? setupServiceRegistryUrl : []),
         ...(displayRhhccIntegration ? refreshServiceRegistry : []),
         ...addFunction,
-        ...openPing,
-        ...openPong,
+        ...openForm,
       ];
 
       return {

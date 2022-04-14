@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-import { FormApi, FormChannelApi, FormEnvelopeApi } from "../api";
+import { FormApi, FormEnvelopeApi } from "../api";
 import * as React from "react";
+import { useCallback, useEffect } from "react";
 import { EmbeddedEnvelopeProps, RefForwardingEmbeddedEnvelope } from "@kie-tools-core/envelope/dist/embedded";
-import { useCallback, useRef } from "react";
 import { EnvelopeServer } from "@kie-tools-core/envelope-bus/dist/channel";
 import { ContainerType } from "@kie-tools-core/envelope/dist/api";
+import { init } from "../envelope";
 
 export type EmbeddedFormProps = {
-  apiImpl: FormChannelApi;
+  apiImpl: {};
   targetOrigin: string;
-  renderView: (container: HTMLDivElement, envelopeId?: string) => Promise<void>;
+  container: HTMLElement;
 };
 
-export type EmbeddedFormRef = FormApi & { envelopeServer: EnvelopeServer<FormChannelApi, FormEnvelopeApi> };
+export type EmbeddedFormRef = FormApi & { envelopeServer: EnvelopeServer<{}, FormEnvelopeApi> };
 
 export const EmbeddedForm = React.forwardRef<EmbeddedFormRef, EmbeddedFormProps>((props, forwardedRef) => {
   const refDelegate = useCallback(
-    (envelopeServer: EnvelopeServer<FormChannelApi, FormEnvelopeApi>) => ({
+    (envelopeServer: EnvelopeServer<{}, FormEnvelopeApi>) => ({
       envelopeServer,
       updateFormSchema: (schema: object) => envelopeServer.envelopeApi.requests.formView__updateFormSchema(schema),
       getFormInputs: () => envelopeServer.envelopeApi.requests.formView__getFormInputs(),
@@ -40,24 +41,22 @@ export const EmbeddedForm = React.forwardRef<EmbeddedFormRef, EmbeddedFormProps>
     []
   );
 
-  const renderLock = useRef(false);
-  const { renderView } = props;
+  const pollInit = useCallback(async (envelopeServer: EnvelopeServer<{}, FormEnvelopeApi>) => {
+    return envelopeServer.envelopeApi.requests.formView__init(
+      { origin: envelopeServer.origin, envelopeServerId: envelopeServer.id },
+      {}
+    );
+  }, []);
 
-  const pollInit = useCallback(
-    async (envelopeServer: EnvelopeServer<FormChannelApi, FormEnvelopeApi>, container: () => HTMLDivElement) => {
-      if (!renderLock.current) {
-        await renderView(container(), envelopeServer.id);
-        renderLock.current = true;
-      }
-
-      // initial props to render a form;
-      return envelopeServer.envelopeApi.requests.formView__init(
-        { origin: envelopeServer.origin, envelopeServerId: envelopeServer.id },
-        {}
-      );
-    },
-    [renderView]
-  );
+  useEffect(() => {
+    init({
+      container: props.container,
+      bus: {
+        postMessage: (message, targetOrigin, transfer) => window.parent.postMessage(message, "*", transfer),
+      },
+      config: { containerType: ContainerType.DIV, envelopeId: "" },
+    });
+  }, [props.container]);
 
   return (
     <EmbeddedFormEnvelope
@@ -72,6 +71,4 @@ export const EmbeddedForm = React.forwardRef<EmbeddedFormRef, EmbeddedFormProps>
 });
 
 const EmbeddedFormEnvelope =
-  React.forwardRef<FormApi, EmbeddedEnvelopeProps<FormChannelApi, FormEnvelopeApi, FormApi>>(
-    RefForwardingEmbeddedEnvelope
-  );
+  React.forwardRef<FormApi, EmbeddedEnvelopeProps<{}, FormEnvelopeApi, FormApi>>(RefForwardingEmbeddedEnvelope);

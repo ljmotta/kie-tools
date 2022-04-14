@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-import { Association, FormChannelApi, FormEnvelopeApi } from "../api";
+import { Association, FormEnvelopeApi } from "../api";
 import { EnvelopeApiFactoryArgs } from "@kie-tools-core/envelope";
-import { FormFactory } from "./FormFactory";
 import { FormComponentProps } from "../../FormComponent";
 import { FormEnvelopeViewApi } from "./FormEnvelopeView";
 
 export class FormEnvelopeApiImpl implements FormEnvelopeApi {
-  private view: () => FormEnvelopeViewApi | null;
+  private view: () => FormEnvelopeViewApi;
 
-  constructor(
-    private readonly args: EnvelopeApiFactoryArgs<FormEnvelopeApi, FormChannelApi, void, {}>,
-    private readonly formViewFactory: FormFactory
-  ) {}
+  constructor(private readonly args: EnvelopeApiFactoryArgs<FormEnvelopeApi, {}, FormEnvelopeViewApi, {}>) {}
 
   public async formView__init(association: Association, initArgs: FormComponentProps<any, any>): Promise<void> {
     this.args.envelopeClient.associate(association.origin, association.envelopeServerId);
-    this.view = this.formViewFactory.create(initArgs, this.args.envelopeClient.manager.clientApi);
+    console.info("something");
+    this.view = await this.args.viewDelegate();
   }
 
   public async formView__updateFormSchema(schema: object): Promise<void> {
