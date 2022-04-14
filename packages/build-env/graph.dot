@@ -122,6 +122,7 @@ digraph G {
   "@kie-tools/feel-input-component" -> "@kie-tools-core/monaco-editor" [ style = "solid", color = "blue" ];
   "@kie-tools/feel-input-component" -> "@kie-tools/i18n-common-dictionary" [ style = "solid", color = "blue" ];
   "@kie-tools/feel-input-component" -> "@kie-tools-core/webpack-base" [ style = "dashed", color = "blue" ];
+  "@kie-tools/form" -> "@kie-tools-core/envelope" [ style = "solid", color = "blue" ];
   "@kie-tools/form" -> "@kie-tools-core/notifications" [ style = "solid", color = "blue" ];
   "@kie-tools/form" -> "@kie-tools/i18n-common-dictionary" [ style = "solid", color = "blue" ];
   "@kie-tools/form" -> "@kie-tools-core/webpack-base" [ style = "dashed", color = "blue" ];

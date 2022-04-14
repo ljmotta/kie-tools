@@ -19,6 +19,7 @@ import { EnvelopeBus } from "@kie-tools-core/envelope-bus/dist/api";
 import { FormFactory } from "./FormFactory";
 import { FormChannelApi, FormEnvelopeApi } from "../api";
 import { FormEnvelopeApiImpl } from "./FormEnvelopeApiImpl";
+import { FormEnvelopeViewApi } from "./FormEnvelopeView";
 
 export type FormViewType = HTMLElement | void;
 

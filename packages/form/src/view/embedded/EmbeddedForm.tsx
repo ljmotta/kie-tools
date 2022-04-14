@@ -27,10 +27,15 @@ export type EmbeddedFormProps = {
   renderView: (container: HTMLDivElement, envelopeId?: string) => Promise<void>;
 };
 
-export const EmbeddedForm = React.forwardRef<FormApi, EmbeddedFormProps>((props, forwardedRef) => {
+export type EmbeddedFormRef = FormApi & { envelopeServer: EnvelopeServer<FormChannelApi, FormEnvelopeApi> };
+
+export const EmbeddedForm = React.forwardRef<EmbeddedFormRef, EmbeddedFormProps>((props, forwardedRef) => {
   const refDelegate = useCallback(
     (envelopeServer: EnvelopeServer<FormChannelApi, FormEnvelopeApi>) => ({
-      onSubmit: (model: object) => envelopeServer.envelopeApi,
+      envelopeServer,
+      updateFormSchema: (schema: object) => envelopeServer.envelopeApi.requests.formView__updateFormSchema(schema),
+      getFormInputs: () => envelopeServer.envelopeApi.requests.formView__getFormInputs(),
+      getFormError: () => envelopeServer.envelopeApi.requests.formView__getFormError(),
     }),
     []
   );

@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-import { FormEnvelopeView } from "./FormEnvelopeView";
 import { ContainerType } from "@kie-tools-core/envelope/dist/api";
 import * as ReactDOM from "react-dom";
 import * as React from "react";
+import { FormEnvelopeView } from "../envelope/FormEnvelopeView";
 
-export const formEnvelopeViewDiv = (container: HTMLElement, envelopeId: string) => {
-  return new Promise<void>((res) => {
-    ReactDOM.render(
-      <FormEnvelopeView envelopeConfig={{ containerType: ContainerType.DIV, envelopeId }} />,
-      container,
-      () => res()
-    );
-  });
-};
-
-export const formEnvelopeViewIframe = (container: HTMLElement) => {
-  return new Promise<void>((res) => {
-    ReactDOM.render(<FormEnvelopeView envelopeConfig={{ containerType: ContainerType.IFRAME }} />, container, () =>
-      res()
-    );
-  });
-};
+// export const formEnvelopeViewDiv = (container: HTMLElement, envelopeId: string) => {
+//   return new Promise<void>((res) => {
+//     ReactDOM.render(
+//       <FormEnvelopeView envelopeConfig={{ containerType: ContainerType.DIV, envelopeId }} />,
+//       container,
+//       () => res()
+//     );
+//   });
+// };
+//
+// export const formEnvelopeViewIframe = (container: HTMLElement) => {
+//   return new Promise<void>((res) => {
+//     ReactDOM.render(<FormEnvelopeView envelopeConfig={{ containerType: ContainerType.IFRAME }} />, container, () =>
+//       res()
+//     );
+//   });
+// };

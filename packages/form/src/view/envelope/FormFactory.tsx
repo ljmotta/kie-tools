@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { FormApi, FormChannelApi } from "../api";
+import { FormChannelApi, FormInitArgs } from "../api";
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import * as React from "react";
-import { FormComponentImpl } from "./FormComponentImpl";
 import { FormComponentProps } from "../../FormComponent";
+import { FormEnvelopeView, FormEnvelopeViewApi } from "./FormEnvelopeView";
 
 export class FormFactory {
   constructor(private setView: React.Dispatch<React.SetStateAction<React.ReactElement>>) {}
 
-  public create(initArgs: FormComponentProps<any, any>, channelApi: MessageBusClientApi<FormChannelApi>) {
-    const ref = React.createRef<FormApi>();
+  public create(initArgs: FormInitArgs, channelApi: MessageBusClientApi<FormChannelApi>) {
+    const ref = React.createRef<FormEnvelopeViewApi>();
 
-    this.setView(<FormComponentImpl ref={ref} initArgs={initArgs} channelApi={channelApi} />);
+    this.setView(<FormEnvelopeView ref={ref} initArgs={initArgs} channelApi={channelApi} />);
 
     return () => ref.current;
   }

@@ -20,5 +20,7 @@
  * These methods are what the "external world" knows about this component.
  */
 export interface FormApi {
-  onSubmit(model: object): void;
+  updateFormSchema(schema: object): Promise<void>;
+  getFormInputs(): Promise<object>;
+  getFormError(): Promise<boolean>;
 }

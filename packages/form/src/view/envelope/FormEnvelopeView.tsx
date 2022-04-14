@@ -16,14 +16,15 @@
 
 import * as React from "react";
 import { FormComponent, FormComponentProps } from "../../FormComponent";
-import { FormApi, FormChannelApi } from "../api";
+import { FormApi, FormChannelApi, FormInitArgs } from "../api";
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import { useImperativeHandle, useState } from "react";
 import { Validator } from "../../Validator";
 import { FormI18n } from "../../i18n";
+import { EnvelopeDivConfig, EnvelopeIFrameConfig } from "@kie-tools-core/envelope";
 
-export interface FormProps<Input, Schema> {
-  initArgs: FormComponentProps<Input, Schema>;
+export interface FormProps {
+  initArgs: FormInitArgs;
   channelApi: MessageBusClientApi<FormChannelApi>;
 }
 
@@ -69,7 +70,13 @@ export interface FormProps<Input, Schema> {
  * Fill form retrieves model/inputs
  */
 
-export const FormComponentImpl = React.forwardRef<FormApi, React.PropsWithChildren<FormProps<object, object>>>(
+export interface FormEnvelopeViewApi {
+  updateFormSchema(schema: object): void;
+  getFormInputs(): object;
+  getFormError(): boolean;
+}
+
+export const FormEnvelopeView = React.forwardRef<FormEnvelopeViewApi, React.PropsWithChildren<FormProps>>(
   (props, forwardedRef) => {
     const [formError, setFormError] = useState<boolean>(false);
     const [formSchema, setFormSchema] = useState<object>();
@@ -79,10 +86,12 @@ export const FormComponentImpl = React.forwardRef<FormApi, React.PropsWithChildr
       forwardedRef,
       () => {
         return {
-          onSubmit: (model: object) => {},
+          updateFormSchema: (schema: object) => setFormSchema(schema),
+          getFormInputs: () => formInputs,
+          getFormError: () => formError,
         };
       },
-      []
+      [formError, formInputs]
     );
 
     return (

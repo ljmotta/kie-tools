@@ -19,6 +19,8 @@
     "build:prod": "yarn lint && rimraf dist && tsc -p tsconfig.prod.json && yarn test"
   },
   "dependencies": {
+    "@kie-tools-core/envelope": "0.0.0",
+    "@kie-tools-core/envelope-bus": "0.0.0",
     "@kie-tools-core/i18n": "0.0.0",
     "@kie-tools-core/notifications": "0.0.0",
     "@kie-tools/i18n-common-dictionary": "0.0.0",

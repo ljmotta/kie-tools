@@ -18,8 +18,11 @@ import { Association, FormChannelApi, FormEnvelopeApi } from "../api";
 import { EnvelopeApiFactoryArgs } from "@kie-tools-core/envelope";
 import { FormFactory } from "./FormFactory";
 import { FormComponentProps } from "../../FormComponent";
+import { FormEnvelopeViewApi } from "./FormEnvelopeView";
 
 export class FormEnvelopeApiImpl implements FormEnvelopeApi {
+  private view: () => FormEnvelopeViewApi | null;
+
   constructor(
     private readonly args: EnvelopeApiFactoryArgs<FormEnvelopeApi, FormChannelApi, void, {}>,
     private readonly formViewFactory: FormFactory
@@ -27,10 +30,16 @@ export class FormEnvelopeApiImpl implements FormEnvelopeApi {
 
   public async formView__init(association: Association, initArgs: FormComponentProps<any, any>): Promise<void> {
     this.args.envelopeClient.associate(association.origin, association.envelopeServerId);
-    this.formViewFactory.create(initArgs, this.args.envelopeClient.manager.clientApi);
+    this.view = this.formViewFactory.create(initArgs, this.args.envelopeClient.manager.clientApi);
   }
 
-  public formView__onSubmit(model: object) {}
-
-  public formView__onValidate(model: object, error: object) {}
+  public async formView__updateFormSchema(schema: object): Promise<void> {
+    return this.view?.()?.updateFormSchema(schema);
+  }
+  public async formView__getFormInputs(): Promise<object> {
+    return this.view?.()?.getFormInputs() ?? {};
+  }
+  public async formView__getFormError(): Promise<boolean> {
+    return this.view?.()?.getFormError() ?? false;
+  }
 }

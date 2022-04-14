@@ -20,10 +20,15 @@ import { FormComponentProps } from "../../FormComponent";
  * Methods provided by the Envelope that can be consumed by the Channel.
  */
 export interface FormEnvelopeApi {
-  formView__init(association: Association, initArgs: FormComponentProps<any, any>): Promise<void>;
+  formView__init(association: Association, initArgs: FormInitArgs): Promise<void>;
+  formView__updateFormSchema(schema: object): Promise<void>;
+  formView__getFormInputs(): Promise<object>;
+  formView__getFormError(): Promise<boolean>;
 }
 
 export interface Association {
   origin: string;
   envelopeServerId: string;
 }
+
+export interface FormInitArgs {}
