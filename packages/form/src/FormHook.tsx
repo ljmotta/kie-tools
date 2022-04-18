@@ -137,7 +137,9 @@ export function useForm<Input extends Record<string, any>, Schema extends Record
       setFormStatus(FormStatus.AUTO_GENERATION_ERROR);
     } else if (
       !formSchema ||
-      Object.keys(getObjectByPath((formSchema as any) ?? {}, propertiesEntryPath) ?? {}).length === 0
+      (formSchema.$ref &&
+        Object.keys(getObjectByPath((formSchema as any) ?? {}, propertiesEntryPath) ?? {}).length === 0) ||
+      Object.keys(formSchema).length === 0
     ) {
       setFormStatus(FormStatus.EMPTY);
     } else if (jsonSchemaBridge) {
