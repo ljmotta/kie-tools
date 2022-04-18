@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { Association, FormEnvelopeApi } from "../api";
+import { Association, FormEnvelopeApi, FormInitArgs } from "../api";
 import { EnvelopeApiFactoryArgs } from "@kie-tools-core/envelope";
-import { FormComponentProps } from "../../FormComponent";
 import { FormFactory } from "./FormFactory";
 import { FormViewEnvelopeApi } from "./FormViewEnvelope";
 import { FormViewType } from "./FormEnvelope";
@@ -29,7 +28,7 @@ export class FormEnvelopeApiImpl implements FormEnvelopeApi {
     private readonly formViewFactory: FormFactory
   ) {}
 
-  public async formView__init(association: Association, initArgs: FormComponentProps<any, any>): Promise<void> {
+  public async formView__init(association: Association, initArgs: FormInitArgs): Promise<void> {
     this.args.envelopeClient.associate(association.origin, association.envelopeServerId);
     this.formView = await this.formViewFactory.create(initArgs, this.args.envelopeClient.manager.clientApi);
   }

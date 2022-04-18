@@ -66,8 +66,10 @@ export function useForm<Input extends Record<string, any>, Schema extends Record
   const removeDeletedPropertiesAndAddDefaultValues = useCallback(
     (model: object, bridge: FormJsonSchemaBridge, previousBridge?: FormJsonSchemaBridge) => {
       const propertiesDifference = diff(
-        getObjectByPath(previousBridge?.schema ?? {}, propertiesEntryPath) ?? {},
-        getObjectByPath(bridge.schema ?? {}, propertiesEntryPath) ?? {}
+        (previousBridge?.schema.$ref
+          ? getObjectByPath(previousBridge?.schema ?? {}, propertiesEntryPath)
+          : previousBridge?.schema) ?? {},
+        (bridge.schema.$ref ? getObjectByPath(bridge.schema ?? {}, propertiesEntryPath) : bridge.schema) ?? {}
       );
 
       const defaultFormValues = Object.keys(bridge?.schema?.properties ?? {}).reduce((acc, property) => {
@@ -101,7 +103,7 @@ export function useForm<Input extends Record<string, any>, Schema extends Record
     try {
       const form = cloneDeep(formSchema ?? {}) as Record<string, Record<string, object>>;
       if (removeRequired) {
-        const entry = getObjectByPath(form, propertiesEntryPath);
+        const entry = form.$ref ? getObjectByPath(form, propertiesEntryPath) : form;
         delete entry.required;
         delete form.required;
       }

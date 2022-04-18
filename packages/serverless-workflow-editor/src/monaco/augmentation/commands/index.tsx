@@ -91,6 +91,10 @@ export function initAugmentationCommands(
                 apiImpl={{}}
                 targetOrigin={window.location.origin}
                 renderView={formEnvelopeViewDiv}
+                initArgs={{
+                  notificationsPanel: false,
+                  removeRequired: true,
+                }}
               />,
               container
             );

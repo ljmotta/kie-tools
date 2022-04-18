@@ -17,14 +17,15 @@
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import * as React from "react";
 import { FormViewEnvelope, FormViewEnvelopeApi } from "./FormViewEnvelope";
+import { FormInitArgs } from "../api";
 
 export class FormFactory {
   constructor(private setView: React.Dispatch<React.SetStateAction<React.ReactElement>>) {}
 
-  public create(initArgs: {}, channelApi: MessageBusClientApi<{}>) {
+  public create(initArgs: FormInitArgs, channelApi: MessageBusClientApi<{}>) {
     const ref = React.createRef<FormViewEnvelopeApi>();
 
-    this.setView(<FormViewEnvelope initArgs={{}} channelApi={channelApi} ref={ref} />);
+    this.setView(<FormViewEnvelope initArgs={initArgs} channelApi={channelApi} ref={ref} />);
 
     return () => ref.current;
   }

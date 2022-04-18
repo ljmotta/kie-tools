@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FormApi, FormEnvelopeApi } from "../api";
+import { FormApi, FormEnvelopeApi, FormInitArgs } from "../api";
 import * as React from "react";
 import { useCallback, useRef } from "react";
 import { EmbeddedEnvelopeProps, RefForwardingEmbeddedEnvelope } from "@kie-tools-core/envelope/dist/embedded";
@@ -25,6 +25,7 @@ export type EmbeddedFormProps = {
   apiImpl: {};
   targetOrigin: string;
   renderView: (container: HTMLDivElement, envelopeId?: string) => Promise<void>;
+  initArgs: FormInitArgs;
 };
 
 export type EmbeddedFormRef = FormApi & { envelopeServer: EnvelopeServer<{}, FormEnvelopeApi> };
@@ -52,10 +53,10 @@ export const EmbeddedForm = React.forwardRef<EmbeddedFormRef, EmbeddedFormProps>
 
       return envelopeServer.envelopeApi.requests.formView__init(
         { origin: envelopeServer.origin, envelopeServerId: envelopeServer.id },
-        {}
+        props.initArgs
       );
     },
-    [renderView]
+    [props.initArgs, renderView]
   );
 
   return (

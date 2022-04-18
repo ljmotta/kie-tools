@@ -18,10 +18,11 @@ import * as React from "react";
 import { useImperativeHandle, useState } from "react";
 import { FormComponent } from "../../FormComponent";
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
+import { FormInitArgs } from "../api";
 
 export interface FormProps {
   channelApi: MessageBusClientApi<{}>;
-  initArgs: {};
+  initArgs: FormInitArgs;
 }
 
 export interface FormViewEnvelopeApi {
@@ -64,12 +65,12 @@ export const FormViewEnvelope = React.forwardRef<FormViewEnvelopeApi, React.Prop
       <>
         <FormComponent
           locale={window.navigator.language}
-          notificationsPanel={false}
           formError={formError}
           setFormError={setFormError}
           formSchema={formSchema}
           formInputs={formInputs}
           setFormInputs={setFormInputs}
+          {...props.initArgs}
         >
           {props.children}
         </FormComponent>
