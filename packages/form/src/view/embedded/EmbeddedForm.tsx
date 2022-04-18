@@ -16,16 +16,15 @@
 
 import { FormApi, FormEnvelopeApi } from "../api";
 import * as React from "react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useRef } from "react";
 import { EmbeddedEnvelopeProps, RefForwardingEmbeddedEnvelope } from "@kie-tools-core/envelope/dist/embedded";
 import { EnvelopeServer } from "@kie-tools-core/envelope-bus/dist/channel";
 import { ContainerType } from "@kie-tools-core/envelope/dist/api";
-import { init } from "../envelope";
 
 export type EmbeddedFormProps = {
   apiImpl: {};
   targetOrigin: string;
-  container: HTMLElement;
+  renderView: (container: HTMLDivElement, envelopeId?: string) => Promise<void>;
 };
 
 export type EmbeddedFormRef = FormApi & { envelopeServer: EnvelopeServer<{}, FormEnvelopeApi> };
@@ -41,22 +40,23 @@ export const EmbeddedForm = React.forwardRef<EmbeddedFormRef, EmbeddedFormProps>
     []
   );
 
-  const pollInit = useCallback(async (envelopeServer: EnvelopeServer<{}, FormEnvelopeApi>) => {
-    return envelopeServer.envelopeApi.requests.formView__init(
-      { origin: envelopeServer.origin, envelopeServerId: envelopeServer.id },
-      {}
-    );
-  }, []);
+  const renderLock = useRef(false);
+  const { renderView } = props;
 
-  useEffect(() => {
-    init({
-      container: props.container,
-      bus: {
-        postMessage: (message, targetOrigin, transfer) => window.parent.postMessage(message, "*", transfer),
-      },
-      config: { containerType: ContainerType.DIV, envelopeId: "" },
-    });
-  }, [props.container]);
+  const pollInit = useCallback(
+    async (envelopeServer: EnvelopeServer<{}, FormEnvelopeApi>, container: () => HTMLDivElement) => {
+      if (!renderLock.current) {
+        await renderView(container(), envelopeServer.id);
+        renderLock.current = true;
+      }
+
+      return envelopeServer.envelopeApi.requests.formView__init(
+        { origin: envelopeServer.origin, envelopeServerId: envelopeServer.id },
+        {}
+      );
+    },
+    [renderView]
+  );
 
   return (
     <EmbeddedFormEnvelope

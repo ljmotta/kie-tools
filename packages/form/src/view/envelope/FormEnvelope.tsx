@@ -17,35 +17,22 @@
 import { Envelope, EnvelopeDivConfig, EnvelopeIFrameConfig } from "@kie-tools-core/envelope";
 import { EnvelopeBus } from "@kie-tools-core/envelope-bus/dist/api";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import { FormEnvelopeApi } from "../api";
 import { FormEnvelopeApiImpl } from "./FormEnvelopeApiImpl";
-import { FormEnvelopeView, FormEnvelopeViewApi } from "./FormEnvelopeView";
-import { ContainerType } from "@kie-tools-core/envelope/dist/api";
+import { FormFactory } from "./FormFactory";
 
 export type FormViewType = HTMLElement | void;
 
 export function init(args: {
-  container: HTMLElement;
   bus: EnvelopeBus;
   config: EnvelopeDivConfig | EnvelopeIFrameConfig;
+  formViewFactory: FormFactory;
 }) {
-  const envelope = new Envelope<FormEnvelopeApi, {}, FormEnvelopeViewApi, {}>(args.bus, args.config);
-
-  const envelopeViewDelegate = async () => {
-    const ref = React.createRef<FormEnvelopeViewApi>();
-    return new Promise<() => FormEnvelopeViewApi>((res) => {
-      ReactDOM.render(
-        <FormEnvelopeView ref={ref} initArgs={{}} channelApi={envelope.channelApi} />,
-        args.container,
-        () => res(() => ref.current!)
-      );
-    });
-  };
+  const envelope = new Envelope<FormEnvelopeApi, {}, FormViewType, {}>(args.bus, args.config);
 
   return envelope.start(
-    envelopeViewDelegate,
+    () => Promise.resolve(() => {}),
     {},
-    { create: (apiFactoryArgs) => new FormEnvelopeApiImpl(apiFactoryArgs) }
+    { create: (apiFactoryArgs) => new FormEnvelopeApiImpl(apiFactoryArgs, args.formViewFactory) }
   );
 }

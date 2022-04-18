@@ -7,14 +7,15 @@ import { SwfServiceCatalogService } from "@kie-tools/serverless-workflow-service
 import * as ReactDOM from "react-dom";
 import { EmbeddedForm } from "@kie-tools/form/dist/view/embedded";
 import { EmbeddedFormRef } from "@kie-tools/form/src/view/embedded";
+import { formEnvelopeViewDiv } from "@kie-tools/form/dist/view/channel";
 
 // Part of an example
 //
-const formChannelApiImpl = {
-  formView__updateFormSchema(schema: object) {
-    console.info(`Received PING from`);
-  },
-};
+// const formChannelApiImpl = {
+//   formView__updateFormSchema(schema: object) {
+//     console.info(`Received PING from`);
+//   },
+// };
 
 export type SwfMonacoEditorCommandTypes =
   | "LogInToRhhcc"
@@ -85,7 +86,12 @@ export function initAugmentationCommands(
             // Part of an example
             //
             ReactDOM.render(
-              <EmbeddedForm ref={ref} apiImpl={{}} targetOrigin={window.location.origin} container={container} />,
+              <EmbeddedForm
+                ref={ref}
+                apiImpl={{}}
+                targetOrigin={window.location.origin}
+                renderView={formEnvelopeViewDiv}
+              />,
               container
             );
           },
