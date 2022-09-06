@@ -26,6 +26,8 @@ on:
         required: false
         default: ""
     secrets:
+      kie_tools_bot_token:
+        required: false
       gh_token:
         required: false
 

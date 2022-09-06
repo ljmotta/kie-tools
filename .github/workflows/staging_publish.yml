@@ -65,8 +65,4 @@ jobs:
       download_asset_url: ${{ needs.create_release.outputs.download_asset_url }}
       upload_asset_url: ${{ needs.create_release.outputs.upload_asset_url }}
     secrets:
-      kie_tools_bot_token: ${{ secrets.KIE_TOOLS_BOT_TOKEN }}
       gh_token: ${{ secrets.GITHUB_TOKEN }}
-      quay_registry_password: ${{ secrets.QUAY_REGISTRY_PASSWORD }}
-      openshift_server: ${{ secrets.OPENSHIFT_SERVER }}
-      openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
