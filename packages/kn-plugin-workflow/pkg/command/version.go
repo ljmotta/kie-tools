@@ -33,7 +33,6 @@ func NewVersionCommand(version string) *cobra.Command {
 		Example: `
 	 # Shows the plugin version
 	 {{.Name}} version
-	 {{.Version}}
 		 `,
 		SuggestFor: []string{"vers", "verison"}, //nolint:misspell
 		PreRunE:    common.BindEnv("verbose"),
@@ -42,12 +41,12 @@ func NewVersionCommand(version string) *cobra.Command {
 	cmd.SetHelpFunc(common.DefaultTemplatedHelp)
 
 	cmd.Run = func(cmd *cobra.Command, args []string) {
-		runVersion(cmd, args, version)
+		runVersion(version)
 	}
 
 	return cmd
 }
 
-func runVersion(cmd *cobra.Command, args []string, version string) {
+func runVersion(version string) {
 	fmt.Printf("Version %s\n", version)
 }
