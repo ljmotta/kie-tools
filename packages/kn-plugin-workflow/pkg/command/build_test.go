@@ -23,7 +23,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/kiegroup/kie-tools/packages/kn-plugin-workflow/pkg/common"
+	"github.com/ljmotta/kie-tools/packages/kn-plugin-workflow/pkg/common"
 )
 
 type testBuildImage struct {
