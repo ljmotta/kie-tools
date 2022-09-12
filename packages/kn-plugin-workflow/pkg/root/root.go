@@ -19,8 +19,8 @@ package root
 import (
 	"fmt"
 
-	"github.com/kiegroup/kie-tools/packages/kn-plugin-workflow/pkg/command"
-	"github.com/kiegroup/kie-tools/packages/kn-plugin-workflow/pkg/common"
+	"github.com/ljmotta/kie-tools/packages/kn-plugin-workflow/pkg/command"
+	"github.com/ljmotta/kie-tools/packages/kn-plugin-workflow/pkg/common"
 	"github.com/ory/viper"
 	"github.com/spf13/cobra"
 )

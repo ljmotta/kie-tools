@@ -21,7 +21,7 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/kiegroup/kie-tools/packages/kn-plugin-workflow/pkg/root"
+	"github.com/ljmotta/kie-tools/packages/kn-plugin-workflow/pkg/root"
 	knplugin "knative.dev/client/pkg/kn/plugin"
 )
 
@@ -43,7 +43,7 @@ func (w *workflowPlugin) Execute(args []string) error {
 	var version string
 	info, _ := debug.ReadBuildInfo()
 	for _, dep := range info.Deps {
-		if strings.Contains(dep.Path, "github.com/kiegroup/kie-tools/packages/kn-plugin-workflow") {
+		if strings.Contains(dep.Path, "github.com/ljmotta/kie-tools/packages/kn-plugin-workflow") {
 			version = dep.Version
 		}
 	}
