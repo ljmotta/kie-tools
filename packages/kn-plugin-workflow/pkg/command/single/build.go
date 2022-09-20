@@ -18,12 +18,14 @@ package single
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net"
 	"path/filepath"
@@ -33,7 +35,9 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/archive"
+	"github.com/docker/docker/pkg/stdcopy"
 	"github.com/kiegroup/kie-tools/packages/kn-plugin-workflow/pkg/common"
+	"github.com/moby/buildkit/client/llb"
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/session/filesync"
 	"github.com/ory/viper"
@@ -181,28 +185,91 @@ func runBuildImage(cfg BuildCmdConfig, cmd *cobra.Command) (err error) {
 	if len(cfg.Extesions) > 0 {
 		buildArgs[common.DOCKER_BUILD_ARG_EXTENSIONS_LIST] = &cfg.Extesions
 	}
-	imageTag := common.GetImage(registry, repository, name, tag)
 
-	eg.Go(func() error {
-		// make sure the Status ends cleanly on build errors
-		defer func() {
-			session.Close()
-		}()
+	base := createLLBBaseImage()
+	output, err := createLLBOutputFiles(base).Marshal(context.TODO())
+	if err != nil {
+		return fmt.Errorf("error output: %w", err)
+	}
 
-		if err := generateOutputFiles(ctx, dockerCli, buildArgs, session.ID()); err != nil {
-			return fmt.Errorf("error output: %w", err)
+	writer := new(bytes.Buffer)
+	llb.WriteTo(output, writer)
+
+	execConfig := types.ExecConfig{
+		AttachStdin:  true,
+		AttachStdout: true,
+		AttachStderr: true,
+		Tty:          false,
+		Cmd:          []string{writer.String()},
+	}
+
+	res, err := dockerCli.ContainerExecCreate(ctx, "buildkit", execConfig)
+	resAttach, err := dockerCli.ContainerExecAttach(context.Background(), res.ID, types.ExecStartCheck{})
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer resAttach.Close()
+
+	// read the output
+	var outBuf, errBuf bytes.Buffer
+	outputDone := make(chan error)
+
+	go func() {
+		// StdCopy demultiplexes the stream into two buffers
+		_, err = stdcopy.StdCopy(&outBuf, &errBuf, resAttach.Reader)
+		outputDone <- err
+	}()
+
+	select {
+	case err := <-outputDone:
+		if err != nil {
+			return err
 		}
+		break
 
-		if err := generateRunnerImage(ctx, dockerCli, buildArgs, imageTag, session.ID()); err != nil {
-			return fmt.Errorf("error runner: %w", err)
-		}
+	case <-ctx.Done():
+		return ctx.Err()
+	}
 
-		return nil
-	})
-
-	if err := eg.Wait(); err != nil {
+	stdout, err := ioutil.ReadAll(&outBuf)
+	if err != nil {
 		return err
 	}
+	stderr, err := ioutil.ReadAll(&errBuf)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(stdout)
+	fmt.Println(stderr)
+
+	// runner, err := createLLBRunnerImage(base).Marshal(context.TODO(), llb.LinuxAmd64)
+	// if err != nil {
+	// 	return fmt.Errorf("error runner: %w", err)
+	// }
+
+	// imageTag := common.GetImage(registry, repository, name, tag)
+
+	// eg.Go(func() error {
+	// 	// make sure the Status ends cleanly on build errors
+	// 	defer func() {
+	// 		session.Close()
+	// 	}()
+
+	// 	if err := generateOutputFiles(ctx, dockerCli, buildArgs, session.ID()); err != nil {
+	// 		return fmt.Errorf("error output: %w", err)
+	// 	}
+
+	// 	if err := generateRunnerImage(ctx, dockerCli, buildArgs, imageTag, session.ID()); err != nil {
+	// 		return fmt.Errorf("error runner: %w", err)
+	// 	}
+
+	// 	return nil
+	// })
+
+	// if err := eg.Wait(); err != nil {
+	// 	return err
+	// }
 
 	fmt.Println("✅ Build success")
 
@@ -287,6 +354,113 @@ func createTarFromDockerfile() (tar io.ReadCloser, err error) {
 	}
 
 	return
+}
+
+func createLLBBaseImage() llb.State {
+	var extensions = false
+	var extensionList = "quarkus-jsonb"
+	var workflowName = "test"
+	var containerRegistry = "quay.io"
+	var containerGroup = "lmotta"
+	var containerName = "my-proj"
+	var containerTag = "llb"
+
+	base := llb.
+		Image("quay.io/lmotta/kn-workflow:2.10.0.Final").
+		Dir("/tmp/kn-plugin-workflow")
+
+	if extensions {
+		base.
+			Run(
+				llb.Shlex(fmt.Sprintf("./mvnw quarkus:add-extension -Dextensions=%s", extensionList)),
+			).
+			Root()
+	} else {
+		base.
+			Run(
+				llb.Shlex("echo \"WITHOUT ADDITIONAL EXTENSIONS\""),
+			).
+			Root()
+	}
+
+	base.File(llb.Copy(llb.Local("context"), "workflow.sw.json", "./src/main/resources/workflow.sw.json"))
+	// TODO: add check
+	// base.File(llb.Copy(llb.Local("context"), "application.properties", "./src/main/resources/application.properties"))
+	base.
+		Run(
+			llb.Shlex(fmt.Sprintf(`./mvnw package \
+-Dquarkus.kubernetes.deployment-target=knative \
+-Dquarkus.knative.name=%s \
+-Dquarkus.container-image.registry=%s \
+-Dquarkus.container-image.group=%s \
+-Dquarkus.container-image.name=%s \
+-Dquarkus.container-image.tag=%s`,
+				workflowName,
+				containerRegistry,
+				containerGroup,
+				containerName,
+				containerTag,
+			)),
+		).
+		Root()
+
+	return base
+}
+
+func createLLBOutputFiles(base llb.State) llb.State {
+	outputFiles := llb.Scratch()
+	var CopyOptions = &llb.CopyInfo{
+		FollowSymlinks:      true,
+		CopyDirContentsOnly: true,
+		AttemptUnpack:       false,
+		CreateDestPath:      true,
+		AllowWildcard:       true,
+		AllowEmptyWildcard:  true,
+	}
+	outputFiles = outputFiles.File(
+		llb.Copy(base, "/tmp/kn-plugin-workflow/target/kubernetes", ".", CopyOptions),
+	)
+	return outputFiles
+}
+
+func createLLBRunnerImage(base llb.State) llb.State {
+	runner := llb.Image("opendjdk:11")
+	var CopyOptions = &llb.CopyInfo{
+		FollowSymlinks:      true,
+		CopyDirContentsOnly: true,
+		AttemptUnpack:       false,
+		CreateDestPath:      true,
+		AllowWildcard:       true,
+		AllowEmptyWildcard:  true,
+	}
+	runner = runner.File(
+		llb.
+			Copy(base, "/tmp/kn-plugin-workflow/target/quarkus-app/lib/", "/runner/lib/", CopyOptions).
+			Copy(base, "/tmp/kn-plugin-workflow/target/quarkus-app/*.jar", "/runner/", CopyOptions).
+			Copy(base, "/tmp/kn-plugin-workflow/target/quarkus-app/app/", "/runner/app/", CopyOptions).
+			Copy(base, "/tmp/kn-plugin-workflow/target/quarkus-app/quarkus/", "/runner/quarkus/", CopyOptions),
+	)
+	return runner
+}
+
+func createLLBDevImage(base llb.State) llb.State {
+	dev := llb.Image("opendjdk:11")
+	var CopyOptions = &llb.CopyInfo{
+		FollowSymlinks:      true,
+		CopyDirContentsOnly: true,
+		AttemptUnpack:       false,
+		CreateDestPath:      true,
+		AllowWildcard:       true,
+		AllowEmptyWildcard:  true,
+	}
+	dev = dev.File(
+		llb.
+			Copy(base, "/root/.m2/", "/root/.m2/", CopyOptions).
+			Copy(base, "/tmp/", "/tmp/", CopyOptions),
+	)
+
+	dev.Dir("/tmp/kn-plugin-workflow/")
+	return dev
 }
 
 // Session is a long running connection between client and a daemon
