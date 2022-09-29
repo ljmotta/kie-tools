@@ -18,24 +18,23 @@ package single
 
 import (
 	"bufio"
-	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net"
+	"os"
 	"path/filepath"
 	"strconv"
 	"sync"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/archive"
-	"github.com/docker/docker/pkg/stdcopy"
 	"github.com/kiegroup/kie-tools/packages/kn-plugin-workflow/pkg/common"
 	"github.com/moby/buildkit/client/llb"
 	"github.com/moby/buildkit/session"
@@ -170,6 +169,7 @@ func runBuildImage(cfg BuildCmdConfig, cmd *cobra.Command) (err error) {
 
 	var workflowSwJson string = common.WORKFLOW_SW_JSON
 
+	// set buildargs
 	buildArgs := map[string]*string{
 		common.DOCKER_BUILD_ARG_WORKFLOW_FILE:            &workflowSwJson,
 		common.DOCKER_BUILD_ARG_CONTAINER_IMAGE_REGISTRY: &registry,
@@ -179,69 +179,114 @@ func runBuildImage(cfg BuildCmdConfig, cmd *cobra.Command) (err error) {
 		common.DOCKER_BUILD_ARG_WORKFLOW_NAME:            &cfg.ImageName,
 	}
 
+	// check if exist extensions, multistage-build
 	existExtensions := strconv.FormatBool(len(cfg.Extesions) > 0)
 	buildArgs[common.DOCKER_BUILD_ARG_EXTENSIONS] = &existExtensions
 
+	// check if has extensions
 	if len(cfg.Extesions) > 0 {
 		buildArgs[common.DOCKER_BUILD_ARG_EXTENSIONS_LIST] = &cfg.Extesions
 	}
 
-	base := createLLBBaseImage()
-	output, err := createLLBOutputFiles(base).Marshal(context.TODO())
+	// Check if exist buildkit container or
+	// TODO
+
+	// Start buildkit container
+	buildkitdContainer, err := dockerCli.ContainerCreate(ctx, &container.Config{
+		Image:        "moby/buildkit:latest",
+		AttachStdin:  false,
+		AttachStdout: false,
+		AttachStderr: false,
+	}, &container.HostConfig{
+		Privileged: true,
+		AutoRemove: true,
+	}, nil, nil, "buildkitd")
+	if err != nil {
+		fmt.Println("container already exists")
+	} else {
+		if err := dockerCli.ContainerStart(ctx, buildkitdContainer.ID, types.ContainerStartOptions{}); err != nil {
+			fmt.Println("error starting buildkitd")
+			return err
+		}
+	}
+	os.Setenv("BUILDKIT_HOST", "docker-container://buildkitd")
+
+	reader, writer, err := os.Pipe()
+	// base := createLLBBaseImage()
+	output, err := createLLBBaseImage().Marshal(context.TODO())
 	if err != nil {
 		return fmt.Errorf("error output: %w", err)
 	}
-
-	writer := new(bytes.Buffer)
+	fmt.Println("use buildctl")
+	command := common.ExecCommand("buildctl", "build", "--local=context=.", "--output=type=image,name=cli:test", "--progress=plain")
 	llb.WriteTo(output, writer)
+	command.Stdin = reader
 
-	execConfig := types.ExecConfig{
-		AttachStdin:  true,
-		AttachStdout: true,
-		AttachStderr: true,
-		Tty:          false,
-		Cmd:          []string{writer.String()},
+	stdout, _ := command.StdoutPipe()
+	stderr, _ := command.StderrPipe()
+	if err := command.Start(); err != nil {
+		fmt.Printf("ERROR: starting command \"%s\" failed\n", "buildctl")
+		return err
 	}
 
-	res, err := dockerCli.ContainerExecCreate(ctx, "buildkit", execConfig)
-	resAttach, err := dockerCli.ContainerExecAttach(context.Background(), res.ID, types.ExecStartCheck{})
-	if err != nil {
-		fmt.Println(err)
+	stdoutScanner := bufio.NewScanner(stdout)
+	for stdoutScanner.Scan() {
+		m := stdoutScanner.Text()
+		fmt.Println(m)
 	}
-	defer resAttach.Close()
+
+	stderrScanner := bufio.NewScanner(stderr)
+	for stderrScanner.Scan() {
+		m := stderrScanner.Text()
+		fmt.Println(m)
+	}
+
+	if err := command.Wait(); err != nil {
+		fmt.Printf("ERROR: something went wrong during command \"%s\"\n", "buildctl")
+		return err
+	}
+
+	return nil
+
+	// res, err := dockerCli.ContainerExecCreate(ctx, "buildkit", execConfig)
+	// resAttach, err := dockerCli.ContainerExecAttach(context.Background(), res.ID, types.ExecStartCheck{})
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// defer resAttach.Close()
 
 	// read the output
-	var outBuf, errBuf bytes.Buffer
-	outputDone := make(chan error)
+	// var outBuf, errBuf bytes.Buffer
+	// outputDone := make(chan error)
 
-	go func() {
-		// StdCopy demultiplexes the stream into two buffers
-		_, err = stdcopy.StdCopy(&outBuf, &errBuf, resAttach.Reader)
-		outputDone <- err
-	}()
+	// go func() {
+	// 	// StdCopy demultiplexes the stream into two buffers
+	// 	_, err = stdcopy.StdCopy(&outBuf, &errBuf, resAttach.Reader)
+	// 	outputDone <- err
+	// }()
 
-	select {
-	case err := <-outputDone:
-		if err != nil {
-			return err
-		}
-		break
+	// select {
+	// case err := <-outputDone:
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	break
 
-	case <-ctx.Done():
-		return ctx.Err()
-	}
+	// case <-ctx.Done():
+	// 	return ctx.Err()
+	// }
 
-	stdout, err := ioutil.ReadAll(&outBuf)
-	if err != nil {
-		return err
-	}
-	stderr, err := ioutil.ReadAll(&errBuf)
-	if err != nil {
-		return err
-	}
+	// stdout, err := ioutil.ReadAll(&outBuf)
+	// if err != nil {
+	// 	return err
+	// }
+	// stderr, err := ioutil.ReadAll(&errBuf)
+	// if err != nil {
+	// 	return err
+	// }
 
-	fmt.Println(stdout)
-	fmt.Println(stderr)
+	// fmt.Println(stdout)
+	// fmt.Println(stderr)
 
 	// runner, err := createLLBRunnerImage(base).Marshal(context.TODO(), llb.LinuxAmd64)
 	// if err != nil {

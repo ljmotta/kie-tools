@@ -106,7 +106,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	fmt.Println("Creating a Kogito Serverless Workflow project...")
 
-	if err := common.RunCommand(
+	if _, err := common.RunCommand(
 		create,
 		"create",
 	); err != nil {

@@ -243,7 +243,7 @@ func runBuildImage(cfg BuildCmdConfig) (out string, err error) {
 		executableName,
 	)
 
-	if err = common.RunCommand(
+	if _, err = common.RunCommand(
 		build,
 		"build",
 	); err != nil {

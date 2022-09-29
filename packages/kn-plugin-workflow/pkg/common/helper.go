@@ -19,6 +19,7 @@ package common
 import (
 	"fmt"
 	"html/template"
+	"io"
 	"os/exec"
 	"regexp"
 	"strings"
@@ -26,28 +27,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func RunCommand(command *exec.Cmd, commandName string) error {
+func RunCommand(command *exec.Cmd, commandName string) (commandStdout io.Writer, err error) {
 	stdout, _ := command.StdoutPipe()
 	stderr, _ := command.StderrPipe()
 
-	if err := command.Start(); err != nil {
+	if err = command.Start(); err != nil {
 		fmt.Printf("ERROR: starting command \"%s\" failed\n", commandName)
-		return err
+		return
 	}
 
 	VerboseLog(stdout, stderr)
 
-	if err := command.Wait(); err != nil {
+	if err = command.Wait(); err != nil {
 		fmt.Printf("ERROR: something went wrong during command \"%s\"\n", commandName)
-		return err
+		return
 	}
 
-	return nil
+	return
 }
 
 func RunExtensionCommand(extensionCommand string, extensions string) error {
 	command := ExecCommand("mvn", extensionCommand, fmt.Sprintf("-Dextensions=%s", extensions))
-	if err := RunCommand(command, extensionCommand); err != nil {
+	if _, err := RunCommand(command, extensionCommand); err != nil {
 		fmt.Println("ERROR: It wasn't possible to add Quarkus extension in your pom.xml.")
 		return err
 	}

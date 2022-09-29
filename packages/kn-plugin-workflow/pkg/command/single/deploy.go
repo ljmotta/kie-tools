@@ -68,7 +68,7 @@ func runDeploy(cmd *cobra.Command, args []string) error {
 	}
 
 	createService := common.ExecCommand("kubectl", "apply", "-f", fmt.Sprintf("%s/knative.yml", cfg.Path))
-	if err := common.RunCommand(
+	if _, err := common.RunCommand(
 		createService,
 		"deploy",
 	); err != nil {
@@ -79,7 +79,7 @@ func runDeploy(cmd *cobra.Command, args []string) error {
 	// Check if kogito.yml file exists
 	if exists, err := checkIfKogitoFileExists(cfg); exists && err == nil {
 		deploy := common.ExecCommand("kubectl", "apply", "-f", fmt.Sprintf("%s/kogito.yml", cfg.Path))
-		if err := common.RunCommand(
+		if _, err := common.RunCommand(
 			deploy,
 			"deploy",
 		); err != nil {
