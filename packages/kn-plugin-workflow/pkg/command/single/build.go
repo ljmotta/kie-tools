@@ -27,16 +27,18 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
-	"github.com/docker/docker/pkg/archive"
 	"github.com/kiegroup/kie-tools/packages/kn-plugin-workflow/pkg/common"
 	"github.com/moby/buildkit/client/llb"
+	"github.com/moby/buildkit/client/llb/imagemetaresolver"
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/session/filesync"
 	"github.com/ory/viper"
@@ -125,13 +127,14 @@ func runBuildCmdConfig(cmd *cobra.Command) (cfg BuildCmdConfig, err error) {
 	return
 }
 func runBuildImage(cfg BuildCmdConfig, cmd *cobra.Command) (err error) {
+	start := time.Now()
 	ctx := cmd.Context()
 	dockerCli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		return fmt.Errorf(err.Error())
 	}
 
-	// creates a session for the dir
+	// creates a grpc session for the dir
 	// TODO: path flag?
 	session, err := trySession(".", false)
 	if err != nil {
@@ -141,7 +144,7 @@ func runBuildImage(cfg BuildCmdConfig, cmd *cobra.Command) (err error) {
 		return fmt.Errorf("buildkit not supported by daemon")
 	}
 
-	// Adds the fs methods to the session
+	// Adds the fs methods to the grpc
 	session.Allow(filesync.NewFSSyncProvider([]filesync.SyncedDir{
 		{
 			Name: "context",
@@ -188,10 +191,7 @@ func runBuildImage(cfg BuildCmdConfig, cmd *cobra.Command) (err error) {
 		buildArgs[common.DOCKER_BUILD_ARG_EXTENSIONS_LIST] = &cfg.Extesions
 	}
 
-	// Check if exist buildkit container or
-	// TODO
-
-	// Start buildkit container
+	// Check if exist or start buildkit container
 	buildkitdContainer, err := dockerCli.ContainerCreate(ctx, &container.Config{
 		Image:        "moby/buildkit:latest",
 		AttachStdin:  false,
@@ -202,7 +202,7 @@ func runBuildImage(cfg BuildCmdConfig, cmd *cobra.Command) (err error) {
 		AutoRemove: true,
 	}, nil, nil, "buildkitd")
 	if err != nil {
-		fmt.Println("container already exists")
+		fmt.Println("✅ Buildkit container is running")
 	} else {
 		if err := dockerCli.ContainerStart(ctx, buildkitdContainer.ID, types.ContainerStartOptions{}); err != nil {
 			fmt.Println("error starting buildkitd")
@@ -211,21 +211,36 @@ func runBuildImage(cfg BuildCmdConfig, cmd *cobra.Command) (err error) {
 	}
 	os.Setenv("BUILDKIT_HOST", "docker-container://buildkitd")
 
-	reader, writer, err := os.Pipe()
-	// base := createLLBBaseImage()
-	output, err := createLLBBaseImage().Marshal(context.TODO())
+	base := createLLBBaseImage()
+	// generate output llb
+	outputReader, outputWriter, err := os.Pipe()
+	if err != nil {
+		return fmt.Errorf("pipe error: %w", err)
+	}
+	output, err := createLLBOutputFiles(base).Marshal(ctx)
 	if err != nil {
 		return fmt.Errorf("error output: %w", err)
 	}
-	fmt.Println("use buildctl")
-	command := common.ExecCommand("buildctl", "build", "--local=context=.", "--output=type=image,name=cli:test", "--progress=plain")
-	llb.WriteTo(output, writer)
-	command.Stdin = reader
 
+	// generate runner llb
+	runnerReader, runnerWriter, err := os.Pipe()
+	if err != nil {
+		return fmt.Errorf("runner pipe error: %w", err)
+	}
+	runner, err := createLLBRunnerImage(base).Marshal(ctx)
+	if err != nil {
+		return fmt.Errorf("error output: %w", err)
+	}
+
+	// output folder
+	command := exec.CommandContext(ctx, "buildctl", "build", "--progress", "plain", "--local", "context=.", "--output", "type=local,dest=output")
+	llb.WriteTo(output, outputWriter)
+	command.Stdin = outputReader
 	stdout, _ := command.StdoutPipe()
 	stderr, _ := command.StderrPipe()
-	if err := command.Start(); err != nil {
-		fmt.Printf("ERROR: starting command \"%s\" failed\n", "buildctl")
+
+	if err = command.Start(); err != nil {
+		fmt.Printf("ERROR: starting command \"%s\" failed\n", "output command")
 		return err
 	}
 
@@ -241,164 +256,43 @@ func runBuildImage(cfg BuildCmdConfig, cmd *cobra.Command) (err error) {
 		fmt.Println(m)
 	}
 
-	if err := command.Wait(); err != nil {
-		fmt.Printf("ERROR: something went wrong during command \"%s\"\n", "buildctl")
+	if err = command.Wait(); err != nil {
+		fmt.Printf("ERROR: something went wrong during command \"%s\"\n", "output command")
 		return err
 	}
 
-	return nil
+	// output tar
+	command2 := exec.CommandContext(ctx, "buildctl", "build", "--progress", "plain", "--local", "context=.", "--output", "type=oci,dest=output.tar")
+	llb.WriteTo(runner, runnerWriter)
+	command2.Stdin = runnerReader
+	stdout2, _ := command2.StdoutPipe()
+	stderr2, _ := command2.StderrPipe()
 
-	// res, err := dockerCli.ContainerExecCreate(ctx, "buildkit", execConfig)
-	// resAttach, err := dockerCli.ContainerExecAttach(context.Background(), res.ID, types.ExecStartCheck{})
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// defer resAttach.Close()
+	if err = command2.Start(); err != nil {
+		fmt.Printf("ERROR: starting command2 \"%s\" failed\n", "tar command2")
+		return err
+	}
 
-	// read the output
-	// var outBuf, errBuf bytes.Buffer
-	// outputDone := make(chan error)
+	stdoutScanner2 := bufio.NewScanner(stdout2)
+	for stdoutScanner2.Scan() {
+		m := stdoutScanner2.Text()
+		fmt.Println(m)
+	}
 
-	// go func() {
-	// 	// StdCopy demultiplexes the stream into two buffers
-	// 	_, err = stdcopy.StdCopy(&outBuf, &errBuf, resAttach.Reader)
-	// 	outputDone <- err
-	// }()
+	stderrScanner2 := bufio.NewScanner(stderr2)
+	for stderrScanner2.Scan() {
+		m := stderrScanner2.Text()
+		fmt.Println(m)
+	}
 
-	// select {
-	// case err := <-outputDone:
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	break
-
-	// case <-ctx.Done():
-	// 	return ctx.Err()
-	// }
-
-	// stdout, err := ioutil.ReadAll(&outBuf)
-	// if err != nil {
-	// 	return err
-	// }
-	// stderr, err := ioutil.ReadAll(&errBuf)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// fmt.Println(stdout)
-	// fmt.Println(stderr)
-
-	// runner, err := createLLBRunnerImage(base).Marshal(context.TODO(), llb.LinuxAmd64)
-	// if err != nil {
-	// 	return fmt.Errorf("error runner: %w", err)
-	// }
-
-	// imageTag := common.GetImage(registry, repository, name, tag)
-
-	// eg.Go(func() error {
-	// 	// make sure the Status ends cleanly on build errors
-	// 	defer func() {
-	// 		session.Close()
-	// 	}()
-
-	// 	if err := generateOutputFiles(ctx, dockerCli, buildArgs, session.ID()); err != nil {
-	// 		return fmt.Errorf("error output: %w", err)
-	// 	}
-
-	// 	if err := generateRunnerImage(ctx, dockerCli, buildArgs, imageTag, session.ID()); err != nil {
-	// 		return fmt.Errorf("error runner: %w", err)
-	// 	}
-
-	// 	return nil
-	// })
-
-	// if err := eg.Wait(); err != nil {
-	// 	return err
-	// }
+	if err = command2.Wait(); err != nil {
+		fmt.Printf("ERROR: something went wrong during command2 \"%s\"\n", "tar command2")
+		return err
+	}
 
 	fmt.Println("✅ Build success")
-
+	fmt.Printf("🚀 Build took: %s \n", time.Since(start))
 	return nil
-}
-
-func generateOutputFiles(
-	ctx context.Context,
-	dockerCli client.CommonAPIClient,
-	buildArgs map[string]*string,
-	sessionId string,
-) (err error) {
-	tar, err := createTarFromDockerfile()
-	if err != nil {
-		return
-	}
-	defer tar.Close()
-
-	outputFilesOptions := types.ImageBuildOptions{
-		SessionID:   sessionId,
-		Dockerfile:  "Dockerfile.workflow",
-		BuildArgs:   buildArgs,
-		Version:     types.BuilderBuildKit,
-		Target:      "output-files",
-		NetworkMode: "default",
-		Outputs: []types.ImageBuildOutput{{
-			Type:  "local",
-			Attrs: map[string]string{},
-		}},
-	}
-
-	res, err := dockerCli.ImageBuild(ctx, tar, outputFilesOptions)
-	if err != nil {
-		return fmt.Errorf("cannot build the app image: %w", err)
-	}
-	defer res.Body.Close()
-
-	return print(res.Body)
-}
-
-func generateRunnerImage(
-	ctx context.Context,
-	dockerCli client.CommonAPIClient,
-	buildArgs map[string]*string,
-	imageTag string,
-	sessionId string,
-) (err error) {
-	tar, err := createTarFromDockerfile()
-	if err != nil {
-		return
-	}
-	defer tar.Close()
-
-	outputFilesOptions := types.ImageBuildOptions{
-		Dockerfile:  "Dockerfile.workflow",
-		SessionID:   sessionId,
-		Tags:        []string{imageTag},
-		BuildArgs:   buildArgs,
-		Version:     types.BuilderBuildKit,
-		Target:      "runner",
-		NetworkMode: "default",
-	}
-
-	res, err := dockerCli.ImageBuild(ctx, tar, outputFilesOptions)
-	if err != nil {
-		return fmt.Errorf("cannot build the app image: %w", err)
-	}
-	defer res.Body.Close()
-
-	return print(res.Body)
-}
-
-func createTarFromDockerfile() (tar io.ReadCloser, err error) {
-	// creates a tar with the Dockerfile and the workflow.sw.json
-	// TODO: path flag?
-	tar, err = archive.TarWithOptions("./", &archive.TarOptions{
-		IncludeFiles: []string{"Dockerfile.workflow", "workflow.sw.json"},
-	})
-
-	if err != nil {
-		err = fmt.Errorf("%w :unable to open Dockerfile", err)
-	}
-
-	return
 }
 
 func createLLBBaseImage() llb.State {
@@ -410,102 +304,73 @@ func createLLBBaseImage() llb.State {
 	var containerName = "my-proj"
 	var containerTag = "llb"
 
+	opts := []llb.ImageOption{llb.LinuxAmd64}
+	opts = append(opts, imagemetaresolver.WithDefault)
 	base := llb.
-		Image("quay.io/lmotta/kn-workflow:2.10.0.Final").
+		Image("quay.io/lmotta/kn-workflow:2.10.0.Final", opts...).
 		Dir("/tmp/kn-plugin-workflow")
 
 	if extensions {
-		base.
+		base = base.
 			Run(
 				llb.Shlex(fmt.Sprintf("./mvnw quarkus:add-extension -Dextensions=%s", extensionList)),
 			).
 			Root()
 	} else {
-		base.
+		base = base.
 			Run(
 				llb.Shlex("echo \"WITHOUT ADDITIONAL EXTENSIONS\""),
 			).
 			Root()
 	}
 
-	base.File(llb.Copy(llb.Local("context"), "workflow.sw.json", "./src/main/resources/workflow.sw.json"))
-	// TODO: add check
-	// base.File(llb.Copy(llb.Local("context"), "application.properties", "./src/main/resources/application.properties"))
-	base.
+	base = base.File(llb.Copy(llb.Local("context"), "./workflow.sw.json", "./src/main/resources/workflow.sw.json"))
+	if _, err := os.Stat("application.properties"); err == nil {
+		base = base.File(llb.Copy(llb.Local("context"), "application.properties", "./src/main/resources/application.properties"))
+	}
+
+	base = base.
 		Run(
-			llb.Shlex(fmt.Sprintf(`./mvnw package \
--Dquarkus.kubernetes.deployment-target=knative \
--Dquarkus.knative.name=%s \
--Dquarkus.container-image.registry=%s \
--Dquarkus.container-image.group=%s \
--Dquarkus.container-image.name=%s \
--Dquarkus.container-image.tag=%s`,
-				workflowName,
-				containerRegistry,
-				containerGroup,
-				containerName,
-				containerTag,
-			)),
-		).
+			llb.Shlex(
+				"./mvnw package" +
+					" -Dquarkus.kubernetes.deployment-target=knative" +
+					fmt.Sprintf(" -Dquarkus.knative.name=%s", workflowName) +
+					fmt.Sprintf(" -Dquarkus.container-image.registry=%s", containerRegistry) +
+					fmt.Sprintf(" -Dquarkus.container-image.group=%s", containerGroup) +
+					fmt.Sprintf(" -Dquarkus.container-image.name=%s", containerName) +
+					fmt.Sprintf(" -Dquarkus.container-image.tag=%s", containerTag),
+			)).
 		Root()
 
 	return base
 }
 
+var CopyOptions = &llb.CopyInfo{
+	FollowSymlinks:      true,
+	CopyDirContentsOnly: true,
+	AttemptUnpack:       false,
+	CreateDestPath:      true,
+	AllowWildcard:       true,
+	AllowEmptyWildcard:  true,
+}
+
 func createLLBOutputFiles(base llb.State) llb.State {
-	outputFiles := llb.Scratch()
-	var CopyOptions = &llb.CopyInfo{
-		FollowSymlinks:      true,
-		CopyDirContentsOnly: true,
-		AttemptUnpack:       false,
-		CreateDestPath:      true,
-		AllowWildcard:       true,
-		AllowEmptyWildcard:  true,
-	}
-	outputFiles = outputFiles.File(
-		llb.Copy(base, "/tmp/kn-plugin-workflow/target/kubernetes", ".", CopyOptions),
-	)
+	outputFiles := llb.Scratch().
+		File(
+			llb.Copy(base, "/tmp/kn-plugin-workflow/target/kubernetes", ".", CopyOptions),
+		)
 	return outputFiles
 }
 
 func createLLBRunnerImage(base llb.State) llb.State {
-	runner := llb.Image("opendjdk:11")
-	var CopyOptions = &llb.CopyInfo{
-		FollowSymlinks:      true,
-		CopyDirContentsOnly: true,
-		AttemptUnpack:       false,
-		CreateDestPath:      true,
-		AllowWildcard:       true,
-		AllowEmptyWildcard:  true,
-	}
-	runner = runner.File(
-		llb.
-			Copy(base, "/tmp/kn-plugin-workflow/target/quarkus-app/lib/", "/runner/lib/", CopyOptions).
-			Copy(base, "/tmp/kn-plugin-workflow/target/quarkus-app/*.jar", "/runner/", CopyOptions).
-			Copy(base, "/tmp/kn-plugin-workflow/target/quarkus-app/app/", "/runner/app/", CopyOptions).
-			Copy(base, "/tmp/kn-plugin-workflow/target/quarkus-app/quarkus/", "/runner/quarkus/", CopyOptions),
-	)
+	opts := []llb.ImageOption{llb.LinuxAmd64}
+	opts = append(opts, imagemetaresolver.WithDefault)
+
+	runner := llb.Image("openjdk:11", opts...).
+		File(
+			llb.Copy(base, "/tmp/kn-plugin-workflow/target/quarkus-app/lib/", "/runner/", CopyOptions),
+		)
 	return runner
-}
-
-func createLLBDevImage(base llb.State) llb.State {
-	dev := llb.Image("opendjdk:11")
-	var CopyOptions = &llb.CopyInfo{
-		FollowSymlinks:      true,
-		CopyDirContentsOnly: true,
-		AttemptUnpack:       false,
-		CreateDestPath:      true,
-		AllowWildcard:       true,
-		AllowEmptyWildcard:  true,
-	}
-	dev = dev.File(
-		llb.
-			Copy(base, "/root/.m2/", "/root/.m2/", CopyOptions).
-			Copy(base, "/tmp/", "/tmp/", CopyOptions),
-	)
-
-	dev.Dir("/tmp/kn-plugin-workflow/")
-	return dev
 }
 
 // Session is a long running connection between client and a daemon
