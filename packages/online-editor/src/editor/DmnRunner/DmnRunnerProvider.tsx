@@ -64,6 +64,13 @@ export function DmnRunnerProvider(props: PropsWithChildren<Props>) {
   const [mode, setMode] = useState(DmnRunnerMode.FORM);
   const [currentInputRowIndex, setCurrentInputRowIndex] = useState<number>(0);
 
+  const dmnRunnerAvailable = useMemo(
+    () =>
+      props.workspaceFile.extension !== "dmn" &&
+      kieSandboxExtendedServices.status !== KieSandboxExtendedServicesStatus.RUNNING,
+    [props.workspaceFile.extension, kieSandboxExtendedServices.status]
+  );
+
   const status = useMemo(() => {
     return isExpanded ? DmnRunnerStatus.AVAILABLE : DmnRunnerStatus.UNAVAILABLE;
   }, [isExpanded]);
@@ -96,7 +103,7 @@ export function DmnRunnerProvider(props: PropsWithChildren<Props>) {
   );
 
   const updateFormSchema = useCallback(async () => {
-    if (props.workspaceFile.extension !== "dmn") {
+    if (!dmnRunnerAvailable) {
       return;
     }
 
@@ -107,19 +114,19 @@ export function DmnRunnerProvider(props: PropsWithChildren<Props>) {
       console.error(err);
       setError(true);
     }
-  }, [props.workspaceFile.extension, preparePayload, service]);
+  }, [dmnRunnerAvailable, preparePayload, service]);
 
   useEffect(() => {
-    if (props.workspaceFile.extension !== "dmn") {
+    if (!dmnRunnerAvailable) {
       setExpanded(false);
       return;
     }
 
     updateFormSchema();
-  }, [updateFormSchema, props.workspaceFile.extension, props.workspaceFile]);
+  }, [updateFormSchema, dmnRunnerAvailable, props.workspaceFile]);
 
   const validate = useCallback(async () => {
-    if (props.workspaceFile.extension !== "dmn") {
+    if (!dmnRunnerAvailable) {
       return;
     }
 
@@ -145,7 +152,14 @@ export function DmnRunnerProvider(props: PropsWithChildren<Props>) {
       message: `${validationResult.messageType}: ${validationResult.message}`,
     }));
     props.editorPageDock?.setNotifications(i18n.terms.validation, "", notifications);
-  }, [props.workspaceFile, props.editorPageDock, kieSandboxExtendedServices.status, service, i18n.terms.validation]);
+  }, [
+    dmnRunnerAvailable,
+    props.workspaceFile,
+    props.editorPageDock,
+    kieSandboxExtendedServices.status,
+    service,
+    i18n.terms.validation,
+  ]);
 
   useEffect(() => {
     validate();
@@ -171,7 +185,7 @@ export function DmnRunnerProvider(props: PropsWithChildren<Props>) {
 
   const prevKieSandboxExtendedServicesStatus = usePrevious(kieSandboxExtendedServices.status);
   useEffect(() => {
-    if (props.workspaceFile.extension !== "dmn") {
+    if (!dmnRunnerAvailable) {
       return;
     }
 
@@ -190,7 +204,7 @@ export function DmnRunnerProvider(props: PropsWithChildren<Props>) {
     ) {
       setExpanded(false);
     }
-  }, [prevKieSandboxExtendedServicesStatus, kieSandboxExtendedServices.status, props.workspaceFile.extension]);
+  }, [prevKieSandboxExtendedServicesStatus, kieSandboxExtendedServices.status, dmnRunnerAvailable]);
 
   const dmnRunnerDispatch = useMemo(
     () => ({

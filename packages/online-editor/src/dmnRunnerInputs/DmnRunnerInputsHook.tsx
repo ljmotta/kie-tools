@@ -39,6 +39,7 @@ export function useDmnRunnerInputs(workspaceFile: WorkspaceFile): DmnRunnerInput
 
   const [inputRows, setInputRows] = useState<Array<InputRow>>(EMPTY_DMN_RUNNER_INPUTS);
   const lastInputRows = useRef<string>(JSON.stringify(EMPTY_DMN_RUNNER_INPUTS));
+  // keeps updated with the previous inputRows;
   const previousInputRows = usePreviousRef(inputRows);
 
   const [didUpdateInputRows, setDidUpdateInputRows] = useState<boolean>(false);
