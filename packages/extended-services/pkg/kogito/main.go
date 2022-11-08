@@ -16,9 +16,30 @@
 
 package kogito
 
+import (
+	"context"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+)
+
 func Systray(port int, jitexecutor []byte, insecureSkipVerify bool) {
-	proxy := NewProxy(port, jitexecutor, insecureSkipVerify)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	proxy := NewProxy(ctx, port, jitexecutor, insecureSkipVerify)
 	proxy.view = &KogitoSystray{}
 	proxy.view.controller = proxy
+
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigs
+		log.Println("Signal detected, shutting down...")
+		proxy.Stop()
+		os.Exit(0)
+	}()
+
 	proxy.view.Run()
 }

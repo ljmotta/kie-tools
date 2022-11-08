@@ -30,7 +30,6 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"os/signal"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -38,14 +37,13 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/kiegroup/kie-tools/extended-services/pkg/config"
-	"github.com/kiegroup/kie-tools/extended-services/pkg/utils"
 	"github.com/phayes/freeport"
 )
 
 type Proxy struct {
+	ctx                context.Context
 	view               *KogitoSystray
-	srv                *http.Server
-	cmd                *exec.Cmd
+	server             *http.Server
 	Started            bool
 	URL                string
 	Port               int
@@ -54,28 +52,26 @@ type Proxy struct {
 	InsecureSkipVerify bool
 }
 
-func NewProxy(port int, jitexecutor []byte, insecureSkipVerify bool) *Proxy {
-	proxy := &Proxy{Started: false}
-	proxy.jitexecutorPath = proxy.createJitExecutor(jitexecutor)
-	proxy.Port = port
-	proxy.InsecureSkipVerify = insecureSkipVerify
-	return proxy
+func NewProxy(ctx context.Context, port int, jitexecutor []byte, insecureSkipVerify bool) *Proxy {
+	return &Proxy{
+		ctx:                ctx,
+		jitexecutorPath:    createJitExecutor(jitexecutor),
+		Started:            false,
+		Port:               port,
+		InsecureSkipVerify: insecureSkipVerify,
+	}
 }
 
-func (self *Proxy) Start() {
-
+func (p *Proxy) Start() {
 	var config config.Config
 	conf := config.GetConfig()
 
-	self.RunnerPort = getFreePort()
-	runnerPort := strconv.Itoa(self.RunnerPort)
-	self.URL = "http://127.0.0.1:" + runnerPort
-	target, err := url.Parse(self.URL)
-	utils.Check(err)
+	p.RunnerPort = getFreePort()
+	runnerPort := strconv.Itoa(p.RunnerPort)
+	p.URL = "http://127.0.0.1:" + runnerPort
 
-	self.cmd = exec.Command(self.jitexecutorPath, "-Dquarkus.http.port="+runnerPort)
-
-	stdout, _ := self.cmd.StdoutPipe()
+	cmd := exec.CommandContext(p.ctx, p.jitexecutorPath, "-Dquarkus.http.port="+runnerPort)
+	stdout, _ := cmd.StdoutPipe()
 
 	go func() {
 		scanner := bufio.NewScanner(stdout)
@@ -85,19 +81,18 @@ func (self *Proxy) Start() {
 		}
 	}()
 
-	go startRunner(self.cmd)
+	go func() {
+		cmd.Start()
+	}()
 
-	proxy := httputil.NewSingleHostReverseProxy(target)
+	router := mux.NewRouter()
+	router.PathPrefix("/devsandbox").HandlerFunc(p.devSandboxHandler())
+	router.PathPrefix("/ping").HandlerFunc(p.pingHandler())
+	router.PathPrefix("/").HandlerFunc(p.proxyHandler())
 
-	r := mux.NewRouter()
-	r.PathPrefix("/devsandbox").HandlerFunc(devSandboxHandler(self))
-	r.PathPrefix("/ping").HandlerFunc(pingHandler(self.Port))
-	r.PathPrefix("/").HandlerFunc(proxyHandler(proxy, self.cmd))
-
-	addr := conf.Proxy.IP + ":" + strconv.Itoa(self.Port)
-
-	self.srv = &http.Server{
-		Handler:      r,
+	addr := conf.Proxy.IP + ":" + strconv.Itoa(p.Port)
+	p.server = &http.Server{
+		Handler:      router,
 		Addr:         addr,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
@@ -105,103 +100,21 @@ func (self *Proxy) Start() {
 
 	fmt.Printf("Server started: %s \n", addr)
 
-	go self.srv.ListenAndServe()
-	go self.GracefulShutdown()
-
-	self.Refresh()
+	go p.server.ListenAndServe()
 }
 
-func (self *Proxy) GracefulShutdown() {
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	<-c
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	log.Println("Signal detected, shutting down...")
-	self.Stop()
-	self.srv.Shutdown(ctx)
-	os.Exit(0)
-}
-
-func (self *Proxy) Stop() {
+func (p *Proxy) Stop() {
 	log.Println("Shutting down")
 
-	stopRunner(self.cmd)
-
-	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*15)
-	defer cancel()
-
-	if err := self.srv.Shutdown(ctx); err != nil {
+	if err := p.server.Shutdown(p.ctx); err != nil {
 		log.Fatalf("Server Shutdown Failed:%+v", err)
 	}
 	log.Println("Shutdown complete")
 
-	self.RunnerPort = 0
-	self.Refresh()
+	p.RunnerPort = 0
 }
 
-func (self *Proxy) Refresh() {
-
-	self.view.SetLoading()
-
-	started := false
-	countDown := 5
-	retry := true
-
-	for countDown > 0 && retry {
-		resp, err := http.Get(self.URL)
-		if err != nil {
-			fmt.Println(err.Error())
-			retry = true
-			countDown--
-		} else {
-			fmt.Println(strconv.Itoa(resp.StatusCode) + " -> " + resp.Status)
-			if resp.StatusCode == 200 {
-				started = true
-			}
-			retry = false
-		}
-		time.Sleep(1 * time.Second)
-	}
-
-	self.Started = started
-	self.view.Refresh()
-}
-
-func (self *Proxy) createJitExecutor(jitexecutor []byte) string {
-	cacheDir, cacheError := os.UserCacheDir()
-	utils.Check(cacheError)
-
-	cachePath := filepath.Join(cacheDir, "org.kogito")
-
-	if _, err := os.Stat(cachePath); os.IsNotExist(err) {
-		os.Mkdir(cachePath, os.ModePerm)
-	}
-
-	var jitexecutorPath string
-
-	if runtime.GOOS == "windows" {
-		jitexecutorPath = filepath.Join(cachePath, "runner.exe")
-	} else {
-		jitexecutorPath = filepath.Join(cachePath, "runner")
-	}
-
-	if _, err := os.Stat(jitexecutorPath); err == nil {
-		os.Remove(jitexecutorPath)
-	}
-
-	f, err := os.Create(jitexecutorPath)
-	utils.Check(err)
-
-	f.Chmod(0777)
-
-	_, err = f.Write(jitexecutor)
-	utils.Check(err)
-	f.Close()
-	return jitexecutorPath
-}
-
-func devSandboxHandler(self *Proxy) func(w http.ResponseWriter, r *http.Request) {
+func (p *Proxy) devSandboxHandler() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "OPTIONS" {
 			w.Header().Add("Access-Control-Allow-Origin", "*")
@@ -211,14 +124,16 @@ func devSandboxHandler(self *Proxy) func(w http.ResponseWriter, r *http.Request)
 		}
 
 		targetUrl, err := url.Parse(r.Header.Get("Target-Url"))
-		utils.Check(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 		emptyUrl, _ := url.Parse("")
 		r.URL = emptyUrl
 		r.Host = r.URL.Host
 
 		proxy := httputil.NewSingleHostReverseProxy(targetUrl)
 
-		// tolerate self-signed certificates
+		// tolerate p-signed certificates
 		proxy.Transport = &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
 			DialContext: (&net.Dialer{
@@ -231,7 +146,7 @@ func devSandboxHandler(self *Proxy) func(w http.ResponseWriter, r *http.Request)
 			TLSHandshakeTimeout:   10 * time.Second,
 			ExpectContinueTimeout: 1 * time.Second,
 			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: self.InsecureSkipVerify,
+				InsecureSkipVerify: p.InsecureSkipVerify,
 			},
 		}
 
@@ -245,36 +160,76 @@ func devSandboxHandler(self *Proxy) func(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func proxyHandler(proxy *httputil.ReverseProxy, cmd *exec.Cmd) func(w http.ResponseWriter, r *http.Request) {
+func (p *Proxy) proxyHandler() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		target, err := url.Parse(p.URL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		proxy := httputil.NewSingleHostReverseProxy(target)
 		r.Host = r.URL.Host
 		proxy.ServeHTTP(w, r)
 	}
 }
 
-func pingHandler(port int) func(w http.ResponseWriter, r *http.Request) {
+func (p *Proxy) pingHandler() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Methods", "GET")
 		var config config.Config
 		conf := config.GetConfig()
-		conf.Proxy.Port = port
+		conf.Proxy.Port = p.Port
 		w.WriteHeader(http.StatusOK)
 		json, _ := json.Marshal(conf)
 		w.Write(json)
 	}
 }
 
-func startRunner(cmd *exec.Cmd) {
-	utils.Check(cmd.Start())
-}
+func createJitExecutor(jitexecutor []byte) string {
+	cacheDir, err := os.UserCacheDir()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-func stopRunner(cmd *exec.Cmd) {
-	cmd.Process.Kill()
+	cachePath := filepath.Join(cacheDir, "org.kogito")
+
+	if _, err := os.Stat(cachePath); os.IsNotExist(err) {
+		os.Mkdir(cachePath, os.ModePerm)
+	}
+
+	var jitexecutorPath string
+	if runtime.GOOS == "windows" {
+		jitexecutorPath = filepath.Join(cachePath, "runner.exe")
+	} else {
+		jitexecutorPath = filepath.Join(cachePath, "runner")
+	}
+
+	if _, err := os.Stat(jitexecutorPath); err == nil {
+		os.Remove(jitexecutorPath)
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	f, err := os.Create(jitexecutorPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	f.Chmod(0777)
+
+	_, err = f.Write(jitexecutor)
+	if err != nil {
+		log.Fatal(err)
+	}
+	f.Close()
+	return jitexecutorPath
 }
 
 func getFreePort() int {
 	port, err := freeport.GetFreePort()
-	utils.Check(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return port
 }
