@@ -37,7 +37,7 @@
     "start": "cross-env EXTENDED_SERVICES_VERSION=$(build-env extendedServices.version) EXTENDED_SERVICES_IP=$(build-env extendedServices.serverIp) EXTENDED_SERVICES_PORT=$(build-env extendedServices.serverPort) EXTENDED_SERVICES_MODELER=$(build-env extendedServices.modeler) ENV=dev go run main.go"
   },
   "dependencies": {
-    "@kie-tools/jitexecutor-native": "1.12.0-Final"
+    "@kie-tools/jitexecutor-native": "1.29.0-Final"
   },
   "devDependencies": {
     "@kie-tools/root-env": "workspace:*",

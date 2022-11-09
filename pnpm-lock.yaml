@@ -657,14 +657,14 @@ importers:
       "@types/chrome": ^0.0.193
       "@types/jest": ^26.0.23
       "@types/jest-when": ^2.7.4
-      "@types/selenium-webdriver": ^4.1.1
+      "@types/selenium-webdriver": ^4.1.7
       chai: ^4.3.4
       copy-webpack-plugin: ^8.1.1
       jest: ^26.6.3
       jest-junit: ^14.0.0
       jest-when: ^3.5.0
       rimraf: ^3.0.2
-      selenium-webdriver: ^4.2.0
+      selenium-webdriver: ^4.5.0
       start-server-and-test: ^1.12.1
       ts-jest: ^26.5.6
       typescript: ^4.4.2
@@ -692,14 +692,14 @@ importers:
       "@types/chrome": 0.0.193
       "@types/jest": 26.0.23
       "@types/jest-when": 2.7.4
-      "@types/selenium-webdriver": 4.1.1
+      "@types/selenium-webdriver": 4.1.7
       chai: 4.3.4
       copy-webpack-plugin: 8.1.1_webpack@5.70.0
       jest: 26.6.3
       jest-junit: 14.0.0
       jest-when: 3.5.0_jest@26.6.3
       rimraf: 3.0.2
-      selenium-webdriver: 4.2.0
+      selenium-webdriver: 4.5.0
       start-server-and-test: 1.12.1
       ts-jest: 26.5.6_hoj6rh37du6uxub6buv3fchqgy
       typescript: 4.5.4
@@ -2223,14 +2223,14 @@ importers:
 
   packages/extended-services:
     specifiers:
-      "@kie-tools/jitexecutor-native": 1.12.0-Final
+      "@kie-tools/jitexecutor-native": 1.29.0-Final
       "@kie-tools/root-env": workspace:*
       cross-env: ^7.0.3
       js-yaml: ^4.1.0
       rimraf: ^3.0.2
       run-script-os: ^1.1.6
     dependencies:
-      "@kie-tools/jitexecutor-native": 1.12.0-Final
+      "@kie-tools/jitexecutor-native": 1.29.0-Final
     devDependencies:
       "@kie-tools/root-env": link:../root-env
       cross-env: 7.0.3
@@ -3206,6 +3206,7 @@ importers:
       "@kie-tools-core/keyboard-shortcuts": workspace:*
       "@kie-tools-core/monaco-editor": workspace:*
       "@kie-tools-core/notifications": workspace:*
+      "@kie-tools-core/openshift": workspace:*
       "@kie-tools-core/operating-system": workspace:*
       "@kie-tools-core/patternfly-base": workspace:*
       "@kie-tools-core/react-hooks": workspace:*
@@ -3245,6 +3246,7 @@ importers:
       "@types/react-window": ^1.8.5
       "@types/testing-library__jest-dom": ^5.9.1
       "@types/testing-library__react": ^9.1.2
+      "@types/uuid": ^8.3.0
       bowser: ^2.10.0
       buffer: ^6.0.3
       copy-webpack-plugin: ^8.1.1
@@ -3272,6 +3274,7 @@ importers:
       start-server-and-test: ^1.12.1
       ts-jest: ^26.5.6
       typescript: ^4.4.2
+      uuid: ^8.3.2
       webpack: ^5.36.2
       webpack-cli: ^4.7.0
       webpack-dev-server: ^4.7.3
@@ -3284,6 +3287,7 @@ importers:
       "@kie-tools-core/keyboard-shortcuts": link:../keyboard-shortcuts
       "@kie-tools-core/monaco-editor": link:../monaco-editor
       "@kie-tools-core/notifications": link:../notifications
+      "@kie-tools-core/openshift": link:../openshift
       "@kie-tools-core/operating-system": link:../operating-system
       "@kie-tools-core/patternfly-base": link:../patternfly-base
       "@kie-tools-core/react-hooks": link:../react-hooks
@@ -3315,6 +3319,7 @@ importers:
       react-router-dom: 5.3.0_react@17.0.2
       react-virtualized-auto-sizer: 1.0.7_sfoxds7t5ydpegc3knd667wn6m
       react-window: 1.8.7_sfoxds7t5ydpegc3knd667wn6m
+      uuid: 8.3.2
     devDependencies:
       "@babel/core": 7.16.12
       "@babel/preset-env": 7.16.11_@babel+core@7.16.12
@@ -3339,6 +3344,7 @@ importers:
       "@types/react-window": 1.8.5
       "@types/testing-library__jest-dom": 5.9.5
       "@types/testing-library__react": 9.1.3
+      "@types/uuid": 8.3.0
       copy-webpack-plugin: 8.1.1_webpack@5.70.0
       cypress: 10.7.0
       cypress-file-upload: 5.0.8_cypress@10.7.0
@@ -3376,6 +3382,36 @@ importers:
       "@kie-tools/root-env": workspace:*
     devDependencies:
       "@kie-tools/root-env": link:../root-env
+
+  packages/openshift:
+    specifiers:
+      "@babel/core": ^7.16.0
+      "@babel/preset-env": ^7.16.0
+      "@babel/preset-react": ^7.16.0
+      "@kie-tools/eslint": workspace:*
+      "@kie-tools/root-env": workspace:*
+      "@kie-tools/tsconfig": workspace:*
+      "@testing-library/jest-dom": ^5.16.1
+      "@types/jest": ^26.0.23
+      jest: ^26.6.3
+      jest-junit: ^14.0.0
+      rimraf: ^3.0.2
+      ts-jest: ^26.5.6
+      typescript: ^4.4.2
+    devDependencies:
+      "@babel/core": 7.16.12
+      "@babel/preset-env": 7.16.11_@babel+core@7.16.12
+      "@babel/preset-react": 7.16.0_@babel+core@7.16.12
+      "@kie-tools/eslint": link:../eslint
+      "@kie-tools/root-env": link:../root-env
+      "@kie-tools/tsconfig": link:../tsconfig
+      "@testing-library/jest-dom": 5.16.1
+      "@types/jest": 26.0.23
+      jest: 26.6.3
+      jest-junit: 14.0.0
+      rimraf: 3.0.2
+      ts-jest: 26.5.6_hoj6rh37du6uxub6buv3fchqgy
+      typescript: 4.5.4
 
   packages/operating-system:
     specifiers:
@@ -3680,6 +3716,7 @@ importers:
       "@kie-tools-core/i18n": workspace:*
       "@kie-tools-core/keyboard-shortcuts": workspace:*
       "@kie-tools-core/notifications": workspace:*
+      "@kie-tools-core/openshift": workspace:*
       "@kie-tools-core/operating-system": workspace:*
       "@kie-tools-core/patternfly-base": workspace:*
       "@kie-tools-core/react-hooks": workspace:*
@@ -3709,6 +3746,7 @@ importers:
       "@patternfly/react-tokens": ^4.33.1
       "@rhoas/registry-instance-sdk": ^0.34.1
       "@svgr/webpack": 6.2.1
+      "@testing-library/jest-dom": ^5.16.1
       "@types/history": ^4.7.3
       "@types/jest": ^26.0.23
       "@types/jest-when": ^2.7.4
@@ -3756,6 +3794,7 @@ importers:
       "@kie-tools-core/i18n": link:../i18n
       "@kie-tools-core/keyboard-shortcuts": link:../keyboard-shortcuts
       "@kie-tools-core/notifications": link:../notifications
+      "@kie-tools-core/openshift": link:../openshift
       "@kie-tools-core/operating-system": link:../operating-system
       "@kie-tools-core/patternfly-base": link:../patternfly-base
       "@kie-tools-core/react-hooks": link:../react-hooks
@@ -3805,6 +3844,7 @@ importers:
       "@kie-tools/serverless-logic-sandbox-base-image-env": link:../serverless-logic-sandbox-base-image-env
       "@kie-tools/tsconfig": link:../tsconfig
       "@svgr/webpack": 6.2.1
+      "@testing-library/jest-dom": 5.16.1
       "@types/history": 4.7.5
       "@types/jest": 26.0.23
       "@types/jest-when": 2.7.4
@@ -5422,7 +5462,7 @@ importers:
       "@rhoas/registry-instance-sdk": ^0.34.1
       "@types/chai": ^4.2.17
       "@types/mocha": ^8.2.2
-      "@types/selenium-webdriver": ^4.1.1
+      "@types/selenium-webdriver": ^4.1.7
       "@types/vscode": ^1.66.0
       "@vscode/test-web": ^0.0.30
       chai: ^4.3.4
@@ -5437,7 +5477,7 @@ importers:
       monaco-yaml: ^4.0.0
       openapi-types: ^7.0.1
       rimraf: ^3.0.2
-      selenium-webdriver: ^4.2.0
+      selenium-webdriver: ^4.5.0
       typescript: ^4.4.2
       vsce: ^2.6.5
       vscode-extension-tester: ^4.4.0
@@ -5480,7 +5520,7 @@ importers:
       "@kie-tools/tsconfig": link:../tsconfig
       "@types/chai": 4.2.18
       "@types/mocha": 8.2.2
-      "@types/selenium-webdriver": 4.1.1
+      "@types/selenium-webdriver": 4.1.7
       "@types/vscode": 1.66.0
       "@vscode/test-web": 0.0.30
       chai: 4.3.4
@@ -5492,7 +5532,7 @@ importers:
       mocha-multi-reporters: 1.5.1_mocha@9.2.0
       monaco-editor-webpack-plugin: 7.0.1_6bqvh7qoz5jkzhww4ewgshaczm
       rimraf: 3.0.2
-      selenium-webdriver: 4.2.0
+      selenium-webdriver: 4.5.0
       typescript: 4.5.4
       vsce: 2.6.5
       vscode-extension-tester: 4.4.1_jvempbdbjtvhoodinnen4jiyly
@@ -5521,7 +5561,7 @@ importers:
       "@kie-tools/yard-editor": workspace:*
       "@types/chai": ^4.2.17
       "@types/mocha": ^8.2.2
-      "@types/selenium-webdriver": ^4.1.1
+      "@types/selenium-webdriver": ^4.1.7
       "@types/vscode": ^1.66.0
       "@vscode/test-web": ^0.0.30
       chai: ^4.3.4
@@ -5535,7 +5575,7 @@ importers:
       monaco-yaml: ^4.0.0
       openapi-types: ^7.0.1
       rimraf: ^3.0.2
-      selenium-webdriver: ^4.2.0
+      selenium-webdriver: ^4.5.0
       typescript: ^4.4.2
       vsce: ^2.6.5
       vscode-extension-tester: ^4.4.0
@@ -5572,7 +5612,7 @@ importers:
       "@kie-tools/tsconfig": link:../tsconfig
       "@types/chai": 4.2.18
       "@types/mocha": 8.2.2
-      "@types/selenium-webdriver": 4.1.1
+      "@types/selenium-webdriver": 4.1.7
       "@types/vscode": 1.66.0
       "@vscode/test-web": 0.0.30
       chai: 4.3.4
@@ -5583,7 +5623,7 @@ importers:
       mocha-multi-reporters: 1.5.1_mocha@9.2.0
       monaco-editor-webpack-plugin: 7.0.1_6bqvh7qoz5jkzhww4ewgshaczm
       rimraf: 3.0.2
-      selenium-webdriver: 4.2.0
+      selenium-webdriver: 4.5.0
       typescript: 4.5.4
       vsce: 2.6.5
       vscode-extension-tester: 4.4.1_jvempbdbjtvhoodinnen4jiyly
@@ -8193,9 +8233,9 @@ packages:
       { integrity: sha512-dxmfwq2F+yxawuGrVVRGmTeZHTqRHa79Vp4FX2KEXHAA9AgK1aaVz8mxZxXYFs2ycfp30NjWvhZCOIRbIKTjAQ== }
     dev: false
 
-  /@kie-tools/jitexecutor-native/1.12.0-Final:
+  /@kie-tools/jitexecutor-native/1.29.0-Final:
     resolution:
-      { integrity: sha512-8mglRmsYN9cYlexjY7P/S4d/5zBTXyKIMJwGc19PNQoNKgphAQQ3V8htrSJaBAyOevnyHFDRi1qQ5Zu0rXA5VQ== }
+      { integrity: sha512-oZ5LxMCILgDGYxEqAPOYos7zJqgetS2JnRhf6hpzY4626k9O/2GhSOxNw8hL9fySJMwguzGZtPFFWBOMtDtAbg== }
     dev: false
 
   /@koa/cors/3.4.1:
@@ -10625,6 +10665,13 @@ packages:
       "@types/ws": 8.2.2
     dev: true
 
+  /@types/selenium-webdriver/4.1.7:
+    resolution:
+      { integrity: sha512-vrhvk4ZtbuIwxIS36pMor1BTGL5CXFDQoMcx2o7TlE6sjSnMlb95CYTuvOWysNAIJKhnVXigiD4rSLTBVgVI+Q== }
+    dependencies:
+      "@types/ws": 8.2.2
+    dev: true
+
   /@types/semver/6.2.3:
     resolution:
       { integrity: sha512-KQf+QAMWKMrtBMsB8/24w53tEsxllMj6TuA80TT/5igJalLI/zm0L3oXRbIAl4Ohfc85gyHX/jhMwsVkmhLU4A== }
@@ -12022,7 +12069,7 @@ packages:
     resolution:
       { integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg== }
     dependencies:
-      follow-redirects: 1.14.9_debug@4.3.1
+      follow-redirects: 1.14.9
     transitivePeerDependencies:
       - debug
     dev: true
@@ -12031,7 +12078,7 @@ packages:
     resolution:
       { integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ== }
     dependencies:
-      follow-redirects: 1.14.9_debug@4.3.1
+      follow-redirects: 1.14.9
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -17421,7 +17468,7 @@ packages:
       tabbable: 5.1.5
     dev: false
 
-  /follow-redirects/1.14.9_debug@4.3.1:
+  /follow-redirects/1.14.9:
     resolution:
       { integrity: sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w== }
     engines: { node: ">=4.0" }
@@ -17430,8 +17477,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dependencies:
-      debug: 4.3.1
 
   /for-in/1.0.2:
     resolution:
@@ -18425,7 +18470,7 @@ packages:
     engines: { node: ">=8.0.0" }
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.9_debug@4.3.1
+      follow-redirects: 1.14.9
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -20084,6 +20129,16 @@ packages:
     dependencies:
       array-includes: 3.1.3
       object.assign: 4.1.2
+    dev: true
+
+  /jszip/3.10.1:
+    resolution:
+      { integrity: sha512-xXDvecyTpGLrqFrvkrUSoxxfJI5AH7U8zxxtVclpsUtMCq4JQ290LY8AW5c7Ggnr/Y/oK+bQMbqK2qmtk3pN4g== }
+    dependencies:
+      lie: 3.3.0
+      pako: 1.0.11
+      readable-stream: 2.3.7
+      setimmediate: 1.0.5
     dev: true
 
   /jszip/3.7.1:
@@ -25158,6 +25213,19 @@ packages:
       - utf-8-validate
     dev: true
 
+  /selenium-webdriver/4.5.0:
+    resolution:
+      { integrity: sha512-9mSFii+lRwcnT2KUAB1kqvx6+mMiiQHH60Y0VUtr3kxxi3oZ3CV3B8e2nuJ7T4SPb+Q6VA0swswe7rYpez07Bg== }
+    engines: { node: ">= 14.20.0" }
+    dependencies:
+      jszip: 3.10.1
+      tmp: 0.2.1
+      ws: 8.10.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
   /selfsigned/2.0.0:
     resolution:
       { integrity: sha512-cUdFiCbKoa1mZ6osuJs2uDHrs0k0oprsKveFiiaBKCNq3SYyb5gs2HxhQyDNLCmL51ZZThqi4YNDpCK6GOP1iQ== }
@@ -25315,7 +25383,8 @@ packages:
     dev: true
 
   /setimmediate/1.0.5:
-    resolution: { integrity: sha1-KQy7Iy4waULX1+qbg3Mqt4VvgoU= }
+    resolution:
+      { integrity: sha512-MATJdZp8sLqDl/68LfQmbP8zKPLQNV6BIZoIgrscFDQ+RsvK/BxeDQOgyxKKoh0y/8h3BqVFnCqQ/gd+reiIXA== }
     dev: true
 
   /setprototypeof/1.0.3:
@@ -28414,6 +28483,20 @@ packages:
     resolution:
       { integrity: sha512-6GLgCqo2cy2A2rjCNFlxQS6ZljG/coZfZXclldI8FB/1G3CCI36Zd8xy2HrFVACi8tfk5XrgLQEk+P0Tnz9UcA== }
     engines: { node: ">=8.3.0" }
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: true
+
+  /ws/8.10.0:
+    resolution:
+      { integrity: sha512-+s49uSmZpvtAsd2h37vIPy1RBusaLawVe8of+GyEPsaJTCMpj/2v8NpeK1SHXjBlQ95lQTmQofOJnFiLoaN3yw== }
+    engines: { node: ">=10.0.0" }
     peerDependencies:
       bufferutil: ^4.0.1
       utf-8-validate: ^5.0.2
