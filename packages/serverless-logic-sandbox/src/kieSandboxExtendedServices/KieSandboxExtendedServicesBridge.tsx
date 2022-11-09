@@ -31,6 +31,6 @@ export class KieSandboxExtendedServicesBridge {
       method: "GET",
     });
     const json = await response.json();
-    return json.App.Version;
+    return json.Version;
   }
 }

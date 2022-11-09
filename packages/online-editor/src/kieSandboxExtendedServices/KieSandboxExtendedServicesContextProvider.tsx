@@ -90,9 +90,8 @@ export function KieSandboxExtendedServicesContextProvider(props: Props) {
 
   useEffect(() => {
     // Pooling to detect either if KieSandboxExtendedServices is running or has stopped
-    let detectCrashesOrStops: number | undefined;
     if (status === KieSandboxExtendedServicesStatus.RUNNING) {
-      detectCrashesOrStops = window.setInterval(() => {
+      const detectCrashesOrStops: number | undefined = window.setInterval(() => {
         bridge.check().catch(() => {
           setStatus(KieSandboxExtendedServicesStatus.STOPPED);
           setModalOpen(true);

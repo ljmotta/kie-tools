@@ -24,22 +24,24 @@ import (
 	"syscall"
 )
 
-func Systray(port int, jitexecutor []byte, insecureSkipVerify bool) {
+func Systray(port string, jitexecutor []byte) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	proxy := NewProxy(ctx, port, jitexecutor, insecureSkipVerify)
-	proxy.view = &KogitoSystray{}
-	proxy.view.controller = proxy
+	view := &KogitoSystray{}
+	server := NewProxy(ctx, port, jitexecutor)
+
+	server.view = view
+	view.server = server
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		<-sigs
 		log.Println("Signal detected, shutting down...")
-		proxy.Stop()
+		server.Stop()
 		os.Exit(0)
 	}()
 
-	proxy.view.Run()
+	view.Run()
 }
