@@ -46,7 +46,7 @@ type Proxy struct {
 	ctx                context.Context
 	view               *KogitoSystray
 	server             *http.Server
-	Started            bool
+	Running            bool
 	URL                string
 	Port               string
 	RunnerPort         string
@@ -58,7 +58,7 @@ func NewProxy(ctx context.Context, port string, jitexecutor []byte) *Proxy {
 	return &Proxy{
 		ctx:                ctx,
 		jitexecutorPath:    createJitExecutor(jitexecutor),
-		Started:            false,
+		Running:            false,
 		Port:               port,
 		InsecureSkipVerify: false,
 	}
@@ -108,21 +108,21 @@ func (p *Proxy) Start() {
 }
 
 func (p *Proxy) Stop() {
-	log.Println("Shutting down")
-
+	log.Println("Stopping the server")
 	if err := p.server.Shutdown(p.ctx); err != nil {
 		log.Fatalf("Server Shutdown Failed:%+v", err)
 	}
-	log.Println("Shutdown complete")
+	p.Running = false
+	log.Println("Server was stopped")
 
 	p.RunnerPort = "0"
+	p.view.Refresh()
 }
 
 func (p *Proxy) Refresh() {
-
 	p.view.SetLoading()
 
-	started := false
+	running := false
 	countDown := 5
 	retry := true
 
@@ -135,7 +135,7 @@ func (p *Proxy) Refresh() {
 		} else {
 			fmt.Println(strconv.Itoa(resp.StatusCode) + " -> " + resp.Status)
 			if resp.StatusCode == 200 {
-				started = true
+				running = true
 			}
 			retry = false
 		}
@@ -143,7 +143,7 @@ func (p *Proxy) Refresh() {
 		time.Sleep(1 * time.Second)
 	}
 
-	p.Started = started
+	p.Running = running
 	p.view.Refresh()
 }
 

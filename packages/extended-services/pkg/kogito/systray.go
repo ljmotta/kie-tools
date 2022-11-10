@@ -60,7 +60,7 @@ func (ks *KogitoSystray) onReady() {
 		case <-ks.openModeler.ClickedCh:
 			ks.openBrowser(MODELER_LINK)
 		case <-ks.StartStopItem.ClickedCh:
-			if ks.server.Started {
+			if ks.server.Running {
 				ks.Stop()
 			} else {
 				ks.Start()
@@ -146,7 +146,7 @@ func (ks *KogitoSystray) SetLoading() {
 }
 
 func (ks *KogitoSystray) changeStartStop() {
-	if ks.server.Started {
+	if ks.server.Running {
 		ks.StartStopItem.SetTitle(STOP)
 	} else {
 		ks.StartStopItem.SetTitle(START)
@@ -154,7 +154,7 @@ func (ks *KogitoSystray) changeStartStop() {
 }
 
 func (ks *KogitoSystray) changeIcon() {
-	if ks.server.Started {
+	if ks.server.Running {
 		if runtime.GOOS == "linux" {
 			systray.SetTemplateIcon(images.DataStartedLinux, images.DataStartedLinux)
 		} else {
