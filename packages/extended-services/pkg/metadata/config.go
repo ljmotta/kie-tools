@@ -16,13 +16,8 @@
 
 package metadata
 
-import "os"
-
 // default values
-var Version = os.Getenv("EXTENDED_SERVICES_VERSION")
-var IP = os.Getenv("EXTENDED_SERVICES_IP")
-var Port = os.Getenv("EXTENDED_SERVICES_PORT")
-var Modeler = os.Getenv("EXTENDED_SERVICES_MODELER")
+var Version, IP, Port, Modeler string
 
 type Proxy struct {
 	IP                 string

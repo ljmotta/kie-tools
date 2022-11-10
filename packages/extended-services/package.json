@@ -34,7 +34,7 @@
     "pack-app:darwin": "cd ./scripts/macos && ./build.sh",
     "pack-app:linux": "cd ./dist/linux && tar -pcvzf kie_sandbox_extended_services.tar.gz kie_sandbox_extended_services",
     "pack-app:win32": "echo 'Nothing to do'",
-    "start": "cross-env EXTENDED_SERVICES_VERSION=$(build-env extendedServices.version) EXTENDED_SERVICES_IP=$(build-env extendedServices.serverIp) EXTENDED_SERVICES_PORT=$(build-env extendedServices.serverPort) EXTENDED_SERVICES_MODELER=$(build-env extendedServices.modeler) ENV=dev go run main.go"
+    "start": "cross-env ENV=dev go run -ldflags=\"github.com/kiegroup/kie-tools/packages/extended-services/pkg/metadata.Version=$(build-env extendedServices.version) -X github.com/kiegroup/kie-tools/packages/extended-services/pkg/metadata.IP=$(build-env extendedServices.serverIp) -X github.com/kiegroup/kie-tools/packages/extended-services/pkg/metadata.Port=$(build-env extendedServices.serverPort) -X github.com/kiegroup/kie-tools/packages/extended-services/pkg/metadata.Modeler=$(build-env extendedServices.modeler)\" main.go"
   },
   "dependencies": {
     "@kie-tools/jitexecutor-native": "1.29.0-Final"
