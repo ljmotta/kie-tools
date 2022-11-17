@@ -18,11 +18,11 @@ package kogito
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"crypto/tls"
 	"io"
 	"net"
-	"strings"
 
 	"encoding/json"
 	"fmt"
@@ -95,7 +95,7 @@ func (p *Proxy) Start() {
 	router.PathPrefix("/test").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "websockets.html")
 	})
-	router.PathPrefix("/jitdmn").HandlerFunc(p.jitExecutorHandler())
+	router.PathPrefix("/jitdmn").HandlerFunc(p.jitdmnHandler())
 
 	addr := metadata.IP + ":" + p.Port
 
@@ -217,9 +217,8 @@ func (p *Proxy) devSandboxHandler() func(rw http.ResponseWriter, req *http.Reque
 	}
 }
 
-func (p *Proxy) jitExecutorHandler() func(rw http.ResponseWriter, req *http.Request) {
+func (p *Proxy) jitdmnHandler() func(rw http.ResponseWriter, req *http.Request) {
 	return func(rw http.ResponseWriter, req *http.Request) {
-		// upgrade to websocket
 		var upgrader = websocket.Upgrader{}
 		conn, err := upgrader.Upgrade(rw, req, nil)
 		if err != nil {
@@ -227,17 +226,6 @@ func (p *Proxy) jitExecutorHandler() func(rw http.ResponseWriter, req *http.Requ
 			return
 		}
 		defer conn.Close()
-
-		/**
-		sandbox send a request to ping.
-		ping reply -> Started: true
-		kie sandbox iniciate websocket on /jitdmn/*
-
-		save the request path *
-		send the request payload to quarkus to the same path
-		retrieve quarkus response
-		send request back with quarkus response.
-		**/
 
 		for {
 			receive := &JitDmnWebSocketReceive{}
@@ -251,35 +239,50 @@ func (p *Proxy) jitExecutorHandler() func(rw http.ResponseWriter, req *http.Requ
 				log.Fatal(err)
 			}
 
-			req.Host = origin.Host
-			req.URL.Host = origin.Host
-			req.URL.Scheme = origin.Scheme
-			req.RequestURI = ""
-			// forward body
-			req.Body = io.NopCloser(strings.NewReader(string(receive.Payload)))
-
-			resp, err := http.DefaultClient.Do(req)
+			b := new(bytes.Buffer)
+			err = json.NewEncoder(b).Encode(receive.Payload)
 			if err != nil {
+				log.Fatal(err)
+			}
+
+			url := "http://" + origin.Host + "/jitdmn/" + receive.Method.String()
+			resp, err := http.Post(url, "application/json", b)
+			if err != nil {
+				fmt.Print(err)
 				response := &JitDmnWebSocketResponse{
 					Method:   receive.Method,
 					Status:   500,
 					Response: "",
 				}
 				err = conn.WriteJSON(response)
-				// send through WEBSOCKET
-				fmt.Fprint(rw, err)
-			}
-
-			if resp == nil {
+				if err != nil {
+					fmt.Print(err)
+				}
 				return
 			}
 
+			if resp == nil {
+				response := &JitDmnWebSocketResponse{
+					Method:   receive.Method,
+					Status:   503,
+					Response: "",
+				}
+				err = conn.WriteJSON(response)
+				if err != nil {
+					fmt.Print(err)
+				}
+				return
+			}
 			defer resp.Body.Close()
+
 			bodyBytes, err := io.ReadAll(resp.Body)
 			if err != nil {
 				log.Fatal(err)
 			}
+
 			bodyString := string(bodyBytes)
+			fmt.Print(bodyString)
+
 			response := &JitDmnWebSocketResponse{
 				Method:   receive.Method,
 				Status:   resp.StatusCode,

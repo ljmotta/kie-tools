@@ -15,14 +15,14 @@ func (m JitDmnWebSocketMethod) String() string {
 	case DmnResult:
 		return "dmnresult"
 	case Schema:
-		return "schema"
+		return "schema/form"
 	}
-	return "unkown"
+	return "unknown"
 }
 
 type JitDmnWebSocketReceive struct {
 	Method  JitDmnWebSocketMethod `json:"method"`
-	Payload string                `json:"payload"`
+	Payload interface{}           `json:"payload"`
 }
 
 type JitDmnWebSocketResponse struct {

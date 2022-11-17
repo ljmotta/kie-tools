@@ -8,8 +8,8 @@
       "name": "Launch Package",
       "type": "go",
       "request": "launch",
-      "mode": "debug",
-      "program": "main.go",
+      "mode": "exec",
+      "program": "${workspaceRoot}/dist/darwin/kie_sandbox_extended_services",
       "showLog": true
     }
   ]

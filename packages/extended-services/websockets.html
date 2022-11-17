@@ -5,7 +5,9 @@
     <p>- add [task]</p>
     <p>- done [task]</p>
     <input id="input" type="text" size="40" />
-    <button onclick="send()">Schema</button>
+    <button onclick="validate()">validate</button>
+    <button onclick="dmnresult()">dmnresult</button>
+    <button onclick="schema()">schema</button>
     <pre id="output"></pre>
   </div>
   <style>
@@ -36,9 +38,61 @@
       output.innerHTML += "\nServer: " + e.data + "\n";
     };
 
-    function send() {
-      socket.send(JSON.stringify({ method: 1, payload: { aa: 1 } }));
+    function validate() {
+      socket.send(
+        JSON.stringify({
+          method: 0,
+          payload: {
+            mainURI: "Untitled.dmn",
+            resources: [
+              {
+                URI: "Untitled.dmn",
+                content:
+                  '<?xml version="1.0" encoding="UTF-8"?>\n<dmn:definitions xmlns:dmn="http://www.omg.org/spec/DMN/20180521/MODEL/" xmlns="https://kiegroup.org/dmn/_E5C88D53-5E69-4022-BFE7-A846F549F939" xmlns:feel="http://www.omg.org/spec/DMN/20180521/FEEL/" xmlns:kie="http://www.drools.org/kie/dmn/1.2" xmlns:dmndi="http://www.omg.org/spec/DMN/20180521/DMNDI/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="_5FB9E701-84C1-4BAB-BC53-9AD19C20C762" name="Untitled" typeLanguage="http://www.omg.org/spec/DMN/20180521/FEEL/" namespace="https://kiegroup.org/dmn/_E5C88D53-5E69-4022-BFE7-A846F549F939">\n  <dmn:extensionElements/>\n  <dmn:inputData id="_273B8E0C-95DC-4FB7-849B-D44C0237075D" name="InputData-1">\n    <dmn:extensionElements/>\n    <dmn:variable id="_6A96A904-690F-4045-BC03-1A7AA494D917" name="InputData-1"/>\n  </dmn:inputData>\n  <dmndi:DMNDI>\n    <dmndi:DMNDiagram id="_85F007DB-91A8-4FA7-BDF8-8E28E0209211" name="DRG">\n      <di:extension>\n        <kie:ComponentsWidthsExtension/>\n      </di:extension>\n      <dmndi:DMNShape id="dmnshape-drg-_273B8E0C-95DC-4FB7-849B-D44C0237075D" dmnElementRef="_273B8E0C-95DC-4FB7-849B-D44C0237075D" isCollapsed="false">\n        <dmndi:DMNStyle>\n          <dmndi:FillColor red="255" green="255" blue="255"/>\n          <dmndi:StrokeColor red="0" green="0" blue="0"/>\n          <dmndi:FontColor red="0" green="0" blue="0"/>\n        </dmndi:DMNStyle>\n        <dc:Bounds x="622" y="179" width="100" height="50"/>\n        <dmndi:DMNLabel/>\n      </dmndi:DMNShape>\n    </dmndi:DMNDiagram>\n  </dmndi:DMNDI>\n</dmn:definitions>',
+              },
+            ],
+          },
+        })
+      );
+      input.value = "";
+    }
+    function dmnresult() {
+      socket.send(
+        JSON.stringify({
+          method: 1,
+          payload: {
+            mainURI: "Untitled.dmn",
+            resources: [
+              {
+                URI: "Untitled.dmn",
+                content:
+                  '<?xml version="1.0" encoding="UTF-8"?>\n<dmn:definitions xmlns:dmn="http://www.omg.org/spec/DMN/20180521/MODEL/" xmlns="https://kiegroup.org/dmn/_E5C88D53-5E69-4022-BFE7-A846F549F939" xmlns:feel="http://www.omg.org/spec/DMN/20180521/FEEL/" xmlns:kie="http://www.drools.org/kie/dmn/1.2" xmlns:dmndi="http://www.omg.org/spec/DMN/20180521/DMNDI/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="_5FB9E701-84C1-4BAB-BC53-9AD19C20C762" name="Untitled" typeLanguage="http://www.omg.org/spec/DMN/20180521/FEEL/" namespace="https://kiegroup.org/dmn/_E5C88D53-5E69-4022-BFE7-A846F549F939">\n  <dmn:extensionElements/>\n  <dmn:inputData id="_273B8E0C-95DC-4FB7-849B-D44C0237075D" name="InputData-1">\n    <dmn:extensionElements/>\n    <dmn:variable id="_6A96A904-690F-4045-BC03-1A7AA494D917" name="InputData-1"/>\n  </dmn:inputData>\n  <dmndi:DMNDI>\n    <dmndi:DMNDiagram id="_85F007DB-91A8-4FA7-BDF8-8E28E0209211" name="DRG">\n      <di:extension>\n        <kie:ComponentsWidthsExtension/>\n      </di:extension>\n      <dmndi:DMNShape id="dmnshape-drg-_273B8E0C-95DC-4FB7-849B-D44C0237075D" dmnElementRef="_273B8E0C-95DC-4FB7-849B-D44C0237075D" isCollapsed="false">\n        <dmndi:DMNStyle>\n          <dmndi:FillColor red="255" green="255" blue="255"/>\n          <dmndi:StrokeColor red="0" green="0" blue="0"/>\n          <dmndi:FontColor red="0" green="0" blue="0"/>\n        </dmndi:DMNStyle>\n        <dc:Bounds x="622" y="179" width="100" height="50"/>\n        <dmndi:DMNLabel/>\n      </dmndi:DMNShape>\n    </dmndi:DMNDiagram>\n  </dmndi:DMNDI>\n</dmn:definitions>',
+              },
+            ],
+          },
+        })
+      );
+      input.value = "";
+    }
+    function schema() {
+      socket.send(
+        JSON.stringify({
+          method: 2,
+          payload: {
+            mainURI: "Untitled.dmn",
+            resources: [
+              {
+                URI: "Untitled.dmn",
+                content:
+                  '<?xml version="1.0" encoding="UTF-8"?>\n<dmn:definitions xmlns:dmn="http://www.omg.org/spec/DMN/20180521/MODEL/" xmlns="https://kiegroup.org/dmn/_E5C88D53-5E69-4022-BFE7-A846F549F939" xmlns:feel="http://www.omg.org/spec/DMN/20180521/FEEL/" xmlns:kie="http://www.drools.org/kie/dmn/1.2" xmlns:dmndi="http://www.omg.org/spec/DMN/20180521/DMNDI/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="_5FB9E701-84C1-4BAB-BC53-9AD19C20C762" name="Untitled" typeLanguage="http://www.omg.org/spec/DMN/20180521/FEEL/" namespace="https://kiegroup.org/dmn/_E5C88D53-5E69-4022-BFE7-A846F549F939">\n  <dmn:extensionElements/>\n  <dmn:inputData id="_273B8E0C-95DC-4FB7-849B-D44C0237075D" name="InputData-1">\n    <dmn:extensionElements/>\n    <dmn:variable id="_6A96A904-690F-4045-BC03-1A7AA494D917" name="InputData-1"/>\n  </dmn:inputData>\n  <dmndi:DMNDI>\n    <dmndi:DMNDiagram id="_85F007DB-91A8-4FA7-BDF8-8E28E0209211" name="DRG">\n      <di:extension>\n        <kie:ComponentsWidthsExtension/>\n      </di:extension>\n      <dmndi:DMNShape id="dmnshape-drg-_273B8E0C-95DC-4FB7-849B-D44C0237075D" dmnElementRef="_273B8E0C-95DC-4FB7-849B-D44C0237075D" isCollapsed="false">\n        <dmndi:DMNStyle>\n          <dmndi:FillColor red="255" green="255" blue="255"/>\n          <dmndi:StrokeColor red="0" green="0" blue="0"/>\n          <dmndi:FontColor red="0" green="0" blue="0"/>\n        </dmndi:DMNStyle>\n        <dc:Bounds x="622" y="179" width="100" height="50"/>\n        <dmndi:DMNLabel/>\n      </dmndi:DMNShape>\n    </dmndi:DMNDiagram>\n  </dmndi:DMNDI>\n</dmn:definitions>',
+              },
+            ],
+          },
+        })
+      );
       input.value = "";
     }
   </script>
 </html>
+
+<!-- {"mainURI":"Untitled.dmn","resources":[{"URI":"Untitled.dmn","content":"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<dmn:definitions xmlns:dmn=\"http://www.omg.org/spec/DMN/20180521/MODEL/\" xmlns=\"https://kiegroup.org/dmn/_E5C88D53-5E69-4022-BFE7-A846F549F939\" xmlns:feel=\"http://www.omg.org/spec/DMN/20180521/FEEL/\" xmlns:kie=\"http://www.drools.org/kie/dmn/1.2\" xmlns:dmndi=\"http://www.omg.org/spec/DMN/20180521/DMNDI/\" xmlns:di=\"http://www.omg.org/spec/DMN/20180521/DI/\" xmlns:dc=\"http://www.omg.org/spec/DMN/20180521/DC/\" id=\"_5FB9E701-84C1-4BAB-BC53-9AD19C20C762\" name=\"Untitled\" typeLanguage=\"http://www.omg.org/spec/DMN/20180521/FEEL/\" namespace=\"https://kiegroup.org/dmn/_E5C88D53-5E69-4022-BFE7-A846F549F939\">\n  <dmn:extensionElements/>\n  <dmn:inputData id=\"_273B8E0C-95DC-4FB7-849B-D44C0237075D\" name=\"InputData-1\">\n    <dmn:extensionElements/>\n    <dmn:variable id=\"_6A96A904-690F-4045-BC03-1A7AA494D917\" name=\"InputData-1\"/>\n  </dmn:inputData>\n  <dmndi:DMNDI>\n    <dmndi:DMNDiagram id=\"_85F007DB-91A8-4FA7-BDF8-8E28E0209211\" name=\"DRG\">\n      <di:extension>\n        <kie:ComponentsWidthsExtension/>\n      </di:extension>\n      <dmndi:DMNShape id=\"dmnshape-drg-_273B8E0C-95DC-4FB7-849B-D44C0237075D\" dmnElementRef=\"_273B8E0C-95DC-4FB7-849B-D44C0237075D\" isCollapsed=\"false\">\n        <dmndi:DMNStyle>\n          <dmndi:FillColor red=\"255\" green=\"255\" blue=\"255\"/>\n          <dmndi:StrokeColor red=\"0\" green=\"0\" blue=\"0\"/>\n          <dmndi:FontColor red=\"0\" green=\"0\" blue=\"0\"/>\n        </dmndi:DMNStyle>\n        <dc:Bounds x=\"622\" y=\"179\" width=\"100\" height=\"50\"/>\n        <dmndi:DMNLabel/>\n      </dmndi:DMNShape>\n    </dmndi:DMNDiagram>\n  </dmndi:DMNDI>\n</dmn:definitions>"}]} -->
