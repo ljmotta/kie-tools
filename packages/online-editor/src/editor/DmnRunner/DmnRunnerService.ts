@@ -15,6 +15,7 @@
  */
 
 import { DmnResult, DmnSchema } from "@kie-tools/form-dmn";
+import { NotificationSeverity } from "@kie-tools-core/notifications/dist/api";
 
 export interface DmnRunnerModelResource {
   URI: string;
@@ -25,6 +26,23 @@ export interface DmnRunnerModelPayload {
   mainURI: string;
   resources: DmnRunnerModelResource[];
   context?: any;
+}
+
+interface DmnValidation {
+  severity: NotificationSeverity;
+  messageType: string;
+  message: string;
+}
+
+enum ExtendedServicesSocketMethods {
+  VALIDATE,
+  DMNRESULT,
+  SCHEMA,
+}
+
+export interface ExtendedServicesSocket {
+  method: ExtendedServicesSocketMethods;
+  payload: DmnRunnerModelPayload;
 }
 
 export class DmnRunnerService {
@@ -54,7 +72,7 @@ export class DmnRunnerService {
     return await response.json();
   }
 
-  public async validate(payload: DmnRunnerModelPayload): Promise<[]> {
+  public async validate(payload: DmnRunnerModelPayload): Promise<DmnValidation[]> {
     if (!this.isPayloadValid(payload)) {
       return [];
     }

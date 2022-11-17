@@ -141,7 +141,7 @@ export function DmnRunnerProvider(props: PropsWithChildren<Props>) {
         };
 
         service.validate(payload).then((validationResults) => {
-          const notifications: Notification[] = validationResults.map((validationResult: any) => ({
+          const notifications: Notification[] = validationResults.map((validationResult) => ({
             type: "PROBLEM",
             path: "",
             severity: validationResult.severity,

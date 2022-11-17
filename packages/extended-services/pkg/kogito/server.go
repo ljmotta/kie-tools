@@ -20,7 +20,9 @@ import (
 	"bufio"
 	"context"
 	"crypto/tls"
+	"io"
 	"net"
+	"strings"
 
 	"encoding/json"
 	"fmt"
@@ -37,6 +39,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 	"github.com/kiegroup/kie-tools/packages/extended-services/pkg/metadata"
 	"github.com/phayes/freeport"
 )
@@ -89,7 +92,10 @@ func (p *Proxy) Start() {
 	router := mux.NewRouter()
 	router.PathPrefix("/devsandbox").HandlerFunc(p.devSandboxHandler())
 	router.PathPrefix("/ping").HandlerFunc(p.pingHandler())
-	router.PathPrefix("/").HandlerFunc(p.jitExecutorHandler())
+	router.PathPrefix("/test").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "websockets.html")
+	})
+	router.PathPrefix("/jitdmn").HandlerFunc(p.jitExecutorHandler())
 
 	addr := metadata.IP + ":" + p.Port
 
@@ -213,21 +219,81 @@ func (p *Proxy) devSandboxHandler() func(rw http.ResponseWriter, req *http.Reque
 
 func (p *Proxy) jitExecutorHandler() func(rw http.ResponseWriter, req *http.Request) {
 	return func(rw http.ResponseWriter, req *http.Request) {
-		if req.Method == "OPTIONS" {
-			rw.Header().Add("Access-Control-Allow-Origin", "*")
-			rw.Header().Add("Access-Control-Allow-Methods", "*")
-			rw.Header().Add("Access-Control-Allow-Headers", "*")
+		// upgrade to websocket
+		var upgrader = websocket.Upgrader{}
+		conn, err := upgrader.Upgrade(rw, req, nil)
+		if err != nil {
+			log.Print("upgrade to websocket: ", err)
 			return
 		}
+		defer conn.Close()
 
-		target, err := url.Parse(p.URL)
-		if err != nil {
-			log.Fatal(err)
+		/**
+		sandbox send a request to ping.
+		ping reply -> Started: true
+		kie sandbox iniciate websocket on /jitdmn/*
+
+		save the request path *
+		send the request payload to quarkus to the same path
+		retrieve quarkus response
+		send request back with quarkus response.
+		**/
+
+		for {
+			receive := &JitDmnWebSocketReceive{}
+			err := conn.ReadJSON(&receive)
+			if err != nil {
+				log.Println("read failed:", err)
+			}
+
+			origin, err := url.Parse(p.URL)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			req.Host = origin.Host
+			req.URL.Host = origin.Host
+			req.URL.Scheme = origin.Scheme
+			req.RequestURI = ""
+			// forward body
+			req.Body = io.NopCloser(strings.NewReader(string(receive.Payload)))
+
+			resp, err := http.DefaultClient.Do(req)
+			if err != nil {
+				response := &JitDmnWebSocketResponse{
+					Method:   receive.Method,
+					Status:   500,
+					Response: "",
+				}
+				err = conn.WriteJSON(response)
+				// send through WEBSOCKET
+				fmt.Fprint(rw, err)
+			}
+
+			if resp == nil {
+				return
+			}
+
+			defer resp.Body.Close()
+			bodyBytes, err := io.ReadAll(resp.Body)
+			if err != nil {
+				log.Fatal(err)
+			}
+			bodyString := string(bodyBytes)
+			response := &JitDmnWebSocketResponse{
+				Method:   receive.Method,
+				Status:   resp.StatusCode,
+				Response: bodyString,
+			}
+			err = conn.WriteJSON(response)
+			if err != nil {
+				log.Println("write failed:", err)
+				break
+			}
+
+			time.Sleep(200)
 		}
-		proxy := httputil.NewSingleHostReverseProxy(target)
 
-		req.Host = req.URL.Host
-		proxy.ServeHTTP(rw, req)
 	}
 }
 
