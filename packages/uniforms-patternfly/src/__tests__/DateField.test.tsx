@@ -39,9 +39,9 @@ test("<DateField> - renders a input with correct id (specified)", () => {
   expect(screen.getByTestId("date-field")).toBeInTheDocument();
   expect(screen.getByTestId("date-picker").getAttribute("id")).toBe("date-picker-y");
   // TimePicker component id is in an inside div
-  expect(screen.getByTestId("time-picker").getElementsByClassName("pf-c-select")[0].getAttribute("id")).toBe(
-    "time-picker-y"
-  );
+  expect(
+    screen.getByTestId("time-picker").getElementsByClassName("pf-c-input-group")[0].children[0].getAttribute("id")
+  ).toBe("time-picker-y");
 });
 
 test("<DateField> - renders a input with correct name", () => {
