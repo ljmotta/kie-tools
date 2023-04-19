@@ -158,18 +158,18 @@ function OutputsBeeTable({ id, i18n, outputs, rows, scrollableParentRef }: Outpu
       ) {
         return [
           {
-            originalId: uuid + `-parent-${output?.name}`,
+            originalId: `-parent-${output?.name}-` + generateUuid(),
             label: "",
-            accessor: `output-parent-${output?.name}` as any,
+            accessor: (`output-parent-${output?.name}-` + generateUuid()) as any,
             dataType: undefined as any,
             isRowIndexColumn: false,
             groupType: "dmn-runner-output",
             minWidth: DMN_RUNNER_OUTPUT_COLUMN_MIN_WIDTH,
             columns: [
               {
-                originalId: uuid + `${output?.name}`,
+                originalId: `${output?.name}-` + generateUuid(),
                 label: output?.name ?? "",
-                accessor: `output-${output?.name}` as any,
+                accessor: (`output-${output?.name}-` + generateUuid()) as any,
                 dataType: output?.dataType ?? DmnBuiltInDataType.Undefined,
                 isRowIndexColumn: false,
                 groupType: "dmn-runner-output",
@@ -184,16 +184,16 @@ function OutputsBeeTable({ id, i18n, outputs, rows, scrollableParentRef }: Outpu
       if (Array.isArray(outputEntry)) {
         return [
           {
-            originalId: uuid + `${output?.name}}`,
+            originalId: `${output?.name}}-` + generateUuid(),
             label: `${output?.name}`,
-            accessor: `output-array-parent-${output?.name}` as any,
+            accessor: (`output-array-parent-${output?.name}-` + generateUuid()) as any,
             dataType: output?.dataType ?? DmnBuiltInDataType.Undefined,
             isRowIndexColumn: false,
             groupType: "dmn-runner-output",
             columns: outputEntry.map((entry, entryIndex) => ({
-              originalId: uuid + `${entryIndex}`,
+              originalId: `${entryIndex}-` + generateUuid(),
               label: `[${entryIndex}]`,
-              accessor: `output-array-${entryIndex}` as any,
+              accessor: (`output-array-${entryIndex}-` + generateUuid()) as any,
               dataType: undefined as any,
               groupType: "dmn-runner-output",
               isRowIndexColumn: false,
@@ -207,9 +207,9 @@ function OutputsBeeTable({ id, i18n, outputs, rows, scrollableParentRef }: Outpu
       if (typeof outputEntry === "object") {
         return [
           {
-            originalId: uuid + `${output?.name}`,
+            originalId: `${output?.name}-` + generateUuid(),
             label: output?.name ?? "",
-            accessor: `output-object-parent-${output?.name}` as any,
+            accessor: (`output-object-parent-${output?.name}-` + generateUuid()) as any,
             dataType: output?.dataType ?? DmnBuiltInDataType.Undefined,
             isRowIndexColumn: false,
             groupType: "dmn-runner-output",
@@ -219,9 +219,9 @@ function OutputsBeeTable({ id, i18n, outputs, rows, scrollableParentRef }: Outpu
                 Object.values(property).find((value) => value === entryKey)
               );
               return {
-                originalId: uuid + `${entryKey}`,
+                originalId: `${entryKey}-` + generateUuid(),
                 label: entryKey,
-                accessor: `output-object-${entryKey}` as any,
+                accessor: (`output-object-${entryKey}-` + generateUuid()) as any,
                 dataType: filteredOutputs?.dataType ?? DmnBuiltInDataType.Undefined,
                 isRowIndexColumn: false,
                 groupType: "dmn-runner-output",
