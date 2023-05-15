@@ -95,9 +95,9 @@ export const Unitables = ({
     if (child.tagName === "svg") {
       return;
     }
-    if (child.style) {
-      child.style.height = "60px";
-    }
+    // if (child.style) {
+    //   child.style.height = "60px";
+    // }
     if (!child.childNodes) {
       return;
     }

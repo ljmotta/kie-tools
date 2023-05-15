@@ -59,6 +59,7 @@ export class UnitablesJsonSchemaBridge extends JSONSchemaBridge {
       field.itemProps = {
         style: { width: DEFAULT_TIME_CELL_WIDTH },
       };
+      field.bridge = this;
     } else if (!field.type) {
       field.type = "string";
     }
