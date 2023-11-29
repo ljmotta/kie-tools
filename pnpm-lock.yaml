@@ -5844,6 +5844,9 @@ importers:
       "@playwright/test":
         specifier: ^1.38.1
         version: 1.38.1
+      buildkite-test-collector:
+        specifier: ^1.6.4
+        version: 1.6.4
       rimraf:
         specifier: ^3.0.2
         version: 3.0.2
@@ -24762,6 +24765,17 @@ packages:
       - debug
     dev: false
 
+  /axios@1.6.2:
+    resolution:
+      { integrity: sha512-7i24Ri4pmDRfJTR7LDBhsOTtcm+9kjX5WiY1X3wIisx6G9So3pfMkEiU7emUBe46oceVImccTEM3k6C5dbVW8A== }
+    dependencies:
+      follow-redirects: 1.15.3
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+    dev: true
+
   /azure-devops-node-api@11.0.1:
     resolution:
       { integrity: sha512-YMdjAw9l5p/6leiyIloxj3k7VIvYThKjvqgiQn88r3nhT93ENwsoDS3A83CyJ4uTWzCZ5f5jCi6c27rTU5Pz+A== }
@@ -25587,6 +25601,20 @@ packages:
     resolution:
       { integrity: sha512-9q/rDEGSb/Qsvv2qvzIzdluL5k7AaJOTrw23z9reQthrbF7is4CtlT0DXyO1oei2DCp4uojjzQ7igaSHp1kAEQ== }
     engines: { node: ">=0.2.0" }
+    dev: true
+
+  /buildkite-test-collector@1.6.4:
+    resolution:
+      { integrity: sha512-m6ogBCRZENg4fG5JYW7yzEJ6XD+iHj7EXD83+Y3QH8l79mO04kQjvFe69iKNDNxJT7twYYoJ1wQjpm3Xp5xGzQ== }
+    engines: { npm: ">=7.0.0" }
+    dependencies:
+      axios: 1.6.2
+      dotenv: 16.3.1
+      request-spy: 0.0.10
+      strip-ansi: 6.0.1
+      uuid: 8.3.2
+    transitivePeerDependencies:
+      - debug
     dev: true
 
   /builtin-status-codes@3.0.0:
@@ -30194,6 +30222,17 @@ packages:
         optional: true
     dependencies:
       debug: 4.3.1
+
+  /follow-redirects@1.15.3:
+    resolution:
+      { integrity: sha512-1VzOtuEM8pC9SFU1E+8KfTjZyMztRsgEfwQl44z8A25uy13jSzTj6dyK2Df52iV0vgHCfBwLhDWevLn95w5v6Q== }
+    engines: { node: ">=4.0" }
+    peerDependencies:
+      debug: "*"
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: true
 
   /for-each@0.3.3:
     resolution:
@@ -35372,6 +35411,11 @@ packages:
     resolution:
       { integrity: sha512-QtYk0gupWEn2+iB+DDRt1L+WbcNYvJRaHdih/dcqthOa1DbnREUGSs2WGcW478GNYpElflo/yybZXu0sTiRXHg== }
 
+  /monkeypatch@1.0.0:
+    resolution:
+      { integrity: sha512-6tG0IrCUUIBuAspnbdmOAd+D/AptB/ya9JLujp88NIAuFuTGdGvCKtDkc6pwNOcIJ6nKLm3FjJlaCdx8vr3r2w== }
+    dev: true
+
   /morgan@1.10.0:
     resolution:
       { integrity: sha512-AbegBVI4sh6El+1gNwvD5YIck7nSA36weD7xvIxG4in80j/UoK8AEGaWnnz8v1GxonMCltmlNs5ZKbGvl9b1XQ== }
@@ -39293,6 +39337,13 @@ packages:
       request-promise-core: 1.1.4(request@2.88.2)
       stealthy-require: 1.1.1
       tough-cookie: 2.5.0
+    dev: true
+
+  /request-spy@0.0.10:
+    resolution:
+      { integrity: sha512-va+4vLamK9Pwu/WJnJrQcTjCjYdIcl0KDKOKEkfvNmer4f+K+OhgbpU4DCiPyzBGnTpYXbrVLrnD8O5fS/cmKA== }
+    dependencies:
+      monkeypatch: 1.0.0
     dev: true
 
   /request@2.88.2:
