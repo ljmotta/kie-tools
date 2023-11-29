@@ -242,7 +242,7 @@ jobs:
         uses: ./.github/actions/upload-ci-reports-and-artifacts
 
       - name: "Upload JUNIT end-to-end tests results to Buildkite (`main` only)"
-        if: always() && !cancelled() && steps.setup_build_mode.outputs.mode != 'none' && !github.event.pull_request
+        if: always() && !cancelled()
         shell: bash
         env:
           BUILDKITE_ANALYTICS_TOKEN: ${{ secrets.BUILDKITE_TOKEN }}
@@ -265,7 +265,7 @@ jobs:
             https://analytics-api.buildkite.com/v1/uploads
 
       - name: "Upload JSON end-to-end tests results to Buildkite (`main` only)"
-        if: always() && !cancelled() && steps.setup_build_mode.outputs.mode != 'none' && !github.event.pull_request
+        if: always() && !cancelled()
         shell: bash
         env:
           BUILDKITE_ANALYTICS_TOKEN: ${{ secrets.BUILDKITE_TOKEN }}
