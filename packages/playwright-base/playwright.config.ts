@@ -36,9 +36,9 @@ export default defineConfig({
   reporter: process.env.CI
     ? [
         ["github"],
-        ["junit", { outputFile: "./dist-e2e-tests/junit-report-e2e.xml" }],
         ["html", { outputFolder: "./dist-e2e-tests/reports/", open: "never" }],
         ["list"],
+        ["json", { outputFile: "./dist-e2e-tests/json-report-e2e.json" }],
       ]
     : [["html", { outputFolder: "./dist-e2e-tests/reports/", open: "never" }], ["list"]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

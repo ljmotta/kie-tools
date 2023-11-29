@@ -35,6 +35,9 @@ outputs:
   end_to_end_tests_reports_patterns_for_find:
     description: ""
     value: ${{ steps.ci_patterns.outputs.end_to_end_tests_reports_patterns_for_find }}
+  end_to_end_tests_reports_patterns_for_find_json:
+    description: ""
+    value: ${{ steps.ci_patterns.outputs.end_to_end_tests_reports_patterns_for_find_json }}
 
 runs:
   using: "composite"
@@ -80,12 +83,21 @@ runs:
 
           await outputPatternsPrefixedWithRoots("tests_reports_patterns", path.join(cwd, "./.github/supporting-files/ci/tests-reports-patterns.txt"));
           await outputPatternsPrefixedWithRoots("end_to_end_tests_reports_patterns", path.join(cwd, "./.github/supporting-files/ci/end-to-end-tests-reports-patterns.txt"));
+          await outputPatternsPrefixedWithRoots("end_to_end_tests_reports_patterns_json", path.join(cwd, "./.github/supporting-files/ci/end-to-end-tests-reports-patterns-json.txt"));
           await outputPatternsPrefixedWithRoots("end_to_end_tests_artifacts_patterns", path.join(cwd, "./.github/supporting-files/ci/end-to-end-tests-artifacts-patterns.txt"));
           await outputPatternsPrefixedWithRoots("build_artifacts_patterns", path.join(cwd, "./.github/supporting-files/ci/build-artifacts-patterns.txt"));
 
           core.setOutput(
             "end_to_end_tests_reports_patterns_for_find", 
             prefixWithRoots(fs.readFileSync("./.github/supporting-files/ci/end-to-end-tests-reports-patterns.txt", "utf-8"))
+              .split("\n")
+              .map(p => `-path '${p}'`)
+              .join(" -o ")
+          );
+
+          core.setOutput(
+            "end_to_end_tests_reports_patterns_for_find_json", 
+            prefixWithRoots(fs.readFileSync("./.github/supporting-files/ci/end-to-end-tests-reports-patterns-json.txt", "utf-8"))
               .split("\n")
               .map(p => `-path '${p}'`)
               .join(" -o ")
@@ -103,3 +115,4 @@ runs:
         echo "${{ steps.ci_patterns.outputs.end_to_end_tests_artifacts_patterns }}" 
         echo "${{ steps.ci_patterns.outputs.build_artifacts_patterns }}"
         echo "${{ steps.ci_patterns.outputs.end_to_end_tests_reports_patterns_for_find }}"
+        echo "${{ steps.ci_patterns.outputs.end_to_end_tests_reports_patterns_for_find_json }}"
