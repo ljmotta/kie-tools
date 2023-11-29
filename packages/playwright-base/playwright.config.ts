@@ -39,6 +39,7 @@ export default defineConfig({
         ["html", { outputFolder: "./dist-e2e-tests/reports/", open: "never" }],
         ["list"],
         ["json", { outputFile: "./dist-e2e-tests/json-report-e2e.json" }],
+        ["buildkite-test-collector/playwright/reporter"],
       ]
     : [["html", { outputFolder: "./dist-e2e-tests/reports/", open: "never" }], ["list"]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

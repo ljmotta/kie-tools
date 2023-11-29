@@ -1,2 +1,3 @@
 **/dist-tests/junit-report*.xml
+**/dist-tests/json-report*.json
 **/target/surefire-reports/TEST-*.xml
