@@ -1,1 +1,1 @@
-**/dist-e2e-tests/json-report*.xml
+**/dist-e2e-tests/json-report*.json
