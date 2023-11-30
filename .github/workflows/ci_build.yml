@@ -79,6 +79,17 @@ jobs:
         if: steps.setup_build_mode.outputs.mode != 'none'
         uses: ./.github/actions/setup-env
 
+      - name: "Setup BROWSERSTACK yml"
+        if: steps.setup_build_mode.outputs.mode == 'full'
+        env:
+          TEST_OBSERVABILITY_USER: ${{ secrets.BROWSERSTACK_OBSERVABILITY_USER }}
+          TEST_OBSERVABILITY_TOKEN: ${{ secrets.BROWSERSTACK_OBSERVABILITY_TOKEN }}
+          TEST_OBSERVABILITY_BUILD_NAME: ${{ github.ref_name }}
+        run: |
+          sed -i -es/BROWSER_STACK_OBSERVABILITY_USER/$TEST_OBSERVABILITY_USER/g browserstack.yml
+          sed -i -es/BROWSER_STACK_OBSERVABILITY_TOKEN/$TEST_OBSERVABILITY_TOKEN/g browserstack.yml
+          sed -i -es/SHA/$TEST_OBSERVABILITY_BUILD_NAME/g browserstack.yml
+
       - name: "FULL → Bootstrap"
         if: steps.setup_build_mode.outputs.mode == 'full'
         env:

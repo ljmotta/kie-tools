@@ -22,6 +22,7 @@
     "@nice-move/prettier-plugin-package-json": "^0.6.1",
     "@prettier/plugin-xml": "^2",
     "@types/node": "^18.13.0",
+    "browserstack-node-sdk": "^1.31.4",
     "filemanager-webpack-plugin": "^7.0.0",
     "husky": "^6.0.0",
     "postinstall-postinstall": "^2.1.0",

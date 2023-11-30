@@ -1,0 +1,7 @@
+userName: "BROWSER_STACK_OBSERVABILITY_USER"
+accessKey: "BROWSER_STACK_OBSERVABILITY_TOKEN"
+buildName: "SHA"
+projectName: "Tools"
+CUSTOM_TAG_1: "KIE_TOOLS"
+testObservability: true
+browserstackAutomation: false
