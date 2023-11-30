@@ -102,7 +102,7 @@ jobs:
           NODE_OPTIONS: "--max_old_space_size=4096"
           BUILDKITE_ANALYTICS_TOKEN: ${{ secrets.BUILDKITE_ANALYTICS_TOKEN }}
         run: >-
-          pnpm -r -F boxed-expression-component... --workspace-concurrency=1 build:prod
+          pnpm -r -F online-editor... --workspace-concurrency=1 build:prod
 
       - name: "PARTIAL → Bootstrap"
         if: steps.setup_build_mode.outputs.mode == 'partial'

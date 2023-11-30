@@ -41,7 +41,11 @@ export default defineConfig({
         ["junit", { outputFile: "./dist-e2e-tests/junit-report-e2e.xml" }],
         ["buildkite-test-collector/playwright/reporter"],
       ]
-    : [["html", { outputFolder: "./dist-e2e-tests/reports/", open: "never" }], ["list"]],
+    : [
+        ["html", { outputFolder: "./dist-e2e-tests/reports/", open: "never" }],
+        ["list"],
+        ["junit", { outputFile: "./dist-e2e-tests/junit-report-e2e.xml" }],
+      ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
