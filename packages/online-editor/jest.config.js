@@ -23,7 +23,11 @@ module.exports = {
       tsconfig: "<rootDir>/tsconfig.json",
     },
   },
-  reporters: ["default", ["jest-junit", { outputFile: "./dist-tests/junit-report.xml" }]],
+  reporters: [
+    "default",
+    "buildkite-test-collector/jest/reporter",
+    ["jest-junit", { outputFile: "./dist-tests/junit-report.xml" }],
+  ],
   moduleDirectories: ["node_modules", "src"],
   moduleFileExtensions: ["js", "jsx", "ts", "tsx"],
   setupFilesAfterEnv: ["./tests/unit/jest.setup.ts"],
