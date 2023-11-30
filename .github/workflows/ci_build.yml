@@ -102,7 +102,7 @@ jobs:
           NODE_OPTIONS: "--max_old_space_size=4096"
           BUILDKITE_ANALYTICS_TOKEN: ${{ secrets.BUILDKITE_ANALYTICS_TOKEN }}
         run: >-
-          pnpm -r -F online-editor... --workspace-concurrency=1 build:prod
+          pnpm -r -F boxed-expression-component... --workspace-concurrency=1 build:prod
 
       - name: "PARTIAL → Bootstrap"
         if: steps.setup_build_mode.outputs.mode == 'partial'
@@ -140,6 +140,24 @@ jobs:
         run: |
           pnpm -F "...[${{ steps.checkout_pr.outputs.base_sha }}]" --workspace-concurrency=1 build:prod
 
+      - name: "Upload JUNIT end-to-end tests results to BrowserStack (`main` only)"
+        if: always() && !cancelled()
+        shell: bash
+        env:
+          TEST_MANAGEMENT_API_TOKEN: ${{ secrets.BROWSER_STACK_TOKEN }}
+          TEST_MANAGEMENT_PROJECT_NAME: "Tools"
+          BUILDKITE_BRANCH: ${{ github.ref_name }}
+          BUILDKITE_MESSAGE: ${{ github.event.commits[0].message }}
+        run: |
+          eval "find -P * -type f ${{ steps.ci_patterns.outputs.end_to_end_tests_reports_patterns_for_find }}"
+          echo "---------------------------- starting upload -----------------------"
+          eval "find -P * -type f ${{ steps.ci_patterns.outputs.end_to_end_tests_reports_patterns_for_find }}" | xargs -I{} curl -X POST \
+            -u $TEST_MANAGEMENT_API_TOKEN \
+            -F project_name=$TEST_MANAGEMENT_PROJECT_NAME \
+            -F "file_path=@{}" \
+            -F "test_run_name=$GITHUB_SHA" \
+            https://test-management.browserstack.com/api/v1/import/results/xml/junit
+
       - name: "Upload JUNIT end-to-end tests results to Buildkite (`main` only)"
         if: always() && !cancelled()
         shell: bash
@@ -148,36 +166,11 @@ jobs:
           BUILDKITE_BRANCH: ${{ github.ref_name }}
           BUILDKITE_MESSAGE: ${{ github.event.commits[0].message }}
         run: |
-          echo $BUILDKITE_BRANCH
           eval "find -P * -type f ${{ steps.ci_patterns.outputs.end_to_end_tests_reports_patterns_for_find }}"
           echo "---------------------------- starting upload -----------------------"
           eval "find -P * -type f ${{ steps.ci_patterns.outputs.end_to_end_tests_reports_patterns_for_find }}" | xargs -I{} curl -X POST \
             -H "Authorization: Token token=\"$BUILDKITE_ANALYTICS_TOKEN\"" \
             -F "format=junit" \
-            -F "data=@{}" \
-            -F "run_env[CI]=github_actions" \
-            -F "run_env[key]=$GITHUB_ACTION-$GITHUB_RUN_NUMBER-$GITHUB_RUN_ATTEMPT" \
-            -F "run_env[number]=$GITHUB_RUN_NUMBER" \
-            -F "run_env[branch]=$BUILDKITE_BRANCH" \
-            -F "run_env[commit_sha]=$GITHUB_SHA" \
-            -F "run_env[message]=$BUILDKITE_MESSAGE" \
-            -F "run_env[url]=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            https://analytics-api.buildkite.com/v1/uploads
-
-      - name: "Upload JSON end-to-end tests results to Buildkite (`main` only)"
-        if: always() && !cancelled()
-        shell: bash
-        env:
-          BUILDKITE_ANALYTICS_TOKEN: ${{ secrets.BUILDKITE_TOKEN }}
-          BUILDKITE_BRANCH: ${{ github.ref_name }}
-          BUILDKITE_MESSAGE: ${{ github.event.commits[0].message }}
-        run: |
-          echo $BUILDKITE_BRANCH
-          eval "find -P * -type f ${{ steps.ci_patterns.outputs.end_to_end_tests_reports_patterns_for_find_json }}"
-          echo "---------------------------- starting upload -----------------------"
-          eval "find -P * -type f ${{ steps.ci_patterns.outputs.end_to_end_tests_reports_patterns_for_find_json }}" | xargs -I{} curl -X POST \
-            -H "Authorization: Token token=\"$BUILDKITE_ANALYTICS_TOKEN\"" \
-            -F "format=json" \
             -F "data=@{}" \
             -F "run_env[CI]=github_actions" \
             -F "run_env[key]=$GITHUB_ACTION-$GITHUB_RUN_NUMBER-$GITHUB_RUN_ATTEMPT" \

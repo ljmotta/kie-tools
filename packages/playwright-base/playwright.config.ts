@@ -38,7 +38,7 @@ export default defineConfig({
         ["github"],
         ["html", { outputFolder: "./dist-e2e-tests/reports/", open: "never" }],
         ["list"],
-        ["json", { outputFile: "./dist-e2e-tests/json-report-e2e.json" }],
+        ["junit", { outputFile: "./dist-e2e-tests/junit-report-e2e.xml" }],
         ["buildkite-test-collector/playwright/reporter"],
       ]
     : [["html", { outputFolder: "./dist-e2e-tests/reports/", open: "never" }], ["list"]],
