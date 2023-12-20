@@ -1,0 +1,88 @@
+name: Bug Report
+description: Report a bug to Apache Incubator KIE Tools
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The issue list is reserved exclusively for bug reports and feature requests.
+
+        For non-technical support or general questions, you can email [dev].
+
+        Please ensure your bug wasn't solved on our [last release](https://github.com/apache/incubator-kie-tools/releases).
+
+        Try to search if your bug is already tracked or we have already working on it on our [issues repository](https://github.com/apache/incubator-kie-issues/issues) or [board](https://github.com/orgs/apache/projects/295/views/5?filterQuery=).
+
+  - type: input
+    attributes:
+      label: Version
+      description: |
+        Which version are you using?
+      placeholder: |
+        e.g. 5.2.2
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Package
+      description: |
+        Where did you see the bug?
+      placeholder: |
+        e.g. BPMN, DMN Chrome Extension, KIE DMN Editor VS Code Extension, KIE Sandbox, build step, etc
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Reproducer
+      description: |
+        Video, logs, images...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: |
+        The steps...
+      placeholder: |
+        1. Created a DMN from scrath
+        2. Created a Decision node
+        3. Add a Boxed Context
+        4. ...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Current Behavior
+      description: What you're experiencing.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Environment
+      description: |
+        e.g.
+          - **OS**: Windows 11 22621.2861
+          - **Browser**: Chrome 120.0.6099.72
+          - **VS Code**: 1.85.1
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Any additional information
+    validations:
+      required: false

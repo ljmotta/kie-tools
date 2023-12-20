@@ -1,0 +1,20 @@
+name: Feature Request
+description: Request a new feature from Apache Incupator KIE Tools
+title: "[Feature] "
+labels: [new-feature]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The issue list is reserved exclusively for bug reports and feature requests.
+
+        For non-technical support or general questions, you can email [dev].
+
+        Try to search if your feature request is already on our tracked on our [issues repository](https://github.com/apache/incubator-kie-issues/issues) on our [board](https://github.com/orgs/apache/projects/295/views/5?filterQuery=).
+
+  - type: textarea
+    attributes:
+      label: Feature description
+      render: markdown
+    validations:
+      required: true
