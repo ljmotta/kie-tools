@@ -18,7 +18,33 @@
  */
 
 import * as React from "react";
+import { DescriptionField, LabelField } from "./Fields";
+import { ExpressionPath } from "../../boxedExpressions/getBeeMap";
 
-export function LabelDescriptionCell() {
-  return <></>;
+export function LabelDescriptionCell({
+  description,
+  expressionPath,
+  isReadonly,
+  label,
+  onChangeDescription,
+  onChangeLabel,
+}: {
+  description: string;
+  expressionPath: ExpressionPath[];
+  label: string;
+  isReadonly: boolean;
+  onChangeDescription: () => void;
+  onChangeLabel: () => void;
+}) {
+  return (
+    <>
+      <DescriptionField
+        isReadonly={isReadonly}
+        initialValue={description}
+        onChange={onChangeDescription}
+        expressionPath={expressionPath}
+      />
+      <LabelField label={label} onChange={onChangeLabel} />
+    </>
+  );
 }

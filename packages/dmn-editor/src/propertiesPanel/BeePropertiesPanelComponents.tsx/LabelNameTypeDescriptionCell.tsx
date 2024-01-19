@@ -18,7 +18,55 @@
  */
 
 import * as React from "react";
+import { UniqueNameIndex } from "../../Dmn15Spec";
+import { DescriptionField, LabelField, NameField, TypeRefField } from "./Fields";
+import { ExpressionPath } from "../../boxedExpressions/getBeeMap";
 
-export function LabelNameTypeDescriptionCell() {
-  return <></>;
+export function LabelNameTypeDescriptionCell({
+  allUniqueNames,
+  description,
+  dmnEditorRootElementRef,
+  expressionPath,
+  label,
+  id,
+  isReadonly,
+  name,
+  onChangeDescription,
+  onChangeLabel,
+  onChangeName,
+  onChangeTypeRef,
+  typeRef,
+}: {
+  allUniqueNames: UniqueNameIndex;
+  description: string;
+  dmnEditorRootElementRef: React.RefObject<HTMLElement>;
+  expressionPath: ExpressionPath[];
+  id: string;
+  isReadonly: boolean;
+  label: string;
+  name: string;
+  onChangeName: (newName: string) => void;
+  onChangeTypeRef: (newTypeRef: string) => void;
+  onChangeDescription: (newDescription: string, expressionPath: ExpressionPath[]) => void;
+  onChangeLabel: (newLabel: string) => void;
+  typeRef: string;
+}) {
+  return (
+    <>
+      <NameField isReadonly={isReadonly} id={id} name={name} allUniqueNames={allUniqueNames} onRename={onChangeName} />
+      <TypeRefField
+        isReadonly={isReadonly}
+        typeRef={typeRef}
+        dmnEditorRootElementRef={dmnEditorRootElementRef}
+        onChange={onChangeTypeRef}
+      />
+      <DescriptionField
+        isReadonly={isReadonly}
+        initialValue={description}
+        onChange={onChangeDescription}
+        expressionPath={expressionPath}
+      />
+      <LabelField label={label} onChange={onChangeLabel} />
+    </>
+  );
 }

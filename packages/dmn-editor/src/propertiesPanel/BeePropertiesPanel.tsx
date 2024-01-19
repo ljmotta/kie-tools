@@ -30,10 +30,12 @@ import { useDmnEditorDerivedStore } from "../store/DerivedStore";
 import { buildXmlHref } from "../xml/xmlHrefs";
 import { SingleNodeProperties } from "./SingleNodeProperties";
 import {
-  AllCellContent,
-  BeePanelType,
-  CellContent,
+  AllCells,
+  AllCellsByType,
+  BeePanelField,
+  CellType,
   ExpressionPath,
+  allCellsByType,
   generateBeeMap,
   getBeePropertiesPanel,
   getDmnObject,
@@ -54,6 +56,7 @@ import { useDmnEditor } from "../DmnEditorContext";
 import { InlineFeelNameInput } from "../feel/InlineFeelNameInput";
 import { AllExpressionTypes, AllExpressionsWithoutTypes } from "../dataTypes/DataTypeSpec";
 import { ClipboardCopy } from "@patternfly/react-core/dist/js/components/ClipboardCopy";
+import { LabelNameTypeDescriptionCell } from "./BeePropertiesPanelComponents.tsx/LabelNameTypeDescriptionCell";
 
 export function BeePropertiesPanel() {
   const dmnEditorStoreApi = useDmnEditorStoreApi();
@@ -103,77 +106,108 @@ export function BeePropertiesPanel() {
 
   /**
    * fix bug on unique names - decision table input
-                fix bug on <Undefined> data types
-                fix focus???
+    fix bug on <Undefined> data types
+    fix focus???
    */
 
-  // TODO: CHANGE TO IF/ELSE = REMOVE SWITCH!
-  // TODO CHECK ALL CASES! MISSING
-  const updateDmnObject = useCallback((dmnObject: AllExpressionsWithoutTypes, newContent: AllCellContent) => {
-    switch (newContent.type) {
-      case "literalExpression":
-        (dmnObject as DMN15__tLiteralExpression).text = newContent.text;
-        break;
-      case "context":
-        if (newContent.cell === "variable") {
-          if (newContent["@_name"]) {
-            (dmnObject as DMN15__tInformationItem)["@_name"] = newContent["@_name"];
-          }
-          if (newContent["@_typeRef"]) {
-            (dmnObject as DMN15__tInformationItem)["@_typeRef"] = newContent["@_typeRef"];
-          }
-        }
-        break;
-      case "decisionTable":
-        if (newContent.cell === "rule") {
-          (dmnObject as DMN15__tUnaryTests | DMN15__tLiteralExpression).text = newContent.text;
-        }
-        if (newContent.cell === "outputHeader") {
-          if (newContent["@_name"]) {
-            (dmnObject as DMN15__tOutputClause)["@_name"] = newContent["@_name"];
-          }
-          if (newContent["@_typeRef"]) {
-            (dmnObject as DMN15__tOutputClause)["@_typeRef"] = newContent["@_typeRef"];
-          }
-        }
-        if (newContent.cell === "inputHeader") {
-          if (newContent.inputExpression.text) {
-            (dmnObject as DMN15__tInputClause).inputExpression.text = newContent.inputExpression.text;
-          }
-          if (newContent.inputExpression["@_typeRef"]) {
-            (dmnObject as DMN15__tInputClause).inputExpression["@_typeRef"] = newContent.inputExpression?.["@_typeRef"];
-          }
-        }
-        break;
-      case "relation":
-        if (newContent.cell === "header") {
-          if (newContent["@_name"]) {
-            (dmnObject as DMN15__tInformationItem)["@_name"] = newContent["@_name"];
-          }
-          if (newContent["@_typeRef"]) {
-            (dmnObject as DMN15__tInformationItem)["@_typeRef"] = newContent["@_typeRef"];
-          }
-        }
-        if (newContent.cell === "content") {
-          (dmnObject as DMN15__tLiteralExpression).text = newContent.text;
-        }
-        break;
-      case "invocation":
-        if (newContent.cell === "parameter") {
-          if (newContent["@_name"]) {
-            (dmnObject as DMN15__tInformationItem)["@_name"] = newContent["@_name"];
-          }
-          if (newContent["@_typeRef"]) {
-            (dmnObject as DMN15__tInformationItem)["@_typeRef"] = newContent["@_typeRef"];
-          }
-        }
-        break;
+  const updateDmnObject = useCallback((dmnObject: AllExpressionsWithoutTypes, newContent: Partial<AllCells>) => {
+    if (newContent.type === "literalExpression") {
+      (dmnObject as DMN15__tLiteralExpression).text = newContent?.[CellType.CONTENT]?.text;
     }
+    if (newContent.type === "context") {
+      (dmnObject as DMN15__tInformationItem)["@_label"] = newContent?.[CellType.ROOT]?.["@_label"];
+      (dmnObject as DMN15__tInformationItem).description = newContent?.[CellType.ROOT]?.description;
+      if (newContent?.[CellType.VARIABLE]) {
+        (dmnObject as DMN15__tInformationItem)["@_typeRef"] = newContent[CellType.VARIABLE]?.["@_typeRef"];
+        if (newContent[CellType.VARIABLE]?.["@_name"]) {
+          (dmnObject as DMN15__tInformationItem)["@_name"] = newContent[CellType.VARIABLE]!["@_name"]!;
+        }
+      }
+    }
+
+    if (newContent.type === "decisionTable") {
+      if (newContent?.[CellType.ROOT]?.["@_label"]) {
+        // TODO
+      }
+      if (newContent?.[CellType.ROOT]?.description) {
+        // TODO
+      }
+      if (newContent?.[CellType.ROOT]) {
+        // TODO
+        if (newContent[CellType.ROOT]?.["@_aggregation"]) {
+          // TODO
+        }
+        if (newContent[CellType.ROOT]?.["@_hitPolicy"]) {
+          // TODO
+        }
+        if (newContent[CellType.ROOT]?.["@_outputLabel"]) {
+          // TODO
+        }
+      }
+      // if (newContent[CellType.INPUT_RULE]) {
+      //   (dmnObject as DMN15__tUnaryTests | DMN15__tLiteralExpression)["@_expressionLanguage"] =
+      //     newContent["@_expressionLanguage"];
+      //   (dmnObject as DMN15__tUnaryTests | DMN15__tLiteralExpression).text = newContent.text;
+      // }
+      // if (newContent.cell === "outputHeader") {
+      //   if (newContent["@_name"]) {
+      //     (dmnObject as DMN15__tOutputClause)["@_name"] = newContent["@_name"];
+      //   }
+      //   if (newContent["@_typeRef"]) {
+      //     (dmnObject as DMN15__tOutputClause)["@_typeRef"] = newContent["@_typeRef"];
+      //   }
+      // }
+      // if (newContent.cell === "inputHeader") {
+      //   if (newContent.inputExpression?.text) {
+      //     (dmnObject as DMN15__tInputClause).inputExpression.text = newContent.inputExpression.text;
+      //   }
+      //   if (newContent.inputExpression?.["@_typeRef"]) {
+      //     (dmnObject as DMN15__tInputClause).inputExpression["@_typeRef"] = newContent.inputExpression?.["@_typeRef"];
+      //   }
+      // }
+    }
+    // if (newContent.type === "relation") {
+    //   if (newContent.cell === "root") {
+    //     // TODO
+    //   }
+    //   if (newContent.cell === "header") {
+    //     if (newContent["@_name"]) {
+    //       (dmnObject as DMN15__tInformationItem)["@_name"] = newContent["@_name"];
+    //     }
+    //     if (newContent["@_typeRef"]) {
+    //       (dmnObject as DMN15__tInformationItem)["@_typeRef"] = newContent["@_typeRef"];
+    //     }
+    //   }
+    //   if (newContent.cell === "content") {
+    //     (dmnObject as DMN15__tLiteralExpression).text = newContent.text;
+    //   }
+    // }
+    // if (newContent.type === "invocation") {
+    //   if (newContent.cell === "root") {
+    //     // TODO
+    //   }
+    //   if (newContent.cell === "parameter") {
+    //     if (newContent["@_name"]) {
+    //       (dmnObject as DMN15__tInformationItem)["@_name"] = newContent["@_name"];
+    //     }
+    //     if (newContent["@_typeRef"]) {
+    //       (dmnObject as DMN15__tInformationItem)["@_typeRef"] = newContent["@_typeRef"];
+    //     }
+    //   }
+    // }
+    // if (newContent.type === "functionDefinition") {
+    //   if (newContent.cell === "root") {
+    //     // TODO
+    //   }
+    //   if (newContent.cell === "parameter") {
+    //     // TODO
+    //   }
+    // }
   }, []);
 
   const updateBee = useCallback(
-    <PropertiesPanel extends keyof CellContent>(
-      newContent: CellContent[PropertiesPanel],
+    <PropertiesPanel extends keyof any>(
+      newContent: Partial<any>,
       expressionPath = selectedObjectInfos?.expressionPath
     ) => {
       dmnEditorStoreApi.setState((state) => {
@@ -196,6 +230,14 @@ export function BeePropertiesPanel() {
     },
     [dmnEditorStoreApi, node?.data.index, selectedObjectInfos?.expressionPath, updateDmnObject]
   );
+
+  const whatSholdIRender = useMemo(() => {
+    if (!propertiesPanel) {
+      return [];
+    }
+
+    console.log(Object.values(propertiesPanel.cell));
+  }, [propertiesPanel]);
 
   return (
     <>
@@ -226,8 +268,58 @@ export function BeePropertiesPanel() {
                   </ClipboardCopy>
                 </FormGroup>
               </FormSection>
-              {propertiesPanel?.type === BeePanelType.LABEL_NAME_TYPE_DESCRIPTION_CELL && (
-                <FormSection title={propertiesPanel?.title ?? ""}>
+              {/* 
+                usar o selectedObjectPath?.type como index numa lista, e retornar quais propriedades tem.l
+
+                selectedObjectPath?.type = "literalExpression"
+                Lista de possibilidades[selectedObjectPath?.type]
+                  "description"
+                  "expressionLanguage"
+                  "label"
+                  "name"
+              */}
+              {}
+              {whatSholdIRender}
+              {/* {selectedObjectPath?.type === BeePanelType.LABEL_NAME_TYPE_DESCRIPTION_CELL && (
+                <FormSection title={propertiesPanel ?? ""}>
+                  <LabelNameTypeDescriptionCell
+                    allUniqueNames={allFeelVariableUniqueNames}
+                    description={(selectedObjectInfos?.cell as DMN15__tInformationItem)?.description?.__$$text ?? ""}
+                    dmnEditorRootElementRef={dmnEditorRootElementRef}
+                    expressionPath={selectedObjectInfos?.expressionPath ?? []}
+                    id={(selectedObjectInfos?.cell as DMN15__tInformationItem)?.["@_id"] ?? ""}
+                    isReadonly={isReadonly}
+                    label={(selectedObjectInfos?.cell as DMN15__tInformationItem)?.["@_label"] ?? ""}
+                    name={(selectedObjectInfos?.cell as DMN15__tInformationItem)?.["@_name"] ?? ""}
+                    onChangeDescription={(newDescription, expressionPath) => {
+                      updateBee<BeePanelType.LABEL_NAME_TYPE_DESCRIPTION_CELL>(
+                        {
+                          type: selectedObjectPath!.type as "context" | "relation" | "invocation",
+                          description: { __$$text: newDescription },
+                        },
+                        expressionPath
+                      );
+                    }}
+                    onChangeName={(newName) => {
+                      updateBee<BeePanelType.LABEL_NAME_TYPE_DESCRIPTION_CELL>({
+                        type: selectedObjectPath!.type as "context" | "relation" | "invocation",
+                        "@_name": newName,
+                      });
+                    }}
+                    onChangeLabel={(newLabel) => {
+                      updateBee<BeePanelType.LABEL_NAME_TYPE_DESCRIPTION_CELL>({
+                        type: selectedObjectPath!.type as "context" | "relation" | "invocation",
+                        "@_label": newLabel,
+                      });
+                    }}
+                    onChangeTypeRef={(newTypeRef) => {
+                      updateBee<BeePanelType.LABEL_NAME_TYPE_DESCRIPTION_CELL>({
+                        type: selectedObjectPath!.type as "context" | "relation" | "invocation",
+                        "@_typeRef": newTypeRef,
+                      });
+                    }}
+                    typeRef={(selectedObjectInfos?.cell as DMN15__tInformationItem)?.["@_typeRef"] ?? ""}
+                  />
                   <FormGroup label="Name">
                     <InlineFeelNameInput
                       enableAutoFocusing={false}
@@ -326,9 +418,9 @@ export function BeePropertiesPanel() {
                     />
                   </FormGroup>
                 </FormSection>
-              )}
-              {propertiesPanel?.type === BeePanelType.EXPLANGUAGE_LABEL_DESCRIPTION_TEXT_CELL && (
-                <FormSection title={propertiesPanel?.title ?? ""}>
+              )} */}
+              {/* {selectedObjectPath?.type === BeePanelType.EXPLANGUAGE_LABEL_DESCRIPTION_TEXT_CELL && (
+                <FormSection title={propertiesPanel ?? ""}>
                   <FormGroup label="Content">
                     <CellContentTextArea
                       initialValue={(selectedObjectInfos?.cell as DMN15__tLiteralExpression)?.text?.__$$text ?? ""}
@@ -340,8 +432,8 @@ export function BeePropertiesPanel() {
                   </FormGroup>
                 </FormSection>
               )}
-              {propertiesPanel?.type === BeePanelType.DECISION_TABLE_INPUT_HEADER_CELL && (
-                <FormSection title={propertiesPanel?.title ?? ""}>
+              {selectedObjectPath?.type === BeePanelType.DECISION_TABLE_INPUT_HEADER_CELL && (
+                <FormSection title={propertiesPanel ?? ""}>
                   <FormGroup label="Name">
                     <InlineFeelNameInput
                       enableAutoFocusing={false}
@@ -387,7 +479,7 @@ export function BeePropertiesPanel() {
                     />
                   </FormGroup>
                 </FormSection>
-              )}
+              )} */}
             </Form>
           </DrawerHead>
         </DrawerPanelContent>
@@ -399,10 +491,7 @@ export function BeePropertiesPanel() {
 function CellContentTextArea(props: {
   initialValue: string;
   type: AllExpressionTypes;
-  onChange: (
-    cellContent: CellContent[BeePanelType.EXPLANGUAGE_LABEL_DESCRIPTION_TEXT_CELL],
-    expressionPath: ExpressionPath[]
-  ) => void;
+  onChange: (cellContent: any, expressionPath: ExpressionPath[]) => void;
   expressionPath: ExpressionPath[];
   isReadonly: boolean;
 }) {
