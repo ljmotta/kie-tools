@@ -84,6 +84,15 @@ export function addStandaloneNode({
             ...variableBase,
           },
         },
+        [NODE_TYPES.alternativeInputData]: {
+          __$$element: "inputData",
+          "@_name": "New Input Data",
+          "@_id": newNodeId,
+          variable: {
+            "@_name": "New Input Data",
+            ...variableBase,
+          },
+        },
         [NODE_TYPES.knowledgeSource]: {
           __$$element: "knowledgeSource",
           "@_name": "New Knowledge Source",

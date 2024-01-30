@@ -19,6 +19,7 @@
 
 import * as React from "react";
 import {
+  AlternativeInputDataNodeSvg,
   BkmNodeSvg,
   DecisionNodeSvg,
   DecisionServiceNodeSvg,
@@ -53,6 +54,7 @@ export function RoundSvg({ children }: React.PropsWithChildren<{}>) {
 export function NodeIcon(nodeType?: NodeType) {
   return switchExpression(nodeType, {
     [NODE_TYPES.inputData]: InputDataIcon,
+    [NODE_TYPES.alternativeInputData]: AlternativeInputDataIcon,
     [NODE_TYPES.decision]: DecisionIcon,
     [NODE_TYPES.bkm]: BkmIcon,
     [NODE_TYPES.knowledgeSource]: KnowledgeSourceIcon,
@@ -68,6 +70,14 @@ export function InputDataIcon() {
   return (
     <RoundSvg>
       <InputDataNodeSvg {...nodeSvgProps} />
+    </RoundSvg>
+  );
+}
+
+export function AlternativeInputDataIcon() {
+  return (
+    <RoundSvg>
+      <AlternativeInputDataNodeSvg {...nodeSvgProps} />
     </RoundSvg>
   );
 }

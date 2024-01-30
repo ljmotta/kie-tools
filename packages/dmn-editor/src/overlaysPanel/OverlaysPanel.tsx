@@ -148,6 +148,17 @@ export function OverlaysPanel() {
             }
           />
         </FormGroup>
+        <FormGroup label={"Enable alternative input node"}>
+          <Switch
+            aria-label={"Change input node shape format"}
+            isChecked={diagram.overlays.enableAlternativeInputNode}
+            onChange={(newValue) =>
+              dmnEditorStoreApi.setState((state) => {
+                state.diagram.overlays.enableAlternativeInputNode = newValue;
+              })
+            }
+          />
+        </FormGroup>
       </Form>
     </>
   );

@@ -19,6 +19,7 @@
 
 export const NODE_TYPES = {
   inputData: "node_inputData" as const,
+  alternativeInputData: "node_alternativeInputData" as const,
   decision: "node_decision" as const,
   bkm: "node_bkm" as const,
   decisionService: "node_decisionService" as const,

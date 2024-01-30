@@ -296,13 +296,13 @@ export function getBounds({
   };
 }
 
-export function getNodeTypeFromDmnObject(dmnObject: NodeDmnObjects) {
+export function getNodeTypeFromDmnObject(dmnObject: NodeDmnObjects, enableAlternativeInputNode?: boolean) {
   if (!dmnObject) {
     return NODE_TYPES.unknown;
   }
 
   const type = switchExpression(dmnObject.__$$element, {
-    inputData: NODE_TYPES.inputData,
+    inputData: enableAlternativeInputNode ? NODE_TYPES.alternativeInputData : NODE_TYPES.inputData,
     decision: NODE_TYPES.decision,
     businessKnowledgeModel: NODE_TYPES.bkm,
     knowledgeSource: NODE_TYPES.knowledgeSource,

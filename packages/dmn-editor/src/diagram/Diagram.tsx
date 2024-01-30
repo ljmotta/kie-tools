@@ -101,6 +101,7 @@ import {
 import { DEFAULT_NODE_SIZES, MIN_NODE_SIZES } from "./nodes/DefaultSizes";
 import { NODE_TYPES } from "./nodes/NodeTypes";
 import {
+  AlternativeInputDataNode,
   BkmNode,
   DecisionNode,
   DecisionServiceNode,
@@ -133,6 +134,7 @@ const nodeTypes: Record<NodeType, any> = {
   [NODE_TYPES.decisionService]: DecisionServiceNode,
   [NODE_TYPES.group]: GroupNode,
   [NODE_TYPES.inputData]: InputDataNode,
+  [NODE_TYPES.alternativeInputData]: AlternativeInputDataNode,
   [NODE_TYPES.decision]: DecisionNode,
   [NODE_TYPES.bkm]: BkmNode,
   [NODE_TYPES.knowledgeSource]: KnowledgeSourceNode,

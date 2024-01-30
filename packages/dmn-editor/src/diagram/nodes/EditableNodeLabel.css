@@ -23,6 +23,12 @@
   align-items: center;
   text-align: left;
 }
+.kie-dmn-editor--editable-node-name-input.outer-center-bottom {
+  align-items: start;
+  text-align: center;
+  position: absolute;
+  margin-top: 80px;
+}
 .kie-dmn-editor--editable-node-name-input.top-center input,
 .kie-dmn-editor--editable-node-name-input.center-center input {
   text-align: center;

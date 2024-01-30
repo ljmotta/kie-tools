@@ -29,6 +29,7 @@ import { Popover } from "@patternfly/react-core/dist/js/components/Popover";
 import { ExternalNodesPanel } from "../externalNodes/ExternalNodesPanel";
 import { MigrationIcon } from "@patternfly/react-icons/dist/js/icons/migration-icon";
 import {
+  AlternativeInputDataIcon,
   BkmIcon,
   DecisionIcon,
   DecisionServiceIcon,
@@ -145,14 +146,25 @@ export function Palette({ pulse }: { pulse: boolean }) {
       <RF.Panel position={"top-left"} style={{ marginTop: "78px" }}>
         <div ref={nodesPalletePopoverRef} style={{ position: "absolute", left: 0, height: 0, zIndex: -1 }} />
         <aside className={`kie-dmn-editor--palette ${pulse ? "pulse" : ""}`}>
-          <div
-            title="Input Data"
-            className={"kie-dmn-editor--palette-button dndnode input-data"}
-            onDragStart={(event) => onDragStart(event, NODE_TYPES.inputData)}
-            draggable={true}
-          >
-            <InputDataIcon />
-          </div>
+          {diagram.overlays.enableAlternativeInputNode ? (
+            <div
+              title="Input Data"
+              className={"kie-dmn-editor--palette-button dndnode input-data"}
+              onDragStart={(event) => onDragStart(event, NODE_TYPES.alternativeInputData)}
+              draggable={true}
+            >
+              <AlternativeInputDataIcon />
+            </div>
+          ) : (
+            <div
+              title="Input Data"
+              className={"kie-dmn-editor--palette-button dndnode input-data"}
+              onDragStart={(event) => onDragStart(event, NODE_TYPES.inputData)}
+              draggable={true}
+            >
+              <InputDataIcon />
+            </div>
+          )}
           <div
             title="Decision"
             className={"kie-dmn-editor--palette-button dndnode decision"}

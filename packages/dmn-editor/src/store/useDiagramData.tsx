@@ -54,6 +54,7 @@ export function useDiagramData(externalDmnsByNamespace: ExternalDmnsIndex) {
 
   const thisDmn = useDmnEditorStore((s) => s.dmn);
   const diagram = useDmnEditorStore((s) => s.diagram);
+  const enableAlternativeInputNode = useDmnEditorStore((s) => s.diagram.overlays.enableAlternativeInputNode);
 
   const { dmnEdgesByDmnElementRef, dmnShapesByHref, hrefsOfDmnElementRefsOfShapesPointingToExternalDmnObjects } =
     useMemo(() => {
@@ -257,7 +258,7 @@ export function useDiagramData(externalDmnsByNamespace: ExternalDmnsIndex) {
     // console.timeEnd("edges");
 
     function ackNode(dmnObjectQName: XmlQName, dmnObject: NodeDmnObjects, index: number) {
-      const type = getNodeTypeFromDmnObject(dmnObject);
+      const type = getNodeTypeFromDmnObject(dmnObject, enableAlternativeInputNode);
       if (!type) {
         return undefined;
       }

@@ -27,6 +27,7 @@ import { buildFeelQNameFromNamespace } from "../feel/buildFeelQName";
 import { useDmnEditorDerivedStore } from "../store/DerivedStore";
 import { Flex } from "@patternfly/react-core/dist/js/layouts/Flex";
 import { DmnBuiltInDataType } from "@kie-tools/boxed-expression-component/dist/api";
+import { useDmnEditorStore } from "../store/Store";
 
 export function DmnObjectListItem({
   dmnObject,
@@ -39,12 +40,13 @@ export function DmnObjectListItem({
   namespace: string;
   relativeToNamespace: string;
 }) {
+  const enableAlternativeInputNode = useDmnEditorStore((s) => s.diagram.overlays.enableAlternativeInputNode);
   const { importsByNamespace, allTopLevelDataTypesByFeelName } = useDmnEditorDerivedStore();
   if (!dmnObject) {
     return <>{dmnObjectHref}</>;
   }
 
-  const Icon = NodeIcon(getNodeTypeFromDmnObject(dmnObject));
+  const Icon = NodeIcon(getNodeTypeFromDmnObject(dmnObject, enableAlternativeInputNode));
   return (
     <Flex
       alignItems={{ default: "alignItemsCenter" }}

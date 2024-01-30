@@ -196,6 +196,8 @@ export function getNodeLabelPosition(nodeType: NodeType): NodeLabelPosition {
   switch (nodeType) {
     case NODE_TYPES.inputData:
       return "center-center";
+    case NODE_TYPES.alternativeInputData:
+      return "outer-center-bottom";
     case NODE_TYPES.decision:
       return "center-center";
     case NODE_TYPES.bkm:

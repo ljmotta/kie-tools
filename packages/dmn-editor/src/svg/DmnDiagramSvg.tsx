@@ -284,6 +284,18 @@ export function getNodeLabelSvgTextAlignmentProps(n: RF.Node<DmnDiagramNodeData>
         transform: `translate(${tlTx},${tlTy})`,
         width: tlWidth,
       } as const;
+
+    case "outer-center-bottom":
+      const ocbTx = n.position.x! + n.width! / 2;
+      const ocbTy = n.position.y! + SVG_NODE_LABEL_TEXT_PADDING_ALL;
+      const ocbWidth = n.width! - 2 * SVG_NODE_LABEL_TEXT_PADDING_ALL;
+      return {
+        verticalAnchor: "end",
+        textAnchor: "middle",
+        transform: `translate(${ocbTx},${ocbTy})`,
+        width: ocbWidth,
+      } as const;
+
     default:
       assertUnreachable(labelPosition);
   }

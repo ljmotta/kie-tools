@@ -28,6 +28,7 @@ export enum NodeNature {
 
 export const nodeNatures: Record<NodeType, NodeNature> = {
   [NODE_TYPES.inputData]: NodeNature.DRG_ELEMENT,
+  [NODE_TYPES.alternativeInputData]: NodeNature.DRG_ELEMENT,
   [NODE_TYPES.decision]: NodeNature.DRG_ELEMENT,
   [NODE_TYPES.bkm]: NodeNature.DRG_ELEMENT,
   [NODE_TYPES.knowledgeSource]: NodeNature.DRG_ELEMENT,

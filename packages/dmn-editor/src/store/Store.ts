@@ -95,6 +95,7 @@ export interface State {
       enableCustomNodeStyles: boolean;
       enableDataTypesToolbarOnNodes: boolean;
       enableStyles: boolean;
+      enableAlternativeInputNode: boolean;
     };
     snapGrid: SnapGrid;
     _selectedNodes: Array<string>;
@@ -196,6 +197,7 @@ export const defaultStaticState = () => ({
       enableCustomNodeStyles: false,
       enableDataTypesToolbarOnNodes: true,
       enableStyles: true,
+      enableAlternativeInputNode: true,
     },
     snapGrid: { isEnabled: true, x: 20, y: 20 },
     _selectedNodes: [],

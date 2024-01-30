@@ -32,6 +32,13 @@ export const MIN_NODE_SIZES: Record<NodeType, (snapGrid: SnapGrid) => DC__Dimens
       "@_height": snappedMinSize.height,
     };
   },
+  [NODE_TYPES.alternativeInputData]: (snapGrid) => {
+    const snappedMinSize = MIN_SIZE_FOR_NODES(snapGrid, NODE_MIN_HEIGHT, NODE_MIN_HEIGHT);
+    return {
+      "@_width": snappedMinSize.width,
+      "@_height": snappedMinSize.height,
+    };
+  },
   [NODE_TYPES.decision]: (snapGrid) => {
     const snappedMinSize = MIN_SIZE_FOR_NODES(snapGrid);
     return {
@@ -94,6 +101,13 @@ export const MIN_NODE_SIZES: Record<NodeType, (snapGrid: SnapGrid) => DC__Dimens
 export const DEFAULT_NODE_SIZES: Record<NodeType, (snapGrid: SnapGrid) => DC__Dimension> = {
   [NODE_TYPES.inputData]: (snapGrid) => {
     const snappedMinSize = MIN_SIZE_FOR_NODES(snapGrid);
+    return {
+      "@_width": snappedMinSize.width,
+      "@_height": snappedMinSize.height,
+    };
+  },
+  [NODE_TYPES.alternativeInputData]: (snapGrid) => {
+    const snappedMinSize = MIN_SIZE_FOR_NODES(snapGrid, NODE_MIN_HEIGHT, NODE_MIN_HEIGHT); // This is not a mistake, we want the alternative input data node to be a small square.
     return {
       "@_width": snappedMinSize.width,
       "@_height": snappedMinSize.height,

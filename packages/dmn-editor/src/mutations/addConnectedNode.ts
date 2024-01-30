@@ -106,6 +106,16 @@ export function addConnectedNode({
             "@_name": "New Input Data",
           },
         },
+        [NODE_TYPES.alternativeInputData]: {
+          __$$element: "inputData",
+          "@_name": "New Input Data",
+          "@_id": newDmnObjectId,
+          ...requirements,
+          variable: {
+            ...variableBase,
+            "@_name": "New Input Data",
+          },
+        },
         [NODE_TYPES.knowledgeSource]: {
           __$$element: "knowledgeSource",
           "@_name": "New Knowledge Source",
