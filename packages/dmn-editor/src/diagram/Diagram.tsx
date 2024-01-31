@@ -1168,6 +1168,7 @@ function DmnDiagramEmptyState({
               variant={ButtonVariant.link}
               icon={<BlueprintIcon />}
               onClick={() => {
+                // TODO: NODE_TYPES based on overlay panel.
                 dmnEditorStoreApi.setState((state) => {
                   const inputDataNodeBounds: DC__Bounds = {
                     "@_x": 100,

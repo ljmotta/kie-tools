@@ -41,6 +41,7 @@ import {
   TextAnnotationNodeSvg,
   UnknownNodeSvg,
   NodeLabelPosition,
+  AlternativeInputDataNodeSvg,
 } from "../diagram/nodes/NodeSvgs";
 import { NODE_TYPES } from "../diagram/nodes/NodeTypes";
 import { useMemo } from "react";
@@ -106,6 +107,16 @@ export function DmnDiagramSvg({
           <g data-kie-dmn-node-id={node.id}>
             {node.type === NODE_TYPES.inputData && (
               <InputDataNodeSvg
+                width={node.width!}
+                height={node.height!}
+                x={node.positionAbsolute!.x}
+                y={node.positionAbsolute!.y}
+                {...style}
+                {...shapeStyle}
+              />
+            )}
+            {node.type === NODE_TYPES.alternativeInputData && (
+              <AlternativeInputDataNodeSvg
                 width={node.width!}
                 height={node.height!}
                 x={node.positionAbsolute!.x}

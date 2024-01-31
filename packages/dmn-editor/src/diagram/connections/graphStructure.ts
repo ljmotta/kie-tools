@@ -35,6 +35,14 @@ export const graphStructure: Map<NodeType, Map<EdgeType, Set<NodeType>>> = new M
     ]),
   ],
   [
+    NODE_TYPES.alternativeInputData,
+    new Map<EdgeType, Set<NodeType>>([
+      [EDGE_TYPES.informationRequirement, new Set([NODE_TYPES.decision])],
+      [EDGE_TYPES.authorityRequirement, new Set([NODE_TYPES.knowledgeSource])],
+      [EDGE_TYPES.association, new Set([NODE_TYPES.textAnnotation])],
+    ]),
+  ],
+  [
     NODE_TYPES.decision,
     new Map<EdgeType, Set<NodeType>>([
       [EDGE_TYPES.informationRequirement, new Set([NODE_TYPES.decision])],
@@ -69,6 +77,7 @@ export const graphStructure: Map<NodeType, Map<EdgeType, Set<NodeType>>> = new M
         EDGE_TYPES.association,
         new Set([
           NODE_TYPES.inputData,
+          NODE_TYPES.alternativeInputData,
           NODE_TYPES.decision,
           NODE_TYPES.bkm,
           NODE_TYPES.decisionService,
@@ -90,6 +99,10 @@ export const outgoingStructure = {
   [NODE_TYPES.inputData]: {
     nodes: outgoingNodes(NODE_TYPES.inputData),
     edges: outgoingEdges(NODE_TYPES.inputData),
+  },
+  [NODE_TYPES.alternativeInputData]: {
+    nodes: outgoingNodes(NODE_TYPES.alternativeInputData),
+    edges: outgoingEdges(NODE_TYPES.alternativeInputData),
   },
   [NODE_TYPES.decision]: {
     nodes: outgoingNodes(NODE_TYPES.decision),

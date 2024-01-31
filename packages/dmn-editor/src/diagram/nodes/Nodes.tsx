@@ -294,8 +294,8 @@ export const AlternativeInputDataNode = React.memo(
 
           <OutgoingStuffNodePanel
             isVisible={!isConnecting && !isTargeted && isHovered}
-            nodeTypes={outgoingStructure[NODE_TYPES.inputData].nodes}
-            edgeTypes={outgoingStructure[NODE_TYPES.inputData].edges}
+            nodeTypes={outgoingStructure[NODE_TYPES.alternativeInputData].nodes}
+            edgeTypes={outgoingStructure[NODE_TYPES.alternativeInputData].edges}
           />
           {isHovered && (
             <NodeResizerHandle

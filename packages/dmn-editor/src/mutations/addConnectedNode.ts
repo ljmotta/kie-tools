@@ -199,6 +199,7 @@ export function getRequirementsFromEdge(
     | Required<Pick<DMN15__tInformationRequirement, "requiredInput" | "@_id">>
     | Required<Pick<DMN15__tInformationRequirement, "requiredDecision" | "@_id">> = switchExpression(sourceNode.type, {
     [NODE_TYPES.inputData]: { "@_id": newEdgeId, requiredInput: { "@_href": `${sourceNode.href}` } },
+    [NODE_TYPES.alternativeInputData]: { "@_id": newEdgeId, requiredInput: { "@_href": `${sourceNode.href}` } },
     [NODE_TYPES.decision]: { "@_id": newEdgeId, requiredDecision: { "@_href": `${sourceNode.href}` } },
     default: undefined,
   });
@@ -217,6 +218,7 @@ export function getRequirementsFromEdge(
     | Required<Pick<DMN15__tAuthorityRequirement, "requiredDecision" | "@_id">>
     | Required<Pick<DMN15__tAuthorityRequirement, "requiredAuthority" | "@_id">> = switchExpression(sourceNode.type, {
     [NODE_TYPES.inputData]: { "@_id": newEdgeId, requiredInput: { "@_href": `${sourceNode.href}` } },
+    [NODE_TYPES.alternativeInputData]: { "@_id": newEdgeId, requiredInput: { "@_href": `${sourceNode.href}` } },
     [NODE_TYPES.decision]: { "@_id": newEdgeId, requiredDecision: { "@_href": `${sourceNode.href}` } },
     [NODE_TYPES.knowledgeSource]: { "@_id": newEdgeId, requiredAuthority: { "@_href": `${sourceNode.href}` } },
     default: undefined,

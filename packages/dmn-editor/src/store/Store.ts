@@ -197,7 +197,7 @@ export const defaultStaticState = () => ({
       enableCustomNodeStyles: false,
       enableDataTypesToolbarOnNodes: true,
       enableStyles: true,
-      enableAlternativeInputNode: true,
+      enableAlternativeInputNode: true, // TODO: DMNDI::...
     },
     snapGrid: { isEnabled: true, x: 20, y: 20 },
     _selectedNodes: [],

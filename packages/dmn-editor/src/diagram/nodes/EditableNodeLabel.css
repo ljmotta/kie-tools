@@ -27,7 +27,8 @@
   align-items: start;
   text-align: center;
   position: absolute;
-  margin-top: 80px;
+  /* TODO: dynamic margin. */
+  margin-top: 100px;
 }
 .kie-dmn-editor--editable-node-name-input.top-center input,
 .kie-dmn-editor--editable-node-name-input.center-center input {

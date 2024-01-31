@@ -35,6 +35,7 @@ import {
   KnowledgeSourceNodeSvg,
   TextAnnotationNodeSvg,
   GroupNodeSvg,
+  AlternativeInputDataNodeSvg,
 } from "./NodeSvgs";
 import { NODE_TYPES } from "./NodeTypes";
 import { EDGE_TYPES } from "../edges/EdgeTypes";
@@ -118,6 +119,7 @@ export function OutgoingStuffNodePanel(props: { isVisible: boolean; nodeTypes: N
                   style={{ padding: `${svgViewboxPadding}px` }}
                 >
                   {nodeType === NODE_TYPES.inputData && <InputDataNodeSvg {...nodeSvgProps} />}
+                  {nodeType === NODE_TYPES.alternativeInputData && <AlternativeInputDataNodeSvg {...nodeSvgProps} />}
                   {nodeType === NODE_TYPES.decision && <DecisionNodeSvg {...nodeSvgProps} />}
                   {nodeType === NODE_TYPES.bkm && <BkmNodeSvg {...nodeSvgProps} />}
                   {nodeType === NODE_TYPES.decisionService && (

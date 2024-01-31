@@ -80,6 +80,7 @@ export function SingleNodeProperties({ nodeId }: { nodeId: string }) {
             title={(() => {
               switch (node.type) {
                 case NODE_TYPES.inputData:
+                case NODE_TYPES.alternativeInputData:
                   return "Input";
                 case NODE_TYPES.decision:
                   return "Decision";
@@ -122,6 +123,7 @@ export function SingleNodeProperties({ nodeId }: { nodeId: string }) {
               {(() => {
                 switch (node.type) {
                   case NODE_TYPES.inputData:
+                  case NODE_TYPES.alternativeInputData:
                     return (
                       <InputDataProperties
                         inputData={node.data!.dmnObject as DMN15__tInputData}
