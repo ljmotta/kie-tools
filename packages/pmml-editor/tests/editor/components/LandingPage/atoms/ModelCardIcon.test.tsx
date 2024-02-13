@@ -19,6 +19,7 @@
 import { render } from "@testing-library/react";
 import * as React from "react";
 import { ModelCardIcon } from "@kie-tools/pmml-editor/dist/editor/components/LandingPage/atoms";
+import "@testing-library/jest-dom";
 
 describe("ModelCardIcon", () => {
   test("render::Undefined", () => {
