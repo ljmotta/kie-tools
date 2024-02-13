@@ -44,7 +44,7 @@
     "@kie-tools/tsconfig": "workspace:*",
     "@testing-library/react": "^12.1.5",
     "@types/chrome": "^0.0.193",
-    "@types/jest": "^29.5.11",
+    "@types/jest": "^29.5.12",
     "@types/jest-when": "^3.5.5",
     "@types/minimatch": "^3.0.5",
     "@types/react": "^17.0.6",
@@ -55,7 +55,7 @@
     "jest-webextension-mock": "^3.8.9",
     "jest-when": "^3.6.0",
     "rimraf": "^3.0.2",
-    "ts-jest": "^29.1.1",
+    "ts-jest": "^29.1.2",
     "typescript": "^4.6.2"
   }
 }
