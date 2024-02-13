@@ -37,7 +37,7 @@
     "@kie-tools/eslint": "workspace:*",
     "@kie-tools/root-env": "workspace:*",
     "@kie-tools/tsconfig": "workspace:*",
-    "@types/jest": "^29.5.11",
+    "@types/jest": "^29.5.12",
     "@types/jest-when": "^3.5.5",
     "@types/json-schema": "^7.0.11",
     "@types/lodash": "^4.14.168",
@@ -47,7 +47,7 @@
     "jest-junit": "^16.0.0",
     "jest-when": "^3.6.0",
     "rimraf": "^3.0.2",
-    "ts-jest": "^29.1.1",
+    "ts-jest": "^29.1.2",
     "typescript": "^4.6.2"
   }
 }

@@ -46,8 +46,8 @@
     "@kie-tools/eslint": "workspace:*",
     "@kie-tools/root-env": "workspace:*",
     "@kie-tools/tsconfig": "workspace:*",
-    "@testing-library/jest-dom": "^6.2.0",
-    "@types/jest": "^29.5.11",
+    "@testing-library/jest-dom": "^6.4.2",
+    "@types/jest": "^29.5.12",
     "@types/jest-when": "^3.5.5",
     "@types/react": "^17.0.6",
     "copyfiles": "^2.4.1",
@@ -56,7 +56,7 @@
     "jest-junit": "^16.0.0",
     "jest-when": "^3.6.0",
     "rimraf": "^3.0.2",
-    "ts-jest": "^29.1.1",
+    "ts-jest": "^29.1.2",
     "typescript": "^4.6.2"
   }
 }
