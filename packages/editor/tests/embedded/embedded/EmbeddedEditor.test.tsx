@@ -30,6 +30,7 @@ import { EmbeddedEditor, EmbeddedEditorRef } from "@kie-tools-core/editor/dist/e
 import { incomingMessage } from "./EmbeddedEditorTestUtils";
 import { render } from "@testing-library/react";
 import { EnvelopeBusMessagePurpose } from "@kie-tools-core/envelope-bus/dist/api";
+import "@testing-library/jest-dom";
 
 describe("EmbeddedEditor::ONLINE", () => {
   const file: EmbeddedEditorFile = {
