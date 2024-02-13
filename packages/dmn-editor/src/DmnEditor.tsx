@@ -1,65 +1,95 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 import "@patternfly/react-core/dist/styles/base.css";
 import "reactflow/dist/style.css";
 
-import * as React from "react";
-import { useCallback, useEffect, useImperativeHandle, useRef, useState, useMemo } from "react";
+import { AllDmnMarshallers, DmnLatestModel } from "@kie-tools/dmn-marshaller";
+import { PMML } from "@kie-tools/pmml-editor-marshaller";
 import { Drawer, DrawerContent, DrawerContentBody } from "@patternfly/react-core/dist/js/components/Drawer";
+import { Label } from "@patternfly/react-core/dist/js/components/Label";
 import { Tab, TabTitleIcon, TabTitleText, Tabs } from "@patternfly/react-core/dist/js/components/Tabs";
 import { FileIcon } from "@patternfly/react-icons/dist/js/icons/file-icon";
 import { InfrastructureIcon } from "@patternfly/react-icons/dist/js/icons/infrastructure-icon";
 import { PficonTemplateIcon } from "@patternfly/react-icons/dist/js/icons/pficon-template-icon";
+import { original } from "immer";
+import * as React from "react";
+import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import * as ReactDOM from "react-dom";
+import { ErrorBoundary, ErrorBoundaryPropsWithFallback } from "react-error-boundary";
+import * as RF from "reactflow";
+import { DmnEditorContextProvider, useDmnEditor } from "./DmnEditorContext";
+import { DmnEditorErrorFallback } from "./DmnEditorErrorFallback";
 import { BoxedExpression } from "./boxedExpressions/BoxedExpression";
 import { DataTypes } from "./dataTypes/DataTypes";
-import { Diagram } from "./diagram/Diagram";
+import { Diagram, DiagramRef } from "./diagram/Diagram";
 import { DmnVersionLabel } from "./diagram/DmnVersionLabel";
-import { IncludedModels } from "./includedModels/IncludedModels";
-import { DiagramPropertiesPanel } from "./propertiesPanel/DiagramPropertiesPanel";
 import {
-  DmnEditorStoreApiContext,
-  DmnEditorTab,
-  StoreApiType,
-  createDmnEditorStore,
-  defaultStaticState,
-  useDmnEditorStore,
-  useDmnEditorStoreApi,
-} from "./store/Store";
-import { useEffectAfterFirstRender } from "./useEffectAfterFirstRender";
-import { Label } from "@patternfly/react-core/dist/js/components/Label";
+  DmnEditorExternalModelsContextProvider,
+  useExternalModels,
+} from "./includedModels/DmnEditorDependenciesContext";
+import { IncludedModels } from "./includedModels/IncludedModels";
 import { BeePropertiesPanel } from "./propertiesPanel/BeePropertiesPanel";
-import { DmnEditorDerivedStoreContextProvider, useDmnEditorDerivedStore } from "./store/DerivedStore";
-import { DmnEditorContextProvider, useDmnEditor } from "./DmnEditorContext";
-import { DmnEditorExternalModelsContextProvider } from "./includedModels/DmnEditorDependenciesContext";
-import { ErrorBoundary, ErrorBoundaryPropsWithFallback } from "react-error-boundary";
-import { DmnEditorErrorFallback } from "./DmnEditorErrorFallback";
-import { DmnLatestModel, AllDmnMarshallers } from "@kie-tools/dmn-marshaller";
-import { PMML } from "@kie-tools/pmml-editor-marshaller";
-import { original } from "immer";
+import { DiagramPropertiesPanel } from "./propertiesPanel/DiagramPropertiesPanel";
+import { ComputedStateCache } from "./store/ComputedStateCache";
+import { Computed, DmnEditorTab, createDmnEditorStore, defaultStaticState } from "./store/Store";
+import { DmnEditorStoreApiContext, StoreApiType, useDmnEditorStore, useDmnEditorStoreApi } from "./store/StoreContext";
+import { DmnDiagramSvg } from "./svg/DmnDiagramSvg";
+import { useEffectAfterFirstRender } from "./useEffectAfterFirstRender";
+import { INITIAL_COMPUTED_CACHE } from "./store/computed/initial";
 
 import "@kie-tools/dmn-marshaller/dist/kie-extensions"; // This is here because of the KIE Extension for DMN.
 import "./DmnEditor.css"; // Leave it for last, as this overrides some of the PF and RF styles.
 
 const ON_MODEL_CHANGE_DEBOUNCE_TIME_IN_MS = 500;
 
+const SVG_PADDING = 20;
+
 export type DmnEditorRef = {
   reset: (mode: DmnLatestModel) => void;
+  getDiagramSvg: () => Promise<string | undefined>;
 };
 
 export type EvaluationResults = Record<string, any>;
 export type ValidationMessages = Record<string, any>;
 export type OnDmnModelChange = (model: DmnLatestModel) => void;
 
-export type OnRequestToJumpToPath = (relativePath: string) => void;
-export type OnRequestToResolvePath = (relativePath: string) => string;
+export type OnRequestToJumpToPath = (normalizedPosixPathRelativeToTheOpenFile: string) => void;
+export type OnRequestToResolvePath = (normalizedPosixPathRelativeToTheOpenFile: string) => string;
+
+/** @returns a list of paths relative to the open file. */
 export type OnRequestExternalModelsAvailableToInclude = () => Promise<string[]>;
-export type OnRequestExternalModelByPath = (relativePath: string) => Promise<ExternalModel | null>;
-export type ExternalModelsIndex = Record<string, ExternalModel | undefined>;
+
+export type OnRequestExternalModelByPath = (
+  normalizedPosixPathRelativeToTheOpenFile: string
+) => Promise<ExternalModel | null>;
+export type ExternalModelsIndex = Record<
+  string /** normalizedPosixPathRelativeToTheOpenFile */,
+  ExternalModel | undefined
+>;
 export type ExternalModel = ({ type: "dmn" } & ExternalDmn) | ({ type: "pmml" } & ExternalPmml);
 
-export type ExternalDmnsIndex = Map<string, ExternalDmn>;
-export type ExternalDmn = { model: DmnLatestModel; relativePath: string; svg: string };
+export type ExternalDmnsIndex = Map<string /** normalizedPosixPathRelativeToTheOpenFile */, ExternalDmn>;
+export type ExternalDmn = { model: DmnLatestModel; normalizedPosixPathRelativeToTheOpenFile: string; svg: string };
 
-export type ExternalPmmlsIndex = Map<string, ExternalPmml>;
-export type ExternalPmml = { model: PMML; relativePath: string };
+export type ExternalPmmlsIndex = Map<string /** normalizedPosixPathRelativeToTheOpenFile */, ExternalPmml>;
+export type ExternalPmml = { model: PMML; normalizedPosixPathRelativeToTheOpenFile: string };
 
 export type DmnEditorProps = {
   /**
@@ -129,19 +159,76 @@ export const DmnEditorInternal = ({
   onModelChange,
   forwardRef,
 }: DmnEditorProps & { forwardRef?: React.Ref<DmnEditorRef> }) => {
-  const { boxedExpressionEditor, dmn, navigation, dispatch, diagram } = useDmnEditorStore((s) => s);
+  const boxedExpressionEditorActiveDrgElementId = useDmnEditorStore((s) => s.boxedExpressionEditor.activeDrgElementId);
+  const isBeePropertiesPanelOpen = useDmnEditorStore((s) => s.boxedExpressionEditor.propertiesPanel.isOpen);
+  const isDiagramPropertiesPanelOpen = useDmnEditorStore((s) => s.diagram.propertiesPanel.isOpen);
+  const navigationTab = useDmnEditorStore((s) => s.navigation.tab);
+  const dmn = useDmnEditorStore((s) => s.dmn);
+  const isDiagramEditingInProgress = useDmnEditorStore((s) => s.computed(s).isDiagramEditingInProgress());
 
   const dmnEditorStoreApi = useDmnEditorStoreApi();
-  const { isDiagramEditingInProgress } = useDmnEditorDerivedStore();
+
   const { dmnModelBeforeEditingRef, dmnEditorRootElementRef } = useDmnEditor();
+  const { externalModelsByNamespace } = useExternalModels();
+
+  // Refs
+
+  const diagramRef = useRef<DiagramRef>(null);
+  const diagramContainerRef = useRef<HTMLDivElement>(null);
+  const beeContainerRef = useRef<HTMLDivElement>(null);
 
   // Allow imperativelly controlling the Editor.
   useImperativeHandle(
     forwardRef,
     () => ({
-      reset: (model) => dispatch.dmn.reset(model),
+      reset: (model) => {
+        const state = dmnEditorStoreApi.getState();
+        return state.dispatch(state).dmn.reset(model);
+      },
+      getDiagramSvg: async () => {
+        const nodes = diagramRef.current?.getReactFlowInstance()?.getNodes();
+        const edges = diagramRef.current?.getReactFlowInstance()?.getEdges();
+        if (!nodes || !edges) {
+          return undefined;
+        }
+
+        const bounds = RF.getNodesBounds(nodes);
+        const state = dmnEditorStoreApi.getState();
+
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("width", bounds.width + SVG_PADDING * 2 + "");
+        svg.setAttribute(
+          "height",
+          // It's not possible to calculate the text height which is outside of the node
+          // for the alternative input data shape
+          bounds.height + (state.computed(state).isAlternativeInputDataShape() ? SVG_PADDING * 5 : SVG_PADDING * 2) + ""
+        );
+
+        // We're still on React 17.
+        // eslint-disable-next-line react/no-deprecated
+        ReactDOM.render(
+          // Indepdent of where the nodes are located, they'll always be rendered at the top-left corner of the SVG
+          <g transform={`translate(${-bounds.x + SVG_PADDING} ${-bounds.y + SVG_PADDING})`}>
+            <DmnDiagramSvg
+              nodes={nodes}
+              edges={edges}
+              snapGrid={state.diagram.snapGrid}
+              importsByNamespace={state.computed(state).importsByNamespace()}
+              thisDmn={state.dmn}
+              isAlternativeInputDataShape={state.computed(state).isAlternativeInputDataShape()}
+              allDataTypesById={state.computed(state).getDataTypes(externalModelsByNamespace).allDataTypesById}
+              allTopLevelItemDefinitionUniqueNames={
+                state.computed(state).getDataTypes(externalModelsByNamespace).allTopLevelItemDefinitionUniqueNames
+              }
+            />
+          </g>,
+          svg
+        );
+
+        return new XMLSerializer().serializeToString(svg);
+      },
     }),
-    [dispatch.dmn]
+    [dmnEditorStoreApi, externalModelsByNamespace]
   );
 
   // Make sure the DMN Editor reacts to props changing.
@@ -154,7 +241,7 @@ export const DmnEditorInternal = ({
       state.dmn.model = model;
       dmnModelBeforeEditingRef.current = model;
     });
-  }, [dmnEditorStoreApi, dispatch.dmn, model]);
+  }, [dmnEditorStoreApi, model]);
 
   useStateAsItWasBeforeConditionBecameTrue(
     dmn.model,
@@ -198,9 +285,6 @@ export const DmnEditorInternal = ({
     [dmnEditorStoreApi]
   );
 
-  const diagramContainerRef = useRef<HTMLDivElement>(null);
-  const beeContainerRef = useRef<HTMLDivElement>(null);
-
   const tabTitle = useMemo(() => {
     return {
       editor: (
@@ -243,28 +327,28 @@ export const DmnEditorInternal = ({
     <div ref={dmnEditorRootElementRef} className={"kie-dmn-editor--root"}>
       <Tabs
         isFilled={true}
-        activeKey={navigation.tab}
+        activeKey={navigationTab}
         onSelect={onTabChanged}
         role={"region"}
         className={"kie-dmn-editor--tabs"}
       >
         <Tab eventKey={DmnEditorTab.EDITOR} title={tabTitle.editor}>
-          {navigation.tab === DmnEditorTab.EDITOR && (
+          {navigationTab === DmnEditorTab.EDITOR && (
             <>
-              {!boxedExpressionEditor.activeDrgElementId && (
-                <Drawer isExpanded={diagram.propertiesPanel.isOpen} isInline={true} position={"right"}>
+              {!boxedExpressionEditorActiveDrgElementId && (
+                <Drawer isExpanded={isDiagramPropertiesPanelOpen} isInline={true} position={"right"}>
                   <DrawerContent panelContent={diagramPropertiesPanel}>
                     <DrawerContentBody>
                       <div className={"kie-dmn-editor--diagram-container"} ref={diagramContainerRef}>
                         {originalVersion && <DmnVersionLabel version={originalVersion} />}
-                        <Diagram container={diagramContainerRef} />
+                        <Diagram ref={diagramRef} container={diagramContainerRef} />
                       </div>
                     </DrawerContentBody>
                   </DrawerContent>
                 </Drawer>
               )}
-              {boxedExpressionEditor.activeDrgElementId && (
-                <Drawer isExpanded={boxedExpressionEditor.propertiesPanel.isOpen} isInline={true} position={"right"}>
+              {boxedExpressionEditorActiveDrgElementId && (
+                <Drawer isExpanded={isBeePropertiesPanelOpen} isInline={true} position={"right"}>
                   <DrawerContent panelContent={beePropertiesPanel}>
                     <DrawerContentBody>
                       <div className={"kie-dmn-editor--bee-container"} ref={beeContainerRef}>
@@ -279,11 +363,11 @@ export const DmnEditorInternal = ({
         </Tab>
 
         <Tab eventKey={DmnEditorTab.DATA_TYPES} title={tabTitle.dataTypes}>
-          {navigation.tab === DmnEditorTab.DATA_TYPES && <DataTypes />}
+          {navigationTab === DmnEditorTab.DATA_TYPES && <DataTypes />}
         </Tab>
 
         <Tab eventKey={DmnEditorTab.INCLUDED_MODELS} title={tabTitle.includedModels}>
-          {navigation.tab === DmnEditorTab.INCLUDED_MODELS && <IncludedModels />}
+          {navigationTab === DmnEditorTab.INCLUDED_MODELS && <IncludedModels />}
         </Tab>
       </Tabs>
     </div>
@@ -291,7 +375,13 @@ export const DmnEditorInternal = ({
 };
 
 export const DmnEditor = React.forwardRef((props: DmnEditorProps, ref: React.Ref<DmnEditorRef>) => {
-  const storeRef = React.useRef<StoreApiType>(createDmnEditorStore(props.model));
+  const store = useMemo(
+    () => createDmnEditorStore(props.model, new ComputedStateCache<Computed>(INITIAL_COMPUTED_CACHE)),
+    // Purposefully empty. This memoizes the initial value of the store
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+  const storeRef = React.useRef<StoreApiType>(store);
 
   const resetState: ErrorBoundaryPropsWithFallback["onReset"] = useCallback(({ args }) => {
     storeRef.current?.setState((state) => {
@@ -305,9 +395,7 @@ export const DmnEditor = React.forwardRef((props: DmnEditorProps, ref: React.Ref
       <ErrorBoundary FallbackComponent={DmnEditorErrorFallback} onReset={resetState}>
         <DmnEditorExternalModelsContextProvider {...props}>
           <DmnEditorStoreApiContext.Provider value={storeRef.current}>
-            <DmnEditorDerivedStoreContextProvider>
-              <DmnEditorInternal forwardRef={ref} {...props} />
-            </DmnEditorDerivedStoreContextProvider>
+            <DmnEditorInternal forwardRef={ref} {...props} />
           </DmnEditorStoreApiContext.Provider>
         </DmnEditorExternalModelsContextProvider>
       </ErrorBoundary>

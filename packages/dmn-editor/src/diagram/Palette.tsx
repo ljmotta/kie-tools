@@ -22,13 +22,15 @@ import * as React from "react";
 import { useCallback } from "react";
 import { NodeType } from "./connections/graphStructure";
 import { NODE_TYPES } from "./nodes/NodeTypes";
-import { DiagramNodesPanel, useDmnEditorStore, useDmnEditorStoreApi } from "../store/Store";
+import { DiagramNodesPanel } from "../store/Store";
+import { useDmnEditorStore, useDmnEditorStoreApi } from "../store/StoreContext";
 import { addStandaloneNode } from "../mutations/addStandaloneNode";
 import { CONTAINER_NODES_DESIRABLE_PADDING, getBounds } from "./maths/DmnMaths";
 import { Popover } from "@patternfly/react-core/dist/js/components/Popover";
 import { ExternalNodesPanel } from "../externalNodes/ExternalNodesPanel";
 import { MigrationIcon } from "@patternfly/react-icons/dist/js/icons/migration-icon";
 import {
+  AlternativeInputDataIcon,
   BkmIcon,
   DecisionIcon,
   DecisionServiceIcon,
@@ -45,6 +47,7 @@ import { DrgNodesPanel } from "./DrgNodesPanel";
 import { CaretDownIcon } from "@patternfly/react-icons/dist/js/icons/caret-down-icon";
 import { useInViewSelect } from "../responsiveness/useInViewSelect";
 import { useDmnEditor } from "../DmnEditorContext";
+import { getDrdId } from "./drd/drdId";
 
 export const MIME_TYPE_FOR_DMN_EDITOR_NEW_NODE_FROM_PALETTE = "application/kie-dmn-editor--new-node-from-palette";
 
@@ -59,6 +62,7 @@ export function Palette({ pulse }: { pulse: boolean }) {
   const diagram = useDmnEditorStore((s) => s.diagram);
   const thisDmn = useDmnEditorStore((s) => s.dmn.model);
   const rfStoreApi = RF.useStoreApi();
+  const isAlternativeInputDataShape = useDmnEditorStore((s) => s.computed(s).isAlternativeInputDataShape());
 
   const groupNodes = useCallback(() => {
     dmnEditorStoreApi.setState((state) => {
@@ -83,7 +87,7 @@ export function Palette({ pulse }: { pulse: boolean }) {
         },
       });
 
-      state.dispatch.diagram.setNodeStatus(state, newNodeId, { selected: true });
+      state.dispatch(state).diagram.setNodeStatus(newNodeId, { selected: true });
     });
   }, [diagram.drdIndex, dmnEditorStoreApi, rfStoreApi]);
 
@@ -101,9 +105,10 @@ export function Palette({ pulse }: { pulse: boolean }) {
           <div ref={drdSelectorPopoverRef} style={{ position: "absolute", left: "56px", height: "100%", zIndex: -1 }} />
           <InlineFeelNameInput
             validate={() => true}
-            allUniqueNames={new Map()}
+            allUniqueNames={() => new Map()}
             name={drd?.["@_name"] ?? ""}
-            id={diagram.drdIndex + ""}
+            prefix={`${diagram.drdIndex + 1}.`}
+            id={getDrdId({ drdIndex: diagram.drdIndex })}
             onRenamed={(newName) => {
               dmnEditorStoreApi.setState((state) => {
                 const drd = addOrGetDrd({ definitions: state.dmn.model.definitions, drdIndex: diagram.drdIndex });
@@ -151,7 +156,7 @@ export function Palette({ pulse }: { pulse: boolean }) {
             onDragStart={(event) => onDragStart(event, NODE_TYPES.inputData)}
             draggable={true}
           >
-            <InputDataIcon />
+            {isAlternativeInputDataShape ? <AlternativeInputDataIcon /> : <InputDataIcon />}
           </div>
           <div
             title="Decision"

@@ -22,6 +22,8 @@ import * as RF from "reactflow";
 import { DEFAULT_INTRACTION_WIDTH } from "../maths/DmnMaths";
 import { DEFAULT_NODE_FILL, DEFAULT_NODE_STROKE_COLOR, DEFAULT_NODE_STROKE_WIDTH } from "./NodeStyle";
 
+export type NodeLabelPosition = "center-bottom" | "center-center" | "top-center" | "center-left" | "top-left";
+
 export type NodeSvgProps = RF.Dimensions &
   RF.XYPosition & {
     fillColor?: string;
@@ -64,8 +66,18 @@ export function normalize<T extends NodeSvgProps>(_props: T) {
   };
 }
 
-export function InputDataNodeSvg(__props: NodeSvgProps) {
-  const { strokeWidth, x, y, width, height, fillColor, strokeColor, props } = normalize(__props);
+export function InputDataNodeSvg(__props: NodeSvgProps & { isCollection?: boolean }) {
+  const {
+    strokeWidth,
+    x,
+    y,
+    width,
+    height,
+    fillColor,
+    strokeColor,
+    props: { isCollection, ...props },
+  } = normalize(__props);
+
   const rx =
     typeof height === "number"
       ? height / 2
@@ -81,7 +93,7 @@ export function InputDataNodeSvg(__props: NodeSvgProps) {
         })();
 
   return (
-    <g>
+    <>
       <rect
         {...props}
         x={x}
@@ -95,15 +107,81 @@ export function InputDataNodeSvg(__props: NodeSvgProps) {
         rx={rx}
         ry={ry}
       />
-    </g>
+      {isCollection && <NodeCollectionMarker {...__props} anchor={"bottom"} />}
+    </>
   );
 }
 
-export function DecisionNodeSvg(__props: NodeSvgProps) {
-  const { strokeWidth, x, y, width, height, fillColor, strokeColor, props } = normalize(__props);
+export function AlternativeInputDataNodeSvg(
+  __props: NodeSvgProps & { isCollection?: boolean; isIcon: boolean; transform?: string }
+) {
+  const {
+    strokeWidth,
+    x,
+    y,
+    width,
+    height,
+    fillColor,
+    strokeColor,
+    props: { isCollection, isIcon, ...props },
+  } = normalize(__props);
+
+  const bevel = 25;
+  const arrowStartingX = 6;
+  const arrowStartingY = 10;
 
   return (
-    <g>
+    <>
+      <polygon
+        {...props}
+        points={`0,0 0,${height} ${width},${height} ${width},${bevel} ${width - bevel},0 ${width - bevel},0`}
+        fill={fillColor ?? DEFAULT_NODE_FILL}
+        stroke={strokeColor ?? DEFAULT_NODE_STROKE_COLOR}
+        strokeLinejoin={"round"}
+        strokeWidth={strokeWidth}
+        transform={isIcon ? __props.transform : `translate(${x},${y})`}
+      />
+      {isIcon === false && (
+        <>
+          <polygon
+            {...props}
+            points={`${width - bevel},0 ${width - bevel},${bevel} ${width},${bevel}`}
+            fill={fillColor ?? DEFAULT_NODE_FILL}
+            stroke={strokeColor ?? DEFAULT_NODE_STROKE_COLOR}
+            strokeLinejoin={"round"}
+            strokeWidth={strokeWidth}
+            transform={`translate(${x},${y})`}
+          />
+          <polygon
+            {...props}
+            points={`${arrowStartingX},${arrowStartingY} ${arrowStartingX},20 20,20 20,26 30,15 20,4 20,${arrowStartingY} `}
+            fill={fillColor ?? DEFAULT_NODE_FILL}
+            stroke={strokeColor ?? DEFAULT_NODE_STROKE_COLOR}
+            strokeLinejoin={"round"}
+            strokeWidth={strokeWidth}
+            transform={`translate(${x},${y})`}
+          />
+        </>
+      )}
+      {isCollection && <NodeCollectionMarker {...__props} anchor={"bottom"} />}
+    </>
+  );
+}
+
+export function DecisionNodeSvg(__props: NodeSvgProps & { isCollection?: boolean }) {
+  const {
+    strokeWidth,
+    x,
+    y,
+    width,
+    height,
+    fillColor,
+    strokeColor,
+    props: { isCollection, ...props },
+  } = normalize(__props);
+
+  return (
+    <>
       <rect
         x={x}
         y={y}
@@ -115,7 +193,8 @@ export function DecisionNodeSvg(__props: NodeSvgProps) {
         strokeLinejoin={"round"}
         {...props}
       />
-    </g>
+      {isCollection && <NodeCollectionMarker {...__props} anchor="top" />}
+    </>
   );
 }
 
@@ -123,7 +202,7 @@ export function BkmNodeSvg(__props: NodeSvgProps) {
   const { strokeWidth, x, y, width, height, fillColor, strokeColor, props } = normalize(__props);
   const bevel = 25;
   return (
-    <g>
+    <>
       <polygon
         {...props}
         points={`${bevel},0 0,${bevel} 0,${height} ${width - bevel},${height} ${width},${height - bevel}, ${width},0`}
@@ -133,7 +212,7 @@ export function BkmNodeSvg(__props: NodeSvgProps) {
         strokeLinejoin={"round"}
         transform={`translate(${x},${y})`}
       />
-    </g>
+    </>
   );
 }
 
@@ -145,7 +224,7 @@ export function KnowledgeSourceNodeSvg(__props: NodeSvgProps) {
   const straightLines = `M${width},${height} L${width},0 L0,0 L0,${height}`;
   const bottomWave = `Q${width / 4},${height + amplitude} ${width / 2},${height} T${width},${height}`;
   return (
-    <g>
+    <>
       <path
         {...props}
         d={`${straightLines} ${bottomWave} Z`}
@@ -155,7 +234,7 @@ export function KnowledgeSourceNodeSvg(__props: NodeSvgProps) {
         strokeLinejoin={"round"}
         transform={`translate(${x},${y})`}
       />
-    </g>
+    </>
   );
 }
 
@@ -197,7 +276,7 @@ export const DecisionServiceNodeSvg = React.forwardRef<
   } = _interactionRectProps;
 
   return (
-    <g>
+    <>
       {!isCollapsed && (
         <>
           <path
@@ -225,7 +304,7 @@ export const DecisionServiceNodeSvg = React.forwardRef<
         width={width}
         height={height}
         strokeWidth={strokeWidth}
-        fill={isCollapsed ? DEFAULT_NODE_FILL : fillColor ?? "transparent"}
+        fill={fillColor ?? "transparent"}
         stroke={strokeColor ?? DEFAULT_NODE_STROKE_COLOR}
         strokeLinejoin={"round"}
         rx={"40"}
@@ -267,7 +346,7 @@ export const DecisionServiceNodeSvg = React.forwardRef<
           </text>
         </>
       )}
-    </g>
+    </>
   );
 });
 
@@ -275,7 +354,7 @@ export function TextAnnotationNodeSvg(__props: NodeSvgProps & { showPlaceholder?
   const { strokeWidth, x, y, width, height, fillColor, strokeColor, props: _props } = normalize(__props);
   const { showPlaceholder, ...props } = _props;
   return (
-    <g>
+    <>
       <rect
         x={x}
         y={y}
@@ -302,7 +381,7 @@ export function TextAnnotationNodeSvg(__props: NodeSvgProps & { showPlaceholder?
           Text
         </text>
       )}
-    </g>
+    </>
   );
 }
 
@@ -322,7 +401,7 @@ export const GroupNodeSvg = React.forwardRef<SVGRectElement, NodeSvgProps & { st
 
     const strokeDasharray = props.strokeDasharray ?? "14,10,3,10";
     return (
-      <g>
+      <>
         <rect
           {...props}
           x={x}
@@ -351,16 +430,16 @@ export const GroupNodeSvg = React.forwardRef<SVGRectElement, NodeSvgProps & { st
           ry={"30"}
           className={containerNodeInteractionRectCssClassName}
         />
-      </g>
+      </>
     );
   }
 );
 
-export const UnknownNodeSvg = (_props: NodeSvgProps & { strokeDasharray?: string }) => {
+export function UnknownNodeSvg(_props: NodeSvgProps & { strokeDasharray?: string }) {
   const { strokeWidth, x, y, width, height, props } = normalize(_props);
   const strokeDasharray = props.strokeDasharray ?? "2,4";
   return (
-    <g>
+    <>
       <rect
         {...props}
         x={x}
@@ -373,6 +452,50 @@ export const UnknownNodeSvg = (_props: NodeSvgProps & { strokeDasharray?: string
         strokeWidth={strokeWidth}
         strokeDasharray={strokeDasharray}
       />
-    </g>
+    </>
   );
-};
+}
+
+function NodeCollectionMarker(__props: NodeSvgProps & { anchor: "top" | "bottom" }) {
+  const { strokeWidth, x, y, width, height, fillColor, strokeColor, props } = normalize(__props);
+
+  const xPosition = x + width / 2;
+  const xSpacing = 7;
+  const y1Position = props.anchor === "bottom" ? y + height - 4 : y + 4;
+  const y2Position = props.anchor === "bottom" ? y + height - 18 : y + 18;
+
+  return (
+    <>
+      <line
+        {...props}
+        x1={xPosition - xSpacing}
+        x2={xPosition - xSpacing}
+        y1={y1Position}
+        y2={y2Position}
+        strokeWidth={strokeWidth}
+        fill={fillColor ?? DEFAULT_NODE_FILL}
+        stroke={strokeColor ?? DEFAULT_NODE_STROKE_COLOR}
+      />
+      <line
+        {...props}
+        x1={xPosition}
+        x2={xPosition}
+        y1={y1Position}
+        y2={y2Position}
+        strokeWidth={strokeWidth}
+        fill={fillColor ?? DEFAULT_NODE_FILL}
+        stroke={strokeColor ?? DEFAULT_NODE_STROKE_COLOR}
+      />
+      <line
+        {...props}
+        x1={xPosition + xSpacing}
+        x2={xPosition + xSpacing}
+        y1={y1Position}
+        y2={y2Position}
+        strokeWidth={strokeWidth}
+        fill={fillColor ?? DEFAULT_NODE_FILL}
+        stroke={strokeColor ?? DEFAULT_NODE_STROKE_COLOR}
+      />
+    </>
+  );
+}
