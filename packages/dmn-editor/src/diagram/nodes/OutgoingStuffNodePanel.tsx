@@ -80,25 +80,18 @@ export function OutgoingStuffNodePanel(props: {
       case EDGE_TYPES.association: {
         return "Add Association edge";
       }
-      default: {
-        return "Add Unknon edge type";
-      }
+      default:
+        throw new Error("");
     }
   }, []);
 
   const getNodeActionTitle = React.useCallback((nodeType: string): string => {
     switch (nodeType) {
-      case NODE_TYPES.inputData: {
-        return "Add Input Data node";
-      }
       case NODE_TYPES.decision: {
         return "Add Decision node";
       }
       case NODE_TYPES.bkm: {
-        return "Add Business Knowledge Model node";
-      }
-      case NODE_TYPES.decisionService: {
-        return "Add Decision Service node";
+        return "Add BKM node";
       }
       case NODE_TYPES.knowledgeSource: {
         return "Add Knowledge Source node";
@@ -106,11 +99,8 @@ export function OutgoingStuffNodePanel(props: {
       case NODE_TYPES.textAnnotation: {
         return "Add Text Annotation node";
       }
-      case NODE_TYPES.group: {
-        return "Add Group node";
-      }
       default: {
-        return "Add Unkonw node type";
+        throw new Error("");
       }
     }
   }, []);
