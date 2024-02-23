@@ -254,6 +254,7 @@ export const InputDataNode = React.memo(
             <InfoNodePanel isVisible={!isTargeted && shouldActLikeHovered} />
 
             <OutgoingStuffNodePanel
+              nodeId={inputData["@_id"]!}
               isVisible={!isTargeted && shouldActLikeHovered}
               nodeTypes={outgoingStructure[NODE_TYPES.inputData].nodes}
               edgeTypes={outgoingStructure[NODE_TYPES.inputData].edges}
@@ -445,6 +446,7 @@ export const DecisionNode = React.memo(
             <EditExpressionNodePanel isVisible={!isTargeted && shouldActLikeHovered} id={decision["@_id"]!} />
           )}
           <OutgoingStuffNodePanel
+            nodeId={decision["@_id"]!}
             isVisible={!isTargeted && shouldActLikeHovered}
             nodeTypes={outgoingStructure[NODE_TYPES.decision].nodes}
             edgeTypes={outgoingStructure[NODE_TYPES.decision].edges}
@@ -581,6 +583,7 @@ export const BkmNode = React.memo(
           <InfoNodePanel isVisible={!isTargeted && shouldActLikeHovered} />
           {!isExternal && <EditExpressionNodePanel isVisible={!isTargeted && shouldActLikeHovered} id={bkm["@_id"]!} />}
           <OutgoingStuffNodePanel
+            nodeId={bkm["@_id"]!}
             isVisible={!isTargeted && shouldActLikeHovered}
             nodeTypes={outgoingStructure[NODE_TYPES.bkm].nodes}
             edgeTypes={outgoingStructure[NODE_TYPES.bkm].edges}
@@ -708,6 +711,7 @@ export const KnowledgeSourceNode = React.memo(
           <br /> */}
           <InfoNodePanel isVisible={!isTargeted && shouldActLikeHovered} />
           <OutgoingStuffNodePanel
+            nodeId={knowledgeSource["@_id"]!}
             isVisible={!isTargeted && shouldActLikeHovered}
             nodeTypes={outgoingStructure[NODE_TYPES.knowledgeSource].nodes}
             edgeTypes={outgoingStructure[NODE_TYPES.knowledgeSource].edges}
@@ -826,6 +830,7 @@ export const TextAnnotationNode = React.memo(
           <br /> */}
           <InfoNodePanel isVisible={!isTargeted && shouldActLikeHovered} />
           <OutgoingStuffNodePanel
+            nodeId={textAnnotation["@_id"]!}
             isVisible={!isTargeted && shouldActLikeHovered}
             nodeTypes={outgoingStructure[NODE_TYPES.textAnnotation].nodes}
             edgeTypes={outgoingStructure[NODE_TYPES.textAnnotation].edges}
@@ -1026,6 +1031,7 @@ export const DecisionServiceNode = React.memo(
           <br /> */}
           <InfoNodePanel isVisible={!isTargeted && selected && !dragging} />
           <OutgoingStuffNodePanel
+            nodeId={decisionService["@_id"]!}
             isVisible={!isTargeted && selected && !dragging}
             nodeTypes={outgoingStructure[NODE_TYPES.decisionService].nodes}
             edgeTypes={outgoingStructure[NODE_TYPES.decisionService].edges}
@@ -1172,6 +1178,7 @@ export const GroupNode = React.memo(
           {/* {`render count: ${renderCount.current}`}
           <br /> */}
           <OutgoingStuffNodePanel
+            nodeId={group["@_id"]!}
             isVisible={!isTargeted && selected && !dragging}
             nodeTypes={outgoingStructure[NODE_TYPES.group].nodes}
             edgeTypes={outgoingStructure[NODE_TYPES.group].edges}
