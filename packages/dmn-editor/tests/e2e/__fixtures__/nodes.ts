@@ -60,6 +60,11 @@ export class Nodes {
     return (await this.get({ name: args.name }).getAttribute("data-nodeid")) ?? "";
   }
 
+  public async delete(args: { name: string }) {
+    await this.page.getByTitle(args.name, { exact: true }).click({ position: { x: 0, y: 0 }, force: true });
+    await this.get({ name: args.name }).press("Delete");
+  }
+
   public async rename(args: { current: string; new: string }) {
     await this.get({ name: args.current }).getByRole("textbox").nth(0).fill(args.new);
     await this.diagram.get().press("Enter");
