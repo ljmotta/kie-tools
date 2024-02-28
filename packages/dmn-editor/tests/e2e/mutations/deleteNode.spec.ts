@@ -25,7 +25,7 @@ test.beforeEach(async ({ editor }) => {
   await editor.open();
 });
 
-test.describe.only("MUTATION - Delete node", () => {
+test.describe("MUTATION - Delete node", () => {
   test.describe("Standalone", () => {
     test("Input Data", async ({ diagram, palette, nodes }) => {
       await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
@@ -82,7 +82,7 @@ test.describe.only("MUTATION - Delete node", () => {
     });
   });
 
-  test.describe.skip("Container", () => {
+  test.describe("Container", () => {
     test("Group", async ({ diagram, palette, nodes }) => {
       await palette.dragNewNode({ type: NodeType.GROUP, targetPosition: { x: 100, y: 100 } });
       await palette.dragNewNode({ type: NodeType.DECISION, targetPosition: { x: 130, y: 130 } });
@@ -110,7 +110,7 @@ test.describe.only("MUTATION - Delete node", () => {
       });
 
       await expect(nodes.get({ name: DefaultNodeName.DECISION_SERVICE })).not.toBeAttached();
-      await expect(nodes.get({ name: DefaultNodeName.DECISION })).not.toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.DECISION })).toBeAttached();
     });
   });
 
