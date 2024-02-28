@@ -20,6 +20,7 @@
 import { expect } from "@playwright/test";
 import { test } from "../__fixtures__/base";
 import { DefaultNodeName, NodeType } from "../__fixtures__/nodes";
+import { EdgeType } from "../__fixtures__/edges";
 
 test.beforeEach(async ({ editor }) => {
   await editor.open();
@@ -114,7 +115,7 @@ test.describe("MUTATION - Delete node", () => {
     });
   });
 
-  test.describe("With Relationship", () => {
+  test.describe("With Single Relationship", () => {
     test("From", async ({ diagram, palette, nodes, edges }) => {
       await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
       await nodes.dragNewConnectedNode({
@@ -164,6 +165,64 @@ test.describe("MUTATION - Delete node", () => {
 
       await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).not.toBeAttached();
       await expect(nodes.get({ name: DefaultNodeName.DECISION })).not.toBeAttached();
+    });
+  });
+
+  test.describe("With Multiple Relationships", () => {
+    test("Single From", async ({ diagram, palette, nodes, edges }) => {
+      await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
+      await nodes.dragNewConnectedNode({
+        from: DefaultNodeName.INPUT_DATA,
+        type: NodeType.DECISION,
+        targetPosition: { x: 100, y: 300 },
+        thenRenameTo: "Decision One",
+      });
+      await nodes.dragNewConnectedNode({
+        from: DefaultNodeName.INPUT_DATA,
+        type: NodeType.DECISION,
+        targetPosition: { x: 300, y: 300 },
+        thenRenameTo: "Decision Two",
+      });
+
+      await nodes.delete({
+        name: DefaultNodeName.INPUT_DATA,
+      });
+
+      await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).not.toBeAttached();
+      await expect(nodes.get({ name: "Decision One" })).toBeAttached();
+      await expect(nodes.get({ name: "Decision Two" })).toBeAttached();
+    });
+
+    test("Single To", async ({ diagram, palette, nodes, edges }) => {
+      await palette.dragNewNode({
+        type: NodeType.INPUT_DATA,
+        targetPosition: { x: 100, y: 100 },
+        thenRenameTo: "Input One",
+      });
+      await palette.dragNewNode({
+        type: NodeType.INPUT_DATA,
+        targetPosition: { x: 300, y: 100 },
+        thenRenameTo: "Input Two",
+      });
+      await palette.dragNewNode({ type: NodeType.DECISION, targetPosition: { x: 300, y: 300 } });
+      await nodes.dragNewConnectedEdge({
+        type: EdgeType.INFORMATION_REQUIREMENT,
+        from: "Input One",
+        to: DefaultNodeName.DECISION,
+      });
+      await nodes.dragNewConnectedEdge({
+        type: EdgeType.INFORMATION_REQUIREMENT,
+        from: "Input Two",
+        to: DefaultNodeName.DECISION,
+      });
+
+      await nodes.delete({
+        name: DefaultNodeName.DECISION,
+      });
+
+      await expect(nodes.get({ name: DefaultNodeName.DECISION })).not.toBeAttached();
+      await expect(nodes.get({ name: "Input One" })).toBeAttached();
+      await expect(nodes.get({ name: "Input Two" })).toBeAttached();
     });
   });
 });
