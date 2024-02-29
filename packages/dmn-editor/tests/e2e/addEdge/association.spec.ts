@@ -18,7 +18,7 @@
  */
 
 import { test, expect } from "../__fixtures__/base";
-import { DefaultNodeName, NodeType } from "../__fixtures__/nodes";
+import { DefaultNodeName, NodePosition, NodeType } from "../__fixtures__/nodes";
 import { EdgeType } from "../__fixtures__/edges";
 import { TestAnnotations } from "@kie-tools/playwright-base/annotations";
 
@@ -272,6 +272,7 @@ test.describe("Add edge - association", () => {
         type: EdgeType.ASSOCIATION,
         from: DefaultNodeName.TEXT_ANNOTATION,
         to: DefaultNodeName.DECISION_SERVICE,
+        position: NodePosition.TOP,
       });
 
       expect(
