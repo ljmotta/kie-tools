@@ -19,7 +19,7 @@
 
 import { expect } from "@playwright/test";
 import { test } from "../__fixtures__/base";
-import { DefaultNodeName, NodeType, NodePosition } from "../__fixtures__/nodes";
+import { DefaultNodeName, NodeType } from "../__fixtures__/nodes";
 import { EdgeType } from "../__fixtures__/edges";
 import { TestAnnotations } from "@kie-tools/playwright-base/annotations";
 
@@ -28,7 +28,7 @@ test.beforeEach(async ({ editor }) => {
 });
 
 test.describe("MUTATIONS - Add edge waypoint", () => {
-  test("Information Requirement", async ({ diagram, page, palette, nodes, edges }) => {
+  test("Information Requirement", async ({ diagram, palette, nodes, edges }) => {
     await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
     test.info().annotations.push({
       type: TestAnnotations.WORKAROUND_DUE_TO,
@@ -53,7 +53,7 @@ test.describe("MUTATIONS - Add edge waypoint", () => {
     await expect(diagram.get()).toHaveScreenshot();
   });
 
-  test("Knowledge Requirement", async ({ diagram, page, palette, nodes, edges }) => {
+  test("Knowledge Requirement", async ({ diagram, palette, nodes, edges }) => {
     await palette.dragNewNode({ type: NodeType.BKM, targetPosition: { x: 100, y: 100 } });
     test.info().annotations.push({
       type: TestAnnotations.WORKAROUND_DUE_TO,
@@ -78,7 +78,7 @@ test.describe("MUTATIONS - Add edge waypoint", () => {
     await expect(diagram.get()).toHaveScreenshot();
   });
 
-  test("Authority Requirement", async ({ diagram, page, palette, nodes, edges }) => {
+  test("Authority Requirement", async ({ diagram, palette, nodes, edges }) => {
     await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
     test.info().annotations.push({
       type: TestAnnotations.WORKAROUND_DUE_TO,
@@ -105,7 +105,7 @@ test.describe("MUTATIONS - Add edge waypoint", () => {
     await expect(diagram.get()).toHaveScreenshot();
   });
 
-  test("Association", async ({ diagram, page, palette, nodes, edges }) => {
+  test("Association", async ({ diagram, palette, nodes, edges }) => {
     await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
     test.info().annotations.push({
       type: TestAnnotations.WORKAROUND_DUE_TO,
