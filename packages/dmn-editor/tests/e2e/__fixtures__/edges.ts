@@ -40,4 +40,13 @@ export class Edges {
   public async getType(args: { from: string; to: string }) {
     return (await this.get({ from: args.from, to: args.to })).locator("path").nth(0).getAttribute("data-edgetype");
   }
+
+  public async delete(args: { from: string; to: string }) {
+    await this.select({ from: args.from, to: args.to });
+    await (await this.get({ from: args.from, to: args.to })).press("Delete");
+  }
+
+  public async select(args: { from: string; to: string }) {
+    await (await this.get({ from: args.from, to: args.to })).click();
+  }
 }
