@@ -40,4 +40,8 @@ export class Edges {
   public async getType(args: { from: string; to: string }) {
     return (await this.get({ from: args.from, to: args.to })).locator("path").nth(0).getAttribute("data-edgetype");
   }
+
+  public async addWaypoint(args: { from: string; to: string }) {
+    await (await this.get({ from: args.from, to: args.to })).dblclick();
+  }
 }
