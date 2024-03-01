@@ -39,14 +39,16 @@ export interface ArgumentEntryExpressionCellProps {
   columnIndex: number;
   parentElementId: string;
   widthsById: Map<string, number[]>;
+  onDataUpdate: (data: readonly DMN15__tBinding[]) => void;
 }
 
 export const ArgumentEntryExpressionCell: React.FunctionComponent<ArgumentEntryExpressionCellProps> = ({
-  data: argumentEntries,
+  data,
   rowIndex,
   columnIndex,
   parentElementId,
   widthsById,
+  onDataUpdate,
 }) => {
   const { setExpression } = useBoxedExpressionEditorDispatch();
 
@@ -61,6 +63,7 @@ export const ArgumentEntryExpressionCell: React.FunctionComponent<ArgumentEntryE
           ),
         };
 
+        onDataUpdate(argumentEntries);
         return { ...prev, binding: argumentEntries };
       });
     },
@@ -70,7 +73,7 @@ export const ArgumentEntryExpressionCell: React.FunctionComponent<ArgumentEntryE
   return (
     <NestedExpressionDispatchContextProvider onSetExpression={onSetExpression}>
       <ExpressionContainer
-        expression={argumentEntries?.[rowIndex]?.expression ?? undefined!}
+        expression={data?.[rowIndex]?.expression ?? undefined!}
         isResetSupported={true}
         isNested={true}
         rowIndex={rowIndex}

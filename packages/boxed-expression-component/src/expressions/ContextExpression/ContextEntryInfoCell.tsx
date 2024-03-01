@@ -99,7 +99,10 @@ export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellP
     rowIndex,
     columnIndex,
     undefined,
-    useCallback(() => `${entryInfo?.["@_name"]} (${entryInfo?.["@_typeRef"]})`, [entryInfo])
+    useCallback(
+      () => `${entryInfo?.["@_name"]} (${entryInfo?.["@_typeRef"] ?? DmnBuiltInDataType.Undefined}})`,
+      [entryInfo]
+    )
   );
 
   const { beeGwtService } = useBoxedExpressionEditor();
@@ -122,10 +125,10 @@ export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellP
         </p>
         <p
           className="expression-info-data-type pf-u-text-truncate"
-          title={entryInfo?.["@_typeRef"]}
+          title={entryInfo?.["@_typeRef"] ?? DmnBuiltInDataType.Undefined}
           data-ouia-component-id={"expression-info-data-type"}
         >
-          ({entryInfo?.["@_typeRef"]})
+          ({entryInfo?.["@_typeRef"] ?? DmnBuiltInDataType.Undefined})
         </p>
       </div>
     ),
@@ -137,7 +140,7 @@ export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellP
       <div className={`${entryInfo?.["@_id"]} entry-info`}>
         <ExpressionDefinitionHeaderMenu
           selectedExpressionName={entryInfo?.["@_name"] ?? ""}
-          selectedDataType={entryInfo?.["@_typeRef"] ?? "<Undefined>"}
+          selectedDataType={entryInfo?.["@_typeRef"] ?? DmnBuiltInDataType.Undefined}
           onExpressionHeaderUpdated={onContextEntryInfoUpdated}
         >
           {renderEntryDefinition({ additionalCssClass: "with-popover-menu" })}

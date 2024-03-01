@@ -461,6 +461,22 @@ export function ContextExpression(
     [contextExpression.contextEntry?.length]
   );
 
+  const beeTableRows = useMemo(() => {
+    return (contextExpression.contextEntry?.filter((e) => e.variable) ?? []).map((c) => {
+      if (c.expression) {
+        return {
+          ...c,
+          expression: {
+            ...c.expression,
+            "@_typeRef": c.expression?.["@_typeRef"] ?? DmnBuiltInDataType.Undefined,
+          },
+        };
+      } else {
+        return c;
+      }
+    });
+  }, [contextExpression.contextEntry]);
+
   return (
     <NestedExpressionContainerContext.Provider value={nestedExpressionContainerValue}>
       <div className={`context-expression ${id}`}>
@@ -471,7 +487,7 @@ export function ContextExpression(
           headerVisibility={headerVisibility}
           cellComponentByColumnAccessor={cellComponentByColumnAccessor}
           columns={beeTableColumns}
-          rows={contextExpression.contextEntry?.filter((e, i, { length }) => i < length - 1) ?? []}
+          rows={beeTableRows}
           onColumnUpdates={onColumnUpdates}
           operationConfig={beeTableOperationConfig}
           allowedOperations={allowedOperations}

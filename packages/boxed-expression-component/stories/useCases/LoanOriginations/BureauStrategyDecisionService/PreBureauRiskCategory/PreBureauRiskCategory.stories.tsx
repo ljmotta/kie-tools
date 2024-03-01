@@ -58,6 +58,7 @@ export const preBureauRiskCategoryExpression: ContextExpressionDefinition = {
         "@_id": "_DD3AABF1-9E83-4F71-A769-D9CC01231580",
         "@_label": "Result Expression",
         "@_hitPolicy": "UNIQUE",
+        annotation: [{ "@_name": "annotation-1" }],
         input: [
           {
             "@_id": "_6887F8AD-5387-4D00-8CED-5234EB2C4EEB",
@@ -90,6 +91,7 @@ export const preBureauRiskCategoryExpression: ContextExpressionDefinition = {
               { "@_id": "_A59583B8-E83D-44CE-8B71-5C29C397CF4E", text: { __$$text: "<100" } },
             ],
             outputEntry: [{ "@_id": "_6A15E6CD-2A38-4517-A82C-CDF504E68E29", text: { __$$text: '"High"' } }],
+            annotationEntry: [{ text: { __$$text: "" } }],
           },
           {
             "@_id": "_EFBD32EA-8A08-4645-927D-EBB784D67910",
@@ -106,6 +108,7 @@ export const preBureauRiskCategoryExpression: ContextExpressionDefinition = {
                 text: { __$$text: '"Medium"' },
               },
             ],
+            annotationEntry: [{ text: { __$$text: "" } }],
           },
           {
             "@_id": "_F2F42947-F671-4230-A462-6BB6D4442D11",
@@ -117,6 +120,7 @@ export const preBureauRiskCategoryExpression: ContextExpressionDefinition = {
               },
             ],
             outputEntry: [{ "@_id": "_18D2FB23-AD7C-41CA-9EB6-D854BE331FE2", text: { __$$text: '"Low"' } }],
+            annotationEntry: [{ text: { __$$text: "" } }],
           },
           {
             "@_id": "_F65C4811-3179-430C-8733-21FDBF418B99",
@@ -130,6 +134,7 @@ export const preBureauRiskCategoryExpression: ContextExpressionDefinition = {
                 text: { __$$text: '"Very Low"' },
               },
             ],
+            annotationEntry: [{ text: { __$$text: "" } }],
           },
           {
             "@_id": "_CDACC55A-3AFE-4A03-81C0-053D23DAE724",
@@ -143,6 +148,7 @@ export const preBureauRiskCategoryExpression: ContextExpressionDefinition = {
                 text: { __$$text: '"Decline"' },
               },
             ],
+            annotationEntry: [{ text: { __$$text: "" } }],
           },
           {
             "@_id": "_2131DA82-B7B0-454E-9176-4E529E7A2B48",
@@ -151,6 +157,7 @@ export const preBureauRiskCategoryExpression: ContextExpressionDefinition = {
               { "@_id": "_A933C989-DF1C-4635-8A07-3A7459F76698", text: { __$$text: "[80..90)" } },
             ],
             outputEntry: [{ "@_id": "_8B0A30E9-9627-48B4-82CA-7B549F27D393", text: { __$$text: '"High"' } }],
+            annotationEntry: [{ text: { __$$text: "" } }],
           },
           {
             "@_id": "_7A91A43D-7987-4C93-869C-5EA96E3ED201",
@@ -167,6 +174,7 @@ export const preBureauRiskCategoryExpression: ContextExpressionDefinition = {
                 text: { __$$text: '"Medium"' },
               },
             ],
+            annotationEntry: [{ text: { __$$text: "" } }],
           },
           {
             "@_id": "_CDEDBBBE-05B7-4070-B479-1391ADC9C6E6",
@@ -175,6 +183,7 @@ export const preBureauRiskCategoryExpression: ContextExpressionDefinition = {
               { "@_id": "_195C7AC3-9F87-41EA-9291-9E52E2CD84F6", text: { __$$text: ">110" } },
             ],
             outputEntry: [{ "@_id": "_67BF6667-022D-4852-A47F-4D40AEED4009", text: { __$$text: '"Low"' } }],
+            annotationEntry: [{ text: { __$$text: "" } }],
           },
         ],
       },

@@ -532,23 +532,55 @@ export function DecisionTableExpression(
     [setExpression]
   );
 
+  const getAggregation = useCallback((aggKey: string) => {
+    switch (aggKey) {
+      case "<":
+        return "MIN";
+      case ">":
+        return "MAX";
+      case "#":
+        return "COUNT";
+      case "+":
+      default:
+        return "SUM";
+    }
+  }, []);
+
+  const getAggregationKey = useCallback((aggKey: string | undefined) => {
+    if (!aggKey) {
+      return "?";
+    }
+    switch (aggKey) {
+      case "MIN":
+        return "<";
+      case "MAX":
+        return ">";
+      case "COUNT":
+        return "#";
+      case "SUM":
+        return "+";
+      default:
+        return "?";
+    }
+  }, []);
+
   const onBuiltInAggregatorSelect = useCallback(
     (aggregation: DMN15__tBuiltinAggregator) => {
       setExpression((prev) => {
         return {
           ...prev,
-          "@_aggregation": aggregation,
+          "@_aggregation": getAggregation(aggregation),
         };
       });
     },
-    [setExpression]
+    [getAggregation, setExpression]
   );
 
   const controllerCell = useMemo(
     () => (
       <HitPolicySelector
         selectedHitPolicy={decisionTableExpression["@_hitPolicy"] ?? "UNIQUE"}
-        selectedBuiltInAggregator={decisionTableExpression["@_aggregation"] ?? "SUM"}
+        selectedBuiltInAggregator={getAggregationKey(decisionTableExpression["@_aggregation"])}
         onHitPolicySelected={onHitPolicySelect}
         onBuiltInAggregatorSelected={onBuiltInAggregatorSelect}
       />

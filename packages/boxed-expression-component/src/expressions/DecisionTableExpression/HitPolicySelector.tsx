@@ -40,7 +40,7 @@ export interface HitPolicySelectorProps {
   /** Pre-selected hit policy */
   selectedHitPolicy: DMN15__tHitPolicy;
   /** Pre-selected built-in aggregator */
-  selectedBuiltInAggregator: DMN15__tBuiltinAggregator;
+  selectedBuiltInAggregator: string;
   /** Callback invoked when hit policy selection changes */
   onHitPolicySelected: (hitPolicy: string) => void;
   /** Callback invoked when built-in aggregator selection changes */
@@ -98,13 +98,13 @@ export function HitPolicySelector({
   const aggregatorHelp = useCallback(
     (aggregatorKey: string) => {
       switch (aggregatorKey) {
-        case "SUM":
+        case "+":
           return i18n.builtInAggregatorHelp.sum;
-        case "COUNT":
+        case "#":
           return i18n.builtInAggregatorHelp.count;
-        case "MIN":
+        case "<":
           return i18n.builtInAggregatorHelp.min;
-        case "MAX":
+        case ">":
           return i18n.builtInAggregatorHelp.max;
         default:
           return i18n.builtInAggregatorHelp.none;
@@ -189,12 +189,18 @@ export function HitPolicySelector({
                   <MenuGroup className="menu-with-help" label="Aggregator function">
                     <MenuList>
                       <>
-                        {["SUM", "COUNT", "MIN", "MAX"].map((aggregatorKey) => (
+                        {[
+                          ["<None>", "?"],
+                          ["SUM", "+"],
+                          ["COUNT", "#"],
+                          ["MIN", "<"],
+                          ["MAX", ">"],
+                        ].map((agg) => (
                           <MenuItemWithHelp
-                            key={aggregatorKey}
-                            menuItemKey={aggregatorKey}
-                            menuItemCustomText={aggregatorKey}
-                            menuItemHelp={aggregatorHelp(aggregatorKey)}
+                            key={agg[0]}
+                            menuItemKey={agg[1]}
+                            menuItemCustomText={agg[0]}
+                            menuItemHelp={aggregatorHelp(agg[1])}
                             setVisibleHelp={toggleVisibleHelpAggregatorFunction}
                             visibleHelp={visibleHelpAggregatorFunction}
                           />
