@@ -18,9 +18,9 @@
  */
 
 import { expect } from "@playwright/test";
-import { test } from "../__fixtures__/base";
-import { DefaultNodeName, NodeType } from "../__fixtures__/nodes";
-import { EdgeType } from "../__fixtures__/edges";
+import { test } from "./__fixtures__/base";
+import { DefaultNodeName, NodeType } from "./__fixtures__/nodes";
+import { EdgeType } from "./__fixtures__/edges";
 import { TestAnnotations } from "@kie-tools/playwright-base/annotations";
 
 test.beforeEach(async ({ editor }) => {
