@@ -26,83 +26,145 @@ test.beforeEach(async ({ editor }) => {
 });
 
 test.describe("Delete - Edge", () => {
-  test("should delete an Information Requirement edge", async ({ edges, diagram, palette, nodes }) => {
-    await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
-    await nodes.dragNewConnectedNode({
-      from: DefaultNodeName.INPUT_DATA,
-      type: NodeType.DECISION,
-      targetPosition: { x: 100, y: 300 },
+  test.describe("Should delete an Information Requirement edge", async () => {
+    test.beforeEach(async ({ palette, nodes, edges }) => {
+      await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
+      await nodes.dragNewConnectedNode({
+        from: DefaultNodeName.INPUT_DATA,
+        type: NodeType.DECISION,
+        targetPosition: { x: 100, y: 300 },
+      });
+
+      expect(await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION })).toBeAttached();
     });
 
-    expect(await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION })).toBeAttached();
+    test("Using 'Delete'", async ({ diagram, edges, nodes }) => {
+      await diagram.resetFocus();
+      await edges.delete({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
 
-    await diagram.resetFocus();
-    await edges.delete({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
+      expect(await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION })).not.toBeAttached();
 
-    expect(await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION })).not.toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.DECISION })).toBeAttached();
+    });
 
-    await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toBeAttached();
-    await expect(nodes.get({ name: DefaultNodeName.DECISION })).toBeAttached();
+    test("Using 'Backspace'", async ({ diagram, edges, nodes }) => {
+      await diagram.resetFocus();
+      await edges.delete({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION, isBackspace: true });
+
+      expect(await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION })).not.toBeAttached();
+
+      await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.DECISION })).toBeAttached();
+    });
   });
 
-  test("should delete an Association edge", async ({ edges, diagram, palette, nodes }) => {
-    await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
-    await nodes.dragNewConnectedNode({
-      from: DefaultNodeName.INPUT_DATA,
-      type: NodeType.TEXT_ANNOTATION,
-      targetPosition: { x: 100, y: 400 },
+  test.describe("Should delete an Association edge", async () => {
+    test.beforeEach(async ({ palette, nodes, edges }) => {
+      await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
+      await nodes.dragNewConnectedNode({
+        from: DefaultNodeName.INPUT_DATA,
+        type: NodeType.TEXT_ANNOTATION,
+        targetPosition: { x: 100, y: 300 },
+      });
+
+      expect(await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION })).toBeAttached();
     });
 
-    expect(await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION })).toBeAttached();
+    test("Using 'Delete'", async ({ diagram, edges, nodes }) => {
+      await diagram.resetFocus();
+      await edges.delete({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
 
-    await diagram.resetFocus();
-    await edges.delete({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
+      expect(
+        await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION })
+      ).not.toBeAttached();
 
-    expect(
-      await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION })
-    ).not.toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.TEXT_ANNOTATION })).toBeAttached();
+    });
 
-    await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toBeAttached();
-    await expect(nodes.get({ name: DefaultNodeName.TEXT_ANNOTATION })).toBeAttached();
+    test("Using 'Backspace'", async ({ diagram, edges, nodes }) => {
+      await diagram.resetFocus();
+      await edges.delete({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION, isBackspace: true });
+
+      expect(
+        await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION })
+      ).not.toBeAttached();
+
+      await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.TEXT_ANNOTATION })).toBeAttached();
+    });
   });
 
-  test("should delete a Knowledge Requirement edge", async ({ edges, diagram, palette, nodes }) => {
-    await palette.dragNewNode({ type: NodeType.BKM, targetPosition: { x: 100, y: 100 } });
-    await nodes.dragNewConnectedNode({
-      from: DefaultNodeName.BKM,
-      type: NodeType.DECISION,
-      targetPosition: { x: 100, y: 300 },
+  test.describe("Should delete a Knowledge Requirement edge", async () => {
+    test.beforeEach(async ({ palette, nodes, edges }) => {
+      await palette.dragNewNode({ type: NodeType.BKM, targetPosition: { x: 100, y: 100 } });
+      await nodes.dragNewConnectedNode({
+        from: DefaultNodeName.BKM,
+        type: NodeType.DECISION,
+        targetPosition: { x: 100, y: 300 },
+      });
+
+      expect(await edges.get({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION })).toBeAttached();
     });
 
-    expect(await edges.get({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION })).toBeAttached();
+    test("Using 'Delete'", async ({ diagram, edges, nodes }) => {
+      await diagram.resetFocus();
+      await edges.delete({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
 
-    await diagram.resetFocus();
-    await edges.delete({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
+      expect(await edges.get({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION })).not.toBeAttached();
 
-    expect(await edges.get({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION })).not.toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.BKM })).toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.DECISION })).toBeAttached();
+    });
 
-    await expect(nodes.get({ name: DefaultNodeName.BKM })).toBeAttached();
-    await expect(nodes.get({ name: DefaultNodeName.DECISION })).toBeAttached();
+    test("Using 'Backspace'", async ({ diagram, edges, nodes }) => {
+      await diagram.resetFocus();
+      await edges.delete({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION, isBackspace: true });
+
+      expect(await edges.get({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION })).not.toBeAttached();
+
+      await expect(nodes.get({ name: DefaultNodeName.BKM })).toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.DECISION })).toBeAttached();
+    });
   });
 
-  test("should delete an Authority Requirement edge", async ({ edges, diagram, palette, nodes }) => {
-    await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
-    await nodes.dragNewConnectedNode({
-      from: DefaultNodeName.INPUT_DATA,
-      type: NodeType.KNOWLEDGE_SOURCE,
-      targetPosition: { x: 100, y: 300 },
+  test.describe("Should delete an Authority Requirement edge", async () => {
+    test.beforeEach(async ({ palette, nodes, edges }) => {
+      await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
+      await nodes.dragNewConnectedNode({
+        from: DefaultNodeName.INPUT_DATA,
+        type: NodeType.KNOWLEDGE_SOURCE,
+        targetPosition: { x: 100, y: 300 },
+      });
+
+      expect(
+        await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE })
+      ).toBeAttached();
     });
 
-    expect(await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE })).toBeAttached();
+    test("Using 'Delete'", async ({ diagram, edges, nodes }) => {
+      await diagram.resetFocus();
+      await edges.delete({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
 
-    await diagram.resetFocus();
-    await edges.delete({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
+      expect(
+        await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE })
+      ).not.toBeAttached();
 
-    expect(
-      await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE })
-    ).not.toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.KNOWLEDGE_SOURCE })).toBeAttached();
+    });
 
-    await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toBeAttached();
-    await expect(nodes.get({ name: DefaultNodeName.KNOWLEDGE_SOURCE })).toBeAttached();
+    test("Using 'Backspace'", async ({ diagram, edges, nodes }) => {
+      await diagram.resetFocus();
+      await edges.delete({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE, isBackspace: true });
+
+      expect(
+        await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE })
+      ).not.toBeAttached();
+
+      await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toBeAttached();
+      await expect(nodes.get({ name: DefaultNodeName.KNOWLEDGE_SOURCE })).toBeAttached();
+    });
   });
 });

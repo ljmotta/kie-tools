@@ -41,9 +41,13 @@ export class Edges {
     return (await this.get({ from: args.from, to: args.to })).locator("path").nth(0).getAttribute("data-edgetype");
   }
 
-  public async delete(args: { from: string; to: string }) {
+  public async delete(args: { from: string; to: string; isBackspace?: boolean }) {
     await this.select({ from: args.from, to: args.to });
-    await (await this.get({ from: args.from, to: args.to })).press("Delete");
+    if (args.isBackspace) {
+      await (await this.get({ from: args.from, to: args.to })).press("Backspace");
+    } else {
+      await (await this.get({ from: args.from, to: args.to })).press("Delete");
+    }
   }
 
   public async select(args: { from: string; to: string }) {
