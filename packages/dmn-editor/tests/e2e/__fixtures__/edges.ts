@@ -38,18 +38,6 @@ export class Edges {
     return this.page.getByRole("button", { name: `Edge from ${from} to ${to}` });
   }
 
-  public async getId(args: { from: string; to: string }): Promise<string> {
-    const reactFlowEdgeTestIdPrefix = "rf__edge-";
-
-    const testId = await (await this.get({ from: args.from, to: args.to })).getAttribute("data-testid");
-
-    if (!testId?.startsWith(reactFlowEdgeTestIdPrefix)) {
-      throw new Error("Reactflow library implementation has changed and test suite needs a fix!");
-    }
-
-    return testId.slice(reactFlowEdgeTestIdPrefix.length);
-  }
-
   public async getType(args: { from: string; to: string }) {
     return (await this.get({ from: args.from, to: args.to })).locator("path").nth(0).getAttribute("data-edgetype");
   }
@@ -64,14 +52,10 @@ export class Edges {
     nth: number;
     targetPosition: { x: number; y: number };
   }) {
-    const edgeId = await this.getId({ from: args.from, to: args.to });
     await this.select({ from: args.from, to: args.to });
-    await (await this.get({ from: args.from, to: args.to }))
-      .locator(`[data-edgehref="${edgeId}"][data-waypointindex="${args.nth}"]`)
-      .click();
 
     await (await this.get({ from: args.from, to: args.to }))
-      .locator(`[data-edgehref="${edgeId}"][data-waypointindex="${args.nth}"]`)
+      .locator(`[data-waypointindex="${args.nth}"]`)
       .dragTo(this.diagram.get(), {
         targetPosition: args.targetPosition,
       });
@@ -88,6 +72,6 @@ export class Edges {
 
   public async select(args: { from: string; to: string }) {
     // because of the waypoints on the edge, we can not click into the edge bounding box middle
-    await (await this.get({ from: args.from, to: args.to })).locator("circle").nth(2).click();
+    await (await this.get({ from: args.from, to: args.to })).locator("circle").nth(1).click();
   }
 }
