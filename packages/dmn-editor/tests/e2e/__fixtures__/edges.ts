@@ -19,6 +19,7 @@
 
 import { Page } from "@playwright/test";
 import { Nodes } from "./nodes";
+import { Diagram } from "./diagram";
 
 export enum EdgeType {
   ASSOCIATION = "association",
@@ -28,7 +29,7 @@ export enum EdgeType {
 }
 
 export class Edges {
-  constructor(public page: Page, public nodes: Nodes) {}
+  constructor(public page: Page, public nodes: Nodes, public diagram: Diagram) {}
 
   public async get(args: { from: string; to: string }) {
     const from = await this.nodes.getId({ name: args.from });
@@ -37,12 +38,43 @@ export class Edges {
     return this.page.getByRole("button", { name: `Edge from ${from} to ${to}` });
   }
 
+  public async getId(args: { from: string; to: string }): Promise<string> {
+    const reactFlowEdgeTestIdPrefix = "rf__edge-";
+
+    const testId = await (await this.get({ from: args.from, to: args.to })).getAttribute("data-testid");
+
+    if (!testId?.startsWith(reactFlowEdgeTestIdPrefix)) {
+      throw new Error("Reactflow library implementation has changed and test suite needs a fix!");
+    }
+
+    return testId.slice(reactFlowEdgeTestIdPrefix.length);
+  }
+
   public async getType(args: { from: string; to: string }) {
     return (await this.get({ from: args.from, to: args.to })).locator("path").nth(0).getAttribute("data-edgetype");
   }
 
   public async addWaypoint(args: { from: string; to: string }) {
     await (await this.get({ from: args.from, to: args.to })).dblclick();
+  }
+
+  public async moveNthWaypoint(args: {
+    from: string;
+    to: string;
+    nth: number;
+    targetPosition: { x: number; y: number };
+  }) {
+    const edgeId = await this.getId({ from: args.from, to: args.to });
+    await this.select({ from: args.from, to: args.to });
+    await (await this.get({ from: args.from, to: args.to }))
+      .locator(`[data-edgehref="${edgeId}"][data-waypointindex="${args.nth}"]`)
+      .click();
+
+    await (await this.get({ from: args.from, to: args.to }))
+      .locator(`[data-edgehref="${edgeId}"][data-waypointindex="${args.nth}"]`)
+      .dragTo(this.diagram.get(), {
+        targetPosition: args.targetPosition,
+      });
   }
 
   public async delete(args: { from: string; to: string; isBackspace?: boolean }) {
@@ -55,6 +87,7 @@ export class Edges {
   }
 
   public async select(args: { from: string; to: string }) {
-    await (await this.get({ from: args.from, to: args.to })).click();
+    // because of the waypoints on the edge, we can not click into the edge bounding box middle
+    await (await this.get({ from: args.from, to: args.to })).locator("circle").nth(2).click();
   }
 }
