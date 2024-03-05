@@ -244,6 +244,15 @@ export function InvocationExpression(
     [setExpression]
   );
 
+  const onDataUpdate = useCallback(
+    (data: DMN15__tBinding[]) => {
+      setExpression((prev: InvocationExpressionDefinition) => {
+        return { ...prev, binding: data };
+      });
+    },
+    [setExpression]
+  );
+
   const cellComponentByColumnAccessor: BeeTableProps<ROWTYPE>["cellComponentByColumnAccessor"] = useMemo(
     () => ({
       parameter: (props) => (
@@ -258,12 +267,13 @@ export function InvocationExpression(
       expression: (props) => (
         <ArgumentEntryExpressionCell
           {...props}
-          data={invocationExpression.binding}
+          data={props.data}
           parentElementId={invocationExpression.parentElementId}
+          onDataUpdate={onDataUpdate}
         />
       ),
     }),
-    [invocationExpression.binding, invocationExpression.parentElementId, updateEntry]
+    [invocationExpression.parentElementId, onDataUpdate, updateEntry]
   );
 
   const beeTableOperationConfig = useMemo<BeeTableOperationConfig>(() => {

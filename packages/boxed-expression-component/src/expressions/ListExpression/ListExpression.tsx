@@ -18,8 +18,8 @@
  */
 
 import * as React from "react";
-import * as ReactTable from "react-table";
 import { useCallback, useMemo } from "react";
+import * as ReactTable from "react-table";
 import {
   BeeTableCellProps,
   BeeTableContextMenuAllowedOperationsConditions,
@@ -27,7 +27,6 @@ import {
   BeeTableOperation,
   BeeTableOperationConfig,
   BeeTableProps,
-  generateUuid,
   ListExpressionDefinition,
 } from "../../api";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
