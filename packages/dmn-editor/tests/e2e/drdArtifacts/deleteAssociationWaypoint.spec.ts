@@ -26,7 +26,7 @@ test.beforeEach(async ({ editor }) => {
   await editor.open();
 });
 
-test.describe.only("Delete edge waypoint - Association", () => {
+test.describe("Delete edge waypoint - Association", () => {
   test.beforeEach(async ({ palette, nodes, browserName }) => {
     test.skip(browserName === "webkit", "https://github.com/apache/incubator-kie-issues/issues/991");
     test.info().annotations.push({
