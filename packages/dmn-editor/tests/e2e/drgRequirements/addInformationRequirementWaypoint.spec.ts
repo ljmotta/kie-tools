@@ -26,7 +26,7 @@ test.beforeEach(async ({ editor }) => {
   await editor.open();
 });
 
-test.describe.only("Add edge waypoint - Information Requirement", () => {
+test.describe("Add edge waypoint - Information Requirement", () => {
   test.beforeEach(async ({ palette, nodes }) => {
     await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
     await nodes.dragNewConnectedNode({
