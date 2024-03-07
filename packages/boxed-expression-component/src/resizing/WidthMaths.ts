@@ -47,7 +47,7 @@ import {
 } from "./WidthConstants";
 
 export function getExpressionMinWidth(expression?: ExpressionDefinition): number {
-  if (!expression) {
+  if (!expression || !expression.__$$element) {
     return DEFAULT_MIN_WIDTH;
   } else if (expression.__$$element === "literalExpression") {
     return LITERAL_EXPRESSION_MIN_WIDTH + LITERAL_EXPRESSION_EXTRA_WIDTH;

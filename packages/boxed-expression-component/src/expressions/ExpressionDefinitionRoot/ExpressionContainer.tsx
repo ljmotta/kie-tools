@@ -236,8 +236,6 @@ export const ExpressionContainer: React.FunctionComponent<ExpressionContainerPro
     ]
   );
 
-  // deve tá ficando com o expression antigo, não com o que foi setado no setExpression
-
   const onLogicTypeReset = useCallback(() => {
     variables?.repository.removeVariable(expression?.["@_id"] ?? "", true);
     setExpression(() => undefined!);

@@ -38,12 +38,17 @@ export function ContextResultExpressionCell(props: {
     ({ getNewExpression }) => {
       setExpression((prev: ContextExpressionDefinition) => {
         const entries = [...(prev.contextEntry ?? [])];
-        const index = entries.length - 1;
 
-        entries.splice(index, 1, {
-          ...entries[index],
-          expression: getNewExpression(entries[index]?.expression),
-        });
+        const index = props.rowIndex < 0 ? entries.length : props.rowIndex;
+
+        if (index < entries.length) {
+          entries.splice(index, 1, {
+            ...entries[index],
+            expression: getNewExpression(entries[index]?.expression),
+          });
+        } else {
+          entries.push({ expression: getNewExpression() });
+        }
 
         return {
           ...prev,
@@ -51,16 +56,18 @@ export function ContextResultExpressionCell(props: {
         };
       });
     },
-    [setExpression]
+    [props.rowIndex, setExpression]
   );
 
   // It is not possible to have a ContextExpression without any entry (props.contextExpression.contextEntries.length === 0)
   const lastEntry = props.contextExpression.contextEntry?.[props.contextExpression.contextEntry.length - 1];
 
+  const resultEntry = props.rowIndex < 0 ? undefined : props.contextExpression.contextEntry?.[props.rowIndex];
+
   return (
     <NestedExpressionDispatchContextProvider onSetExpression={onSetExpression}>
       <ExpressionContainer
-        expression={lastEntry?.expression}
+        expression={resultEntry?.expression}
         isResetSupported={true}
         isNested={true}
         rowIndex={props.rowIndex}
