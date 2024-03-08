@@ -22,6 +22,7 @@ import { BoxedExpressionEditor, BoxedExpressionEditorProps } from "../../../src/
 import { BoxedExpressionEditorWrapper } from "../../boxedExpressionStoriesWrapper";
 import { Base as EmptyExpression } from "../../misc/Empty/EmptyExpression.stories";
 import { DmnBuiltInDataType, FunctionExpressionDefinitionKind, generateUuid } from "../../../src/api";
+import { BEE_TABLE_ROW_INDEX_COLUMN_WIDTH } from "../../../src/resizing/WidthConstants";
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta: Meta<BoxedExpressionEditorProps> = {
@@ -31,6 +32,9 @@ const meta: Meta<BoxedExpressionEditorProps> = {
 };
 export default meta;
 type Story = StoryObj<BoxedExpressionEditorProps>;
+
+const expressionId = generateUuid();
+const nestedExpressionId = generateUuid();
 
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
 export const Base: Story = {
@@ -55,7 +59,7 @@ export const InstallmentCalculation: Story = {
     ...EmptyExpression.args,
     expression: {
       __$$element: "functionDefinition",
-      "@_id": generateUuid(),
+      "@_id": expressionId,
       "@_label": "Installment calculation",
       "@_typeRef": DmnBuiltInDataType.Number,
       "@_kind": FunctionExpressionDefinitionKind.Feel,
@@ -83,6 +87,7 @@ export const InstallmentCalculation: Story = {
       },
     },
     isResetSupportedOnRootExpression: false,
+    widthsById: new Map([[expressionId, [BEE_TABLE_ROW_INDEX_COLUMN_WIDTH, 700]]]),
   },
 };
 

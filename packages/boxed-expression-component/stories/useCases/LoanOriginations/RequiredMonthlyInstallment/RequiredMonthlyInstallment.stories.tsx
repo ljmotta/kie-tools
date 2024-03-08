@@ -32,9 +32,12 @@ const meta: Meta<BoxedExpressionEditorProps> = {
 export default meta;
 type Story = StoryObj<BoxedExpressionEditorProps>;
 
+const expressionId = "_EF51A747-D5E1-414E-9DD5-964362FB2AEC";
+const innerExpressionId = "_EE98C97E-4CFE-463D-A500-B8D6D7FC69BD";
+
 export const requiredMonthlyInstallmentExpression: InvocationExpressionDefinition = {
   __$$element: "invocation",
-  "@_id": "_EF51A747-D5E1-414E-9DD5-964362FB2AEC",
+  "@_id": expressionId,
   "@_label": "Required monthly installment",
   "@_typeRef": DmnBuiltInDataType.Number,
   expression: {
@@ -51,7 +54,7 @@ export const requiredMonthlyInstallmentExpression: InvocationExpressionDefinitio
       },
       expression: {
         __$$element: "literalExpression",
-        "@_id": "_EE98C97E-4CFE-463D-A500-B8D6D7FC69BD",
+        "@_id": innerExpressionId,
         "@_label": "Product Type",
         "@_typeRef": "t.ProductType",
         text: { __$$text: "Requested product.ProductType" },
@@ -113,5 +116,9 @@ export const Expression: Story = {
     beeGwtService,
     pmmlDocuments,
     isResetSupportedOnRootExpression: false,
+    widthsById: new Map<string, number[]>([
+      [expressionId, [120]],
+      [innerExpressionId, [250]],
+    ]),
   },
 };

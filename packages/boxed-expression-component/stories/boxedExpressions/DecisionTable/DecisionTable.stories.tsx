@@ -26,6 +26,13 @@ import {
   DECISION_TABLE_INPUT_DEFAULT_VALUE,
   DECISION_TABLE_OUTPUT_DEFAULT_VALUE,
 } from "../../../src/expressions/DecisionTableExpression";
+import {
+  BEE_TABLE_ROW_INDEX_COLUMN_WIDTH,
+  CONTEXT_ENTRY_INFO_MIN_WIDTH,
+  DECISION_TABLE_ANNOTATION_DEFAULT_WIDTH,
+  DECISION_TABLE_INPUT_DEFAULT_WIDTH,
+  DECISION_TABLE_OUTPUT_DEFAULT_WIDTH,
+} from "../../../src/resizing/WidthConstants";
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta: Meta<BoxedExpressionEditorProps> = {
@@ -36,6 +43,9 @@ const meta: Meta<BoxedExpressionEditorProps> = {
 export default meta;
 type Story = StoryObj<BoxedExpressionEditorProps>;
 
+const expressionId = generateUuid();
+const nestedExpressionId = generateUuid();
+
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
 export const Base: Story = {
   render: (args) => BoxedExpressionEditorWrapper(),
@@ -44,7 +54,7 @@ export const Base: Story = {
     ...EmptyExpression.args,
     expression: {
       __$$element: "decisionTable",
-      "@_id": generateUuid(),
+      "@_id": expressionId,
       "@_label": "Expression Name",
       "@_hitPolicy": "UNIQUE",
       input: [
@@ -83,6 +93,18 @@ export const Base: Story = {
         },
       ],
     },
+    widthsById: new Map([
+      [
+        expressionId,
+        [
+          BEE_TABLE_ROW_INDEX_COLUMN_WIDTH,
+          DECISION_TABLE_INPUT_DEFAULT_WIDTH,
+          DECISION_TABLE_OUTPUT_DEFAULT_WIDTH,
+          DECISION_TABLE_ANNOTATION_DEFAULT_WIDTH,
+        ],
+      ],
+    ]),
+
     isResetSupportedOnRootExpression: false,
   },
 };
@@ -94,7 +116,7 @@ export const Discount: Story = {
     ...EmptyExpression.args,
     expression: {
       __$$element: "decisionTable",
-      "@_id": generateUuid(),
+      "@_id": expressionId,
       "@_label": "Discount",
       "@_typeRef": DmnBuiltInDataType.Number,
       "@_hitPolicy": "PRIORITY",
@@ -148,6 +170,17 @@ export const Discount: Story = {
       ],
     },
     isResetSupportedOnRootExpression: false,
+    widthsById: new Map([
+      [
+        expressionId,
+        [
+          BEE_TABLE_ROW_INDEX_COLUMN_WIDTH,
+          120,
+          DECISION_TABLE_OUTPUT_DEFAULT_WIDTH,
+          DECISION_TABLE_ANNOTATION_DEFAULT_WIDTH,
+        ],
+      ],
+    ]),
   },
 };
 
@@ -158,7 +191,7 @@ export const Nested: Story = {
     ...EmptyExpression.args,
     expression: {
       __$$element: "context",
-      "@_id": generateUuid(),
+      "@_id": expressionId,
       "@_label": "Expression Name",
       contextEntry: [
         {
@@ -169,7 +202,7 @@ export const Nested: Story = {
           },
           expression: {
             __$$element: "decisionTable",
-            "@_id": generateUuid(),
+            "@_id": nestedExpressionId,
             "@_label": "Expression Name",
             "@_hitPolicy": "UNIQUE",
             input: [
@@ -214,6 +247,18 @@ export const Nested: Story = {
         },
       ],
     },
+    widthsById: new Map([
+      [expressionId, [CONTEXT_ENTRY_INFO_MIN_WIDTH]],
+      [
+        nestedExpressionId,
+        [
+          BEE_TABLE_ROW_INDEX_COLUMN_WIDTH,
+          DECISION_TABLE_INPUT_DEFAULT_WIDTH,
+          DECISION_TABLE_OUTPUT_DEFAULT_WIDTH,
+          DECISION_TABLE_ANNOTATION_DEFAULT_WIDTH,
+        ],
+      ],
+    ]),
     isResetSupportedOnRootExpression: false,
   },
 };

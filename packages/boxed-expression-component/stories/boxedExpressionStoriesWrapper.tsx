@@ -272,7 +272,7 @@ export function BoxedExpressionEditorWrapper(props?: Partial<BoxedExpressionEdit
         isResetSupportedOnRootExpression={
           props?.isResetSupportedOnRootExpression ?? args.isResetSupportedOnRootExpression
         }
-        widthsById={new Map<string, number[]>()}
+        widthsById={widthsById ?? new Map<string, number[]>()}
         expressionName={expression?.["@_label"]}
       />
     </div>
