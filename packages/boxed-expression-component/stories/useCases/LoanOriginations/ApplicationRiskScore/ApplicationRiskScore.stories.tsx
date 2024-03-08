@@ -22,6 +22,11 @@ import { ContextExpressionDefinition, DmnBuiltInDataType } from "../../../../src
 import type { Meta, StoryObj } from "@storybook/react";
 import { beeGwtService, BoxedExpressionEditorWrapper, pmmlDocuments } from "../../../boxedExpressionStoriesWrapper";
 import { BoxedExpressionEditor, BoxedExpressionEditorProps } from "../../../../src/expressions";
+import {
+  BEE_TABLE_ROW_INDEX_COLUMN_WIDTH,
+  CONTEXT_ENTRY_INFO_MIN_WIDTH,
+  CONTEXT_EXPRESSION_EXTRA_WIDTH,
+} from "../../../../src/resizing/WidthConstants";
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta: Meta<BoxedExpressionEditorProps> = {
@@ -32,9 +37,11 @@ const meta: Meta<BoxedExpressionEditorProps> = {
 export default meta;
 type Story = StoryObj<BoxedExpressionEditorProps>;
 
+const expressionId = "_36398C55-5ED1-41C6-B643-98DBDD52D143";
+const innerExpressionId = "_40CCF542-F80F-4C14-AAE5-AAAFA3304648";
 export const applicationRiskScoreExpression: ContextExpressionDefinition = {
   __$$element: "context",
-  "@_id": "_36398C55-5ED1-41C6-B643-98DBDD52D143",
+  "@_id": expressionId,
   "@_label": "Application risk score",
   "@_typeRef": DmnBuiltInDataType.Number,
   contextEntry: [
@@ -85,7 +92,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
     {
       expression: {
         __$$element: "decisionTable",
-        "@_id": "_40CCF542-F80F-4C14-AAE5-AAAFA3304648",
+        "@_id": innerExpressionId,
         "@_label": "Result Expression",
         "@_hitPolicy": "COLLECT",
         "@_aggregation": "SUM",
@@ -265,5 +272,9 @@ export const Expression: Story = {
     beeGwtService,
     pmmlDocuments,
     isResetSupportedOnRootExpression: false,
+    widthsById: new Map([
+      [expressionId, [CONTEXT_ENTRY_INFO_MIN_WIDTH, 739]],
+      [innerExpressionId, [BEE_TABLE_ROW_INDEX_COLUMN_WIDTH, 132, 132, 144, 161, 100]],
+    ]),
   },
 };

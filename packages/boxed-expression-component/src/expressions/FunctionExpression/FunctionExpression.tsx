@@ -28,12 +28,10 @@ import {
 } from "../../api";
 import { PopoverMenu } from "../../contextMenu/PopoverMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { JAVA_FUNCTION_EXPRESSION_VALUES_MIN_WIDTH } from "../../resizing/WidthConstants";
 import {
   useBoxedExpressionEditor,
   useBoxedExpressionEditorDispatch,
 } from "../BoxedExpressionEditor/BoxedExpressionEditorContext";
-import { assertUnreachable } from "../ExpressionDefinitionRoot/ExpressionDefinitionLogicTypeSelector";
 import { FeelFunctionExpression, FeelFunctionExpressionDefinition } from "./FeelFunctionExpression";
 import "./FunctionExpression.css";
 import { FunctionKindSelector } from "./FunctionKindSelector";

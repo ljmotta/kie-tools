@@ -22,6 +22,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { beeGwtService, BoxedExpressionEditorWrapper, pmmlDocuments } from "../../../../boxedExpressionStoriesWrapper";
 import { BoxedExpressionEditor, BoxedExpressionEditorProps } from "../../../../../src/expressions";
 import { loanOriginationsDataTypes } from "../../boxedExpressionEditorBase";
+import { BEE_TABLE_ROW_INDEX_COLUMN_WIDTH } from "../../../../../src/resizing/WidthConstants";
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta: Meta<BoxedExpressionEditorProps> = {
@@ -32,27 +33,28 @@ const meta: Meta<BoxedExpressionEditorProps> = {
 export default meta;
 type Story = StoryObj<BoxedExpressionEditorProps>;
 
+const expressionId = "_1AAE9CB0-2B4B-4159-A994-A93D5F91EE23";
 export const strategyExpression: DecisionTableExpressionDefinition = {
   __$$element: "decisionTable",
-  "@_id": "_1AAE9CB0-2B4B-4159-A994-A93D5F91EE23",
+  "@_id": expressionId,
   "@_label": "Strategy",
   "@_typeRef": "t.Strategy",
   "@_hitPolicy": "UNIQUE",
   input: [
     {
       "@_id": "_000159BA-3887-4445-8DC7-3A7A82EE3ED9",
-      "@_label": "Bureau call type",
       inputExpression: {
         "@_typeRef": "t.BureauCallType",
         "@_id": "_2B5896FA-9555-4CC9-8893-3AE9CB9C0FA9",
+        text: { __$$text: "Bureau call type" },
       },
     },
     {
       "@_id": "_3D46C973-60DA-433A-B3DE-F2B6DB2B892C",
-      "@_label": "Eligibility",
       inputExpression: {
         "@_typeRef": "t.Eligibility",
         "@_id": "_0E4FC630-E178-4DE4-BA63-D8A02E14C8A2",
+        text: { __$$text: "Eligibility" },
       },
     },
   ],
@@ -107,5 +109,6 @@ export const Expression: Story = {
     beeGwtService,
     pmmlDocuments,
     isResetSupportedOnRootExpression: false,
+    widthsById: new Map([[expressionId, [BEE_TABLE_ROW_INDEX_COLUMN_WIDTH, 138, 129, 113, 100]]]),
   },
 };
