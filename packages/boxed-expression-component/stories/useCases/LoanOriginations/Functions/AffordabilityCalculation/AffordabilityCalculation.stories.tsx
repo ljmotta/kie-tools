@@ -116,6 +116,7 @@ export const affordabilityCalculationExpression: FunctionExpressionDefinition = 
               "@_label": "Result Expression",
             },
           ],
+          annotation: [{ "@_name": "annotation-1" }],
           rule: [
             {
               "@_id": "_52890D5C-85F5-422B-B771-54CD0FAD4A40",
@@ -131,6 +132,7 @@ export const affordabilityCalculationExpression: FunctionExpressionDefinition = 
                   text: { __$$text: "0.6" },
                 },
               ],
+              annotationEntry: [],
             },
             {
               "@_id": "_64813FBD-87E7-4A67-AF78-DAAC2086C3DF",
@@ -146,6 +148,7 @@ export const affordabilityCalculationExpression: FunctionExpressionDefinition = 
                   text: { __$$text: "0.7" },
                 },
               ],
+              annotationEntry: [],
             },
             {
               "@_id": "_AEF602C0-ABC0-4553-A792-5C2140E6F07E",
@@ -161,6 +164,7 @@ export const affordabilityCalculationExpression: FunctionExpressionDefinition = 
                   text: { __$$text: "0.8" },
                 },
               ],
+              annotationEntry: [],
             },
           ],
         },

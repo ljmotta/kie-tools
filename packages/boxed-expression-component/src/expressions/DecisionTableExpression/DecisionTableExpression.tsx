@@ -541,8 +541,9 @@ export function DecisionTableExpression(
       case "#":
         return "COUNT";
       case "+":
-      default:
         return "SUM";
+      case "?":
+        return undefined;
     }
   }, []);
 
