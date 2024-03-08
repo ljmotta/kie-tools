@@ -27,6 +27,7 @@ import {
   BeeTableOperation,
   BeeTableOperationConfig,
   BeeTableProps,
+  InsertRowColumnsDirection,
   ListExpressionDefinition,
 } from "../../api";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
@@ -105,10 +106,19 @@ export function ListExpression(
   );
 
   const beeTableRows = useMemo(() => {
-    return (listExpression.expression ?? []).map((item) => ({
+    const rows = (listExpression.expression ?? []).map((item) => ({
       variable: undefined as any,
       expression: item,
     }));
+
+    if (rows.length === 0) {
+      rows.push({
+        variable: undefined as any,
+        expression: undefined as any,
+      });
+    }
+
+    return rows;
   }, [listExpression.expression]);
 
   const beeTableColumns = useMemo<ReactTable.Column<ROWTYPE>[]>(
@@ -137,11 +147,24 @@ export function ListExpression(
   );
 
   const onRowAdded = useCallback(
-    (args: { beforeIndex: number }) => {
+    (args: { beforeIndex: number; rowsCount: number; insertDirection: InsertRowColumnsDirection }) => {
       setExpression((prev: ListExpressionDefinition) => {
         const newItems = [...(prev.expression ?? [])];
+        const newListItems = [];
 
-        newItems.splice(args.beforeIndex, 0, undefined as any); // SPEC DISCREPANCY: Starting without an expression gives users the ability to select the expression type.
+        for (let i = 0; i < args.rowsCount; i++) {
+          const newItem = undefined as any; // SPEC DISCREPANCY: Starting without an expression gives users the ability to select the expression type.
+          newListItems.push(newItem);
+        }
+
+        for (const newEntry of newListItems) {
+          let index = args.beforeIndex;
+          newItems.splice(index, 0, newEntry);
+          if (args.insertDirection === InsertRowColumnsDirection.AboveOrRight) {
+            index++;
+          }
+        }
+
         return { ...prev, expression: newItems };
       });
     },

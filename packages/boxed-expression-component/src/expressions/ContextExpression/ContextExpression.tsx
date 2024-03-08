@@ -282,18 +282,21 @@ export function ContextExpression(
     return row.id;
   }, []);
 
+  const resultIndex =
+    contextExpression.contextEntry?.findIndex((e) => !e.variable) ?? contextExpression.contextEntry?.length ?? 1;
+
   const beeTableAdditionalRow = useMemo(() => {
     return [
       <ContextResultInfoCell key={"context-result-info"} />,
       <ContextResultExpressionCell
         key={"context-result-expression"}
         contextExpression={contextExpression}
-        rowIndex={(contextExpression.contextEntry ?? []).length - 1}
+        rowIndex={resultIndex}
         columnIndex={2}
         widthsById={widthsById}
       />,
     ];
-  }, [contextExpression, widthsById]);
+  }, [contextExpression, resultIndex, widthsById]);
 
   const getDefaultContextEntry = useCallback(
     (name?: string): DMN15__tContextEntry => {

@@ -96,15 +96,16 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
             inputExpression: {
               "@_typeRef": DmnBuiltInDataType.Number,
               "@_id": "_BE1DBAB9-BE82-4F8F-8E16-6227731C9E65",
+              text: { __$$text: "Age" },
             },
           },
           {
             "@_id": "_D6A329C9-D92E-43AB-9449-827C83697F59",
             "@_label": "Employment Status",
-
             inputExpression: {
               "@_typeRef": "t.EmploymentStatus",
               "@_id": "_E7F1CC56-2891-48BF-92A1-41414FC14994",
+              text: { __$$text: "Employment Status" },
             },
           },
           {
@@ -114,6 +115,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
             inputExpression: {
               "@_typeRef": "t.MaritalStatus",
               "@_id": "_4A1DB037-D38D-45D1-A8E8-CB17896811B2",
+              text: { __$$text: "Marital Status" },
             },
           },
         ],
@@ -123,6 +125,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
             "@_name": "Result Expression",
           },
         ],
+        annotation: [{ "@_name": "annotation-1" }],
         rule: [
           {
             "@_id": "_EB2B5C94-DCAB-4020-A78E-BCB9E6B6494D",
@@ -132,6 +135,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
               { "@_id": "_A6265958-B697-4B0D-BC55-7435AC2255B4", text: { __$$text: "-" } },
             ],
             outputEntry: [{ "@_id": "_E6BA0A4A-376F-4D5B-922D-07ED1B16F561", text: { __$$text: "32" } }],
+            annotationEntry: [],
           },
           {
             "@_id": "_D42C5ACB-95A7-4995-8C0D-926F5989A8CA",
@@ -141,6 +145,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
               { "@_id": "_89EE9CE1-FB90-4266-9EE9-E2A956A4FD16", text: { __$$text: "-" } },
             ],
             outputEntry: [{ "@_id": "_67313A9A-7C28-42A9-B513-F269F3357E93", text: { __$$text: "35" } }],
+            annotationEntry: [],
           },
           {
             "@_id": "_C90EF514-B92E-47D2-B41C-C0445F9BB708",
@@ -150,6 +155,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
               { "@_id": "_F0A0DE3D-0435-493B-A8FA-1763F8D97352", text: { __$$text: "-" } },
             ],
             outputEntry: [{ "@_id": "_D2598910-8427-4DBC-97A9-E81D64ACBDA9", text: { __$$text: "40" } }],
+            annotationEntry: [],
           },
           {
             "@_id": "_A6F1BFC3-1C0F-4416-95A0-7F7B12805048",
@@ -159,6 +165,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
               { "@_id": "_8357A853-1754-47D7-B10A-18E9A0CA4A27", text: { __$$text: "-" } },
             ],
             outputEntry: [{ "@_id": "_5C1A37FD-B22A-446D-BC47-0E67B4671E2C", text: { __$$text: "43" } }],
+            annotationEntry: [],
           },
           {
             "@_id": "_0597BEB7-17F4-472F-B69C-3E6807C74FDD",
@@ -168,6 +175,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
               { "@_id": "_30FB6674-CDFD-4610-98AF-58B5F06DCB0A", text: { __$$text: "-" } },
             ],
             outputEntry: [{ "@_id": "_569D30AA-AFFF-49F3-B602-FDE601C2F617", text: { __$$text: "48" } }],
+            annotationEntry: [],
           },
           {
             "@_id": "_7D674FE0-672E-4603-9546-C7DC9B2B4AF7",
@@ -177,6 +185,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
               { "@_id": "_94363FC7-6731-4860-96A5-B4FD35609F81", text: { __$$text: '"S"' } },
             ],
             outputEntry: [{ "@_id": "_0ECF5E3F-0FDA-498C-9B98-C789DD70E0C9", text: { __$$text: "25" } }],
+            annotationEntry: [],
           },
           {
             "@_id": "_773EF50F-4C43-4D37-89A2-81E4246B906A",
@@ -186,6 +195,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
               { "@_id": "_604CD0C4-4E51-4DF4-B464-E731DDCD3340", text: { __$$text: '"M"' } },
             ],
             outputEntry: [{ "@_id": "_E3CA53E0-131D-419A-9E61-35B5666D2ACB", text: { __$$text: "45" } }],
+            annotationEntry: [],
           },
           {
             "@_id": "_DA9E4278-8339-4FF4-A068-0190FE25E267",
@@ -198,6 +208,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
               { "@_id": "_C0CDCFF4-F73B-4C5E-8942-F6BB3645948A", text: { __$$text: "-" } },
             ],
             outputEntry: [{ "@_id": "_FDFA6746-4D5F-4CA9-B4CD-36E6E8186D80", text: { __$$text: "15" } }],
+            annotationEntry: [],
           },
           {
             "@_id": "_D997BF3C-F595-4143-81FC-81B9A4E64BAA",
@@ -210,6 +221,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
               { "@_id": "_F89E5DE2-0D3C-4D84-AB2A-CE50B916B0F0", text: { __$$text: "-" } },
             ],
             outputEntry: [{ "@_id": "_30012312-3264-4FD3-9989-E562787519A7", text: { __$$text: "18" } }],
+            annotationEntry: [],
           },
           {
             "@_id": "_BBB9511D-41C4-4C58-906F-5D492C1187F4",
@@ -222,6 +234,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
               { "@_id": "_D1FFF025-F01B-420A-87EB-5C19BB9409B7", text: { __$$text: "-" } },
             ],
             outputEntry: [{ "@_id": "_73E6A4E8-4733-47C9-85CD-00E7E593CC68", text: { __$$text: "45" } }],
+            annotationEntry: [],
           },
           {
             "@_id": "_CC5C1811-24AD-4B59-AE95-703013A00A09",
@@ -234,6 +247,7 @@ export const applicationRiskScoreExpression: ContextExpressionDefinition = {
               { "@_id": "_42B348D0-E612-4C63-98CE-6F102BF7C045", text: { __$$text: "-" } },
             ],
             outputEntry: [{ "@_id": "_53F400E8-8E83-4FB0-B840-F2B903F601F8", text: { __$$text: "36" } }],
+            annotationEntry: [],
           },
         ],
       },
