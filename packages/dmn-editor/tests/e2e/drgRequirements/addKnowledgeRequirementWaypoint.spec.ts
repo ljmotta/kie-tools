@@ -39,10 +39,10 @@ test.describe("Add edge waypoint - Knowledge Requirement", () => {
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
 
     await expect(
-      (await edges.get({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION })).locator("[data-waypointindex='1']")
+      await edges.getWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION, waypointIndex: 1 })
     ).toBeAttached();
     await expect(
-      (await edges.get({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION })).locator("[data-waypointindex='2']")
+      await edges.getWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION, waypointIndex: 2 })
     ).not.toBeAttached();
   });
 
@@ -53,10 +53,10 @@ test.describe("Add edge waypoint - Knowledge Requirement", () => {
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
 
     await expect(
-      (await edges.get({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION })).locator("[data-waypointindex='1']")
+      await edges.getWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION, waypointIndex: 1 })
     ).toBeAttached();
     await expect(
-      (await edges.get({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION })).locator("[data-waypointindex='2']")
+      await edges.getWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION, waypointIndex: 2 })
     ).toBeAttached();
   });
 });

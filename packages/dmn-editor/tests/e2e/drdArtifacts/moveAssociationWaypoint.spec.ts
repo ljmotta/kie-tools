@@ -60,10 +60,10 @@ test.describe("Move edge waypoint - Association", () => {
       });
 
       await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
-      await edges.moveNthWaypoint({
+      await edges.moveWaypoint({
         from: DefaultNodeName.INPUT_DATA,
         to: DefaultNodeName.TEXT_ANNOTATION,
-        nth: 1,
+        waypointIndex: 1,
         targetPosition: { x: 500, y: 300 },
       });
 
@@ -104,16 +104,16 @@ test.describe("Move edge waypoint - Association", () => {
 
       await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
 
-      await edges.moveNthWaypoint({
+      await edges.moveWaypoint({
         from: DefaultNodeName.INPUT_DATA,
         to: DefaultNodeName.TEXT_ANNOTATION,
-        nth: 1,
+        waypointIndex: 1,
         targetPosition: { x: 500, y: 100 },
       });
-      await edges.moveNthWaypoint({
+      await edges.moveWaypoint({
         from: DefaultNodeName.INPUT_DATA,
         to: DefaultNodeName.TEXT_ANNOTATION,
-        nth: 2,
+        waypointIndex: 2,
         targetPosition: { x: 500, y: 500 },
       });
 

@@ -60,10 +60,10 @@ test.describe("Move edge waypoint - Authority Requirement", () => {
       });
 
       await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
-      await edges.moveNthWaypoint({
+      await edges.moveWaypoint({
         from: DefaultNodeName.INPUT_DATA,
         to: DefaultNodeName.KNOWLEDGE_SOURCE,
-        nth: 1,
+        waypointIndex: 1,
         targetPosition: { x: 300, y: 300 },
       });
 
@@ -104,16 +104,16 @@ test.describe("Move edge waypoint - Authority Requirement", () => {
 
       await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
 
-      await edges.moveNthWaypoint({
+      await edges.moveWaypoint({
         from: DefaultNodeName.INPUT_DATA,
         to: DefaultNodeName.KNOWLEDGE_SOURCE,
-        nth: 1,
+        waypointIndex: 1,
         targetPosition: { x: 500, y: 100 },
       });
-      await edges.moveNthWaypoint({
+      await edges.moveWaypoint({
         from: DefaultNodeName.INPUT_DATA,
         to: DefaultNodeName.KNOWLEDGE_SOURCE,
-        nth: 2,
+        waypointIndex: 2,
         targetPosition: { x: 500, y: 500 },
       });
 

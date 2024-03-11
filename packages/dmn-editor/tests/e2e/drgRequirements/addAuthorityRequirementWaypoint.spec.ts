@@ -38,14 +38,18 @@ test.describe("Add edge waypoint - Authority Requirement", () => {
   test("should attach single Authority Requirement waypoint to the DOM", async ({ edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
     await expect(
-      (
-        await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE })
-      ).locator("[data-waypointindex='1']")
+      await edges.getWaypoint({
+        from: DefaultNodeName.INPUT_DATA,
+        to: DefaultNodeName.KNOWLEDGE_SOURCE,
+        waypointIndex: 1,
+      })
     ).toBeAttached();
     await expect(
-      (
-        await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE })
-      ).locator("[data-waypointindex='2']")
+      await edges.getWaypoint({
+        from: DefaultNodeName.INPUT_DATA,
+        to: DefaultNodeName.KNOWLEDGE_SOURCE,
+        waypointIndex: 2,
+      })
     ).not.toBeAttached();
   });
 
@@ -56,14 +60,18 @@ test.describe("Add edge waypoint - Authority Requirement", () => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
 
     await expect(
-      (
-        await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE })
-      ).locator("[data-waypointindex='1']")
+      await edges.getWaypoint({
+        from: DefaultNodeName.INPUT_DATA,
+        to: DefaultNodeName.KNOWLEDGE_SOURCE,
+        waypointIndex: 1,
+      })
     ).toBeAttached();
     await expect(
-      (
-        await edges.get({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE })
-      ).locator("[data-waypointindex='2']")
+      await edges.getWaypoint({
+        from: DefaultNodeName.INPUT_DATA,
+        to: DefaultNodeName.KNOWLEDGE_SOURCE,
+        waypointIndex: 2,
+      })
     ).toBeAttached();
   });
 });
