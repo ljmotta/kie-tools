@@ -76,13 +76,6 @@ function getDefaultExpressionDefinitionByLogicType(
           },
           expression: undefined as any, // SPEC DISCREPANCY: Starting without an expression gives users the ability to select the expression type.
         },
-        {
-          variable: {
-            "@_id": generateUuid(),
-            "@_name": "Result expression",
-          },
-          expression: undefined as any, // SPEC DISCREPANCY: Starting without an expression gives users the ability to select the expression type.
-        },
       ],
     };
     return contextExpression;
