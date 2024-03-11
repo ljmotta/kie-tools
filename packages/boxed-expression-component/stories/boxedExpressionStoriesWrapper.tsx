@@ -43,6 +43,15 @@ import {
   INVOCATION_EXPRESSION_DEFAULT_PARAMETER_DATA_TYPE,
   INVOCATION_EXPRESSION_DEFAULT_PARAMETER_NAME,
 } from "../src/expressions/InvocationExpression";
+import {
+  BEE_TABLE_ROW_INDEX_COLUMN_WIDTH,
+  CONTEXT_ENTRY_EXPRESSION_MIN_WIDTH,
+  CONTEXT_ENTRY_INFO_MIN_WIDTH,
+  DECISION_TABLE_ANNOTATION_DEFAULT_WIDTH,
+  DECISION_TABLE_INPUT_DEFAULT_WIDTH,
+  DECISION_TABLE_OUTPUT_DEFAULT_WIDTH,
+  LITERAL_EXPRESSION_MIN_WIDTH,
+} from "../src/resizing/WidthConstants";
 
 function getDefaultExpressionDefinitionByLogicType(
   logicType: ExpressionDefinition["__$$element"] | undefined,
@@ -68,6 +77,7 @@ function getDefaultExpressionDefinitionByLogicType(
     const contextExpression: ContextExpressionDefinition = {
       __$$element: "context",
       "@_typeRef": dataType,
+      "@_id": generateUuid(),
       contextEntry: [
         {
           variable: {
@@ -83,12 +93,14 @@ function getDefaultExpressionDefinitionByLogicType(
     const listExpression: ListExpressionDefinition = {
       __$$element: "list",
       "@_typeRef": dataType,
+      "@_id": generateUuid(),
       expression: [undefined as any], // SPEC DISCREPANCY: Starting without an expression gives users the ability to select the expression type.
     };
     return listExpression;
   } else if (logicType === "invocation") {
     const invocationExpression: InvocationExpressionDefinition = {
       __$$element: "invocation",
+      "@_id": generateUuid(),
       "@_typeRef": dataType,
       binding: [
         {
@@ -111,6 +123,7 @@ function getDefaultExpressionDefinitionByLogicType(
     const relationExpression: RelationExpressionDefinition = {
       __$$element: "relation",
       "@_typeRef": dataType,
+      "@_id": generateUuid(),
       column: [
         {
           "@_id": generateUuid(),
@@ -127,6 +140,7 @@ function getDefaultExpressionDefinitionByLogicType(
   } else if (logicType === "decisionTable") {
     const decisionTableExpression: DecisionTableExpressionDefinition = {
       __$$element: "decisionTable",
+      "@_id": generateUuid(),
       "@_typeRef": dataType,
       "@_hitPolicy": "UNIQUE",
       input: [
@@ -208,11 +222,41 @@ export const dataTypes = [
   { typeRef: "YearsMonthsDuration", name: "years and months duration", isCustom: false },
 ];
 
+function getDefaultWidths(logicType: ExpressionDefinition["__$$element"] | undefined, id: string) {
+  switch (logicType) {
+    case "context":
+      return new Map([[id, [CONTEXT_ENTRY_INFO_MIN_WIDTH, CONTEXT_ENTRY_EXPRESSION_MIN_WIDTH]]]);
+
+    case "literalExpression":
+      return new Map([[id, [LITERAL_EXPRESSION_MIN_WIDTH]]]);
+
+    case "relation":
+      return new Map([[id, [100]]]);
+
+    case "decisionTable":
+      return new Map([
+        [
+          id,
+          [
+            BEE_TABLE_ROW_INDEX_COLUMN_WIDTH,
+            DECISION_TABLE_INPUT_DEFAULT_WIDTH,
+            DECISION_TABLE_OUTPUT_DEFAULT_WIDTH,
+            DECISION_TABLE_ANNOTATION_DEFAULT_WIDTH,
+          ],
+        ],
+      ]);
+
+    default:
+      return new Map<string, number[]>();
+  }
+}
+
 export const beeGwtService: BeeGwtService = {
   getDefaultExpressionDefinition(logicType: ExpressionDefinition["__$$element"] | undefined, dataType: string) {
+    const expression = getDefaultExpressionDefinitionByLogicType(logicType, dataType, 0);
     return {
-      expression: getDefaultExpressionDefinitionByLogicType(logicType, dataType, 0),
-      widthsById: new Map(), // FIXME: Tiago
+      expression: expression,
+      widthsById: getDefaultWidths(logicType, expression["@_id"] ?? ""),
     };
   },
   openDataTypePage(): void {},
