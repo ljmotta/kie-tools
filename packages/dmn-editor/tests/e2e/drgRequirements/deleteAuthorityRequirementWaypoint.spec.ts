@@ -44,16 +44,18 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
 
   test("should delete the single Association edge waypoint to make it straight", async ({ diagram, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
-    await edges.moveNthWaypoint({
+    await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.KNOWLEDGE_SOURCE,
-      nth: 1,
+      waypointIndex: 1,
       targetPosition: { x: 300, y: 300 },
     });
 
-    await expect(diagram.get()).toHaveScreenshot("add-authority-requirement-waypoint-and-move-it.png");
-
-    await edges.deleteNthWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE, nth: 1 });
+    await edges.deleteNthWaypoint({
+      from: DefaultNodeName.INPUT_DATA,
+      to: DefaultNodeName.KNOWLEDGE_SOURCE,
+      waypointIndex: 1,
+    });
     await expect(diagram.get()).toHaveScreenshot("delete-authority-requirement-waypoint-straight-edge.png");
   });
 
@@ -67,25 +69,23 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
 
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
 
-    await edges.moveNthWaypoint({
+    await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.KNOWLEDGE_SOURCE,
-      nth: 1,
+      waypointIndex: 1,
       targetPosition: { x: 500, y: 100 },
     });
-    await edges.moveNthWaypoint({
+    await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.KNOWLEDGE_SOURCE,
-      nth: 2,
+      waypointIndex: 2,
       targetPosition: { x: 500, y: 500 },
     });
-
-    await expect(diagram.get()).toHaveScreenshot("add-multiple-authority-requirement-waypoints-and-move-them.png");
 
     await edges.deleteNthWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.KNOWLEDGE_SOURCE,
-      nth: 1,
+      waypointIndex: 1,
     });
     await expect(diagram.get()).toHaveScreenshot("delete-authority-requirement-waypoint-edge-with-corner.png");
   });

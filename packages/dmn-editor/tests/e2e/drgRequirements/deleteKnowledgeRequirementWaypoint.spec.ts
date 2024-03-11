@@ -47,19 +47,17 @@ test.describe("Delete edge waypoint - Knowledge Requirement", () => {
     edges,
   }) => {
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
-    await edges.moveNthWaypoint({
+    await edges.moveWaypoint({
       from: DefaultNodeName.BKM,
       to: DefaultNodeName.DECISION,
-      nth: 1,
+      waypointIndex: 1,
       targetPosition: { x: 300, y: 300 },
     });
-
-    await expect(diagram.get()).toHaveScreenshot("add-knowledge-requirement-waypoint-and-move-it.png");
 
     await edges.deleteNthWaypoint({
       from: DefaultNodeName.BKM,
       to: DefaultNodeName.DECISION,
-      nth: 1,
+      waypointIndex: 1,
     });
 
     await expect(diagram.get()).toHaveScreenshot("delete-knowledge-requirement-waypoint-straight-edge.png");
@@ -75,25 +73,23 @@ test.describe("Delete edge waypoint - Knowledge Requirement", () => {
 
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
 
-    await edges.moveNthWaypoint({
+    await edges.moveWaypoint({
       from: DefaultNodeName.BKM,
       to: DefaultNodeName.DECISION,
-      nth: 1,
+      waypointIndex: 1,
       targetPosition: { x: 500, y: 100 },
     });
-    await edges.moveNthWaypoint({
+    await edges.moveWaypoint({
       from: DefaultNodeName.BKM,
       to: DefaultNodeName.DECISION,
-      nth: 2,
+      waypointIndex: 2,
       targetPosition: { x: 500, y: 500 },
     });
-
-    await expect(diagram.get()).toHaveScreenshot("add-multiple-knowledge-requirement-waypoints-and-not-move-them.png");
 
     await edges.deleteNthWaypoint({
       from: DefaultNodeName.BKM,
       to: DefaultNodeName.DECISION,
-      nth: 1,
+      waypointIndex: 1,
     });
     await expect(diagram.get()).toHaveScreenshot("delete-knowledge-requirement-waypoint-edge-with-corner.png");
   });

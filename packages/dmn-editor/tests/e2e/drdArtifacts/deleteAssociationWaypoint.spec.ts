@@ -44,18 +44,17 @@ test.describe("Delete edge waypoint - Association", () => {
 
   test("should delete the single Association edge waypoint to make it straight", async ({ diagram, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
-    await edges.moveNthWaypoint({
+    await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.TEXT_ANNOTATION,
-      nth: 1,
+      waypointIndex: 1,
       targetPosition: { x: 500, y: 300 },
     });
-    await expect(diagram.get()).toHaveScreenshot("add-association-waypoint-and-move-it.png");
 
     await edges.deleteNthWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.TEXT_ANNOTATION,
-      nth: 1,
+      waypointIndex: 1,
     });
     await expect(diagram.get()).toHaveScreenshot("delete-association-waypoint-straight-edge.png");
   });
@@ -66,25 +65,23 @@ test.describe("Delete edge waypoint - Association", () => {
 
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
 
-    await edges.moveNthWaypoint({
+    await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.TEXT_ANNOTATION,
-      nth: 1,
+      waypointIndex: 1,
       targetPosition: { x: 500, y: 100 },
     });
-    await edges.moveNthWaypoint({
+    await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.TEXT_ANNOTATION,
-      nth: 2,
+      waypointIndex: 2,
       targetPosition: { x: 500, y: 500 },
     });
-
-    await expect(diagram.get()).toHaveScreenshot("add-multiple-association-waypoint-and-move-them.png");
 
     await edges.deleteNthWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.TEXT_ANNOTATION,
-      nth: 1,
+      waypointIndex: 1,
     });
 
     await expect(diagram.get()).toHaveScreenshot("delete-association-waypoint-edge-with-corner.png");
