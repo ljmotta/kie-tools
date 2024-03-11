@@ -22,6 +22,7 @@ import { BoxedExpressionEditor, BoxedExpressionEditorProps } from "../../../src/
 import { BoxedExpressionEditorWrapper } from "../../boxedExpressionStoriesWrapper";
 import { Base as EmptyExpression } from "../../misc/Empty/EmptyExpression.stories";
 import { DmnBuiltInDataType, generateUuid } from "../../../src/api";
+import { CONTEXT_ENTRY_INFO_MIN_WIDTH } from "../../../src/resizing/WidthConstants";
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta: Meta<BoxedExpressionEditorProps> = {
@@ -32,6 +33,12 @@ const meta: Meta<BoxedExpressionEditorProps> = {
 export default meta;
 type Story = StoryObj<BoxedExpressionEditorProps>;
 
+const expressionId = generateUuid();
+const nestedExpressionId = generateUuid();
+const widthsById = new Map<string, number[]>();
+widthsById.set(expressionId, [CONTEXT_ENTRY_INFO_MIN_WIDTH]);
+widthsById.set(nestedExpressionId, [CONTEXT_ENTRY_INFO_MIN_WIDTH]);
+
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
 export const Base: Story = {
   render: (args) => BoxedExpressionEditorWrapper(),
@@ -40,7 +47,7 @@ export const Base: Story = {
     ...EmptyExpression.args,
     expression: {
       __$$element: "context",
-      "@_id": generateUuid(),
+      "@_id": expressionId,
       "@_label": "Expression Name",
       "@_typeRef": DmnBuiltInDataType.Undefined,
       contextEntry: [
@@ -55,6 +62,7 @@ export const Base: Story = {
       ],
     },
     isResetSupportedOnRootExpression: false,
+    widthsById: widthsById,
   },
 };
 
@@ -165,7 +173,7 @@ export const Nested: Story = {
     ...EmptyExpression.args,
     expression: {
       __$$element: "context",
-      "@_id": generateUuid(),
+      "@_id": expressionId,
       "@_label": "Expression Name",
       contextEntry: [
         {
@@ -175,7 +183,7 @@ export const Nested: Story = {
           },
           expression: {
             __$$element: "context",
-            "@_id": generateUuid(),
+            "@_id": nestedExpressionId,
             "@_label": "Expression Name",
             contextEntry: [
               {
@@ -196,5 +204,6 @@ export const Nested: Story = {
       ],
     },
     isResetSupportedOnRootExpression: false,
+    widthsById: widthsById,
   },
 };

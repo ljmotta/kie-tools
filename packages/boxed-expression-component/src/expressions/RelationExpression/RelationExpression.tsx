@@ -61,7 +61,7 @@ export function RelationExpression(
   }
 ) {
   const { i18n } = useBoxedExpressionEditorI18n();
-  const { widthsById, variables } = useBoxedExpressionEditor();
+  const { widthsById, variables, expressionHolderId } = useBoxedExpressionEditor();
   const { setExpression, setWidth } = useBoxedExpressionEditorDispatch();
 
   const id = relationExpression["@_id"]!;
@@ -160,16 +160,35 @@ export function RelationExpression(
   /// //////////////////////////////////////////////////////
 
   const beeTableColumns = useMemo<ReactTable.Column<ROWTYPE>[]>(() => {
-    return columns.map((c) => {
-      return {
-        accessor: c["@_id"] as any, // FIXME: https://github.com/kiegroup/kie-issues/issues/169
-        label: c["@_name"] ?? DEFAULT_EXPRESSION_NAME,
-        dataType: c["@_typeRef"] ?? "<Undefined>",
+    return [
+      {
+        accessor: expressionHolderId as any, // FIXME: https://github.com/kiegroup/kie-issues/issues/169
+        label: relationExpression["@_label"] ?? DEFAULT_EXPRESSION_NAME,
+        dataType: relationExpression["@_typeRef"] ?? "<Undefined>",
         isRowIndexColumn: false,
-        setColumnWidth,
         width: undefined,
-      };
-    });
+        columns: columns.map((column, columnIndex) => ({
+          accessor: column["@_id"] as any,
+          label: column["@_name"],
+          dataType: column["@_typeRef"] ?? "<Undefined>",
+          isRowIndexColumn: false,
+          minWidth: RELATION_EXPRESSION_COLUMN_MIN_WIDTH,
+          setWidth: setColumnWidth(columnIndex),
+          width: column.width ?? RELATION_EXPRESSION_COLUMN_MIN_WIDTH,
+        })),
+      },
+    ];
+
+    // return columns.map((c) => {
+    //   return {
+    //     accessor: c["@_id"] as any, // FIXME: https://github.com/kiegroup/kie-issues/issues/169
+    //     label: c["@_name"] ?? DEFAULT_EXPRESSION_NAME,
+    //     dataType: c["@_typeRef"] ?? "<Undefined>",
+    //     isRowIndexColumn: false,
+    //     setColumnWidth,
+    //     width: undefined,
+    //   };
+    // });
   }, [columns, setColumnWidth]);
 
   const beeTableRows = useMemo<ROWTYPE[]>(

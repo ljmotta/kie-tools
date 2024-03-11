@@ -22,6 +22,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { beeGwtService, BoxedExpressionEditorWrapper, pmmlDocuments } from "../../../../boxedExpressionStoriesWrapper";
 import { BoxedExpressionEditor, BoxedExpressionEditorProps } from "../../../../../src/expressions";
 import { loanOriginationsDataTypes } from "../../boxedExpressionEditorBase";
+import { BEE_TABLE_ROW_INDEX_COLUMN_WIDTH } from "../../../../../src/resizing/WidthConstants";
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta: Meta<BoxedExpressionEditorProps> = {
@@ -32,9 +33,12 @@ const meta: Meta<BoxedExpressionEditorProps> = {
 export default meta;
 type Story = StoryObj<BoxedExpressionEditorProps>;
 
+const expressionId = "_21BA0CB9-F15E-482F-BCBB-F6694EF9B1FC";
+const innerExpressionId = "_DD3AABF1-9E83-4F71-A769-D9CC01231580";
+
 export const preBureauRiskCategoryExpression: ContextExpressionDefinition = {
   __$$element: "context",
-  "@_id": "_21BA0CB9-F15E-482F-BCBB-F6694EF9B1FC",
+  "@_id": expressionId,
   "@_label": "Pre-bureau risk category",
   "@_typeRef": "t.BureauRiskCategory",
   contextEntry: [
@@ -55,25 +59,25 @@ export const preBureauRiskCategoryExpression: ContextExpressionDefinition = {
     {
       expression: {
         __$$element: "decisionTable",
-        "@_id": "_DD3AABF1-9E83-4F71-A769-D9CC01231580",
+        "@_id": innerExpressionId,
         "@_label": "Result Expression",
         "@_hitPolicy": "UNIQUE",
         annotation: [{ "@_name": "annotation-1" }],
         input: [
           {
             "@_id": "_6887F8AD-5387-4D00-8CED-5234EB2C4EEB",
-            "@_label": "Existing Customer",
             inputExpression: {
               "@_typeRef": DmnBuiltInDataType.Boolean,
               "@_id": "_19E2A18A-57C5-473F-BCA9-79D1D4E4D9CE",
+              text: { __$$text: "Existing Customer" },
             },
           },
           {
             "@_id": "_D998C69B-7B36-4ECF-907B-D29B352B8D2F",
-            "@_label": "Application risk score",
             inputExpression: {
               "@_typeRef": DmnBuiltInDataType.Number,
               "@_id": "_9A98108B-7397-446B-AD37-CB00C2914548",
+              text: { __$$text: "Application risk score" },
             },
           },
         ],
@@ -201,5 +205,9 @@ export const Expression: Story = {
     beeGwtService,
     pmmlDocuments,
     isResetSupportedOnRootExpression: false,
+    widthsById: new Map<string, number[]>([
+      [expressionId, [154, 570]],
+      [innerExpressionId, [BEE_TABLE_ROW_INDEX_COLUMN_WIDTH, 123, 154, 123, 100]],
+    ]),
   },
 };
