@@ -65,9 +65,15 @@ export class Edges {
     });
   }
 
-  public async deleteNthWaypoint(args: { from: string; to: string; waypointIndex: number }) {
+  public async deleteWaypoint(args: { from: string; to: string; waypointIndex: number }) {
     await this.select({ from: args.from, to: args.to });
     await (await this.getWaypoint({ from: args.from, to: args.to, waypointIndex: args.waypointIndex })).dblclick();
+  }
+
+  public async deleteWaypoints(args: { from: string; to: string; waypointsCount: number }) {
+    for (let i = 0; i < args.waypointsCount; i++) {
+      await this.deleteWaypoint({ from: args.from, to: args.to, waypointIndex: 1 });
+    }
   }
 
   public async delete(args: { from: string; to: string; isBackspace?: boolean }) {

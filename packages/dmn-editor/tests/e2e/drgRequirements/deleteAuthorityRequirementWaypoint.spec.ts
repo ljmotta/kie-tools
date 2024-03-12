@@ -42,6 +42,24 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
     });
   });
 
+  test("should delete the single Association edge waypoint", async ({ edges }) => {
+    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
+
+    await edges.deleteWaypoint({
+      from: DefaultNodeName.INPUT_DATA,
+      to: DefaultNodeName.KNOWLEDGE_SOURCE,
+      waypointIndex: 1,
+    });
+
+    await expect(
+      await edges.getWaypoint({
+        from: DefaultNodeName.INPUT_DATA,
+        to: DefaultNodeName.KNOWLEDGE_SOURCE,
+        waypointIndex: 1,
+      })
+    ).not.toBeAttached();
+  });
+
   test("should delete the single Association edge waypoint to make it straight", async ({ diagram, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
     await edges.moveWaypoint({
@@ -51,12 +69,40 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
       targetPosition: { x: 300, y: 300 },
     });
 
-    await edges.deleteNthWaypoint({
+    await edges.deleteWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.KNOWLEDGE_SOURCE,
       waypointIndex: 1,
     });
     await expect(diagram.get()).toHaveScreenshot("delete-authority-requirement-waypoint-straight-edge.png");
+  });
+
+  test("should delete all Authority Requirement edge waypoints", async ({ nodes, edges }) => {
+    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
+    await nodes.move({ name: DefaultNodeName.KNOWLEDGE_SOURCE, targetPosition: { x: 200, y: 500 } });
+
+    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
+
+    await edges.deleteWaypoints({
+      from: DefaultNodeName.INPUT_DATA,
+      to: DefaultNodeName.KNOWLEDGE_SOURCE,
+      waypointsCount: 2,
+    });
+
+    await expect(
+      await edges.getWaypoint({
+        from: DefaultNodeName.INPUT_DATA,
+        to: DefaultNodeName.KNOWLEDGE_SOURCE,
+        waypointIndex: 1,
+      })
+    ).not.toBeAttached();
+    await expect(
+      await edges.getWaypoint({
+        from: DefaultNodeName.INPUT_DATA,
+        to: DefaultNodeName.KNOWLEDGE_SOURCE,
+        waypointIndex: 2,
+      })
+    ).not.toBeAttached();
   });
 
   test("should delete one of Authority Requirement edge waypoints to reduce edge corners", async ({
@@ -82,7 +128,7 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
       targetPosition: { x: 500, y: 500 },
     });
 
-    await edges.deleteNthWaypoint({
+    await edges.deleteWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.KNOWLEDGE_SOURCE,
       waypointIndex: 1,

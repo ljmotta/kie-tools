@@ -42,6 +42,24 @@ test.describe("Delete edge waypoint - Knowledge Requirement", () => {
     });
   });
 
+  test("should delete the single Knowledge Requirement edge waypoint", async ({ edges }) => {
+    await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
+
+    await edges.deleteWaypoint({
+      from: DefaultNodeName.BKM,
+      to: DefaultNodeName.DECISION,
+      waypointIndex: 1,
+    });
+
+    await expect(
+      await edges.getWaypoint({
+        from: DefaultNodeName.BKM,
+        to: DefaultNodeName.DECISION,
+        waypointIndex: 1,
+      })
+    ).not.toBeAttached();
+  });
+
   test("should delete the single Knowledge Requirement edge waypoint to make it straight", async ({
     diagram,
     edges,
@@ -54,13 +72,42 @@ test.describe("Delete edge waypoint - Knowledge Requirement", () => {
       targetPosition: { x: 300, y: 300 },
     });
 
-    await edges.deleteNthWaypoint({
+    await edges.deleteWaypoint({
       from: DefaultNodeName.BKM,
       to: DefaultNodeName.DECISION,
       waypointIndex: 1,
     });
 
     await expect(diagram.get()).toHaveScreenshot("delete-knowledge-requirement-waypoint-straight-edge.png");
+  });
+
+  test("should delete all Knowledge Requirement edge waypoints", async ({ nodes, edges }) => {
+    await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
+    await nodes.move({ name: DefaultNodeName.DECISION, targetPosition: { x: 200, y: 500 } });
+
+    await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
+
+    await edges.deleteWaypoints({
+      from: DefaultNodeName.BKM,
+      to: DefaultNodeName.DECISION,
+      waypointsCount: 2,
+    });
+
+    await expect(
+      await edges.getWaypoint({
+        from: DefaultNodeName.BKM,
+        to: DefaultNodeName.DECISION,
+        waypointIndex: 1,
+      })
+    ).not.toBeAttached();
+
+    await expect(
+      await edges.getWaypoint({
+        from: DefaultNodeName.BKM,
+        to: DefaultNodeName.DECISION,
+        waypointIndex: 2,
+      })
+    ).not.toBeAttached();
   });
 
   test("should delete one of Knowledge Requirement edge waypoints to reduce edge corner", async ({
@@ -86,7 +133,7 @@ test.describe("Delete edge waypoint - Knowledge Requirement", () => {
       targetPosition: { x: 500, y: 500 },
     });
 
-    await edges.deleteNthWaypoint({
+    await edges.deleteWaypoint({
       from: DefaultNodeName.BKM,
       to: DefaultNodeName.DECISION,
       waypointIndex: 1,
