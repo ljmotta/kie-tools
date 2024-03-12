@@ -54,25 +54,6 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.INPUT_DATA })).not.toBeAttached();
     });
 
-    test.skip("shouldn't add an Knowledge Requirement edge from Input Data node to Decision Service node", async ({
-      palette,
-      nodes,
-      edges,
-    }) => {
-      await palette.dragNewNode({
-        type: NodeType.DECISION_SERVICE,
-        targetPosition: { x: 300, y: 100 },
-      });
-
-      await nodes.dragNewConnectedEdge({
-        type: EdgeType.KNOWLEDGE_REQUIREMENT,
-        from: "Source Node",
-        to: DefaultNodeName.DECISION_SERVICE,
-      });
-
-      expect(await edges.get({ from: "Source Node", to: DefaultNodeName.DECISION_SERVICE })).not.toBeAttached();
-    });
-
     test("shouldn't add an Knowledge Requirement edge from Input Data node to Knowledge Source node", async ({
       palette,
       nodes,
