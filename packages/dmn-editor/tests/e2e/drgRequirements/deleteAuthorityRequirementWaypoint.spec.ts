@@ -60,7 +60,7 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
     ).not.toBeAttached();
   });
 
-  test("should delete the single Association edge waypoint to make it straight", async ({ diagram, edges }) => {
+  test("should delete the single Authority Requirement edge waypoint to make it straight", async ({ diagram, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
     await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
