@@ -42,7 +42,7 @@ test.describe("Delete edge waypoint - Information Requirement", () => {
     });
   });
 
-  test("should delete the single Information Requirement edge waypoint", async ({ edges }) => {
+  test("should delete one Information Requirement edge waypoint", async ({ edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
 
     await edges.deleteWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION, waypointIndex: 1 });
@@ -56,10 +56,7 @@ test.describe("Delete edge waypoint - Information Requirement", () => {
     ).not.toBeAttached();
   });
 
-  test("should delete the single Information Requirement edge waypoint to make it straight", async ({
-    diagram,
-    edges,
-  }) => {
+  test("should move and delete one Information Requirement edge waypoint", async ({ diagram, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
     await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
@@ -73,7 +70,7 @@ test.describe("Delete edge waypoint - Information Requirement", () => {
     await expect(diagram.get()).toHaveScreenshot("delete-information-requirement-waypoint-straight-edge.png");
   });
 
-  test("should delete all Information Requirement edge waypoints", async ({ nodes, edges }) => {
+  test("should delete two Information Requirement edge waypoints", async ({ nodes, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
     await nodes.move({ name: DefaultNodeName.DECISION, targetPosition: { x: 200, y: 500 } });
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
@@ -100,16 +97,10 @@ test.describe("Delete edge waypoint - Information Requirement", () => {
     ).not.toBeAttached();
   });
 
-  test("should delete one of Information Requirement edge waypoints to reduce edge corners", async ({
-    diagram,
-    nodes,
-    edges,
-  }) => {
+  test("should move two and delete one Information Requirement edge waypoints", async ({ diagram, nodes, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
     await nodes.move({ name: DefaultNodeName.DECISION, targetPosition: { x: 200, y: 500 } });
-
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
-
     await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.DECISION,

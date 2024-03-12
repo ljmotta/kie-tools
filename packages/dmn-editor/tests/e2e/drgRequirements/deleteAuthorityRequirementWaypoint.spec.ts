@@ -42,7 +42,7 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
     });
   });
 
-  test("should delete the single Authority Requirement edge waypoint", async ({ edges }) => {
+  test("should delete one Authority Requirement edge waypoint", async ({ edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
 
     await edges.deleteWaypoint({
@@ -60,10 +60,7 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
     ).not.toBeAttached();
   });
 
-  test("should delete the single Authority Requirement edge waypoint to make it straight", async ({
-    diagram,
-    edges,
-  }) => {
+  test("should move and delete one Authority Requirement edge waypoint", async ({ diagram, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
     await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
@@ -80,7 +77,7 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
     await expect(diagram.get()).toHaveScreenshot("delete-authority-requirement-waypoint-straight-edge.png");
   });
 
-  test("should delete all Authority Requirement edge waypoints", async ({ nodes, edges }) => {
+  test("should delete two Authority Requirement edge waypoints", async ({ nodes, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
     await nodes.move({ name: DefaultNodeName.KNOWLEDGE_SOURCE, targetPosition: { x: 200, y: 500 } });
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
@@ -107,16 +104,10 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
     ).not.toBeAttached();
   });
 
-  test("should delete one of Authority Requirement edge waypoints to reduce edge corners", async ({
-    diagram,
-    nodes,
-    edges,
-  }) => {
+  test("should move two and delete one Authority Requirement edge waypoints", async ({ diagram, nodes, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
     await nodes.move({ name: DefaultNodeName.KNOWLEDGE_SOURCE, targetPosition: { x: 200, y: 500 } });
-
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
-
     await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.KNOWLEDGE_SOURCE,

@@ -42,7 +42,7 @@ test.describe("Delete edge waypoint - Association", () => {
     });
   });
 
-  test("should delete the single Association edge waypoint", async ({ edges }) => {
+  test("should delete one Association edge waypoint", async ({ edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
 
     await edges.deleteWaypoint({
@@ -60,7 +60,7 @@ test.describe("Delete edge waypoint - Association", () => {
     ).not.toBeAttached();
   });
 
-  test("should delete the single Association edge waypoint to make it straight", async ({ diagram, edges }) => {
+  test("should move and delete one Association edge waypoint", async ({ diagram, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
     await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
@@ -77,7 +77,7 @@ test.describe("Delete edge waypoint - Association", () => {
     await expect(diagram.get()).toHaveScreenshot("delete-association-waypoint-straight-edge.png");
   });
 
-  test("should delete all Association edge waypoints", async ({ nodes, edges }) => {
+  test("should delete two Association edge waypoints", async ({ nodes, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
     await nodes.move({ name: DefaultNodeName.TEXT_ANNOTATION, targetPosition: { x: 200, y: 500 } });
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
@@ -104,12 +104,10 @@ test.describe("Delete edge waypoint - Association", () => {
     ).not.toBeAttached();
   });
 
-  test("should delete one of Association edge waypoints to reduce edge corners", async ({ diagram, nodes, edges }) => {
+  test("should move two and delete one Association edge waypoints", async ({ diagram, nodes, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
     await nodes.move({ name: DefaultNodeName.TEXT_ANNOTATION, targetPosition: { x: 200, y: 500 } });
-
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
-
     await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.TEXT_ANNOTATION,

@@ -42,7 +42,7 @@ test.describe("Delete edge waypoint - Knowledge Requirement", () => {
     });
   });
 
-  test("should delete the single Knowledge Requirement edge waypoint", async ({ edges }) => {
+  test("should delete one Knowledge Requirement edge waypoint", async ({ edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
 
     await edges.deleteWaypoint({
@@ -60,10 +60,7 @@ test.describe("Delete edge waypoint - Knowledge Requirement", () => {
     ).not.toBeAttached();
   });
 
-  test("should delete the single Knowledge Requirement edge waypoint to make it straight", async ({
-    diagram,
-    edges,
-  }) => {
+  test("should move and delete one Knowledge Requirement edge waypoint", async ({ diagram, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
     await edges.moveWaypoint({
       from: DefaultNodeName.BKM,
@@ -81,7 +78,7 @@ test.describe("Delete edge waypoint - Knowledge Requirement", () => {
     await expect(diagram.get()).toHaveScreenshot("delete-knowledge-requirement-waypoint-straight-edge.png");
   });
 
-  test("should delete all Knowledge Requirement edge waypoints", async ({ nodes, edges }) => {
+  test("should delete two Knowledge Requirement edge waypoints", async ({ nodes, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
     await nodes.move({ name: DefaultNodeName.DECISION, targetPosition: { x: 200, y: 500 } });
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
@@ -109,16 +106,10 @@ test.describe("Delete edge waypoint - Knowledge Requirement", () => {
     ).not.toBeAttached();
   });
 
-  test("should delete one of Knowledge Requirement edge waypoints to reduce edge corner", async ({
-    diagram,
-    nodes,
-    edges,
-  }) => {
+  test("should move two and delete one Knowledge Requirement edge waypoints", async ({ diagram, nodes, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
     await nodes.move({ name: DefaultNodeName.DECISION, targetPosition: { x: 200, y: 500 } });
-
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
-
     await edges.moveWaypoint({
       from: DefaultNodeName.BKM,
       to: DefaultNodeName.DECISION,
