@@ -42,7 +42,7 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
     });
   });
 
-  test("should delete the single Association edge waypoint", async ({ edges }) => {
+  test("should delete the single Authority Requirement edge waypoint", async ({ edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
 
     await edges.deleteWaypoint({
