@@ -80,7 +80,6 @@ test.describe("Delete edge waypoint - Association", () => {
   test("should delete all Association edge waypoints", async ({ nodes, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
     await nodes.move({ name: DefaultNodeName.TEXT_ANNOTATION, targetPosition: { x: 200, y: 500 } });
-
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
 
     await edges.deleteWaypoints({

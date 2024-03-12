@@ -84,7 +84,6 @@ test.describe("Delete edge waypoint - Knowledge Requirement", () => {
   test("should delete all Knowledge Requirement edge waypoints", async ({ nodes, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
     await nodes.move({ name: DefaultNodeName.DECISION, targetPosition: { x: 200, y: 500 } });
-
     await edges.addWaypoint({ from: DefaultNodeName.BKM, to: DefaultNodeName.DECISION });
 
     await edges.deleteWaypoints({
