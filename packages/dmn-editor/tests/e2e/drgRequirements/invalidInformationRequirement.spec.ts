@@ -18,7 +18,7 @@
  */
 
 import { test, expect } from "../__fixtures__/base";
-import { DefaultNodeName, NodeType } from "../__fixtures__/nodes";
+import { DefaultNodeName, NodePosition, NodeType } from "../__fixtures__/nodes";
 import { EdgeType } from "../__fixtures__/edges";
 
 test.beforeEach(async ({ editor }) => {
@@ -111,7 +111,7 @@ test.describe("Invalid edge - Information Requirement", () => {
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.KNOWLEDGE_SOURCE })).not.toBeAttached();
     });
 
-    test.skip("shouldn't add an Information Requirement edge from Input Data node to Group node", async ({
+    test("shouldn't add an Information Requirement edge from Input Data node to Group node", async ({
       palette,
       nodes,
       edges,
@@ -125,6 +125,7 @@ test.describe("Invalid edge - Information Requirement", () => {
         type: EdgeType.INFORMATION_REQUIREMENT,
         from: "Source Node",
         to: DefaultNodeName.GROUP,
+        position: NodePosition.TOP,
       });
 
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.GROUP })).not.toBeAttached();
@@ -220,14 +221,11 @@ test.describe("Invalid edge - Information Requirement", () => {
       palette,
       nodes,
       edges,
-      page,
     }) => {
       await palette.dragNewNode({
         type: NodeType.KNOWLEDGE_SOURCE,
         targetPosition: { x: 300, y: 100 },
       });
-
-      await page.pause();
 
       await nodes.dragNewConnectedEdge({
         type: EdgeType.INFORMATION_REQUIREMENT,
@@ -238,21 +236,21 @@ test.describe("Invalid edge - Information Requirement", () => {
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.KNOWLEDGE_SOURCE })).not.toBeAttached();
     });
 
-    test.skip("shouldn't add an Information Requirement edge from Decision node to Group node", async ({
+    test("shouldn't add an Information Requirement edge from Decision node to Group node", async ({
       palette,
       nodes,
       edges,
-      page,
     }) => {
       await palette.dragNewNode({
         type: NodeType.GROUP,
-        targetPosition: { x: 300, y: 300 },
+        targetPosition: { x: 400, y: 400 },
       });
 
       await nodes.dragNewConnectedEdge({
         type: EdgeType.INFORMATION_REQUIREMENT,
         from: "Source Node",
         to: DefaultNodeName.GROUP,
+        position: NodePosition.TOP,
       });
 
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.GROUP })).not.toBeAttached();

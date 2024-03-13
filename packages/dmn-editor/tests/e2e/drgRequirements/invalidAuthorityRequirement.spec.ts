@@ -18,7 +18,7 @@
  */
 
 import { test, expect } from "../__fixtures__/base";
-import { DefaultNodeName, NodeType } from "../__fixtures__/nodes";
+import { DefaultNodeName, NodePosition, NodeType } from "../__fixtures__/nodes";
 import { EdgeType } from "../__fixtures__/edges";
 
 test.beforeEach(async ({ editor }) => {
@@ -73,7 +73,7 @@ test.describe("Invalid edge - Authority Requirement", () => {
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.DECISION_SERVICE })).not.toBeAttached();
     });
 
-    test.skip("shouldn't add an Authority Requirement edge from Input Data node to Group node", async ({
+    test("shouldn't add an Authority Requirement edge from Input Data node to Group node", async ({
       palette,
       nodes,
       edges,
@@ -87,6 +87,7 @@ test.describe("Invalid edge - Authority Requirement", () => {
         type: EdgeType.AUTHORITY_REQUIREMENT,
         from: "Source Node",
         to: DefaultNodeName.GROUP,
+        position: NodePosition.TOP,
       });
 
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.GROUP })).not.toBeAttached();
