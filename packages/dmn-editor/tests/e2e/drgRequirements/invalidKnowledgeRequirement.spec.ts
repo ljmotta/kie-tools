@@ -26,7 +26,7 @@ test.beforeEach(async ({ editor }) => {
 });
 
 test.describe("Invalid edge - Knowledge Requirement", () => {
-  test.describe("From BKM", () => {
+  test.describe("BKM", () => {
     test.beforeEach(async ({ palette }) => {
       await palette.dragNewNode({
         type: NodeType.BKM,

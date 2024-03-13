@@ -26,7 +26,7 @@ test.beforeEach(async ({ editor }) => {
 });
 
 test.describe("Invalid edge - Information Requirement", () => {
-  test.describe("From Input Data", () => {
+  test.describe("Input Data", () => {
     test.beforeEach(async ({ palette }) => {
       await palette.dragNewNode({
         type: NodeType.INPUT_DATA,
@@ -150,7 +150,7 @@ test.describe("Invalid edge - Information Requirement", () => {
     });
   });
 
-  test.describe("From Decision", () => {
+  test.describe("Decision", () => {
     test.beforeEach(async ({ palette }) => {
       await palette.dragNewNode({
         type: NodeType.DECISION,
