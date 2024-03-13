@@ -50,7 +50,7 @@ export class Edges {
     await (await this.get({ from: args.from, to: args.to })).dblclick();
   }
 
-  public async addWaypoint2(args: { from: string; to: string; waypointIndex?: number }) {
+  public async addWaypoint2(args: { from: string; to: string; afterWaypointIndex?: number }) {
     const dAttribute = await (
       await (await this.get({ from: args.from, to: args.to })).locator("path").first()
     ).getAttribute("d");
@@ -58,7 +58,9 @@ export class Edges {
     const edgeSegments = dAttribute?.match(/M [0-9]*,[0-9]* L [0-9]*,[0-9]*/);
 
     if (edgeSegments) {
-      const edgeSegment = args.waypointIndex ? edgeSegments[Math.max(0, args.waypointIndex - 1)] : edgeSegments[0];
+      const edgeSegment = args.afterWaypointIndex
+        ? edgeSegments[Math.min(edgeSegments.length - 1, args.afterWaypointIndex)]
+        : edgeSegments[0];
       const from = edgeSegment.split(/ L [0-9]*,[0-9]*/)[0];
       const to = edgeSegment.split(/M [0-9]*,[0-9]* /)[1];
 

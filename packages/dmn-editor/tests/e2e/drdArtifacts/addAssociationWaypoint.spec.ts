@@ -25,7 +25,7 @@ test.beforeEach(async ({ editor }) => {
   await editor.open();
 });
 
-test.describe("Add edge waypoint - Association", () => {
+test.describe.only("Add edge waypoint - Association", () => {
   test.beforeEach(async ({ palette, nodes }) => {
     await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
     await nodes.dragNewConnectedNode({
@@ -35,7 +35,7 @@ test.describe("Add edge waypoint - Association", () => {
     });
   });
 
-  test.only("should attach single Association waypoint to the DOM", async ({ edges }) => {
+  test("should attach single Association waypoint to the DOM", async ({ edges }) => {
     await edges.addWaypoint2({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
 
     await expect(
@@ -55,10 +55,12 @@ test.describe("Add edge waypoint - Association", () => {
   });
 
   test("should attach multiple Association waypoints to the DOM", async ({ nodes, edges }) => {
-    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
-    await nodes.move({ name: DefaultNodeName.TEXT_ANNOTATION, targetPosition: { x: 200, y: 500 } });
-
-    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
+    await edges.addWaypoint2({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
+    await edges.addWaypoint2({
+      from: DefaultNodeName.INPUT_DATA,
+      to: DefaultNodeName.TEXT_ANNOTATION,
+      afterWaypointIndex: 1,
+    });
 
     await expect(
       await edges.getWaypoint({
