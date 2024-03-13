@@ -26,7 +26,7 @@ test.beforeEach(async ({ editor }) => {
 });
 
 test.describe("Invalid edge - Authority Requirement", () => {
-  test.describe("From Knowledge Source", () => {
+  test.describe("Knowledge Source", () => {
     test.beforeEach(async ({ palette }) => {
       await palette.dragNewNode({
         type: NodeType.KNOWLEDGE_SOURCE,
