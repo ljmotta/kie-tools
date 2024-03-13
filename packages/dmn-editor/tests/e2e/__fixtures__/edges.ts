@@ -50,6 +50,27 @@ export class Edges {
     await (await this.get({ from: args.from, to: args.to })).dblclick();
   }
 
+  public async addWaypoint2(args: { from: string; to: string; waypointIndex?: number }) {
+    const dAttribute = await (
+      await (await this.get({ from: args.from, to: args.to })).locator("path").first()
+    ).getAttribute("d");
+
+    const edgeSegments = dAttribute?.match(/M [0-9]*,[0-9]* L [0-9]*,[0-9]*/);
+
+    if (edgeSegments) {
+      const edgeSegment = args.waypointIndex ? edgeSegments[Math.max(0, args.waypointIndex - 1)] : edgeSegments[0];
+      const from = edgeSegment.split(/ L [0-9]*,[0-9]*/)[0];
+      const to = edgeSegment.split(/M [0-9]*,[0-9]* /)[1];
+
+      const fromPoint = { x: parseInt(from.slice(2).split(",")[0]), y: parseInt(from.slice(2).split(",")[1]) };
+      const toPoint = { x: parseInt(to.slice(2).split(",")[0]), y: parseInt(to.slice(2).split(",")[1]) };
+
+      const targetPoint = { x: (fromPoint.x + toPoint.x) / 2, y: (fromPoint.y + toPoint.y) / 2 };
+
+      await this.diagram.dblclick(targetPoint);
+    }
+  }
+
   public async moveWaypoint(args: {
     from: string;
     to: string;

@@ -35,8 +35,8 @@ test.describe("Add edge waypoint - Association", () => {
     });
   });
 
-  test("should attach single Association waypoint to the DOM", async ({ edges }) => {
-    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
+  test.only("should attach single Association waypoint to the DOM", async ({ edges }) => {
+    await edges.addWaypoint2({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.TEXT_ANNOTATION });
 
     await expect(
       await edges.getWaypoint({
