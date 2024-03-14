@@ -46,11 +46,7 @@ export class Edges {
     return (await this.get({ from: args.from, to: args.to })).locator("path").nth(0).getAttribute("data-edgetype");
   }
 
-  public async addWaypoint(args: { from: string; to: string }) {
-    await (await this.get({ from: args.from, to: args.to })).dblclick();
-  }
-
-  public async addWaypoint2(args: { from: string; to: string; afterWaypointIndex?: number }) {
+  public async addWaypoint(args: { from: string; to: string; afterWaypointIndex?: number }) {
     const dAttribute = await (
       await (await this.get({ from: args.from, to: args.to })).locator("path").first()
     ).getAttribute("d");

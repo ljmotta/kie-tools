@@ -70,10 +70,9 @@ test.describe("Delete edge waypoint - Information Requirement", () => {
     await expect(diagram.get()).toHaveScreenshot("delete-information-requirement-waypoint-straight-edge.png");
   });
 
-  test("should delete two Information Requirement edge waypoints", async ({ nodes, edges }) => {
+  test("should delete two Information Requirement edge waypoints", async ({ edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
-    await nodes.move({ name: DefaultNodeName.DECISION, targetPosition: { x: 200, y: 500 } });
-    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
+    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION, afterWaypointIndex: 1 });
 
     await edges.deleteWaypoints({
       from: DefaultNodeName.INPUT_DATA,
@@ -97,10 +96,9 @@ test.describe("Delete edge waypoint - Information Requirement", () => {
     ).not.toBeAttached();
   });
 
-  test("should move two and delete one Information Requirement edge waypoints", async ({ diagram, nodes, edges }) => {
+  test("should move two and delete one Information Requirement edge waypoints", async ({ diagram, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
-    await nodes.move({ name: DefaultNodeName.DECISION, targetPosition: { x: 200, y: 500 } });
-    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION });
+    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.DECISION, afterWaypointIndex: 1 });
     await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.DECISION,
@@ -119,6 +117,7 @@ test.describe("Delete edge waypoint - Information Requirement", () => {
       to: DefaultNodeName.DECISION,
       waypointIndex: 1,
     });
+
     await expect(diagram.get()).toHaveScreenshot("delete-information-requirement-waypoint-edge-with-corner.png");
   });
 });

@@ -77,10 +77,13 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
     await expect(diagram.get()).toHaveScreenshot("delete-authority-requirement-waypoint-straight-edge.png");
   });
 
-  test("should delete two Authority Requirement edge waypoints", async ({ nodes, edges }) => {
+  test("should delete two Authority Requirement edge waypoints", async ({ edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
-    await nodes.move({ name: DefaultNodeName.KNOWLEDGE_SOURCE, targetPosition: { x: 200, y: 500 } });
-    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
+    await edges.addWaypoint({
+      from: DefaultNodeName.INPUT_DATA,
+      to: DefaultNodeName.KNOWLEDGE_SOURCE,
+      afterWaypointIndex: 1,
+    });
 
     await edges.deleteWaypoints({
       from: DefaultNodeName.INPUT_DATA,
@@ -104,10 +107,13 @@ test.describe("Delete edge waypoint - Authority Requirement", () => {
     ).not.toBeAttached();
   });
 
-  test("should move two and delete one Authority Requirement edge waypoints", async ({ diagram, nodes, edges }) => {
+  test("should move two and delete one Authority Requirement edge waypoints", async ({ diagram, edges }) => {
     await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
-    await nodes.move({ name: DefaultNodeName.KNOWLEDGE_SOURCE, targetPosition: { x: 200, y: 500 } });
-    await edges.addWaypoint({ from: DefaultNodeName.INPUT_DATA, to: DefaultNodeName.KNOWLEDGE_SOURCE });
+    await edges.addWaypoint({
+      from: DefaultNodeName.INPUT_DATA,
+      to: DefaultNodeName.KNOWLEDGE_SOURCE,
+      afterWaypointIndex: 1,
+    });
     await edges.moveWaypoint({
       from: DefaultNodeName.INPUT_DATA,
       to: DefaultNodeName.KNOWLEDGE_SOURCE,
