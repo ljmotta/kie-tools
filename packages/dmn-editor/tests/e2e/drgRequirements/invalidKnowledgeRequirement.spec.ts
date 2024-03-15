@@ -54,6 +54,17 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.INPUT_DATA })).not.toBeAttached();
     });
 
+    test("should dim the target Input Data node", async ({ palette, nodes }) => {
+      await palette.dragNewNode({
+        type: NodeType.INPUT_DATA,
+        targetPosition: { x: 300, y: 100 },
+      });
+
+      await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
+
+      await nodes.asserrtIsDimmed({ name: DefaultNodeName.INPUT_DATA });
+    });
+
     test("shouldn't add an Knowledge Requirement edge from Input Data node to Knowledge Source node", async ({
       palette,
       nodes,
@@ -71,6 +82,17 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
       });
 
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.KNOWLEDGE_SOURCE })).not.toBeAttached();
+    });
+
+    test("should dim the target Knowledge Source node", async ({ palette, nodes }) => {
+      await palette.dragNewNode({
+        type: NodeType.KNOWLEDGE_SOURCE,
+        targetPosition: { x: 300, y: 100 },
+      });
+
+      await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
+
+      await nodes.asserrtIsDimmed({ name: DefaultNodeName.KNOWLEDGE_SOURCE });
     });
 
     test("shouldn't add an Knowledge Requirement edge from Input Data node to Group node", async ({
@@ -93,6 +115,17 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.GROUP })).not.toBeAttached();
     });
 
+    test("should dim the target Group node", async ({ palette, nodes }) => {
+      await palette.dragNewNode({
+        type: NodeType.GROUP,
+        targetPosition: { x: 300, y: 100 },
+      });
+
+      await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
+
+      await nodes.asserrtIsDimmed({ name: DefaultNodeName.GROUP });
+    });
+
     test("shouldn't add an Knowledge Requirement edge from Input Data node to Text Annotation node", async ({
       palette,
       nodes,
@@ -110,6 +143,17 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
       });
 
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.TEXT_ANNOTATION })).not.toBeAttached();
+    });
+
+    test("should dim the target Text Annotation node", async ({ palette, nodes }) => {
+      await palette.dragNewNode({
+        type: NodeType.TEXT_ANNOTATION,
+        targetPosition: { x: 300, y: 100 },
+      });
+
+      await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
+
+      await nodes.asserrtIsDimmed({ name: DefaultNodeName.TEXT_ANNOTATION });
     });
   });
 });

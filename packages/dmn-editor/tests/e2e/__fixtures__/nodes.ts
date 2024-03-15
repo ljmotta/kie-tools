@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 import { Diagram } from "./diagram";
 import { EdgeType } from "./edges";
 
@@ -53,6 +53,10 @@ export enum NodePosition {
 export class Nodes {
   constructor(public page: Page, public diagram: Diagram, public browserName: string) {}
 
+  public async asserrtIsDimmed(args: { name: string }) {
+    await expect(this.get({ name: args.name })).toHaveClass(/.*dimmed/);
+  }
+
   public get(args: { name: string }) {
     return this.page.locator(`div[data-nodelabel="${args.name}"]`);
   }
@@ -82,16 +86,7 @@ export class Nodes {
         ? await this.getPositionalNodeHandleCoordinates({ node: to, position: args.position })
         : undefined;
 
-    switch (args.type) {
-      case EdgeType.ASSOCIATION:
-        return from.getByTitle("Add Association edge").dragTo(to, { targetPosition });
-      case EdgeType.AUTHORITY_REQUIREMENT:
-        return from.getByTitle("Add Authority Requirement edge").dragTo(to, { targetPosition });
-      case EdgeType.INFORMATION_REQUIREMENT:
-        return from.getByTitle("Add Information Requirement edge").dragTo(to, { targetPosition });
-      case EdgeType.KNOWLEDGE_REQUIREMENT:
-        return from.getByTitle("Add Knowledge Requirement edge").dragTo(to, { targetPosition });
-    }
+    return from.getByTitle(this.getAddTitle(args.type)).dragTo(to, { targetPosition });
   }
 
   public async dragNewConnectedNode(args: {
@@ -173,6 +168,12 @@ export class Nodes {
     return this.get({ name: args.name }).locator("span", { hasText: args.name }).dblclick();
   }
 
+  public async startDraggingEdge(args: { from: string; edgeType: EdgeType }) {
+    await this.select({ name: args.from, position: NodePosition.TOP });
+    await this.get({ name: args.from }).getByTitle(this.getAddTitle(args.edgeType)).hover();
+    await this.page.mouse.down();
+  }
+
   // After creating a node takes a while to get the focus.
   // This methods waits until it gets the focus.
   public async waitForNodeToBeFocused(args: { name: string }) {
@@ -217,6 +218,19 @@ export class Nodes {
         return { x: toBoundingBox.width / 2, y: toBoundingBox.height / 2 };
       case NodePosition.TOP_PADDING:
         return { x: toBoundingBox.width / 2, y: 10 };
+    }
+  }
+
+  private getAddTitle(edgeType: EdgeType) {
+    switch (edgeType) {
+      case EdgeType.ASSOCIATION:
+        return "Add Association edge";
+      case EdgeType.AUTHORITY_REQUIREMENT:
+        return "Add Authority Requirement edge";
+      case EdgeType.INFORMATION_REQUIREMENT:
+        return "Add Information Requirement edge";
+      case EdgeType.KNOWLEDGE_REQUIREMENT:
+        return "Add Knowledge Requirement edge";
     }
   }
 }
