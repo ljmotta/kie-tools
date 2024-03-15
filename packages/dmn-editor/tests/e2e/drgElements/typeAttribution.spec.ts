@@ -18,7 +18,6 @@
  */
 
 import { test, expect } from "../__fixtures__/base";
-import { DEFAULT_DRD_NAME } from "../__fixtures__/diagram";
 import { DataType } from "../__fixtures__/jsonModel";
 import { DefaultNodeName, NodeType } from "../__fixtures__/nodes";
 
@@ -26,30 +25,44 @@ test.beforeEach(async ({ editor }) => {
   await editor.open();
 });
 
-test.describe("Type attribution", () => {
-  test.describe("Input Data", () => {
-    test.only("should change Input Data data type", async ({ page, palette, nodes }) => {
-      await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
+test.describe.only("Type attribution", () => {
+  test("should change Input Data node data type", async ({ palette, nodes }) => {
+    await palette.dragNewNode({ type: NodeType.INPUT_DATA, targetPosition: { x: 100, y: 100 } });
 
-      await nodes.hover({ name: DefaultNodeName.INPUT_DATA });
-      await nodes.get({ name: DefaultNodeName.INPUT_DATA }).getByLabel(DataType.Undefined).click();
-      await page.pause();
-      await nodes
-        .get({ name: DefaultNodeName.INPUT_DATA })
-        .getByRole("option")
-        .getByText(DataType.Number, { exact: true })
-        .click();
+    await nodes.changeDataType({ nodeName: DefaultNodeName.INPUT_DATA, from: DataType.Undefined, to: DataType.Number });
 
-      await page.pause();
-
-      await nodes.hover({ name: DefaultNodeName.INPUT_DATA });
-      await page.pause();
-    });
+    await nodes.hover({ name: DefaultNodeName.INPUT_DATA });
+    await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA }).locator("input")).toHaveValue(DataType.Number);
   });
 
-  test.describe("Decision", () => {});
+  test("should change Decision node data type", async ({ palette, nodes }) => {
+    await palette.dragNewNode({ type: NodeType.DECISION, targetPosition: { x: 100, y: 100 } });
 
-  test.describe("Decision Service", () => {});
+    await nodes.changeDataType({ nodeName: DefaultNodeName.DECISION, from: DataType.Undefined, to: DataType.Number });
 
-  test.describe("BKM", () => {});
+    await nodes.hover({ name: DefaultNodeName.DECISION });
+    await expect(nodes.get({ name: DefaultNodeName.DECISION }).locator("input")).toHaveValue(DataType.Number);
+  });
+
+  test("should change Decision Service node data type", async ({ palette, nodes }) => {
+    await palette.dragNewNode({ type: NodeType.DECISION_SERVICE, targetPosition: { x: 100, y: 100 } });
+
+    await nodes.changeDataType({
+      nodeName: DefaultNodeName.DECISION_SERVICE,
+      from: DataType.Undefined,
+      to: DataType.Number,
+    });
+
+    await nodes.hover({ name: DefaultNodeName.DECISION_SERVICE });
+    await expect(nodes.get({ name: DefaultNodeName.DECISION_SERVICE }).locator("input")).toHaveValue(DataType.Number);
+  });
+
+  test.only("should change BKM node data type", async ({ palette, nodes }) => {
+    await palette.dragNewNode({ type: NodeType.BKM, targetPosition: { x: 100, y: 100 } });
+
+    await nodes.changeDataType({ nodeName: DefaultNodeName.BKM, from: DataType.Undefined, to: DataType.Number });
+
+    await nodes.hover({ name: DefaultNodeName.BKM });
+    await expect(nodes.get({ name: DefaultNodeName.BKM }).locator("input")).toHaveValue(DataType.Number);
+  });
 });

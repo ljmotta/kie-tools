@@ -20,6 +20,7 @@
 import { Locator, Page } from "@playwright/test";
 import { Diagram } from "./diagram";
 import { EdgeType } from "./edges";
+import { DataType } from "./jsonModel";
 
 export enum NodeType {
   INPUT_DATA,
@@ -122,6 +123,12 @@ export class Nodes {
   public async rename(args: { current: string; new: string }) {
     await this.get({ name: args.current }).getByRole("textbox").nth(0).fill(args.new);
     await this.diagram.get().press("Enter");
+  }
+
+  public async changeDataType(args: { nodeName: string; from: DataType; to: DataType }) {
+    await this.hover({ name: args.nodeName });
+    await this.get({ name: args.nodeName }).getByLabel(args.from).click();
+    await this.get({ name: args.nodeName }).getByRole("option").getByText(args.to, { exact: true }).click();
   }
 
   public async select(args: { name: string; position?: NodePosition }) {
