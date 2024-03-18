@@ -79,6 +79,7 @@ test.describe("Invalid edge - Authority Requirement", () => {
         type: EdgeType.AUTHORITY_REQUIREMENT,
         from: "Source Node",
         to: DefaultNodeName.DECISION_SERVICE,
+        position: NodePosition.TOP,
       });
 
       expect(await edges.get({ from: "Source Node", to: DefaultNodeName.DECISION_SERVICE })).not.toBeAttached();

@@ -54,7 +54,7 @@ export class Nodes {
   constructor(public page: Page, public diagram: Diagram, public browserName: string) {}
 
   public async asserrtIsDimmed(args: { name: string }) {
-    await expect(this.get({ name: args.name })).toHaveClass(/.*dimmed/);
+    await expect(this.page.locator(".dimmed").locator("span:has-text('" + args.name + "')")).toBeAttached();
   }
 
   public get(args: { name: string }) {
