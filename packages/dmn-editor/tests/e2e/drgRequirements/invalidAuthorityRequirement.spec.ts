@@ -65,6 +65,18 @@ test.describe("Invalid edge - Authority Requirement", () => {
       await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toHaveClass(/.*dimmed/);
     });
 
+    test("should dim the target Alternative Input Data node", async ({ diagram, palette, nodes }) => {
+      await diagram.selectAlternativeInputDataShape();
+      await palette.dragNewNode({
+        type: NodeType.INPUT_DATA,
+        targetPosition: { x: 300, y: 100 },
+      });
+
+      await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.AUTHORITY_REQUIREMENT });
+
+      await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toHaveClass(/.*dimmed/);
+    });
+
     test("shouldn't add an Authority Requirement edge from Input Data node to Decision Service node", async ({
       palette,
       nodes,

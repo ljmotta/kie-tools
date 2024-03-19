@@ -65,6 +65,18 @@ test.describe("Invalid edge - Information Requirement", () => {
       await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toHaveClass(/.*dimmed/);
     });
 
+    test("should dim the target Alternative Input Data node", async ({ diagram, palette, nodes }) => {
+      await diagram.selectAlternativeInputDataShape();
+      await palette.dragNewNode({
+        type: NodeType.INPUT_DATA,
+        targetPosition: { x: 300, y: 100 },
+      });
+
+      await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.INFORMATION_REQUIREMENT });
+
+      await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toHaveClass(/.*dimmed/);
+    });
+
     test("shouldn't add an Information Requirement edge from Input Data node to BKM node", async ({
       palette,
       edges,

@@ -247,7 +247,7 @@ export const InputDataNode = React.memo(
         >
           {/* {`render count: ${renderCount.current}`}
           <br /> */}
-          <div className={`kie-dmn-editor--node ${additionalClasses}`}>
+          <div className={"kie-dmn-editor--node"}>
             <InfoNodePanel isVisible={!isTargeted && shouldActLikeHovered} />
 
             <OutgoingStuffNodePanel
