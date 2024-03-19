@@ -62,7 +62,7 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
 
-      await nodes.assertIsDimmed({ name: DefaultNodeName.INPUT_DATA });
+      await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toHaveClass(/.*dimmed/);
     });
 
     test("shouldn't add an Knowledge Requirement edge from Input Data node to Knowledge Source node", async ({
@@ -92,7 +92,7 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
 
-      await nodes.assertIsDimmed({ name: DefaultNodeName.KNOWLEDGE_SOURCE });
+      await expect(nodes.get({ name: DefaultNodeName.KNOWLEDGE_SOURCE })).toHaveClass(/.*dimmed/);
     });
 
     test("shouldn't add an Knowledge Requirement edge from Input Data node to Group node", async ({
@@ -123,7 +123,7 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
 
-      await nodes.assertIsDimmed({ name: DefaultNodeName.GROUP });
+      await expect(nodes.get({ name: DefaultNodeName.GROUP })).toHaveClass(/.*dimmed/);
     });
 
     test("shouldn't add an Knowledge Requirement edge from Input Data node to Text Annotation node", async ({
@@ -153,7 +153,7 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
 
-      await nodes.assertIsDimmed({ name: DefaultNodeName.TEXT_ANNOTATION });
+      await expect(nodes.get({ name: DefaultNodeName.TEXT_ANNOTATION })).toHaveClass(/.*dimmed/);
     });
   });
 });

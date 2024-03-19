@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { Locator, Page, expect } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 import { Diagram } from "./diagram";
 import { EdgeType } from "./edges";
 
@@ -52,10 +52,6 @@ export enum NodePosition {
 
 export class Nodes {
   constructor(public page: Page, public diagram: Diagram, public browserName: string) {}
-
-  public async assertIsDimmed(args: { name: string }) {
-    await expect(this.page.locator(".dimmed").locator("span:has-text('" + args.name + "')")).toBeAttached();
-  }
 
   public get(args: { name: string }) {
     return this.page.locator(`div[data-nodelabel="${args.name}"]`);

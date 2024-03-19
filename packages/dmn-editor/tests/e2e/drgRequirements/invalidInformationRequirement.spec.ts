@@ -62,7 +62,7 @@ test.describe("Invalid edge - Information Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.INFORMATION_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.INPUT_DATA });
+      await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA })).toHaveClass(/.*dimmed/);
     });
 
     test("shouldn't add an Information Requirement edge from Input Data node to BKM node", async ({
@@ -92,7 +92,7 @@ test.describe("Invalid edge - Information Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.INFORMATION_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.BKM });
+      await expect(nodes.get({ name: DefaultNodeName.BKM })).toHaveClass(/.*dimmed/);
     });
 
     test("shouldn't add an Information Requirement edge from Input Data node to Decision Service node", async ({
@@ -122,7 +122,7 @@ test.describe("Invalid edge - Information Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.INFORMATION_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.DECISION_SERVICE });
+      await expect(nodes.get({ name: DefaultNodeName.DECISION_SERVICE })).toHaveClass(/.*dimmed/);
     });
 
     test("shouldn't add an Information Requirement edge from Input Data node to Knowledge Source node", async ({
@@ -152,7 +152,7 @@ test.describe("Invalid edge - Information Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.INFORMATION_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.KNOWLEDGE_SOURCE });
+      await expect(nodes.get({ name: DefaultNodeName.KNOWLEDGE_SOURCE })).toHaveClass(/.*dimmed/);
     });
 
     test("shouldn't add an Information Requirement edge from Input Data node to Group node", async ({
@@ -183,7 +183,7 @@ test.describe("Invalid edge - Information Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.INFORMATION_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.GROUP });
+      await expect(nodes.get({ name: DefaultNodeName.GROUP })).toHaveClass(/.*dimmed/);
     });
 
     test("shouldn't add an Information Requirement edge from Input Data node to Text Annotation node", async ({
@@ -213,7 +213,7 @@ test.describe("Invalid edge - Information Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.INFORMATION_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.TEXT_ANNOTATION });
+      await expect(nodes.get({ name: DefaultNodeName.TEXT_ANNOTATION })).toHaveClass(/.*dimmed/);
     });
   });
 
