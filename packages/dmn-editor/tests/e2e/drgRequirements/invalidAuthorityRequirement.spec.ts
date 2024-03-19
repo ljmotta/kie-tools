@@ -26,7 +26,7 @@ test.beforeEach(async ({ editor }) => {
 });
 
 test.describe("Invalid edge - Authority Requirement", () => {
-  test.describe("Knowledge Source", () => {
+  test.describe("Invalid edge - Authority Requirement - From Knowledge Source", () => {
     test.beforeEach(async ({ palette }) => {
       await palette.dragNewNode({
         type: NodeType.KNOWLEDGE_SOURCE,
@@ -62,7 +62,7 @@ test.describe("Invalid edge - Authority Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.AUTHORITY_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.INPUT_DATA });
+      await nodes.assertIsDimmed({ name: DefaultNodeName.INPUT_DATA });
     });
 
     test("shouldn't add an Authority Requirement edge from Input Data node to Decision Service node", async ({
@@ -93,7 +93,7 @@ test.describe("Invalid edge - Authority Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.AUTHORITY_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.DECISION_SERVICE });
+      await nodes.assertIsDimmed({ name: DefaultNodeName.DECISION_SERVICE });
     });
 
     test("shouldn't add an Authority Requirement edge from Input Data node to Group node", async ({
@@ -124,7 +124,7 @@ test.describe("Invalid edge - Authority Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.AUTHORITY_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.GROUP });
+      await nodes.assertIsDimmed({ name: DefaultNodeName.GROUP });
     });
 
     test("shouldn't add an Authority Requirement edge from Input Data node to Text Annotation node", async ({
@@ -154,7 +154,7 @@ test.describe("Invalid edge - Authority Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.AUTHORITY_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.TEXT_ANNOTATION });
+      await nodes.assertIsDimmed({ name: DefaultNodeName.TEXT_ANNOTATION });
     });
   });
 });

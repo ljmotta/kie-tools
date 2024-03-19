@@ -26,7 +26,7 @@ test.beforeEach(async ({ editor }) => {
 });
 
 test.describe("Invalid edge - Knowledge Requirement", () => {
-  test.describe("BKM", () => {
+  test.describe("Invalid edge - Knowledge Requirement - From BKM", () => {
     test.beforeEach(async ({ palette }) => {
       await palette.dragNewNode({
         type: NodeType.BKM,
@@ -62,7 +62,7 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.INPUT_DATA });
+      await nodes.assertIsDimmed({ name: DefaultNodeName.INPUT_DATA });
     });
 
     test("shouldn't add an Knowledge Requirement edge from Input Data node to Knowledge Source node", async ({
@@ -92,7 +92,7 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.KNOWLEDGE_SOURCE });
+      await nodes.assertIsDimmed({ name: DefaultNodeName.KNOWLEDGE_SOURCE });
     });
 
     test("shouldn't add an Knowledge Requirement edge from Input Data node to Group node", async ({
@@ -123,7 +123,7 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.GROUP });
+      await nodes.assertIsDimmed({ name: DefaultNodeName.GROUP });
     });
 
     test("shouldn't add an Knowledge Requirement edge from Input Data node to Text Annotation node", async ({
@@ -153,7 +153,7 @@ test.describe("Invalid edge - Knowledge Requirement", () => {
 
       await nodes.startDraggingEdge({ from: "Source Node", edgeType: EdgeType.KNOWLEDGE_REQUIREMENT });
 
-      await nodes.asserrtIsDimmed({ name: DefaultNodeName.TEXT_ANNOTATION });
+      await nodes.assertIsDimmed({ name: DefaultNodeName.TEXT_ANNOTATION });
     });
   });
 });

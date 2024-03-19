@@ -53,7 +53,7 @@ export enum NodePosition {
 export class Nodes {
   constructor(public page: Page, public diagram: Diagram, public browserName: string) {}
 
-  public async asserrtIsDimmed(args: { name: string }) {
+  public async assertIsDimmed(args: { name: string }) {
     await expect(this.page.locator(".dimmed").locator("span:has-text('" + args.name + "')")).toBeAttached();
   }
 
@@ -86,7 +86,7 @@ export class Nodes {
         ? await this.getPositionalNodeHandleCoordinates({ node: to, position: args.position })
         : undefined;
 
-    return from.getByTitle(this.getAddTitle(args.type)).dragTo(to, { targetPosition });
+    return from.getByTitle(this.getAddEdgeTitle(args.type)).dragTo(to, { targetPosition });
   }
 
   public async dragNewConnectedNode(args: {
@@ -170,7 +170,7 @@ export class Nodes {
 
   public async startDraggingEdge(args: { from: string; edgeType: EdgeType }) {
     await this.select({ name: args.from, position: NodePosition.TOP });
-    await this.get({ name: args.from }).getByTitle(this.getAddTitle(args.edgeType)).hover();
+    await this.get({ name: args.from }).getByTitle(this.getAddEdgeTitle(args.edgeType)).hover();
     await this.page.mouse.down();
   }
 
@@ -221,7 +221,7 @@ export class Nodes {
     }
   }
 
-  private getAddTitle(edgeType: EdgeType) {
+  private getAddEdgeTitle(edgeType: EdgeType) {
     switch (edgeType) {
       case EdgeType.ASSOCIATION:
         return "Add Association edge";
