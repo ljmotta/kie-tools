@@ -31,7 +31,6 @@ test.describe.only("Type attribution", () => {
 
     await nodes.changeDataType({ nodeName: DefaultNodeName.INPUT_DATA, from: DataType.Undefined, to: DataType.Number });
 
-    await nodes.hover({ name: DefaultNodeName.INPUT_DATA });
     await expect(nodes.get({ name: DefaultNodeName.INPUT_DATA }).locator("input")).toHaveValue(DataType.Number);
   });
 
@@ -40,7 +39,6 @@ test.describe.only("Type attribution", () => {
 
     await nodes.changeDataType({ nodeName: DefaultNodeName.DECISION, from: DataType.Undefined, to: DataType.Number });
 
-    await nodes.hover({ name: DefaultNodeName.DECISION });
     await expect(nodes.get({ name: DefaultNodeName.DECISION }).locator("input")).toHaveValue(DataType.Number);
   });
 
@@ -53,7 +51,6 @@ test.describe.only("Type attribution", () => {
       to: DataType.Number,
     });
 
-    await nodes.hover({ name: DefaultNodeName.DECISION_SERVICE });
     await expect(nodes.get({ name: DefaultNodeName.DECISION_SERVICE }).locator("input")).toHaveValue(DataType.Number);
   });
 
@@ -62,7 +59,6 @@ test.describe.only("Type attribution", () => {
 
     await nodes.changeDataType({ nodeName: DefaultNodeName.BKM, from: DataType.Undefined, to: DataType.Number });
 
-    await nodes.hover({ name: DefaultNodeName.BKM });
     await expect(nodes.get({ name: DefaultNodeName.BKM }).locator("input")).toHaveValue(DataType.Number);
   });
 });
