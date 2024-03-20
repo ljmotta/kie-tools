@@ -24,6 +24,7 @@ import { Nodes } from "./nodes";
 import { Editor } from "./editor";
 import { Edges } from "./edges";
 import { JsonModel } from "./jsonModel";
+import { PropertiesPanel } from "./propertiesPanel";
 
 type DmnEditorFixtures = {
   diagram: Diagram;
@@ -32,6 +33,7 @@ type DmnEditorFixtures = {
   jsonModel: JsonModel;
   nodes: Nodes;
   palette: Palette;
+  propertiesPanel: PropertiesPanel;
 };
 
 export const test = base.extend<DmnEditorFixtures>({
@@ -52,6 +54,9 @@ export const test = base.extend<DmnEditorFixtures>({
   },
   palette: async ({ page, diagram, nodes }, use) => {
     await use(new Palette(page, diagram, nodes));
+  },
+  propertiesPanel: async ({ page }, use) => {
+    await use(new PropertiesPanel(page));
   },
 });
 
