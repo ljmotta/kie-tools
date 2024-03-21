@@ -42,26 +42,26 @@ export function DmnEditorWrapper(props?: Partial<StorybookDmnEditorProps>) {
     [props?.onModelChange]
   );
 
-  useEffect(() => {
-    if (Object.keys(diff(argsCopy.current.model, model)).length !== 0) {
-      updateArgs({
-        ...argsCopy.current,
-        model: model,
-        xml: getMarshaller(generateEmptyDmn15(), { upgradeTo: "latest" }).builder.build(model),
-      });
-    }
-  }, [updateArgs, model]);
+  // useEffect(() => {
+  //   if (Object.keys(diff(argsCopy.current.model, model)).length !== 0) {
+  //     updateArgs({
+  //       ...argsCopy.current,
+  //       model: model,
+  //       xml: getMarshaller(generateEmptyDmn15(), { upgradeTo: "latest" }).builder.build(model),
+  //     });
+  //   }
+  // }, [updateArgs, model]);
 
-  useEffect(() => {
-    if (Object.keys(diff(argsCopy.current, args)).length === 0) {
-      return;
-    }
-    argsCopy.current = args;
-    if (Object.keys(diff(args.model, model)).length === 0) {
-      return;
-    }
-    onModelChange(args.model);
-  }, [args, model, onModelChange]);
+  // useEffect(() => {
+  //   if (Object.keys(diff(argsCopy.current, args)).length === 0) {
+  //     return;
+  //   }
+  //   argsCopy.current = args;
+  //   if (Object.keys(diff(args.model, model)).length === 0) {
+  //     return;
+  //   }
+  //   onModelChange(args.model);
+  // }, [args, model, onModelChange]);
 
   return (
     <>
