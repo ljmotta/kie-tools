@@ -54,7 +54,7 @@ test.describe.only("Type attribution", () => {
     await expect(nodes.get({ name: DefaultNodeName.DECISION_SERVICE }).locator("input")).toHaveValue(DataType.Number);
   });
 
-  test.only("should change BKM node data type", async ({ palette, nodes }) => {
+  test("should change BKM node data type", async ({ palette, nodes }) => {
     await palette.dragNewNode({ type: NodeType.BKM, targetPosition: { x: 100, y: 100 } });
 
     await nodes.changeDataType({ nodeName: DefaultNodeName.BKM, from: DataType.Undefined, to: DataType.Number });
