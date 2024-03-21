@@ -47,28 +47,35 @@ test.describe.only("Change Properties - Decision", () => {
     );
   });
 
-  test("should change the Decision node description", async ({ nodes, propertiesPanel }) => {
+  test("should change the Decision node description", async ({ propertiesPanel }) => {
     await propertiesPanel.changeNodeDescription({ newDescription: "New Decision Description" });
 
-    // assert uisng jsonModel? assert using reopening properties panel? assert using screenshot?
+    expect(await propertiesPanel.getNodeDescription({ nodeName: DefaultNodeName.DECISION })).toBe(
+      "New Decision Description"
+    );
   });
 
-  test("should change the Decision node question", async ({ nodes, propertiesPanel }) => {
+  test("should change the Decision node question", async ({ propertiesPanel }) => {
     await propertiesPanel.changeNodeQuestion({ newQuestion: "New Decision Question" });
 
-    // assert uisng jsonModel? assert using reopening properties panel? assert using screenshot?
+    expect(await propertiesPanel.getNodeQuestion({ nodeName: DefaultNodeName.DECISION })).toBe("New Decision Question");
   });
 
-  test("should change the Decision node answers", async ({ nodes, propertiesPanel }) => {
+  test("should change the Decision node answers", async ({ propertiesPanel }) => {
     await propertiesPanel.changeNodeAllowedAnswers({ newAllowedAnswers: "New Allowed Answers" });
 
-    // assert uisng jsonModel? assert using reopening properties panel? assert using screenshot?
+    expect(await propertiesPanel.getNodeAllowedAnswers({ nodeName: DefaultNodeName.DECISION })).toBe(
+      "New Allowed Answers"
+    );
   });
 
-  test("should change the Decision node documentation links", async ({ nodes, propertiesPanel }) => {
-    await propertiesPanel.addDocumentationLink({ linkText: "Link Texts", linkHref: "http://link.test.com" });
+  test("should change the Decision node documentation links", async ({ propertiesPanel }) => {
+    await propertiesPanel.addDocumentationLink({ linkText: "Link Text", linkHref: "http://link.test.com" });
 
-    // assert uisng jsonModel? assert using reopening properties panel? assert using screenshot?
+    const links = await propertiesPanel.getDocumentationLinks({ nodeName: DefaultNodeName.DECISION });
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveText("Link Text");
+    expect(links[0]).toHaveAttribute("href", "http://link.test.com/");
   });
 
   test("should change the Decision node font", async ({ nodes, propertiesPanel }) => {
