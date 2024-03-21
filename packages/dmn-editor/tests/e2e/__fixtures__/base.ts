@@ -55,8 +55,8 @@ export const test = base.extend<DmnEditorFixtures>({
   palette: async ({ page, diagram, nodes }, use) => {
     await use(new Palette(page, diagram, nodes));
   },
-  propertiesPanel: async ({ page }, use) => {
-    await use(new PropertiesPanel(page));
+  propertiesPanel: async ({ diagram, nodes, page }, use) => {
+    await use(new PropertiesPanel(diagram, nodes, page));
   },
 });
 
