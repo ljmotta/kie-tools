@@ -254,7 +254,7 @@ export const ExpressionContainer: React.FunctionComponent<ExpressionContainerPro
       setWidth({ id: expression["@_id"], values: [] });
     }
 
-    setExpression(undefined!); // SPEC DISCREPANCY: Undefined expressions gives users the ability to select the expression type.
+    setExpression(undefined); // SPEC DISCREPANCY: Undefined expressions gives users the ability to select the expression type.
   }, [expression, setExpression, setWidth, variables?.repository]);
 
   const getPlacementRef = useCallback(() => containerRef.current!, []);

@@ -46,7 +46,7 @@ export interface BoxedExpressionEditorContextType {
 }
 
 export interface BoxedExpressionEditorDispatchContextType {
-  setExpression: React.Dispatch<React.SetStateAction<ExpressionDefinition>>;
+  setExpression: React.Dispatch<React.SetStateAction<ExpressionDefinition | undefined>>;
   setWidth: React.Dispatch<{ id: string; values: number[] }>;
 }
 
