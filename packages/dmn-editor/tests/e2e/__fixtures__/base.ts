@@ -24,7 +24,11 @@ import { Nodes } from "./nodes";
 import { Editor } from "./editor";
 import { Edges } from "./edges";
 import { JsonModel } from "./jsonModel";
-import { PropertiesPanel } from "./propertiesPanel";
+import { GeneralProperties } from "./propertiesPanel/generalProperties";
+import { PropertiesPanelBase } from "./propertiesPanel/propertiesPanelBase";
+import { GeneralDecisionServiceProperties } from "./propertiesPanel/generalDecisionServiceProperties";
+import { DecisionProperties } from "./propertiesPanel/decisionProperties";
+import { KnowledgeSourceProperties } from "./propertiesPanel/knowledgeSourceProperties";
 
 type DmnEditorFixtures = {
   diagram: Diagram;
@@ -33,7 +37,11 @@ type DmnEditorFixtures = {
   jsonModel: JsonModel;
   nodes: Nodes;
   palette: Palette;
-  propertiesPanel: PropertiesPanel;
+  generalProperties: GeneralProperties;
+  decisionProperties: DecisionProperties;
+  knowledgeSourceProperties: KnowledgeSourceProperties;
+  propertiesPanel: PropertiesPanelBase;
+  generalDecisionServiceProperties: GeneralDecisionServiceProperties;
 };
 
 export const test = base.extend<DmnEditorFixtures>({
@@ -55,8 +63,20 @@ export const test = base.extend<DmnEditorFixtures>({
   palette: async ({ page, diagram, nodes }, use) => {
     await use(new Palette(page, diagram, nodes));
   },
+  generalProperties: async ({ diagram, nodes, page }, use) => {
+    await use(new GeneralProperties(diagram, nodes, page));
+  },
+  decisionProperties: async ({ diagram, nodes, page }, use) => {
+    await use(new DecisionProperties(diagram, nodes, page));
+  },
+  knowledgeSourceProperties: async ({ diagram, nodes, page }, use) => {
+    await use(new KnowledgeSourceProperties(diagram, nodes, page));
+  },
   propertiesPanel: async ({ diagram, nodes, page }, use) => {
-    await use(new PropertiesPanel(diagram, nodes, page));
+    await use(new PropertiesPanelBase(diagram, nodes, page));
+  },
+  generalDecisionServiceProperties: async ({ diagram, nodes, page }, use) => {
+    await use(new GeneralDecisionServiceProperties(diagram, nodes, page));
   },
 });
 
