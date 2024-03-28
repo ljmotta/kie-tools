@@ -26,7 +26,7 @@ import { Edges } from "./edges";
 import { JsonModel } from "./jsonModel";
 import { GeneralProperties } from "./propertiesPanel/generalProperties";
 import { PropertiesPanelBase } from "./propertiesPanel/propertiesPanelBase";
-import { GeneralDecisionServiceProperties } from "./propertiesPanel/generalDecisionServiceProperties";
+import { ContainerNodeGeneralProperties } from "./propertiesPanel/containerNodeGeneralProperties";
 import { DecisionProperties } from "./propertiesPanel/decisionProperties";
 import { KnowledgeSourceProperties } from "./propertiesPanel/knowledgeSourceProperties";
 
@@ -41,7 +41,7 @@ type DmnEditorFixtures = {
   decisionProperties: DecisionProperties;
   knowledgeSourceProperties: KnowledgeSourceProperties;
   propertiesPanel: PropertiesPanelBase;
-  generalDecisionServiceProperties: GeneralDecisionServiceProperties;
+  containerNodeGeneralProperties: ContainerNodeGeneralProperties;
 };
 
 export const test = base.extend<DmnEditorFixtures>({
@@ -75,8 +75,8 @@ export const test = base.extend<DmnEditorFixtures>({
   propertiesPanel: async ({ diagram, nodes, page }, use) => {
     await use(new PropertiesPanelBase(diagram, nodes, page));
   },
-  generalDecisionServiceProperties: async ({ diagram, nodes, page }, use) => {
-    await use(new GeneralDecisionServiceProperties(diagram, nodes, page));
+  containerNodeGeneralProperties: async ({ diagram, nodes, page }, use) => {
+    await use(new ContainerNodeGeneralProperties(diagram, nodes, page));
   },
 });
 
