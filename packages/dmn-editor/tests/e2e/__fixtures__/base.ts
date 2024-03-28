@@ -29,6 +29,7 @@ import { PropertiesPanelBase } from "./propertiesPanel/propertiesPanelBase";
 import { ContainerNodeGeneralProperties } from "./propertiesPanel/containerNodeGeneralProperties";
 import { DecisionProperties } from "./propertiesPanel/decisionProperties";
 import { KnowledgeSourceProperties } from "./propertiesPanel/knowledgeSourceProperties";
+import { TextAnnotationProperties } from "./propertiesPanel/textAnnotationProperties";
 
 type DmnEditorFixtures = {
   diagram: Diagram;
@@ -40,6 +41,7 @@ type DmnEditorFixtures = {
   generalProperties: GeneralProperties;
   decisionProperties: DecisionProperties;
   knowledgeSourceProperties: KnowledgeSourceProperties;
+  textAnnotationProperties: TextAnnotationProperties;
   propertiesPanel: PropertiesPanelBase;
   containerNodeGeneralProperties: ContainerNodeGeneralProperties;
 };
@@ -71,6 +73,9 @@ export const test = base.extend<DmnEditorFixtures>({
   },
   knowledgeSourceProperties: async ({ diagram, nodes, page }, use) => {
     await use(new KnowledgeSourceProperties(diagram, nodes, page));
+  },
+  textAnnotationProperties: async ({ diagram, nodes, page }, use) => {
+    await use(new TextAnnotationProperties(diagram, nodes, page));
   },
   propertiesPanel: async ({ diagram, nodes, page }, use) => {
     await use(new PropertiesPanelBase(diagram, nodes, page));
