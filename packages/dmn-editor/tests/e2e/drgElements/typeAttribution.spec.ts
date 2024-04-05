@@ -52,6 +52,8 @@ test.describe.only("Type attribution", () => {
     });
 
     await expect(nodes.get({ name: DefaultNodeName.DECISION_SERVICE }).locator("input")).toHaveValue(DataType.Number);
+
+    // TODO add screenshot tests https://github.com/apache/incubator-kie-issues/issues/914
   });
 
   test("should change BKM node data type", async ({ palette, nodes }) => {
