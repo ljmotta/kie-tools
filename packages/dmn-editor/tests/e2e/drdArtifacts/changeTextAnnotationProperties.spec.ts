@@ -74,6 +74,11 @@ test.describe("Change Properties - Text Annotation", () => {
 
     await page.getByRole("button", { name: "Expand / collapse Shape" }).click();
     await page.getByTestId("color-picker-shape-fill").fill("#f12200");
+
+    // It's necessary to pick the parent element ".." to have access to the SVG.
+    await expect(
+      nodes.get({ name: DefaultNodeName.TEXT_ANNOTATION }).locator("..").locator("path").nth(0)
+    ).toHaveAttribute("fill", "rgba(241, 34, 0, 0.1)");
   });
 
   test("should change the Text Annotation node shape - stroke color", async ({ nodes, page }) => {
@@ -81,5 +86,10 @@ test.describe("Change Properties - Text Annotation", () => {
 
     await page.getByRole("button", { name: "Expand / collapse Shape" }).click();
     await page.getByTestId("color-picker-shape-stroke").fill("#f12200");
+
+    // It's necessary to pick the parent element ".." to have access to the SVG.
+    await expect(
+      nodes.get({ name: DefaultNodeName.TEXT_ANNOTATION }).locator("..").locator("path").nth(0)
+    ).toHaveAttribute("stroke", "rgba(241, 34, 0, 1)");
   });
 });
