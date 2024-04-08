@@ -69,10 +69,17 @@ test.describe("Change Properties - Text Annotation", () => {
     expect(await textAnnotationPropertiesPanel.getFont()).toBe("Verdana");
   });
 
-  test.skip("should change the Text Annotation node shape - background color", async ({
-    nodes,
-    textAnnotationPropertiesPanel,
-  }) => {
-    // blocked https://github.com/microsoft/playwright/issues/19929#issuecomment-1377035969
+  test("should change the Text Annotation node shape - fill color", async ({ nodes, page }) => {
+    await nodes.select({ name: DefaultNodeName.TEXT_ANNOTATION });
+
+    await page.getByRole("button", { name: "Expand / collapse Shape" }).click();
+    await page.getByTestId("color-picker-shape-fill").fill("#f12200");
+  });
+
+  test("should change the Text Annotation node shape - stroke color", async ({ nodes, page }) => {
+    await nodes.select({ name: DefaultNodeName.TEXT_ANNOTATION });
+
+    await page.getByRole("button", { name: "Expand / collapse Shape" }).click();
+    await page.getByTestId("color-picker-shape-stroke").fill("#f12200");
   });
 });
