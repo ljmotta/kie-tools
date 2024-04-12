@@ -38,14 +38,17 @@ test.describe("Add node - Knowledge Source", () => {
         await expect(diagram.get()).toHaveScreenshot("add-knowledge-source-node-from-palette.png");
 
         // JSON model assertions
-        expect(
-          await jsonModel.drgElements.getKnowledgeSource({
-            name: DefaultNodeName.KNOWLEDGE_SOURCE,
-            drdName: DEFAULT_DRD_NAME,
-          })
-        ).toEqual({
-          name: DefaultNodeName.KNOWLEDGE_SOURCE,
-          bounds: { x: 0, y: 0, width: 160, height: 80 },
+        const knowledgeSource = await jsonModel.drgElements.getKnowledgeSource({ drgElementIndex: 0, drdIndex: 0 });
+        expect(knowledgeSource).toEqual({
+          __$$element: "knowledgeSource",
+          "@_id": knowledgeSource["@_id"],
+          "@_name": DefaultNodeName.KNOWLEDGE_SOURCE,
+        });
+        expect(await jsonModel.drd.getDrgElementBoundsOnDrd({ drgElementIndex: 0, drdIndex: 0 })).toEqual({
+          "@_x": 0,
+          "@_y": 0,
+          "@_width": 160,
+          "@_height": 80,
         });
       });
     });

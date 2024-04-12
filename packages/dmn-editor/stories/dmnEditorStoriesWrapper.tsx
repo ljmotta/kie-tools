@@ -36,6 +36,7 @@ export function DmnEditorWrapper(props?: Partial<StorybookDmnEditorProps>) {
   const ref = useRef<DmnEditorRef>(null);
   const [modelArgs, setModelArgs] = useState<DmnLatestModel>(args.model);
   const model = useMemo(() => props?.model ?? modelArgs, [modelArgs, props?.model]);
+  const [modelChanged, setModelChange] = useState<boolean>(false);
 
   const onModelChange = useMemo(
     () => (props?.onModelChange ? props.onModelChange : setModelArgs),
@@ -63,12 +64,18 @@ export function DmnEditorWrapper(props?: Partial<StorybookDmnEditorProps>) {
     onModelChange(args.model);
   }, [args, model, onModelChange]);
 
+  const onModelDebounceStateChanged = useCallback((changed: boolean) => {
+    setModelChange(changed);
+  }, []);
+
   return (
     <>
-      <div data-testid={"storybook--dmn-editor-model"} style={{ display: "none" }}>
-        {JSON.stringify(model)}
-      </div>
-      <div style={{ position: "absolute", width: "100vw", height: "100vh", top: "0px", left: "0px" }}>
+      {modelChanged && (
+        <div data-testid={"storybook--dmn-editor-model"} style={{ display: "none" }}>
+          {JSON.stringify(model)}
+        </div>
+      )}
+      <div style={{ position: "absolute", width: "100%", height: "100%", top: "0px", left: "0px" }}>
         <DmnEditor
           ref={ref}
           model={model}
@@ -85,6 +92,7 @@ export function DmnEditorWrapper(props?: Partial<StorybookDmnEditorProps>) {
           evaluationResults={props?.evaluationResults ?? args.evaluationResults}
           issueTrackerHref={props?.issueTrackerHref ?? args.issueTrackerHref}
           onRequestToJumpToPath={props?.onRequestToJumpToPath ?? args.onRequestToJumpToPath}
+          onModelDebounceStateChanged={onModelDebounceStateChanged}
         />
       </div>
     </>
