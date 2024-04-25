@@ -18,7 +18,7 @@
  */
 
 import * as React from "react";
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { FormGroup, FormSection } from "@patternfly/react-core/dist/js/components/Form";
 import { TextInput } from "@patternfly/react-core/dist/js/components/TextInput";
 import { CubeIcon } from "@patternfly/react-icons/dist/js/icons/cube-icon";
@@ -59,6 +59,7 @@ export function ShapeOptions({
   const shapes = useDmnEditorStore((s) =>
     nodeIds.map((nodeId) => s.computed(s).indexedDrd().dmnShapesByHref.get(nodeId))
   );
+  const nodesById = useDmnEditorStore((s) => s.computed(s).getDiagramData(externalModelsByNamespace).nodesById);
   const shapeStyles = useMemo(() => shapes.map((shape) => shape?.["di:Style"]), [shapes]);
 
   // For when a single node is selected.
@@ -76,10 +77,23 @@ export function ShapeOptions({
    * while **event.target.value** of the **onBlur** handler refers to value of the previously selected node.
    * So in the **onBlur** implementation, we need to check, if the selected node is the same node that was used as source for the value in the event.target.value.
    */
-  const [currentlyReShapedNodeId, setCurrentlyReShapedNodeId] = useState<string>(nodeIds[0]);
-
   const [width, setWidth] = useState<number>(boundWidth);
   const [height, setHeight] = useState<number>(boundHeight);
+  /**
+   * The `setBounds` method uses the `nodeId` to update a specific node.
+   * Filling the `TextField` and changing the `nodeId` will cause the `onBlur`
+   * method to be called with this new `nodeId`. This reference keep the
+   * old `nodeId` saved, so the `setBounds` can be update the correct node.
+   */
+  const previousNodeId = useRef(nodeIds[0]);
+
+  useEffect(() => {
+    setWidth(boundWidth);
+  }, [boundWidth]);
+
+  useEffect(() => {
+    setHeight(boundHeight);
+  }, [boundHeight]);
 
   const fillColor = useMemo(() => {
     const b = (shapeStyles[0]?.["dmndi:FillColor"]?.["@_blue"] ?? DEFAULT_FILL_COLOR["@_red"]).toString(16);
@@ -98,13 +112,13 @@ export function ShapeOptions({
   const [isShapeSectionExpanded, setShapeSectionExpanded] = useState<boolean>(startExpanded);
 
   const setBounds = useCallback(
-    (callback: (bounds: DC__Bounds, state: State) => void) => {
+    (callback: (bounds: DC__Bounds, state: State) => void, nodeId: string) => {
       dmnEditorStoreApi.setState((s) => {
         const { diagramElements } = addOrGetDrd({ definitions: s.dmn.model.definitions, drdIndex: s.diagram.drdIndex });
 
-        const index = nodeIds.map((nodeId) => s.computed(s).indexedDrd().dmnShapesByHref.get(nodeId))[0]?.index ?? -1;
+        const index = s.computed(s).indexedDrd()?.dmnShapesByHref?.get(nodeId)?.index ?? -1;
         if (index < 0) {
-          throw new Error(`DMN Shape for '${nodeIds[0]}' does not exist.`);
+          throw new Error(`DMN Shape for '${nodeId}' does not exist.`);
         }
 
         const shape = diagramElements?.[index];
@@ -118,83 +132,81 @@ export function ShapeOptions({
         callback(shape["dc:Bounds"], s);
       });
     },
-    [dmnEditorStoreApi, nodeIds]
+    [dmnEditorStoreApi]
   );
 
   const onChangeWidth = useCallback(
     (newWidth: string) => {
-      setCurrentlyReShapedNodeId(nodeIds[0]);
       setWidth(+newWidth);
+      previousNodeId.current = nodeIds[0];
     },
-    [nodeIds, setCurrentlyReShapedNodeId, setWidth]
+    [nodeIds]
   );
 
   const onBlurWidth = useCallback(
     (event) => {
-      if (currentlyReShapedNodeId === nodeIds[0]) {
-        setBounds((bounds, state) => {
-          const node = state.computed(state).getDiagramData(externalModelsByNamespace).nodesById.get(nodeIds[0]);
-          const minNodeSize = MIN_NODE_SIZES[node?.type as NodeType]({
-            snapGrid: state.diagram.snapGrid,
-            isAlternativeInputDataShape: state.computed(state).isAlternativeInputDataShape(),
-          });
-
-          if (parseInt(event.target.value) < minNodeSize["@_width"]) {
-            bounds["@_width"] = minNodeSize["@_width"];
-          } else {
-            bounds["@_width"] = parseInt(event.target.value);
-          }
+      setBounds((bounds, state) => {
+        const node = nodesById.get(previousNodeId.current);
+        const minNodeSize = MIN_NODE_SIZES[node?.type as NodeType]({
+          snapGrid: state.diagram.snapGrid,
+          isAlternativeInputDataShape: state.computed(state).isAlternativeInputDataShape(),
         });
-      }
+
+        if (parseInt(event.target.value) < minNodeSize["@_width"]) {
+          bounds["@_width"] = minNodeSize["@_width"];
+          setWidth(minNodeSize["@_width"]);
+        } else {
+          bounds["@_width"] = parseInt(event.target.value);
+        }
+      }, previousNodeId.current);
     },
-    [currentlyReShapedNodeId, externalModelsByNamespace, nodeIds, setBounds]
+    [nodesById, setBounds]
   );
 
   const onChangeHeight = useCallback(
     (newHeight: string) => {
-      setCurrentlyReShapedNodeId(nodeIds[0]);
       setHeight(+newHeight);
+      previousNodeId.current = nodeIds[0];
     },
-    [nodeIds, setCurrentlyReShapedNodeId, setHeight]
+    [nodeIds]
   );
 
   const onBlurHeight = useCallback(
     (event) => {
-      if (currentlyReShapedNodeId === nodeIds[0]) {
-        setBounds((bounds, state) => {
-          const node = state.computed(state).getDiagramData(externalModelsByNamespace).nodesById.get(nodeIds[0]);
-          const minNodeSize = MIN_NODE_SIZES[node?.type as NodeType]({
-            snapGrid: state.diagram.snapGrid,
-            isAlternativeInputDataShape: state.computed(state).isAlternativeInputDataShape(),
-          });
-
-          if (parseInt(event.target.value) < minNodeSize["@_height"]) {
-            bounds["@_height"] = minNodeSize["@_height"];
-          } else {
-            bounds["@_height"] = parseInt(event.target.value);
-          }
+      setBounds((bounds, state) => {
+        const node = nodesById.get(previousNodeId.current);
+        const minNodeSize = MIN_NODE_SIZES[node?.type as NodeType]({
+          snapGrid: state.diagram.snapGrid,
+          isAlternativeInputDataShape: state.computed(state).isAlternativeInputDataShape(),
         });
-      }
+
+        if (parseInt(event.target.value) < minNodeSize["@_height"]) {
+          bounds["@_height"] = minNodeSize["@_height"];
+          setHeight(minNodeSize["@_height"]);
+        } else {
+          bounds["@_height"] = parseInt(event.target.value);
+        }
+      }, previousNodeId.current);
     },
-    [currentlyReShapedNodeId, externalModelsByNamespace, nodeIds, setBounds]
+    [nodesById, setBounds]
   );
 
   const onChangePositionX = useCallback(
     (newX: string) => {
       setBounds((bounds) => {
         bounds["@_x"] = +parseFloat(newX).toFixed(2);
-      });
+      }, nodeIds[0]);
     },
-    [setBounds]
+    [nodeIds, setBounds]
   );
 
   const onChangePositionY = useCallback(
     (newY: string) => {
       setBounds((bounds) => {
         bounds["@_y"] = +parseFloat(newY).toFixed(2);
-      });
+      }, nodeIds[0]);
     },
-    [setBounds]
+    [nodeIds, setBounds]
   );
 
   const setShapeStyles = useCallback(
@@ -295,16 +307,6 @@ export function ShapeOptions({
       clearTimeout(timeout);
     };
   }, [setShapeStyles, temporaryFillColor]);
-
-  useEffect(() => {
-    setCurrentlyReShapedNodeId(nodeIds[0]);
-    setWidth(boundWidth);
-  }, [boundWidth, nodeIds]);
-
-  useEffect(() => {
-    setCurrentlyReShapedNodeId(nodeIds[0]);
-    setHeight(boundHeight);
-  }, [boundHeight, nodeIds]);
 
   const onReset = useCallback(() => {
     setShapeStyles((shapes, state) => {
