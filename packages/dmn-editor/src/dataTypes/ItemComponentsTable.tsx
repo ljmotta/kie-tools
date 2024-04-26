@@ -54,7 +54,7 @@ import {
 import { getNewDmnIdRandomizer } from "../idRandomizer/dmnIdRandomizer";
 import { isEnum } from "./ConstraintsEnum";
 import { isRange } from "./ConstraintsRange";
-import { constraintTypeHelper, recursevelyGetDmnBuiltInDataType } from "./Constraints";
+import { constraintTypeHelper, recursivelyGetRootItemDefinition } from "./Constraints";
 import { builtInFeelTypeNames } from "./BuiltInFeelTypes";
 import { useDmnEditor } from "../DmnEditorContext";
 import { DMN15__tItemDefinition } from "@kie-tools/dmn-marshaller/dist/schemas/dmn-1_5/ts-gen/types";
@@ -313,10 +313,14 @@ export function ItemComponentsTable({
                 return <>Expression</>;
               };
 
-              const rootItemDefinition = recursevelyGetDmnBuiltInDataType(
+              const rootItemDefinition = recursivelyGetRootItemDefinition(
                 dt.itemDefinition,
                 allDataTypesById,
                 allTopLevelItemDefinitionUniqueNames
+              );
+
+              const isItemComponent = !!parent.itemDefinition?.itemComponent?.find(
+                (ic) => ic["@_id"] === rootItemDefinition["@_id"]
               );
 
               return (
@@ -456,7 +460,8 @@ export function ItemComponentsTable({
                         />
                       </td>
                       <td>
-                        {canHaveConstraints(rootItemDefinition) ? (
+                        {canHaveConstraints(rootItemDefinition) ||
+                        (isStruct(rootItemDefinition) && !isItemComponent) ? (
                           <Button
                             variant={ButtonVariant.link}
                             onClick={() => {
