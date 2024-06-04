@@ -24,16 +24,16 @@ import { State } from "../Store";
 export function computeContainingDecisionServiceHrefsByDecisionHrefs({
   thisDmnsNamespace,
   drgElementsNamespace,
-  drgElements,
+  thisDrgElements,
 }: {
   thisDmnsNamespace: string;
   drgElementsNamespace: string;
-  drgElements: State["dmn"]["model"]["definitions"]["drgElement"];
+  thisDrgElements: State["dmn"]["model"]["definitions"]["drgElement"];
 }) {
-  drgElements ??= [];
+  thisDrgElements ??= [];
   const decisionServiceHrefsByDecisionHrefs = new Map<string, string[]>();
 
-  for (const drgElement of drgElements) {
+  for (const drgElement of thisDrgElements) {
     const drgElementHref = buildXmlHref({
       namespace: drgElementsNamespace === thisDmnsNamespace ? "" : drgElementsNamespace,
       id: drgElement["@_id"]!,

@@ -217,7 +217,7 @@ export function canRemoveNodeFromDrdOnly({
     computeContainingDecisionServiceHrefsByDecisionHrefs({
       thisDmnsNamespace: definitions["@_namespace"],
       drgElementsNamespace: __readonly_dmnObjectNamespace,
-      drgElements,
+      thisDrgElements: drgElements,
     });
 
   const containingDecisionServiceHrefs =

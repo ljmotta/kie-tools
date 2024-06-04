@@ -61,7 +61,7 @@ export function DrgNodesPanel() {
   const containingDecisionServiceHrefsByDecisionHrefsRelativeToThisDmn = useMemo(
     () =>
       computeContainingDecisionServiceHrefsByDecisionHrefs({
-        drgElements: thisDmnsDrgElements,
+        thisDrgElements: thisDmnsDrgElements,
         drgElementsNamespace: thisDmnsNamespace,
         thisDmnsNamespace: thisDmnsNamespace,
       }),

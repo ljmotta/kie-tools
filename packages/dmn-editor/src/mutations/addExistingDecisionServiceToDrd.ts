@@ -59,7 +59,7 @@ export function getStrategyToAddExistingDecisionServiceToDrd({
   __readonly_decisionServiceNamespace,
   __readonly_drgElement,
   __readonly_externalDmnsIndex,
-  __readonly_namespace,
+  __readonly_thisDmnNamespace,
   __readonly_indexedDrd,
   __readonly_drdIndex,
 }: {
@@ -67,12 +67,12 @@ export function getStrategyToAddExistingDecisionServiceToDrd({
   __readonly_decisionServiceNamespace: string;
   __readonly_drgElement: Normalized<DMN15__tDecisionService>;
   __readonly_externalDmnsIndex: ReturnType<Computed["getExternalModelTypesByNamespace"]>["dmns"];
-  __readonly_namespace: string;
+  __readonly_thisDmnNamespace: string;
   __readonly_indexedDrd: ReturnType<Computed["indexedDrd"]>;
   __readonly_drdIndex: number;
 }) {
   const decisionServiceDmnDefinitions =
-    !__readonly_decisionServiceNamespace || __readonly_decisionServiceNamespace === __readonly_namespace
+    !__readonly_decisionServiceNamespace || __readonly_decisionServiceNamespace === __readonly_thisDmnNamespace
       ? __readonly_definitions
       : __readonly_externalDmnsIndex.get(__readonly_decisionServiceNamespace)?.model.definitions;
   if (!decisionServiceDmnDefinitions) {
@@ -82,7 +82,7 @@ export function getStrategyToAddExistingDecisionServiceToDrd({
   }
   const { decisionServiceNamespaceForHref, containedDecisionHrefsRelativeToThisDmn } =
     getDecisionServicePropertiesRelativeToThisDmn({
-      thisDmnsNamespace: __readonly_namespace,
+      thisDmnsNamespace: __readonly_thisDmnNamespace,
       decisionServiceNamespace: __readonly_decisionServiceNamespace,
       decisionService: __readonly_drgElement,
     });
@@ -92,17 +92,9 @@ export function getStrategyToAddExistingDecisionServiceToDrd({
     id: __readonly_drgElement["@_id"]!,
   });
 
-  const containingDecisionServiceHrefsByDecisionHrefsRelativeToThisDmn =
-    computeContainingDecisionServiceHrefsByDecisionHrefs({
-      thisDmnsNamespace: __readonly_namespace,
-      drgElementsNamespace: __readonly_decisionServiceNamespace,
-      drgElements: decisionServiceDmnDefinitions.drgElement,
-    });
-
-  const doesThisDrdHaveConflictingDecisionService = containedDecisionHrefsRelativeToThisDmn.some((decisionHref) =>
-    (containingDecisionServiceHrefsByDecisionHrefsRelativeToThisDmn.get(decisionHref) ?? []).some((d) =>
-      __readonly_indexedDrd.dmnShapesByHref.has(d)
-    )
+  // Check for conflicts on the current DRD
+  const doesThisDrdHaveConflictingDecisionService = containedDecisionHrefsRelativeToThisDmn.some((s) =>
+    __readonly_indexedDrd.dmnShapesByHref.get(s)
   );
 
   if (doesThisDrdHaveConflictingDecisionService) {
@@ -119,11 +111,11 @@ export function getStrategyToAddExistingDecisionServiceToDrd({
   const drds = decisionServiceDmnDefinitions["dmndi:DMNDI"]?.["dmndi:DMNDiagram"] ?? [];
   let indexedDrd: ReturnType<Computed["indexedDrd"]> | undefined;
   for (let i = 0; i < drds.length; i++) {
-    if (__readonly_namespace === __readonly_decisionServiceNamespace && i === __readonly_drdIndex) {
+    if (__readonly_thisDmnNamespace === __readonly_decisionServiceNamespace && i === __readonly_drdIndex) {
       continue; // Skip the current DRD!
     }
 
-    const _indexedDrd = computeIndexedDrd(__readonly_namespace, decisionServiceDmnDefinitions, i);
+    const _indexedDrd = computeIndexedDrd(__readonly_thisDmnNamespace, decisionServiceDmnDefinitions, i);
     const dsShape = _indexedDrd.dmnShapesByHref.get(decisionServiceHrefRelativeToThisDmn);
     const hasCompleteExpandedDepictionOfDecisionService =
       dsShape &&

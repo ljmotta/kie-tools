@@ -392,7 +392,7 @@ export const Diagram = React.forwardRef<DiagramRef, { container: React.RefObject
               __readonly_drdIndex: drdIndex,
               __readonly_externalDmnsIndex: externalDmnsIndex,
               __readonly_indexedDrd: dereferencedState.computed(dereferencedState).indexedDrd(),
-              __readonly_namespace: dereferencedState.dmn.model.definitions["@_namespace"],
+              __readonly_thisDmnNamespace: dereferencedState.dmn.model.definitions["@_namespace"],
             });
 
             if (strategyForAddingDecisionServiceToDrd === StrategyForAddingDecisionServiceToDrd.CONFLICT) {
@@ -492,7 +492,7 @@ export const Diagram = React.forwardRef<DiagramRef, { container: React.RefObject
               __readonly_drdIndex: drdIndex,
               __readonly_externalDmnsIndex: externalDmnsIndex,
               __readonly_indexedDrd: dereferencedState.computed(dereferencedState).indexedDrd(),
-              __readonly_namespace: dereferencedState.dmn.model.definitions["@_namespace"],
+              __readonly_thisDmnNamespace: dereferencedState.dmn.model.definitions["@_namespace"],
             });
             if (strategyForAddingDecisionServiceToDrd === StrategyForAddingDecisionServiceToDrd.CONFLICT) {
               addConflictingDecisionServiceToDrd({
