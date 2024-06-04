@@ -20,35 +20,54 @@
 import { DMN15__tDefinitions } from "@kie-tools/dmn-marshaller/dist/schemas/dmn-1_5/ts-gen/types";
 import { repopulateInputDataAndDecisionsOnDecisionService } from "./repopulateInputDataAndDecisionsOnDecisionService";
 import { Normalized } from "../normalization/normalize";
+import { ExternalDmnsIndex } from "../DmnEditor";
+import { buildXmlHref } from "../xml/xmlHrefs";
 
 export function deleteDecisionFromDecisionService({
   definitions,
-  decisionId,
-  decisionServiceId,
+  __readonly_decisionId,
+  __readonly_decisionNamespace,
+  __readonly_decisionServiceId,
+  __readonly_externalDmnsIndex,
 }: {
   definitions: Normalized<DMN15__tDefinitions>;
-  decisionId: string;
-  decisionServiceId: string;
+  __readonly_decisionId: string;
+  __readonly_decisionNamespace: string | undefined;
+  __readonly_decisionServiceId: string;
+  __readonly_externalDmnsIndex: ExternalDmnsIndex;
 }) {
-  console.debug(`DMN MUTATION: Deleting Decision '${decisionId}' from Decision Service '${decisionServiceId}'`);
+  console.debug(
+    `DMN MUTATION: Deleting Decision '${__readonly_decisionId}' from Decision Service '${__readonly_decisionServiceId}'`
+  );
 
-  const decision = definitions.drgElement?.find((s) => s["@_id"] === decisionId);
+  // Normalize the namespace
+  const namespace =
+    __readonly_decisionNamespace === definitions["@_namespace"] ? undefined : __readonly_decisionNamespace;
+  // Get the external model from that namespace
+  const externalDmn = namespace === undefined ? undefined : __readonly_externalDmnsIndex.get(namespace);
+
+  const decision =
+    externalDmn === undefined
+      ? definitions.drgElement?.find((s) => s["@_id"] === __readonly_decisionId)
+      : externalDmn.model.definitions.drgElement?.find((s) => s["@_id"] === __readonly_decisionId);
   if (decision?.__$$element !== "decision") {
-    throw new Error(`DMN MUTATION: DRG Element with id '${decisionId}' is either not a Decision or doesn't exist.`);
+    throw new Error(
+      `DMN MUTATION: DRG Element with id '${__readonly_decisionId}' is either not a Decision or doesn't exist.`
+    );
   }
 
-  const decisionService = definitions.drgElement?.find((s) => s["@_id"] === decisionServiceId);
+  const decisionService = definitions.drgElement?.find((s) => s["@_id"] === __readonly_decisionServiceId);
   if (decisionService?.__$$element !== "decisionService") {
     throw new Error(
-      `DMN MUTATION: DRG Element with id '${decisionServiceId}' is either not a Decision Service or doesn't exist.`
+      `DMN MUTATION: DRG Element with id '${__readonly_decisionServiceId}' is either not a Decision Service or doesn't exist.`
     );
   }
 
   decisionService.outputDecision = (decisionService.outputDecision ?? []).filter(
-    (s) => s["@_href"] !== `#${decisionId}`
+    (s) => s["@_href"] !== buildXmlHref({ namespace, id: __readonly_decisionId })
   );
   decisionService.encapsulatedDecision = (decisionService.encapsulatedDecision ?? []).filter(
-    (s) => s["@_href"] !== `#${decisionId}`
+    (s) => s["@_href"] !== buildXmlHref({ namespace, id: __readonly_decisionId })
   );
 
   repopulateInputDataAndDecisionsOnDecisionService({ definitions, decisionService });

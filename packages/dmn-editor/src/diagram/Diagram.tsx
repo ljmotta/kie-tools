@@ -991,8 +991,12 @@ export const Diagram = React.forwardRef<DiagramRef, { container: React.RefObject
                 for (let i = 0; i < selectedNodes.length; i++) {
                   deleteDecisionFromDecisionService({
                     definitions: state.dmn.model.definitions,
-                    decisionId: selectedNodes[i].data.dmnObject!["@_id"]!, // We can assume that all selected nodes are Decisions because the contaiment was validated above.
-                    decisionServiceId: p.data.dmnObject!["@_id"]!,
+                    __readonly_decisionId: selectedNodes[i].data.dmnObject!["@_id"]!, // We can assume that all selected nodes are Decisions because the contaiment was validated above.
+                    __readonly_decisionServiceId: p.data.dmnObject!["@_id"]!,
+                    __readonly_decisionNamespace: selectedNodes[i].data.dmnObjectNamespace,
+                    __readonly_externalDmnsIndex: state
+                      .computed(state)
+                      .getExternalModelTypesByNamespace(externalModelsByNamespace).dmns,
                   });
                 }
               } else {
@@ -1007,13 +1011,18 @@ export const Diagram = React.forwardRef<DiagramRef, { container: React.RefObject
               for (let i = 0; i < selectedNodes.length; i++) {
                 addDecisionToDecisionService({
                   definitions: state.dmn.model.definitions,
-                  drdIndex: state.computed(state).getDrdIndex(),
-                  decisionId: selectedNodes[i].data.dmnObject!["@_id"]!, // We can assume that all selected nodes are Decisions because the contaiment was validated above.
-                  decisionServiceId: state
+                  __readonly_drdIndex: state.computed(state).getDrdIndex(),
+                  __readonly_decisionId: selectedNodes[i].data.dmnObject!["@_id"]!, // We can assume that all selected nodes are Decisions because the contaiment was validated above.
+                  __readonly_decisionNamespace: selectedNodes[i].data.dmnObjectNamespace,
+                  __readonly_externalDmnsIndex: state
+                    .computed(state)
+                    .getExternalModelTypesByNamespace(externalModelsByNamespace).dmns,
+                  __readonly_decisionServiceId: state
                     .computed(state)
                     .getDiagramData(externalModelsByNamespace)
                     .nodesById.get(dropTargetNode.id)!.data.dmnObject!["@_id"]!,
-                  snapGrid: state.diagram.snapGrid,
+                  __readonly_snapGrid: state.diagram.snapGrid,
+                  __readonly_isAlternativeInputDataShape: state.computed(state).isAlternativeInputDataShape(),
                 });
               }
             } else {
