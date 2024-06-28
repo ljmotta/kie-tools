@@ -2,7 +2,6 @@
   "extends": "@kie-tools/tsconfig/tsconfig.json",
   "compilerOptions": {
     "module": "CommonJS",
-    "outDir": "dist",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "target": "es6",

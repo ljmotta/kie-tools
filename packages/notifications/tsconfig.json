@@ -1,7 +1,4 @@
 {
   "extends": "@kie-tools/tsconfig/tsconfig.json",
-  "compilerOptions": {
-    "outDir": "dist"
-  },
   "include": ["src"]
 }

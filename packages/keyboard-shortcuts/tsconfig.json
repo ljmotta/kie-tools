@@ -1,7 +1,6 @@
 {
   "extends": "@kie-tools/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
     "types": ["@testing-library/jest-dom"]
   },
   "include": ["src"]

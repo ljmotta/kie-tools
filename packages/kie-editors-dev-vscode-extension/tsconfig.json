@@ -3,8 +3,7 @@
   "compilerOptions": {
     "declaration": false,
     "declarationMap": false,
-    "resolveJsonModule": true,
-    "outDir": "dist"
+    "resolveJsonModule": true
   },
   "include": ["src"]
 }
