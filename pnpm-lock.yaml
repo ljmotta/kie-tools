@@ -7446,18 +7446,27 @@ importers:
       '@types/babel__standalone':
         specifier: ^7.1.7
         version: 7.1.7
+      '@types/json-schema':
+        specifier: ^7.0.15
+        version: 7.0.15
       '@types/lodash':
         specifier: ^4.14.168
         version: 4.14.202
       '@types/react':
         specifier: ^17.0.6
         version: 17.0.21
+      '@types/react-datetime-picker':
+        specifier: ^3.4.1
+        version: 3.4.1
       '@types/react-dom':
         specifier: ^17.0.5
         version: 17.0.8
       '@types/react-helmet':
         specifier: ^6.1.9
         version: 6.1.11
+      '@types/react-svg-pan-zoom':
+        specifier: ^3.3.9
+        version: 3.3.9
       '@types/uuid':
         specifier: ^8.3.0
         version: 8.3.0
@@ -8015,6 +8024,9 @@ importers:
       '@types/react':
         specifier: ^17.0.6
         version: 17.0.21
+      '@types/react-datetime-picker':
+        specifier: ^3.4.1
+        version: 3.4.1
       '@types/react-dom':
         specifier: ^17.0.5
         version: 17.0.8
@@ -9257,9 +9269,6 @@ importers:
         specifier: workspace:*
         version: link:../dashbuilder-client
     devDependencies:
-      '@kie-tools/tsconfig':
-        specifier: workspace:*
-        version: link:../tsconfig
       copyfiles:
         specifier: ^2.4.1
         version: 2.4.1
@@ -17637,6 +17646,9 @@ packages:
 
   '@types/react-simple-maps@1.0.8':
     resolution: {integrity: sha512-gNXpQor+H0CCjp8GVNUeeTV+iDPdqFuCDIlYHH17KZ/tVHK1WaRIZl+s2ZnPCVQo27nEnRgU3GQxYbOYxXxgNQ==}
+
+  '@types/react-svg-pan-zoom@3.3.9':
+    resolution: {integrity: sha512-/VA3nI3OmIjgrvWPPeesyON2OxoC27v4yuZ2VRjItXrQnmGZTnQb2WUafLm7+weTUsfFfmngGAyH8oIlbKDkNA==}
 
   '@types/react-table@7.7.7':
     resolution: {integrity: sha512-3l2TP4detx9n5Jt44XhdH7Ku6PYwz6kB83P8W+YcBMUkIHtiw2gsCCcq9c4wyCIcdSwcTlWZ9WqH4PF7Yfbprg==}
@@ -37607,6 +37619,10 @@ snapshots:
       '@types/d3-geo': 1.12.3
       '@types/d3-zoom': 1.8.3
       '@types/geojson': 7946.0.8
+      '@types/react': 17.0.21
+
+  '@types/react-svg-pan-zoom@3.3.9':
+    dependencies:
       '@types/react': 17.0.21
 
   '@types/react-table@7.7.7':
