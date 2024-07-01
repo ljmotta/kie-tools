@@ -220,5 +220,5 @@ export class KogitoEditorEnvelopeApiImpl<
 }
 
 function sanitize(str: string): string {
-  return str.replace(/[\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069]/gu, "");
+  return str.replace(/[\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069]/g, "");
 }

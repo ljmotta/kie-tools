@@ -1,6 +1,7 @@
 {
   "extends": "@kie-tools/tsconfig/tsconfig.browser.json",
   "compilerOptions": {
+    "esModuleInterop": true,
     "declaration": false,
     "declarationMap": false,
     "jsx": "react-jsx",
@@ -12,7 +13,8 @@
     "esm": true,
     "compilerOptions": {
       "esModuleInterop": true,
-      "module": "CommonJS"
+      "module": "CommonJS",
+      "moduleResolution": "node"
     }
   }
 }

@@ -1,6 +1,7 @@
 {
-  "extends": "@kie-tools/tsconfig/tsconfig.browser.json",
+  "extends": "@kie-tools/tsconfig/tsconfig.node.json",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
     "types": ["node", "@testing-library/jest-dom"]
   }

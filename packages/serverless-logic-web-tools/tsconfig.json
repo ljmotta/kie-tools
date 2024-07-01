@@ -2,7 +2,6 @@
   "extends": "@kie-tools/tsconfig/tsconfig.browser.json",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
     "jsx": "react-jsx",
     "types": ["@testing-library/jest-dom"]
   },
@@ -12,7 +11,8 @@
     "esm": true,
     "compilerOptions": {
       "esModuleInterop": true,
-      "module": "CommonJS"
+      "module": "CommonJS",
+      "moduleResolution": "node"
     }
   }
 }

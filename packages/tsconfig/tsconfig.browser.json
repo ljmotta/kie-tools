@@ -2,8 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "lib": ["es6", "dom", "es2018", "es2019", "esnext", "DOM.Iterable"],
-    "target": "es2018",
+    "target": "es6",
     "module": "ESNext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "node"
   }
 }

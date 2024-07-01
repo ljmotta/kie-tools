@@ -39,7 +39,7 @@ function getDevDeploymentImageUrl(imageEnvVars: any) {
     : `${baseImageName}:${baseImageTag}`;
 }
 
-export const defaultEnvJson: EnvJson = {
+const defaultEnvJson: EnvJson = {
   KIE_SANDBOX_VERSION: buildEnv.root.version,
   KIE_SANDBOX_CORS_PROXY_URL: buildEnv.onlineEditor.corsProxyUrl,
   KIE_SANDBOX_FEEDBACK_URL: buildEnv.onlineEditor.feedbackUrl,
@@ -156,3 +156,5 @@ export const defaultEnvJson: EnvJson = {
     },
   ],
 };
+
+export default defaultEnvJson;
