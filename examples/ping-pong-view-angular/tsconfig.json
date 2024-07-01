@@ -1,8 +1,5 @@
 {
-  "extends": "@kie-tools/tsconfig/tsconfig.json",
-  "compilerOptions": {
-    "moduleResolution": "node"
-  },
+  "extends": "@kie-tools/tsconfig/tsconfig.browser.json",
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

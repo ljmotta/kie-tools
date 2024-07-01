@@ -1,4 +1,6 @@
 {
-  "extends": "@kie-tools/tsconfig/tsconfig.json",
-  "include": ["src"]
+  "extends": "@kie-tools/tsconfig/tsconfig.browser.json",
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  }
 }
