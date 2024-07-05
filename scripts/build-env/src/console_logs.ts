@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { ERROR_ACCESS_LOG_FILE_ABSOLUTE_PATH_ENV_VAR_NAME } from "./lib";
+import { ERROR_ACCESS_LOG_FILE_ABSOLUTE_PATH_ENV_VAR_NAME } from "./lib.js";
 
 export const LOGS = {
   error: {

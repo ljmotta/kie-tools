@@ -12,6 +12,7 @@
   "bugs": {
     "url": "https://github.com/apache/incubator-kie-tools/issues"
   },
+  "type": "module",
   "scripts": {
     "build:dev": "pnpm build:prod",
     "build:prod": "pnpm cleanup && pnpm env-json:schema:generate && run-script-if --bool \"$(build-env containerImages.build)\" --then \"pnpm copy:assets\" \"pnpm image:docker:build\"",

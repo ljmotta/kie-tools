@@ -21,7 +21,7 @@ import { EnvJson } from "../src/env/EnvJson";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { env } from "../env";
+import { env } from "../env/index.mjs";
 const buildEnv: any = env; // build-env is not typed
 
 export const defaultEnvJson: EnvJson = {

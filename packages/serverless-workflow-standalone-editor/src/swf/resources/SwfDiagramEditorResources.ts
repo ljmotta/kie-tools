@@ -20,7 +20,7 @@
 import * as fs from "fs";
 import { BaseEditorResources } from "../../common/EditorResources";
 import { getServerlessWorkflowLanguageData } from "@kie-tools/serverless-workflow-diagram-editor-envelope/dist/api";
-import * as swfEditorAssets from "@kie-tools/serverless-workflow-diagram-editor-assets";
+import swfEditorAssets from "@kie-tools/serverless-workflow-diagram-editor-assets/index.mjs";
 
 export class ServerlessWorkflowDiagramEditorResources extends BaseEditorResources {
   public get(args: { resourcesPathPrefix: string }) {

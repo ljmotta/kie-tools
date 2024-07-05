@@ -17,16 +17,16 @@
  * under the License.
  */
 
-const { execSync, execFileSync } = require("child_process");
-const path = require("path");
-const buildEnv = require("../env");
+import { execSync, execFileSync } from "child_process";
+import path from "path";
+import { env } from "../env/index.mjs";
 
 const filePath = path.join(process.cwd(), "tests/test.zip");
 
 const containersPorts = {
-  fileserver: buildEnv.env.devDeploymentUploadService.dev.fileServerPort,
-  buildtimeInstall: buildEnv.env.devDeploymentUploadService.dev.buildTimePort,
-  runTimeInstall: buildEnv.env.devDeploymentUploadService.dev.runtTimePort,
+  fileserver: env.devDeploymentUploadService.dev.fileServerPort,
+  buildtimeInstall: env.devDeploymentUploadService.dev.buildTimePort,
+  runTimeInstall: env.devDeploymentUploadService.dev.runtTimePort,
 };
 
 describe("Test built images individually", () => {

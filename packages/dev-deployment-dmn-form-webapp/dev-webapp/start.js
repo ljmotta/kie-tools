@@ -17,9 +17,9 @@
  * under the License.
  */
 
-const { spawn } = require("node:child_process");
-const path = require("path");
-const { env } = require("../env");
+import { spawn } from "node:child_process";
+import path from "path";
+import { env } from "../env/index.mjs";
 
 const buildEnv = env;
 
@@ -27,7 +27,7 @@ const mvn = spawn(
   "mvn",
   [
     "-f",
-    path.join(__dirname, "./quarkus-app"),
+    path.join(import.meta.dirname, "./quarkus-app"),
     "clean",
     "quarkus:dev",
     "-Dmaven.test.skip",
@@ -65,10 +65,13 @@ if (process.argv.indexOf("--env") !== -1 && process.argv[process.argv.indexOf("-
 const webpack = spawn(
   "npx",
   [
-    "webpack",
+    "node",
+    "--loader",
+    "ts-node/esm",
+    "node_modules/webpack-cli/bin/cli.js",
     "serve",
     "-c",
-    path.join(__dirname, "../webpack.config.ts"),
+    path.join(import.meta.dirname, "../webpack.config.ts"),
     "--host",
     "0.0.0.0",
     "--env",

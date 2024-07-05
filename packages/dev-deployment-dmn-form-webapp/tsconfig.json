@@ -11,8 +11,10 @@
   "ts-node": {
     "esm": true,
     "compilerOptions": {
+      "module": "esnext",
       "esModuleInterop": true,
-      "module": "CommonJS"
+      "allowSyntheticDefaultImports": true,
+      "allowImportingTsExtensions": true
     }
   }
 }

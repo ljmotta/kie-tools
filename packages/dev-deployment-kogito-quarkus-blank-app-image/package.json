@@ -12,6 +12,7 @@
   "bugs": {
     "url": "https://github.com/apache/incubator-kie-tools/issues"
   },
+  "type": "module",
   "scripts": {
     "build": "run-script-if --bool \"$(build-env containerImages.build)\" --then \"pnpm m2-repo-via-http:container:run\" \"pnpm copy:assets\" \"pnpm image:docker:build\" --finally \"pnpm m2-repo-via-http:container:kill\"",
     "build:dev": "pnpm build",

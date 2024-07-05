@@ -3,5 +3,14 @@
   "compilerOptions": {
     "declaration": false,
     "declarationMap": false
+  },
+
+  "ts-node": {
+    "esm": true,
+    "compilerOptions": {
+      "module": "ESNext",
+      "allowSyntheticDefaultImports": true,
+      "allowImportingTsExtensions": true
+    }
   }
 }

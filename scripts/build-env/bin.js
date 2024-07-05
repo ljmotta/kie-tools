@@ -19,4 +19,4 @@
  * under the License.
  */
 
-require("./dist/bin");
+import "./dist/bin.js";

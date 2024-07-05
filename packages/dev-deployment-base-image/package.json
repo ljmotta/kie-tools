@@ -12,6 +12,7 @@
   "bugs": {
     "url": "https://github.com/apache/incubator-kie-tools/issues"
   },
+  "type": "commonjs",
   "scripts": {
     "build:dev": "run-script-if --bool \"$(build-env containerImages.build)\" --then \"pnpm copy-assets\" \"pnpm image:docker:build\"",
     "build:prod": "run-script-if --bool \"$(build-env containerImages.build)\" --then \"pnpm copy-assets\" \"pnpm image:docker:build\"",

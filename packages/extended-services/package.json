@@ -37,6 +37,7 @@
     "download:mvn:jitexecutor-native:darwin": "mvn dependency:get -Dartifact=\"org.kie.kogito:jitexecutor-native-darwin:$(build-env kogitoRuntime.version):jar:binaries\"",
     "download:mvn:jitexecutor-native:linux": "mvn dependency:get -Dartifact=\"org.kie.kogito:jitexecutor-native-linux:$(build-env kogitoRuntime.version):jar:binaries\"",
     "download:mvn:jitexecutor-native:win32": "pnpm powershell \"mvn dependency:get `-Dartifact=org.kie.kogito:jitexecutor-native-win32:$(build-env kogitoRuntime.version):jar:binaries\"",
+    "env": "build-env --print-vars",
     "install": "go mod tidy && pnpm download:mvn:jitexecutor-native && pnpm unpack:mvn:jitexecutor-native",
     "pack-app": "run-script-os",
     "pack-app:darwin": "cd ./scripts/macos && ./build.sh",

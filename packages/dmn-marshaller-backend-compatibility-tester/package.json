@@ -19,6 +19,7 @@
     "dist",
     "src"
   ],
+  "type": "commonjs",
   "scripts": {
     "build:dev": "rimraf dist && tsc -p tsconfig.json && pnpm prefetch",
     "build:prod": "pnpm build:dev",

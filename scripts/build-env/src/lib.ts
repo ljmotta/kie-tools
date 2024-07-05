@@ -17,9 +17,9 @@
  * under the License.
  */
 
-import { EnvAndVarsWithName, VarWithName } from "./types";
-import { getOrDefault } from "./index";
-import { LOGS } from "./console_logs";
+import { EnvAndVarsWithName, VarWithName } from "./types.js";
+import { getOrDefault } from "./index.js";
+import { LOGS } from "./console_logs.js";
 
 import * as path from "path";
 import * as fs from "fs";
@@ -30,15 +30,17 @@ export const BUILD_ENV_RECURSION_STOP_FILE_NAME = ".build-env-root";
 export async function requireEnv(curDir: string): Promise<EnvAndVarsWithName<any> | undefined> {
   const envPathJs = path.resolve(curDir, "env", "index.js");
   const envPathCjs = path.resolve(curDir, "env", "index.cjs");
+  const envPathMjs = path.resolve(curDir, "env", "index.mjs");
 
   const envPathJsExists = fs.existsSync(envPathJs);
   const envPathCjsExists = fs.existsSync(envPathCjs);
-  if (!envPathJsExists && !envPathCjsExists) {
+  const envPathMjsExists = fs.existsSync(envPathMjs);
+  if (!envPathJsExists && !envPathCjsExists && !envPathMjsExists) {
     // console.debug(logs.error.envNotFound({envPath}));
     return undefined;
   }
 
-  const envFilePath = envPathJsExists ? envPathJs : envPathCjs;
+  const envFilePath = envPathJsExists ? envPathJs : envPathCjsExists ? envPathCjs : envPathMjs;
   // console.debug(logs.debug.envFound({envPath}));
 
   try {

@@ -16,6 +16,7 @@
     "dist",
     "src"
   ],
+  "type": "module",
   "scripts": {
     "build:dev": "rimraf dist && pnpm copy:css && tsc -p tsconfig.json",
     "build:prod": "rimraf dist && pnpm copy:css && pnpm lint && tsc -p tsconfig.json && pnpm test-e2e",

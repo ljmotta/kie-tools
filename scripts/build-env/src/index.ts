@@ -17,8 +17,8 @@
  * under the License.
  */
 
-import { LOGS } from "./console_logs";
-import { VarWithName, Var, EnvAndVarsWithName } from "./types";
+import { LOGS } from "./console_logs.js";
+import { VarWithName, Var, EnvAndVarsWithName } from "./types.js";
 
 export function str2bool(str: string | undefined) {
   return str === "true";

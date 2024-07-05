@@ -17,15 +17,15 @@
  * under the License.
  */
 
-import { ERROR_ACCESS_LOG_FILE_ABSOLUTE_PATH_ENV_VAR_NAME, findEnv } from "./lib";
-import { LOGS } from "./console_logs";
+import { ERROR_ACCESS_LOG_FILE_ABSOLUTE_PATH_ENV_VAR_NAME, findEnv } from "./lib.js";
+import { LOGS } from "./console_logs.js";
 
 import * as path from "path";
 import * as fs from "fs";
 import * as os from "os";
 
-import { treatSpecialPrintCases } from "./special_print_cases";
-import { treatStaticPrintCases } from "./static_print_cases";
+import { treatSpecialPrintCases } from "./special_print_cases.js";
+import { treatStaticPrintCases } from "./static_print_cases.js";
 
 const opt = process.argv[2];
 const flag = process.argv[3];

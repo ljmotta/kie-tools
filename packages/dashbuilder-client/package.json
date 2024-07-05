@@ -15,6 +15,7 @@
   "files": [
     "dist/"
   ],
+  "type": "commonjs",
   "scripts": {
     "build:dev": "rimraf dist && pnpm copy:dashbuilder",
     "build:prod": "pnpm build:dev",

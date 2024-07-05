@@ -17,9 +17,9 @@
  * under the License.
  */
 
-const buildEnv = require("./env");
-const { setup } = require("@kie-tools/maven-config-setup-helper");
+import { env } from "./env/index.mjs";
+import { setup } from "@kie-tools/maven-config-setup-helper";
 
 setup(`
-    -Drevision=${buildEnv.env.devDeploymentKogitoQuarkusBlankAppImage.version}
+    -Drevision=${env.devDeploymentKogitoQuarkusBlankAppImage.version}
 `);

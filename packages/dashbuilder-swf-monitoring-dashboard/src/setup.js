@@ -17,7 +17,7 @@
  * under the License.
  */
 
-dashbuilder = {
+var dashbuilder = {
   /*
     // possible modes are EDITOR and CLIENT - if dashboards is set then CLIENT mode is assumed
 	mode: "CLIENT",

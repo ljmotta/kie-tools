@@ -12,6 +12,7 @@
   "bugs": {
     "url": "https://github.com/apache/incubator-kie-tools/issues"
   },
+  "type": "module",
   "scripts": {
     "build": "run-script-os",
     "build:dev": "pnpm cleanup && pnpm build",

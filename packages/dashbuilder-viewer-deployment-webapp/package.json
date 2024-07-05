@@ -14,11 +14,12 @@
   },
   "types": "./dist/index.d.ts",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
-    "build:dev": "rimraf dist && webpack --env dev",
-    "build:prod": "pnpm lint && rimraf dist && webpack",
+    "build:dev": "rimraf dist && node --loader ts-node/esm node_modules/webpack-cli/bin/cli.js --config webpack.config.ts --env dev",
+    "build:prod": "pnpm lint && rimraf dist && node --loader ts-node/esm node_modules/webpack-cli/bin/cli.js --config webpack.config.ts",
     "lint": "run-script-if --bool \"$(build-env linters.run)\" --then \"kie-tools--eslint ./src\"",
-    "start": "webpack serve --host 0.0.0.0 --env dev"
+    "start": "node --loader ts-node/esm node_modules/webpack-cli/bin/cli.js serve --config webpack.config.ts --host 0.0.0.0 --env dev"
   },
   "dependencies": {
     "@kie-tools-core/editor": "workspace:*",
@@ -53,6 +54,7 @@
     "html-replace-webpack-plugin": "^2.6.0",
     "html-webpack-plugin": "^5.3.2",
     "rimraf": "^3.0.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.2",
     "webpack": "^5.88.2",
     "webpack-cli": "^4.10.0",

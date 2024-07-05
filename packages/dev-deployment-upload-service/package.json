@@ -15,6 +15,7 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "scripts": {
     "build": "run-script-os",
     "build:dev": "rimraf dist && pnpm build-install-script:dev && pnpm build-all",

@@ -15,6 +15,7 @@
   "files": [
     "**/dist/*"
   ],
+  "type": "commonjs",
   "scripts": {
     "build:dev": "run-script-os && pnpm copy:components && pnpm build:dev:runtime",
     "build:dev:linux:darwin": "mvn clean install -DskipTests -Dgwt.compiler.skip=true",

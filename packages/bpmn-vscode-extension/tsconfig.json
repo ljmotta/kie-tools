@@ -3,5 +3,15 @@
   "compilerOptions": {
     "declaration": false,
     "declarationMap": false
+  },
+
+  "ts-node": {
+    "esm": true,
+    "compilerOptions": {
+      "module": "esnext",
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "allowImportingTsExtensions": true
+    }
   }
 }

@@ -17,8 +17,6 @@
  * under the License.
  */
 
-import { LOGS } from "./console_logs";
-
 export function treatStaticPrintCases({ opt }: { opt: string }) {
   //help
   if (opt === "--help") {
@@ -63,9 +61,10 @@ or
   if (opt === "--generate-empty-env-index-js") {
     console.log(
       `
-const { varsWithName, composeEnv, getOrDefault, str2bool } = require("@kie-tools-scripts/build-env");
+import { varsWithName, composeEnv, getOrDefault, str2bool } from "@kie-tools-scripts/build-env";
+import * as rootEnv from "@kie-tools/root-env/env/index.mjs"
 
-module.exports = composeEnv([require("@kie-tools/root-env/env")], {
+module.exports = composeEnv([rootEnv], {
   vars: varsWithName({
     MY_CUSTOM_PROPERTY: {
       default: "true",

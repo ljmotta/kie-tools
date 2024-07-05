@@ -17,9 +17,9 @@
  * under the License.
  */
 
-const { execSync } = require("child_process");
-const fs = require("fs");
-const path = require("path");
+import { execSync } from "child_process";
+import fs from "fs";
+import path from "path";
 
 const MVN_CONFIG_ORIGINAL_FILE_PATH = path.join(".mvn", "maven.config.original");
 const MVN_CONFIG_FILE_PATH = path.join(".mvn", "maven.config");

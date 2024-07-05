@@ -25,7 +25,7 @@ import GitHubRepoPage from "@kie-tools/chrome-extension-test-helper/dist/framewo
 import SwfEditor from "@kie-tools/chrome-extension-test-helper/dist/framework/editor/swf/SwfEditor";
 
 // @ts-ignore
-import { env } from "../../env";
+import { env } from "../../env/index.mjs";
 
 const TEST_NAME = "SwfTest";
 

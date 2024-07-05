@@ -4,5 +4,15 @@
     "declaration": false,
     "declarationMap": false,
     "jsx": "react-jsx"
+  },
+
+  "ts-node": {
+    "esm": true,
+    "compilerOptions": {
+      "module": "esnext",
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "allowImportingTsExtensions": true
+    }
   }
 }

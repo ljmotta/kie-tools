@@ -17,6 +17,7 @@
   "files": [
     "dist"
   ],
+  "type": "commonjs",
   "scripts": {
     "build:dev": "rimraf dist && tsc -p tsconfig.json",
     "build:prod": "pnpm lint && rimraf dist && tsc -p tsconfig.json",
@@ -24,8 +25,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/preset-env": "^7.16.0",
     "@kie-tools/eslint": "workspace:*",
     "@kie-tools/root-env": "workspace:*",
     "@kie-tools/tsconfig": "workspace:*",

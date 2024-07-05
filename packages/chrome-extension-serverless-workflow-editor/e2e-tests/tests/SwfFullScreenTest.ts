@@ -24,7 +24,7 @@ import GitHubRepoPage from "@kie-tools/chrome-extension-test-helper/dist/framewo
 import Tools from "@kie-tools/chrome-extension-test-helper/dist/utils/Tools";
 
 // @ts-ignore
-import { env } from "../../env";
+import { env } from "../../env/index.mjs";
 
 const TEST_NAME = "SwfFullScreenTest";
 

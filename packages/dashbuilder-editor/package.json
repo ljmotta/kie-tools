@@ -17,6 +17,7 @@
   "files": [
     "dist/editor"
   ],
+  "type": "module",
   "scripts": {
     "build:dev": "rimraf dist && pnpm copy:dashbuilder && pnpm copy:css && pnpm copy:images && tsc -p tsconfig.json",
     "build:prod": "pnpm lint && rimraf dist && pnpm copy:dashbuilder && pnpm copy:css && pnpm copy:images && tsc -p tsconfig.json",
@@ -25,7 +26,7 @@
     "copy:images": "cpr ./static/images ./dist/images",
     "deploy": "gh-pages -d dist",
     "lint": "run-script-if --bool \"$(build-env linters.run)\" --then \"kie-tools--eslint ./src\"",
-    "start": "webpack serve -c ./dev-webapp/webpack.config.js --host 0.0.0.0 --env dev"
+    "start": "node --loader ts-node/esm node_modules/webpack-cli/bin/cli.js serve --config ./dev-webapp/webpack.config.ts --host 0.0.0.0 --env dev"
   },
   "dependencies": {
     "@kie-tools-core/editor": "workspace:*",
@@ -63,6 +64,7 @@
     "monaco-editor-webpack-plugin": "^7.0.1",
     "rimraf": "^3.0.2",
     "start-server-and-test": "^2.0.3",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.2",
     "vscode-json-languageservice": "^4.2.1",
     "webpack": "^5.88.2",

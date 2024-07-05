@@ -17,13 +17,13 @@
  * under the License.
  */
 
-const { varsWithName, getOrDefault, composeEnv, str2bool } = require("@kie-tools-scripts/build-env");
+import { varsWithName, getOrDefault, composeEnv, str2bool } from "@kie-tools-scripts/build-env";
 
-const rootEnv = require("@kie-tools/root-env/env");
-const extendedServicesEnv = require("@kie-tools/extended-services/env");
-const corsProxyEnv = require("@kie-tools/cors-proxy/env");
+import rootEnv from "@kie-tools/root-env/env";
+import extendedServicesEnv from "@kie-tools/extended-services/env";
+import corsProxyEnv from "@kie-tools/cors-proxy/env";
 
-module.exports = composeEnv([rootEnv, extendedServicesEnv, corsProxyEnv], {
+export default composeEnv([rootEnv, extendedServicesEnv, corsProxyEnv], {
   vars: varsWithName({
     ONLINE_EDITOR__buildInfo: {
       default: `dev (${process.env.USER}) @ ${new Date().toISOString()}`,

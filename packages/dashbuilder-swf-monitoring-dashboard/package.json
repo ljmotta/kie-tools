@@ -15,6 +15,7 @@
   "files": [
     "dist/"
   ],
+  "type": "module",
   "scripts": {
     "build:dev": "rimraf dist && pnpm copy:dashbuilder",
     "build:prod": "pnpm build:dev",

@@ -17,6 +17,7 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "scripts": {
     "build:dev": "pnpm dist",
     "build:prod": "pnpm lint && pnpm dist",

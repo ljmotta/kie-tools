@@ -22,7 +22,7 @@ import { routes } from "../src/navigation/Routes";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { env } from "../env";
+import { env } from "../env/index.js";
 import { AuthProviderGroup, AuthProviderType } from "../src/authProviders/AuthProvidersApi";
 import { FileTypes } from "@kie-tools-core/workspaces-git-fs/dist/constants/ExtensionHelper";
 import { GLOB_PATTERN } from "../src/envelopeLocator/EditorEnvelopeLocatorFactory";

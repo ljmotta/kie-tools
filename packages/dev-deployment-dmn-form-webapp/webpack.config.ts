@@ -20,14 +20,18 @@
 import CopyPlugin from "copy-webpack-plugin";
 import patternflyBase from "@kie-tools-core/patternfly-base";
 import { merge } from "webpack-merge";
-import common from "@kie-tools-core/webpack-base/webpack.common.config";
+import common from "@kie-tools-core/webpack-base/webpack.common.config.mts";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import { ProvidePlugin } from "webpack";
+import webpack from "webpack";
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
-import { defaultEnvJson } from "./build/defaultEnvJson";
+import { defaultEnvJson } from "./build/defaultEnvJson.ts";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+const { ProvidePlugin } = webpack;
 
 export default async (env: any, argv: any) => {
-  return merge(common(env), {
+  return merge(common(env, argv), {
     entry: {
       index: "./src/index.tsx",
     },
@@ -68,5 +72,5 @@ export default async (env: any, argv: any) => {
     module: {
       rules: [...patternflyBase.webpackModuleRules],
     },
-  });
+  } as any);
 };

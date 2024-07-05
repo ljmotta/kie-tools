@@ -18,8 +18,9 @@
  */
 
 import * as path from "path";
-const buildEnv = require("../env");
-const jbang = require("@jbangdev/jbang");
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import jbang from "@jbangdev/jbang";
 
 const parentScriptPath = path.join(__dirname, "..", "src", "DmnMarshallerBackendCompatibilityTesterScript.java");
 const dmnValidationScriptPath = path.join(__dirname, "..", "src", "DmnValidation.java");
@@ -75,13 +76,15 @@ export function checkDmnSemanticComparisonWithImports(data: {
   ]);
 }
 
-function executeScript(scriptPath: string, args?: string[]) {
+async function executeScript(scriptPath: string, args?: string[]) {
   /* Windows requires double quotes to wrap the argument, while in POSIX it must be wrapped by single quotes */
   const isWindowsPath = path.sep !== "/";
   const quoteChar = isWindowsPath ? '"' : "'";
 
   const jbangArgs = [] as string[];
-  jbangArgs.push("-Dkogito-runtime.version=" + buildEnv.env.kogitoRuntime.version);
+  const env = await import(path.join(__dirname, "../env/index.mjs"));
+
+  jbangArgs.push("-Dkogito-runtime.version=" + env.default.kogitoRuntime.version);
   jbangArgs.push(scriptPath);
   args?.forEach((arg) => jbangArgs.push(quoteChar + arg + quoteChar));
 

@@ -12,6 +12,7 @@
   "bugs": {
     "url": "https://github.com/apache/incubator-kie-tools/issues"
   },
+  "type": "module",
   "devDependencies": {
     "@kie-tools/root-env": "workspace:*"
   }

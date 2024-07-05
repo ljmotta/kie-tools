@@ -12,6 +12,7 @@
   "bugs": {
     "url": "https://github.com/apache/incubator-kie-tools/issues"
   },
+  "type": "commonjs",
   "scripts": {
     "build:dev": "pnpm cleanup && pnpm copy:cors-proxy-package && run-script-if --bool \"$(build-env containerImages.build)\" --then \"pnpm docker:build\"",
     "build:prod": "pnpm cleanup && pnpm copy:cors-proxy-package && run-script-if --bool \"$(build-env containerImages.build)\" --then \"pnpm docker:build\"",

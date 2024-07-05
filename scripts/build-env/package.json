@@ -13,14 +13,15 @@
     "url": "https://github.com/apache/incubator-kie-tools/issues"
   },
   "bin": {
-    "build-env": "bin.js"
+    "build-env": "bin.mjs"
   },
   "main": "dist/index.js",
   "files": [
-    "bin.js",
+    "bin.mjs",
     "dist",
     "src"
   ],
+  "type": "module",
   "scripts": {
     "install": "rimraf dist && tsc"
   },

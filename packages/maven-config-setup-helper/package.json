@@ -16,6 +16,7 @@
   "files": [
     "index.js"
   ],
+  "type": "module",
   "scripts": {},
   "devDependencies": {}
 }

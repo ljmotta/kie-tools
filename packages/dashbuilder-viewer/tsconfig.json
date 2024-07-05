@@ -2,5 +2,14 @@
   "extends": "@kie-tools/tsconfig/tsconfig.browser.json",
   "compilerOptions": {
     "jsx": "react-jsx"
+  },
+
+  "ts-node": {
+    "esm": true,
+    "compilerOptions": {
+      "module": "ESNext",
+      "allowSyntheticDefaultImports": true,
+      "allowImportingTsExtensions": true
+    }
   }
 }

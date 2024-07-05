@@ -17,6 +17,7 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "scripts": {
     "build:dev": "rimraf dist && tsc -p tsconfig.json",
     "build:prod": "pnpm lint && rimraf dist && tsc -p tsconfig.json",

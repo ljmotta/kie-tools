@@ -17,17 +17,17 @@
  * under the License.
  */
 
-const fs = require("fs");
-const version = require("../package.json").version;
-const devDeploymentUploadServiceEnv = require("../env");
-const { argv } = require("process");
+import fs from "fs";
+import { argv } from "process";
+import { env } from "../env/index.mjs";
+import packageJson from "../package.json" with { type: "json" };
 
 const baseInstallScriptFile = fs.readFileSync("getDevDeploymentUploadService.sh");
 
 const contents = baseInstallScriptFile.toString();
 
-const downloadPath = devDeploymentUploadServiceEnv.env.devDeploymentUploadService.url.path;
-const downloadHost = devDeploymentUploadServiceEnv.env.devDeploymentUploadService.url.host;
+const downloadPath = env.devDeploymentUploadService.url.path;
+const downloadHost = env.devDeploymentUploadService.url.host;
 
 let downloadUrl = `${downloadHost}/${downloadPath}`;
 if (argv[2] === "--dev") {
@@ -40,6 +40,6 @@ if (!fs.existsSync("dist")) {
 
 fs.writeFileSync(
   "dist/getDevDeploymentUploadService.sh",
-  contents.replace("<DOWNLOAD_URL>", downloadUrl).replace("<VERSION>", version)
+  contents.replace("<DOWNLOAD_URL>", downloadUrl).replace("<VERSION>", packageJson.version)
 );
 fs.chmodSync("dist/getDevDeploymentUploadService.sh", "755");

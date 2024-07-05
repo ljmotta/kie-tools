@@ -17,8 +17,8 @@
  * under the License.
  */
 
-import { flattenObj, parseVarsForDotEnvPrint } from "./lib";
-import { EnvAndVarsWithName } from "./types";
+import { flattenObj, parseVarsForDotEnvPrint } from "./lib.js";
+import { EnvAndVarsWithName } from "./types.js";
 
 export function treatSpecialPrintCases({
   opt,

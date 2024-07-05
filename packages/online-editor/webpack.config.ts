@@ -22,11 +22,9 @@ import CopyPlugin from "copy-webpack-plugin";
 import { merge } from "webpack-merge";
 import * as stunnerEditors from "@kie-tools/stunner-editors";
 import { EnvironmentPlugin } from "webpack";
-
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { ProvidePlugin } from "webpack";
 import { defaultEnvJson } from "./build/defaultEnvJson";
-
 import common from "@kie-tools-core/webpack-base/webpack.common.config";
 import patternflyBase from "@kie-tools-core/patternfly-base";
 import childProcess from "child_process";
@@ -37,7 +35,7 @@ import HtmlReplaceWebpackPlugin from "html-replace-webpack-plugin";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { env } from "./env";
+import { env } from "./env/index.js";
 const buildEnv: any = env; // build-env is not typed
 
 export default async (env: any, argv: any) => {

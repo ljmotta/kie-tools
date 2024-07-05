@@ -12,6 +12,7 @@
   "bugs": {
     "url": "https://github.com/apache/incubator-kie-tools/issues"
   },
+  "type": "commonjs",
   "scripts": {
     "build:dev": "run-script-os",
     "build:dev:darwin:linux": "mvn clean install -DskipTests",

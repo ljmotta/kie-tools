@@ -1,3 +1,12 @@
 {
-  "extends": "@kie-tools/tsconfig/tsconfig.node.json"
+  "extends": "@kie-tools/tsconfig/tsconfig.node.json",
+
+  "ts-node": {
+    "esm": true,
+    "compilerOptions": {
+      "module": "ESNext",
+      "allowSyntheticDefaultImports": true,
+      "allowImportingTsExtensions": true
+    }
+  }
 }

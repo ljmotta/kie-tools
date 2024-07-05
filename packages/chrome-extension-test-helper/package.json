@@ -13,6 +13,7 @@
   "bugs": {
     "url": "https://github.com/apache/incubator-kie-tools/issues"
   },
+  "type": "module",
   "scripts": {
     "build": "rimraf dist && tsc",
     "prepare": "pnpm run build"
