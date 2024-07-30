@@ -17,6 +17,6 @@
  * under the License.
  */
 
-import * as cli from "./cli";
+import * as cli from "./cli/cli";
 
 cli.run();

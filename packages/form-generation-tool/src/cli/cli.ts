@@ -17,12 +17,11 @@
  * under the License.
  */
 
-import inquirer, { Answers } from "inquirer";
+import { generateForms } from "../generation/index";
+import { checkKogitoProjectHasForms, checkKogitoProjectStructure } from "../generation/fs/checks";
+import { input, confirm, rawlist } from "@inquirer/prompts";
 
-import { Args, generateForms } from "../generation";
-import { checkKogitoProjectHasForms, checkKogitoProjectStructure } from "../generation/fs";
-
-export function run() {
+export async function run() {
   const validateProjectPath = (path: string): string | boolean => {
     if (!path || path === "") {
       return "Please type a Kogito Project path";
@@ -36,72 +35,42 @@ export function run() {
     return true;
   };
 
-  const isOverwriteVisible = (answers: Answers): boolean => {
-    return checkKogitoProjectHasForms(answers.path);
+  const isOverwriteVisible = (path: string): boolean => {
+    return checkKogitoProjectHasForms(path);
   };
+  console.log(`
+Kogito Form Generation CLI
+===========================
 
-  const execute = (answers: Answers): void => {
-    const args: Args = {
-      path: answers.path,
-      type: answers.type,
-      overwrite: answers.overwrite,
-    };
+This tool will help you generate forms for the Processes and User Tasks in your Kogito Projects.
+The generated forms will be stored as resources in your project (in src/main/resources/forms folder).
+`);
 
-    const message =
-      "\nCurrent selection:" +
-      `\nProject path: ${args.path}` +
-      `\nForm type: ${args.type}` +
-      `${args.overwrite !== undefined ? `\nOverwrite existing forms: ${args.overwrite}` : ""}\n`;
+  const path = await input({ message: "Type your Kogito Project path", validate: validateProjectPath });
+  const overwrite = isOverwriteVisible(path)
+    ? await confirm({ message: "The project already contains forms, do you want to overwrite the existing ones?" })
+    : undefined;
+  const type = await rawlist({
+    message: "Select the Form type",
+    choices: [
+      { name: "patternfly", value: "patternfly" },
+      { name: "bootstrap", value: "bootstrap" },
+    ],
+  });
 
-    console.log(message);
+  console.log(`
+Current selection
+===========================
 
-    inquirer
-      .prompt({
-        name: "confirm",
-        type: "confirm",
-        message: "Do you want to continue?",
-        default: true,
-      })
-      .then((answers) => {
-        if (answers.confirm) {
-          generateForms(args);
-        }
-        console.log("\nGood bye!");
-      });
-  };
+Project path: ${path}
+Form type: ${type}
+${overwrite !== undefined ? `Overwrite existing forms: ${overwrite}` : ""} 
+`);
 
-  const questions = [
-    {
-      name: "path",
-      type: "string",
-      message: "Type your Kogito Project path:",
-      validate: validateProjectPath,
-    },
-    {
-      name: "overwrite",
-      type: "confirm",
-      message: "The project already contains forms, do you want to overwrite the existing ones?",
-      default: false,
-      when: isOverwriteVisible,
-    },
-    {
-      name: "type",
-      type: "list",
-      message: "Select the Form type:",
-      choices: ["patternfly", "bootstrap"],
-      default: "patternfly",
-    },
-  ];
+  const confirmOperation = await confirm({ message: "Do you want to continue?" });
 
-  console.log("Kogito Form Generation CLI");
-  console.log("===========================");
-  console.log();
-  console.log("This tool will help you generate forms for the Processes and User Tasks in your Kogito Projects.");
-  console.log(
-    "The tool will search for the User Tasks JSON schemas generated in your project, so make sure the project is build."
-  );
-  console.log("The generated forms will be stored as resources in your project (in src/main/resources/forms folder).");
-  console.log();
-
-  inquirer.prompt(questions).then(execute);
+  if (confirmOperation) {
+    generateForms({ path, overwrite: overwrite ?? false, type });
+  }
+  console.log("\nGood bye!");
 }
