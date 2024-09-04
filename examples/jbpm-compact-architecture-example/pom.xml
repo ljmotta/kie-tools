@@ -37,9 +37,19 @@
     <kogito.management-console.image
     >docker.io/apache/incubator-kie-kogito-management-console:main</kogito.management-console.image>
     <kogito.task-console.image>docker.io/apache/incubator-kie-kogito-task-console:main</kogito.task-console.image>
+    <version.io.quarkiverse.embedded.postgresql>0.2.2</version.io.quarkiverse.embedded.postgresql>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-arc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-resteasy</artifactId>
@@ -52,24 +62,14 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-health</artifactId>
-    </dependency>
 
+    <!-- Runtime -->
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-with-drools-quarkus</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>kie-addons-quarkus-process-management</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>kogito-addons-quarkus-jobs-management</artifactId>
-    </dependency>
+    <!-- Addons -->
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-addons-quarkus-process-svg</artifactId>
@@ -78,31 +78,19 @@
       <groupId>org.kie</groupId>
       <artifactId>kie-addons-quarkus-source-files</artifactId>
     </dependency>
-
-    <!-- Persistence -->
     <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-jdbc-postgresql</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-agroal</artifactId>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-addons-quarkus-process-management</artifactId>
     </dependency>
     <dependency>
       <groupId>org.kie</groupId>
-      <artifactId>kie-addons-quarkus-persistence-jdbc</artifactId>
-    </dependency>
-
-    <!-- Data Index Addon -->
-    <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>kogito-addons-quarkus-data-index-postgresql</artifactId>
+      <artifactId>kogito-addons-quarkus-jobs-management</artifactId>
     </dependency>
 
     <!-- Data Index Persistence -->
     <dependency>
       <groupId>org.kie</groupId>
-      <artifactId>kogito-addons-quarkus-data-index-persistence-postgresql</artifactId>
+      <artifactId>kogito-addons-quarkus-data-index-postgresql</artifactId>
     </dependency>
 
     <!-- Jobs Service -->
@@ -115,14 +103,23 @@
       <artifactId>jobs-service-postgresql-common</artifactId>
     </dependency>
 
-    <!-- Data Audit -->
+    <!-- DevUI -->
+    <!-- <dependency>
+      <groupId>org.jbpm</groupId>
+      <artifactId>jbpm-quarkus-devui</artifactId>
+    </dependency> -->
+
     <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>kogito-addons-quarkus-data-audit-jpa</artifactId>
+      <groupId>io.quarkiverse.embedded.postgresql</groupId>
+      <artifactId>quarkus-embedded-postgresql</artifactId>
+      <version>${version.io.quarkiverse.embedded.postgresql}</version>
     </dependency>
+
+    <!-- Test -->
     <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>kogito-addons-quarkus-data-audit</artifactId>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-scenario-simulation</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
