@@ -40,11 +40,17 @@ var KogitoBomDependency = Dependency{
 // of created and converted Quarkus projects.
 var KogitoDependencies = []Dependency{
 	{GroupId: "org.kie", ArtifactId: "kie-addons-quarkus-knative-eventing"},
+	{GroupId: "org.kie", ArtifactId: "kie-addons-quarkus-process-management"},
 	{GroupId: "org.kie", ArtifactId: "kie-addons-quarkus-source-files"},
-	{GroupId: "org.apache.kie.sonataflow", ArtifactId: "sonataflow-quarkus-devui", Version: PluginVersion},
 	{GroupId: "org.kie", ArtifactId: "kogito-addons-quarkus-data-index-inmemory"},
+	{GroupId: "org.kie", ArtifactId: "kogito-addons-quarkus-jobs-service-embedded"},
 	{GroupId: "org.apache.kie.sonataflow", ArtifactId: "sonataflow-quarkus"},
+	{GroupId: "org.apache.kie.sonataflow", ArtifactId: "sonataflow-quarkus-devui", Version: "${kie.tooling.version}"},
 }
+
+// requared crds for sonataflow
+var SonataflowCRDs = []string{"sonataflowbuilds.sonataflow.org", "sonataflowclusterplatforms.sonataflow.org", "sonataflowplatforms.sonataflow.org", "sonataflows.sonataflow.org"}
+var KnativeCoreServingCRDs = []string{"images.caching.internal.knative.dev", "certificates.networking.internal.knative.dev", "configurations.serving.knative.dev", "clusterdomainclaims.networking.internal.knative.dev", "domainmappings.serving.knative.dev", "ingresses.networking.internal.knative.dev", "metrics.autoscaling.internal.knative.dev", "podautoscalers.autoscaling.internal.knative.dev", "revisions.serving.knative.dev", "routes.serving.knative.dev", "services.serving.knative.dev", "serverlessservices.networking.internal.knative.dev"}
 
 const (
 	QuarkusMavenPlugin                          = "quarkus-maven-plugin"

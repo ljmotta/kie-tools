@@ -17,6 +17,15 @@
 
 ## @kie-tools/jbpm-quarkus-devui
 
+### Running the Dev application
+
+- Run `pnpm start` as usual and access http://0.0.0.0:8080/kie/q/dev-ui
+
+To test the application running on different domains:
+
+- Edit your `/etc/hosts` file and add a `0.0.0.0   quarkus-app.localhost` entry
+- Run `pnpm start` and access http://quarkus-app.localhost:8080/kie/q/dev-ui
+
 ---
 
 Apache KIE (incubating) is an effort undergoing incubation at The Apache Software
@@ -31,10 +40,6 @@ Some of the incubating project’s releases may not be fully compliant with ASF
 policy. For example, releases may have incomplete or un-reviewed licensing
 conditions. What follows is a list of known issues the project is currently
 aware of (note that this list, by definition, is likely to be incomplete):
-
-- Hibernate, an LGPL project, is being used. Hibernate is in the process of relicensing to ASL v2
-- Some files, particularly test files, and those not supporting comments, may be missing the ASF Licensing Header
--
 
 - Hibernate, an LGPL project, is being used. Hibernate is in the process of
   relicensing to ASL v2

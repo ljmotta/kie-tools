@@ -185,7 +185,7 @@ The Apache KIE Tools project contains several applications. To develop each one 
 
 1. After you've successfully built the project following the instructions above, open the `packages/kie-editors-dev-vscode-extension` folder on VS Code. Use a new VS Code window so that the `packages/kie-editors-dev-vscode-extension` folder shows up as root in the VS Code explorer.
 2. From there, you can Run the extension or the end-to-end tests by using the `Debug` menu/section. You can also use the respective shortcuts (F5 to start debugging, for instance).
-3. **NOTE:** To run the VS Code extension in development mode, you need `webpack` and `webpack-cli` to be globally installed on NPM. Normally you can do that with `npm install -g webpack@^5.88.2 webpack-cli@^4.10.0`, but `sudo` may be required depending on your installation.
+3. **NOTE:** To run the VS Code extension in development mode, you need `webpack` and `webpack-cli` to be globally installed on NPM. Normally you can do that with `npm install -g webpack@^5.92.1 webpack-cli@^4.10.0`, but `sudo` may be required depending on your installation.
 4. **Remember!** If you make changes to any package other than `packages/kie-editors-dev-vscode-extension`, you have to manually rebuild them before relaunching the extension on VS Code.
 
 #### VS Code Extension (Serverless Workflow Editor)
@@ -222,9 +222,10 @@ The Apache KIE Tools project contains several applications. To develop each one 
 #### Serverless Logic Web Tools
 
 1. After you've successfully built the project following the instructions above, go to `packages/serverless-logic-web-tools`.
-1. Open a terminal and run `pnpm start`. This will start a `webpack serve` instance with the Serverless Logic Web Tools resources.
-1. From now on you can use the development version of the Serverless Logic Web Tools by accessing `https://localhost:9020`.
-1. Run the CORS Proxy by running `pnpm start` at `packages/cors-proxy`.
+2. Open a terminal and run `pnpm start`. This will start a `webpack serve` instance with the Serverless Logic Web Tools resources.
+3. From now on you can use the development version of the Serverless Logic Web Tools by accessing `https://localhost:9020`.
+4. Run the CORS Proxy by running `pnpm start` at `packages/cors-proxy`.
+5. (Optional) To try the "Runtime Tools" functionalities, run the SonataFlow Dev App by running `pnpm start` at `packages/sonataflow-dev-app`, then open `https://localhost:9020/#/settings/runtime-tools` and set `http://localhost:4000/graphql` in the "Data Index URL" field
 
 #### Standalone Editors (DMN and BPMN)
 
