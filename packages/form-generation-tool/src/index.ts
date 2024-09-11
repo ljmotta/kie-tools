@@ -16,7 +16,3 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import * as cli from "./cli/cli";
-
-cli.run();

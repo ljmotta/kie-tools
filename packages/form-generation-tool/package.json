@@ -12,9 +12,6 @@
   "bugs": {
     "url": "https://github.com/apache/incubator-kie-tools/issues"
   },
-  "bin": {
-    "form-generation-tool": "bin.js"
-  },
   "types": "./dist/index.d.ts",
   "main": "dist/index.js",
   "files": [
@@ -36,7 +33,6 @@
     "test": "run-script-if --ignore-errors \"$(build-env tests.ignoreFailures)\" --bool \"$(build-env tests.run)\" --then \"jest --silent --verbose --passWithNoTests\""
   },
   "dependencies": {
-    "@inquirer/prompts": "^5.3.4",
     "@kie-tools/uniforms-bootstrap4-codegen": "workspace:*",
     "@kie-tools/uniforms-patternfly-codegen": "workspace:*",
     "lodash": "^4.17.21",

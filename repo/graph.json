@@ -73,7 +73,10 @@
       { "id": "@kie-tools/xml-parser-ts-codegen" },
       { "id": "@kie-tools/xml-parser-ts" },
       { "id": "bpmn-vscode-extension" },
+      { "id": "@kie-tools/form-generation-tool" },
       { "id": "@kie-tools/vscode-java-code-completion-extension-plugin" },
+      { "id": "@kie-tools/uniforms-bootstrap4-codegen" },
+      { "id": "@kie-tools/uniforms-patternfly-codegen" },
       { "id": "@kie-tools/pmml-editor-marshaller" },
       { "id": "@kie-tools/stunner-editors-dmn-loader" },
       { "id": "chrome-extension-pack-kogito-kie-editors" },
@@ -131,9 +134,6 @@
       { "id": "@kie-tools/extended-services" },
       { "id": "@kie-tools/extended-services-java" },
       { "id": "extended-services-vscode-extension" },
-      { "id": "@kie-tools/form-generation-tool" },
-      { "id": "@kie-tools/uniforms-bootstrap4-codegen" },
-      { "id": "@kie-tools/uniforms-patternfly-codegen" },
       { "id": "@kie-tools/import-java-classes-component" },
       { "id": "@kie-tools/runtime-tools-process-webapp-components" },
       { "id": "@kie-tools/runtime-tools-shared-webapp-components" },
@@ -888,6 +888,11 @@
       },
       {
         "source": "bpmn-vscode-extension",
+        "target": "@kie-tools/form-generation-tool",
+        "weight": 1
+      },
+      {
+        "source": "bpmn-vscode-extension",
         "target": "@kie-tools/kie-bc-editors",
         "weight": 1
       },
@@ -902,8 +907,58 @@
         "weight": 1
       },
       {
+        "source": "@kie-tools/form-generation-tool",
+        "target": "@kie-tools/uniforms-bootstrap4-codegen",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/form-generation-tool",
+        "target": "@kie-tools/uniforms-patternfly-codegen",
+        "weight": 1
+      },
+      {
         "source": "@kie-tools/vscode-java-code-completion-extension-plugin",
         "target": "@kie-tools/maven-base",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/uniforms-bootstrap4-codegen",
+        "target": "@kie-tools-core/webpack-base",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/uniforms-bootstrap4-codegen",
+        "target": "@kie-tools/eslint",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/uniforms-bootstrap4-codegen",
+        "target": "@kie-tools/jest-base",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/uniforms-bootstrap4-codegen",
+        "target": "@kie-tools/tsconfig",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/uniforms-patternfly-codegen",
+        "target": "@kie-tools-core/webpack-base",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/uniforms-patternfly-codegen",
+        "target": "@kie-tools/eslint",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/uniforms-patternfly-codegen",
+        "target": "@kie-tools/jest-base",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/uniforms-patternfly-codegen",
+        "target": "@kie-tools/tsconfig",
         "weight": 1
       },
       {
@@ -1609,56 +1664,6 @@
       {
         "source": "extended-services-vscode-extension",
         "target": "@kie-tools/extended-services-java",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/form-generation-tool",
-        "target": "@kie-tools/uniforms-bootstrap4-codegen",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/form-generation-tool",
-        "target": "@kie-tools/uniforms-patternfly-codegen",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/uniforms-bootstrap4-codegen",
-        "target": "@kie-tools-core/webpack-base",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/uniforms-bootstrap4-codegen",
-        "target": "@kie-tools/eslint",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/uniforms-bootstrap4-codegen",
-        "target": "@kie-tools/jest-base",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/uniforms-bootstrap4-codegen",
-        "target": "@kie-tools/tsconfig",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/uniforms-patternfly-codegen",
-        "target": "@kie-tools-core/webpack-base",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/uniforms-patternfly-codegen",
-        "target": "@kie-tools/eslint",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/uniforms-patternfly-codegen",
-        "target": "@kie-tools/jest-base",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/uniforms-patternfly-codegen",
-        "target": "@kie-tools/tsconfig",
         "weight": 1
       },
       {

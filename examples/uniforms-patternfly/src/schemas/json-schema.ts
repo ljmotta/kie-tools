@@ -17,10 +17,10 @@
  * under the License.
  */
 
-import * as Ajv from "ajv";
+import AjvDraft04 from "ajv-draft-04";
 import { JSONSchemaBridge } from "uniforms-bridge-json-schema";
 
-const ajv = new Ajv({ allErrors: true, useDefaults: true });
+const ajv = new AjvDraft04({ strict: false, allErrors: true, useDefaults: true });
 
 function createValidator(schema: any) {
   const validator = ajv.compile(schema);

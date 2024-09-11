@@ -17,8 +17,7 @@
  * under the License.
  */
 
-import Ajv from "ajv";
-import * as metaSchemaDraft04 from "ajv/lib/refs/json-schema-draft-04.json";
+import AjvDraft04 from "ajv-draft-04";
 export { ValidateFunction } from "ajv";
 import { duration } from "moment";
 import {
@@ -217,24 +216,31 @@ export class DmnRunnerAjv {
   }
 
   constructor() {
-    this.ajv = new Ajv({
+    this.ajv = new AjvDraft04({
+      strict: false,
       allErrors: true,
-      schemaId: "auto",
       useDefaults: true,
       removeAdditional: "all",
       verbose: true,
     });
-    this.ajv.addMetaSchema(metaSchemaDraft04);
-    this.ajv.addKeyword(X_DMN_TYPE_KEYWORD, {});
+    this.ajv.addKeyword(X_DMN_TYPE_KEYWORD, undefined);
     this.ajv.addKeyword(X_DMN_ALLOWED_VALUES_KEYWORD, {
       compile: this.constraintCompiler(),
+      macro: () => {
+        return {};
+      },
+      keyword: "",
     });
     this.ajv.addKeyword(X_DMN_TYPE_CONSTRAINTS_KEYWORD, {
       compile: this.constraintCompiler(),
+      macro: () => {
+        return {};
+      },
+      keyword: "",
     });
-    this.ajv.addKeyword(X_DMN_DESCRIPTIONS_KEYWORD, {});
-    this.ajv.addKeyword(RECURSION_KEYWORD, {});
-    this.ajv.addKeyword(RECURSION_REF_KEYWORD, {});
+    this.ajv.addKeyword(X_DMN_DESCRIPTIONS_KEYWORD, undefined);
+    this.ajv.addKeyword(RECURSION_KEYWORD, undefined);
+    this.ajv.addKeyword(RECURSION_REF_KEYWORD, undefined);
     this.ajv.addFormat(DAYS_AND_TIME_DURATION_FORMAT, {
       type: "string",
       validate: (data: string) => !!data.match(DAYS_AND_TIME_DURATION_REGEXP),
@@ -246,7 +252,7 @@ export class DmnRunnerAjv {
     });
   }
 
-  public getAjv(): Ajv.Ajv {
+  public getAjv(): AjvDraft04 {
     return this.ajv;
   }
 }
