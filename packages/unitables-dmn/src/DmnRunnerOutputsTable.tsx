@@ -30,10 +30,12 @@ import { DmnUnitablesI18n } from "./i18n";
 import { DmnUnitablesJsonSchemaBridge } from "./uniforms/DmnUnitablesJsonSchemaBridge";
 import * as ReactTable from "react-table";
 import {
+  BeeTableCellProps,
   BeeTableContextMenuAllowedOperationsConditions,
   BeeTableHeaderVisibility,
   BeeTableOperation,
   BeeTableOperationConfig,
+  BeeTableProps,
   DmnBuiltInDataType,
   generateUuid,
 } from "@kie-tools/boxed-expression-component/dist/api";
@@ -44,6 +46,14 @@ import "@kie-tools/boxed-expression-component/dist/@types/react-table";
 import { ResizerStopBehavior } from "@kie-tools/boxed-expression-component/dist/resizing/ResizingWidthsContext";
 import "./DmnRunnerOutputsTable.css";
 import { DecisionResult, DmnEvaluationResult } from "@kie-tools/extended-services-api";
+import { UnitablesColumnType } from "@kie-tools/unitables/dist/UnitablesTypes";
+import { useUnitablesRow } from "@kie-tools/unitables/dist/UnitablesContext";
+import {
+  useBeeTableCoordinates,
+  useBeeTableSelectableCellRef,
+} from "@kie-tools/boxed-expression-component/dist/selection/BeeTableSelectionContext";
+import getObjectValueByPath from "lodash/get";
+import { ProgressStep } from "@patternfly/react-core";
 
 interface Props {
   i18n: DmnUnitablesI18n;
@@ -399,8 +409,27 @@ function OutputsBeeTable({ id, i18n, outputsPropertiesMap, results, scrollablePa
     return [BeeTableOperation.SelectionCopy];
   }, []);
 
+  const onClick = useCallback(() => {
+    console.log("CLICKED - ID - ");
+  }, []);
+
+  const cellComponentByColumnAccessor: BeeTableProps<ROWTYPE>["cellComponentByColumnAccessor"] = React.useMemo(() => {
+    return beeTableColumns.reduce(
+      (acc, parentColumn) => {
+        (parentColumn.columns ?? []).forEach((column) => {
+          acc[`${column.accessor}`] = (props) => (
+            <UnitablesBeeTableCell {...props} accessor={column.accessor} onClick={onClick} />
+          );
+        });
+        return acc;
+      },
+      {} as NonNullable<BeeTableProps<ROWTYPE>["cellComponentByColumnAccessor"]>
+    );
+  }, [beeTableColumns, onClick]);
+
   return (
     <StandaloneBeeTable
+      cellComponentByColumnAccessor={cellComponentByColumnAccessor}
       scrollableParentRef={scrollableParentRef}
       allowedOperations={allowedOperations}
       getColumnKey={getColumnKey}
@@ -419,5 +448,36 @@ function OutputsBeeTable({ id, i18n, outputsPropertiesMap, results, scrollablePa
       shouldShowColumnsInlineControls={false}
       resizerStopBehavior={ResizerStopBehavior.SET_WIDTH_ALWAYS}
     />
+  );
+}
+
+export function UnitablesBeeTableCell({
+  onClick,
+  accessor,
+  ...props
+}: React.PropsWithChildren<BeeTableCellProps<ROWTYPE>> & {
+  onClick: () => void;
+  accessor: string;
+}) {
+  const { containerCellCoordinates } = useBeeTableCoordinates();
+  const fieldInput = useMemo(() => {
+    return (props.data[containerCellCoordinates?.rowIndex ?? 0] as any)[accessor];
+  }, [props.data, accessor, containerCellCoordinates]);
+
+  const { isActive, isEditing } = useBeeTableSelectableCellRef(
+    containerCellCoordinates?.rowIndex ?? 0,
+    containerCellCoordinates?.columnIndex ?? 0,
+    undefined,
+    useCallback(() => `${fieldInput ?? ""}`, [fieldInput])
+  );
+
+  useEffect(() => {
+    onClick();
+  }, [isActive, onClick]);
+
+  return (
+    <div style={{ outline: "none" }} tabIndex={-1} onClick={onClick}>
+      <div style={{ height: "60px" }}>{fieldInput}</div>
+    </div>
   );
 }
