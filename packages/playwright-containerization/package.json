@@ -1,0 +1,39 @@
+{
+  "name": "@kie-tools/playwright-containerization",
+  "version": "0.0.0",
+  "description": "",
+  "license": "Apache-2.0",
+  "keywords": [],
+  "homepage": "https://github.com/apache/incubator-kie-tools",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apache/incubator-kie-tools.git"
+  },
+  "bugs": {
+    "url": "https://github.com/apache/incubator-kie-tools/issues"
+  },
+  "bin": {
+    "playwright-container": "bin.js"
+  },
+  "types": "index.d.ts",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "copy:assets": "pnpm copy:extended-services-java",
+    "copy:extended-services-java": "run-script-os",
+    "copy:extended-services-java:linux:darwin": "copyfiles -u 1 ./node_modules/@kie-tools/playwright-base/ ./dist-dev/playwright-base",
+    "docker:run": "docker run -it --rm --ipc=host --mount type=bind,source=\"$(pwd)\"/tests,target=/app/tests/ --mount type=bind,source=\"$(pwd)\"/dist-e2e-tests,target=/app/dist-e2e-tests --network=host playwright-containerization /bin/bash",
+    "test:e2e": "playwright test",
+    "test:e2e:open": "playwright show-report dist-e2e-tests/reports",
+    "test:e2e:trace": "playwright test --trace=on"
+  },
+  "devDependencies": {
+    "@kie-tools/playwright-base": "workspace:*",
+    "@kie-tools/root-env": "workspace:*",
+    "@playwright/test": "^1.45.2",
+    "copyfiles": "^2.4.1",
+    "rimraf": "^3.0.2"
+  }
+}
