@@ -19,18 +19,21 @@
 
 const { varsWithName, composeEnv, str2bool, getOrDefault } = require("@kie-tools-scripts/build-env");
 
-module.exports = composeEnv([require("@kie-tools/root-env/env")], {
-  vars: varsWithName({
-    PLAYWRIGHT_BASE__installDeps: {
-      default: "false",
-      description: "Toggles the installation of Playwright dependencies. Can be `true` or `false`.",
-    },
-  }),
-  get env() {
-    return {
-      playwrightBase: {
-        installDeps: str2bool(getOrDefault(this.vars.PLAYWRIGHT_BASE__installDeps)),
+module.exports = composeEnv(
+  [require("@kie-tools/root-env/env"), require("@kie-tools/playwright-browsers-server/env")],
+  {
+    vars: varsWithName({
+      PLAYWRIGHT_BASE__installDeps: {
+        default: "false",
+        description: "Toggles the installation of Playwright dependencies. Can be `true` or `false`.",
       },
-    };
-  },
-});
+    }),
+    get env() {
+      return {
+        playwrightBase: {
+          installDeps: str2bool(getOrDefault(this.vars.PLAYWRIGHT_BASE__installDeps)),
+        },
+      };
+    },
+  }
+);

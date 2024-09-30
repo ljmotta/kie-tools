@@ -20,9 +20,11 @@
   "scripts": {
     "install": "run-script-if --bool \"$(build-env playwrightBase.installDeps)\" --then \"pnpm playwright install --with-deps\""
   },
+  "dependencies": {
+    "@kie-tools/playwright-browsers-server": "workspace:*"
+  },
   "devDependencies": {
     "@kie-tools/root-env": "workspace:*",
-    "@playwright/test": "^1.45.2",
-    "rimraf": "^3.0.2"
+    "@playwright/test": "^1.45.2"
   }
 }

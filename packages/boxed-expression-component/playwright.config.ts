@@ -26,7 +26,7 @@ const buildEnv: any = env;
 
 const customConfig = defineConfig({
   use: {
-    baseURL: `http://localhost:${buildEnv.boxedExpressionComponent.storybook.port}`,
+    baseURL: `http://host.docker.internal:${buildEnv.boxedExpressionComponent.storybook.port}`,
   },
   /* Run your local dev server before starting the tests */
   webServer: {

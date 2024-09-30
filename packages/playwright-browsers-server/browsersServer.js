@@ -17,25 +17,15 @@
  * under the License.
  */
 
-import { defineConfig } from "@playwright/test";
-import playwirghtBaseConfig from "@kie-tools/playwright-base/playwright.config";
-import merge from "lodash/merge";
-import { env } from "./env";
+const { chromium, webkit } = require("@playwright/test");
 
-const buildEnv: any = env;
+(async () => {
+  const chromiumWs = await chromium.launchServer({ headless: true, port: 10001, wsPath: "chromium" });
+  console.log(chromiumWs.wsEndpoint());
 
-const customConfig = defineConfig({
-  use: {
-    baseURL: `http://host.docker.internal:${buildEnv.dmnEditor.storybook.port}`,
-  },
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: "pnpm start",
-    url: `http://localhost:${buildEnv.dmnEditor.storybook.port}/iframe.html?args=&id=use-cases-empty--empty&viewMode=story`,
-    reuseExistingServer: !process.env.CI || true,
-    stdout: "pipe",
-    timeout: 180000,
-  },
-});
+  const chromeWs = await chromium.launchServer({ headless: true, port: 10010, wsPath: "chrome", channel: "chrome" });
+  console.log(chromeWs.wsEndpoint());
 
-export default defineConfig(merge(playwirghtBaseConfig, customConfig));
+  const webkitWs = await webkit.launchServer({ headless: true, port: 10100, wsPath: "webkit" });
+  console.log(webkitWs.wsEndpoint());
+})();

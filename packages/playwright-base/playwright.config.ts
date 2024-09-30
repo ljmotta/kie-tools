@@ -19,6 +19,9 @@
 
 import { devices, defineConfig } from "@playwright/test";
 import { ProjectName } from "./projectNames";
+import { env } from "./env";
+
+const buildEnv: any = env;
 
 export default defineConfig({
   testDir: "./tests-e2e",
@@ -65,7 +68,15 @@ export default defineConfig({
     {
       timeout: 60000,
       name: ProjectName.CHROMIUM,
-      use: { ...devices["Desktop Chrome"], permissions: ["clipboard-read"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        permissions: ["clipboard-read"],
+        connectOptions: {
+          wsEndpoint: `ws://localhost:${buildEnv.playwrightBrowsersServer.port.chromium}/chromium`,
+          exposeNetwork: "*",
+          timeout: 30000,
+        },
+      },
     },
 
     // {
@@ -76,13 +87,30 @@ export default defineConfig({
     {
       timeout: 60000,
       name: ProjectName.WEBKIT,
-      use: { ...devices["Desktop Safari"], deviceScaleFactor: 1 },
+      use: {
+        ...devices["Desktop Safari"],
+        deviceScaleFactor: 1,
+        connectOptions: {
+          wsEndpoint: `ws://localhost:${buildEnv.playwrightBrowsersServer.port.webkit}/webkit`,
+          exposeNetwork: "*",
+          timeout: 30000,
+        },
+      },
     },
 
     {
       timeout: 60000,
       name: ProjectName.GOOGLE_CHROME,
-      use: { ...devices["Desktop Chrome"], channel: "chrome", permissions: ["clipboard-read"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        channel: "chrome",
+        permissions: ["clipboard-read"],
+        connectOptions: {
+          wsEndpoint: `ws://localhost:${buildEnv.playwrightBrowsersServer.port.chrome}/chrome`,
+          exposeNetwork: "*",
+          timeout: 30000,
+        },
+      },
     },
   ],
 });

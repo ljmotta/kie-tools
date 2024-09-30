@@ -30,7 +30,7 @@ const customConfig = defineConfig({
   },
   use: {
     viewport: { width: 1600, height: 1200 },
-    baseURL: `http://localhost:${buildEnv.onlineEditor.dev.port}`,
+    baseURL: `http://http://host.docker.internal:${buildEnv.onlineEditor.dev.port}`,
     ignoreHTTPSErrors: true,
   },
   /* Run your local dev server before starting the tests */

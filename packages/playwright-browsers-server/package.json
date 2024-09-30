@@ -1,0 +1,29 @@
+{
+  "name": "@kie-tools/playwright-browsers-server",
+  "version": "0.0.0",
+  "description": "",
+  "license": "Apache-2.0",
+  "keywords": [],
+  "homepage": "https://github.com/apache/incubator-kie-tools",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apache/incubator-kie-tools.git"
+  },
+  "bugs": {
+    "url": "https://github.com/apache/incubator-kie-tools/issues"
+  },
+  "types": "index.d.ts",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "image:docker:build": "kie-tools--image-builder build -r \"$(build-env playwrightBrowsersServer.image.registry)\" -a \"$(build-env playwrightBrowsersServer.image.account)\" -n \"$(build-env playwrightBrowsersServer.image.name)\" -t \"$(build-env playwrightBrowsersServer.image.buildTag)\" --build-arg PLAYWRIGHT_IMAGE_TAG=\"$(build-env playwrightBrowsersServer.image.playwrightImageTag)\"",
+    "start:docker": "docker container run --rm -q --name=\"$(build-env playwrightBrowsersServer.image.name)\" -p \"$(build-env playwrightBrowsersServer.port.chromium)\":\"$(build-env playwrightBrowsersServer.port.chromium)\" -p \"$(build-env playwrightBrowsersServer.port.chrome)\":\"$(build-env playwrightBrowsersServer.port.chrome)\" -p \"$(build-env playwrightBrowsersServer.port.webkit)\":\"$(build-env playwrightBrowsersServer.port.webkit)\" --add-host=\"host.docker.internal:host-gateway\" \"$(build-env playwrightBrowsersServer.image.registry)$(build-env playwrightBrowsersServer.image.account)$(build-env playwrightBrowsersServer.image.name)$(build-env playwrightBrowsersServer.image.buildTag)\""
+  },
+  "devDependencies": {
+    "@kie-tools/image-builder": "workspace:*",
+    "@kie-tools/root-env": "workspace:*",
+    "@playwright/test": "^1.45.2"
+  }
+}
