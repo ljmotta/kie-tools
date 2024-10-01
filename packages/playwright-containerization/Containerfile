@@ -16,25 +16,36 @@
 # under the License.
 
 # use the same image as the CI
-ARG UBUNTU_TAG
+ARG UBUNTU_IMAGE_TAG
 
-FROM --platform=linux/amd64 ubuntu:${UBUNTU_TAG}
+FROM --platform=linux/amd64 ubuntu:${UBUNTU_IMAGE_TAG}
 
-# adds args/envs for the config.ts
-# requires to bind mount the test folder to /app/tests/
-# requires to bind mount the dist-e2e/
+WORKDIR /kie-tools
 
-WORKDIR /app
+COPY ./dist-dev/playwright.config.ts playwright.config.ts
+COPY ./dist-dev/projectNames.ts playwright-base/projectNames.ts
+COPY ./dist-dev/annotations.ts playwright-base/annotations.ts
 
-COPY dist-dev/playwright.config.ts playwright.config.ts
-COPY dist-dev/projectNames.ts projectNames.ts
-COPY dist-dev/annotations.ts annotations.ts
+# Make it available for the playwright.config.ts
+RUN ln -s ./playwright-base/projectNames.ts projectNames.ts
 
 COPY tsconfig.container.json tsconfig.json
 COPY package.container.json package.json
 
+ARG NODE_VERSION
+RUN echo $NODE_VERSION
+
+# Install node
+RUN apt update && apt install -y curl && rm -rf /var/lib/apt/lists/*
+ENV NVM_DIR=/root/.nvm
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
+
 # Install package.json deps
-RUN npm install
+RUN npm install && npm install -g pnpm@9.3.0
 
 # Install browsers
-RUN npx playwright install-deps
+RUN pnpm exec playwright install && pnpm exec playwright install-deps && rm -rf /var/lib/apt/lists/*

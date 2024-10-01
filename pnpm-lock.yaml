@@ -6845,9 +6845,30 @@ importers:
       '@playwright/test':
         specifier: ^1.45.2
         version: 1.45.2
+
+  packages/playwright-containerization:
+    devDependencies:
+      '@kie-tools/image-builder':
+        specifier: workspace:*
+        version: link:../image-builder
+      '@kie-tools/playwright-base':
+        specifier: workspace:*
+        version: link:../playwright-base
+      '@kie-tools/root-env':
+        specifier: workspace:*
+        version: link:../root-env
+      '@playwright/test':
+        specifier: ^1.45.2
+        version: 1.45.2
+      copyfiles:
+        specifier: ^2.4.1
+        version: 2.4.1
       rimraf:
         specifier: ^3.0.2
         version: 3.0.2
+      run-script-os:
+        specifier: ^1.1.6
+        version: 1.1.6
 
   packages/pmml-editor:
     dependencies:
@@ -46389,8 +46410,8 @@ snapshots:
 
   copyfiles@2.4.1:
     dependencies:
-      glob: 7.2.0
-      minimatch: 3.0.5
+      glob: 7.2.3
+      minimatch: 3.1.2
       mkdirp: 1.0.4
       noms: 0.0.0
       through2: 2.0.5
@@ -58911,7 +58932,7 @@ snapshots:
   yargs@16.2.0:
     dependencies:
       cliui: 7.0.4
-      escalade: 3.1.1
+      escalade: 3.2.0
       get-caller-file: 2.0.5
       require-directory: 2.1.1
       string-width: 4.2.3

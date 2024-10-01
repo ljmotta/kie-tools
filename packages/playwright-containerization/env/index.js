@@ -23,9 +23,13 @@ const rootEnv = require("@kie-tools/root-env/env");
 
 module.exports = composeEnv([rootEnv], {
   vars: varsWithName({
-    PLAYWRIGHT_CONTAINERIZATION__ubuntuTag: {
+    PLAYWRIGHT_CONTAINERIZATION__ubuntuImageTag: {
       default: "22.04",
       description: "The ubuntu tag used in the FROM import.",
+    },
+    PLAYWRIGHT_CONTAINERIZATION__nodeVersion: {
+      default: "20.14.0",
+      description: "Node version used in the project",
     },
     PLAYWRIGHT_CONTAINERIZATION__imageRegistry: {
       default: "docker.io",
@@ -47,7 +51,8 @@ module.exports = composeEnv([rootEnv], {
   get env() {
     return {
       playwrightContainerization: {
-        ubuntuTag: getOrDefault(this.vars.PLAYWRIGHT_CONTAINERIZATION__ubuntuTag),
+        ubuntuImageTag: getOrDefault(this.vars.PLAYWRIGHT_CONTAINERIZATION__ubuntuImageTag),
+        nodeVersion: getOrDefault(this.vars.PLAYWRIGHT_CONTAINERIZATION__nodeVersion),
         registry: getOrDefault(this.vars.PLAYWRIGHT_CONTAINERIZATION__imageRegistry),
         account: getOrDefault(this.vars.PLAYWRIGHT_CONTAINERIZATION__imageAccount),
         name: getOrDefault(this.vars.PLAYWRIGHT_CONTAINERIZATION__imageName),

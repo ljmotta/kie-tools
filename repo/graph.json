@@ -164,6 +164,7 @@
       { "id": "@kie/kogito-jit-runner-image" },
       { "id": "@kie/kogito-jobs-service-allinone-image" },
       { "id": "@kie-tools/unitables" },
+      { "id": "@kie-tools/playwright-containerization" },
       { "id": "pmml-vscode-extension" },
       { "id": "@kie-tools/runtime-tools-components" },
       { "id": "@kie-tools/runtime-tools-shared-gateway-api" },
@@ -2021,6 +2022,16 @@
         "weight": 1
       },
       {
+        "source": "@kie-tools/playwright-containerization",
+        "target": "@kie-tools/image-builder",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/playwright-containerization",
+        "target": "@kie-tools/playwright-base",
+        "weight": 1
+      },
+      {
         "source": "pmml-vscode-extension",
         "target": "@kie-tools-core/vscode-extension",
         "weight": 1
@@ -2684,6 +2695,7 @@
     ["@kie-tools-core/operating-system", "packages/operating-system"],
     ["@kie-tools-core/patternfly-base", "packages/patternfly-base"],
     ["@kie-tools/playwright-base", "packages/playwright-base"],
+    ["@kie-tools/playwright-containerization", "packages/playwright-containerization"],
     ["@kie-tools/pmml-editor", "packages/pmml-editor"],
     ["@kie-tools/pmml-editor-marshaller", "packages/pmml-editor-marshaller"],
     ["pmml-vscode-extension", "packages/pmml-vscode-extension"],

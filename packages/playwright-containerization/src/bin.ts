@@ -154,69 +154,16 @@ function buildImage(args: ArgsType, imageFullNames: string[]) {
   }
 }
 
-function createOpenShiftImageStream(imageName: string) {
-  const contents = `<<EOF
-apiVersion: image.openshift.io/v1
-kind: ImageStream
-metadata:
-  name: ${imageName}
-spec:
-  lookupPolicy:
-    local: true
-EOF
-  `;
-
-  execSync(`oc apply -f - ${contents}`, { stdio: "inherit" });
-}
-
-function createOpenShfitBuildConfig(imageName: string, tag: string, containerfile: string, buildArgs: string[]) {
-  const contents = `<<EOF
-apiVersion: build.openshift.io/v1
-kind: BuildConfig
-metadata:
-  name: ${imageName}
-spec:
-  output:
-    to:
-      kind: ImageStreamTag
-      name: ${imageName}:${tag}
-  strategy:
-    dockerStrategy:
-      dockerfilePath: ${containerfile}
-      ${
-        buildArgs?.length > 0
-          ? `buildArgs: ${buildArgs
-              .map((arg) => {
-                const [key, value] = arg.split("=");
-                return `
-       - name: ${key}
-         value: ${value}`;
-              })
-              .join("")}`
-          : ""
-      }
-  source:
-    type: Binary
-    binary: {}
-  resources:
-    limits:
-      memory: 4Gi
-EOF
-  `;
-
-  execSync(`oc apply -f - ${contents}`, { stdio: "inherit" });
-}
-
 async function main() {
   function prettyPrintError(error: Error) {
-    console.error("\x1b[31m[image-builder] %s\x1b[0m", error);
+    console.error("\x1b[31m[playwright-containerization] %s\x1b[0m", error);
   }
   try {
     await yargs(hideBin(process.argv))
       .version(false)
       .scriptName("")
       .wrap(Math.min(150, terminalWidth()))
-      .scriptName("@kie-tools/image-builder")
+      .scriptName("@kie-tools/playwright-containerization")
       .epilog(
         `
 CLI tool to help building container images using build variables and different engines on different OSes.
@@ -228,110 +175,12 @@ Also useful to aid on developing images and pushing them to Kubernetes/OpenShift
         "Build an image using parameters from your myCustomEnv build env variables"
       )
       .options({
-        registry: {
-          alias: "r",
-          demandOption: false,
-          describe: "The string for the image registry",
-          type: "string",
-          nargs: 1,
-          coerce: (arg) => evalStringArg<string>(arg),
-        },
-        account: {
-          alias: "a",
-          demandOption: false,
-          describe: "The string for the image account",
-          type: "string",
-          nargs: 1,
-          coerce: (arg) => evalStringArg<string>(arg),
-        },
-        name: {
-          alias: "n",
-          demandOption: true,
-          describe: "The string for the image name",
-          type: "string",
-          nargs: 1,
-          coerce: (arg) => evalStringArg<string>(arg),
-        },
-        tags: {
-          alias: "t",
-          demandOption: true,
-          describe: "The string for the image tags",
-          type: "array",
-          coerce: (tags) => {
-            if (tags.length === 1) {
-              const evaluedArgs = evalStringArg<string>(tags[0]);
-              return evaluedArgs.split(" ") as string[];
-            }
-            return tags as string[];
-          },
-        },
-        engine: {
-          alias: "e",
-          demandOption: false,
-          default: "docker",
-          describe: "The build engine to be used",
-          type: "string",
-          nargs: 1,
-          choices: ["docker", "podman"] as const,
-        },
-        push: {
-          alias: "p",
-          demandOption: false,
-          default: false,
-          describe: "Push the image to the registry",
-          type: "boolean",
-        },
-        allowHostNetworkAccess: {
-          demandOption: false,
-          default: false,
-          describe: "Allows host network access during build",
-          type: "boolean",
-        },
-        containerfile: {
-          alias: "f",
-          demandOption: false,
-          default: "Containerfile",
-          describe: "Path to the Containerfile/Dockerfile",
-          type: "string",
-          nargs: 1,
-        },
         context: {
           alias: "c",
           demandOption: false,
           default: "./",
           describe: "Path to the build context",
           type: "string",
-          nargs: 1,
-        },
-        "build-arg": {
-          demandOption: false,
-          describe:
-            "Build args for the builder in the format '<arg>=<value>', where <value> is a string (Can be used multiple times)",
-          type: "array",
-          default: [],
-          coerce: (buildArgs) => {
-            const regex = new RegExp(/(.*=.*)+/);
-            const results = buildArgs.map((arg: string) => regex.test(arg.toString().trim()));
-            if (!results.every(Boolean)) {
-              throw new Error(
-                `ERROR! --build-arg: Invalid build argument supplied ("${buildArgs.join(
-                  " "
-                )}"). Use the format 'var1=value1 var2=value2 ...'`
-              );
-            }
-            const evaluedBuildArgs = buildArgs.map((arg: string) => {
-              const [key, value] = arg.split("=");
-              return `${key}=${evalStringArg<string>(value)}`;
-            });
-            return evaluedBuildArgs;
-          },
-        },
-        arch: {
-          demandOption: false,
-          describe: "The target build architecture. If not provided will default to the native architecture",
-          type: "string",
-          default: "native",
-          choices: ["amd64", "arm64", "native"] as const,
           nargs: 1,
         },
       })

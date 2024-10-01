@@ -1,13 +1,12 @@
 {
-  "name": "playwright-docker",
+  "name": "playwright-containerization",
   "version": "1.0.0",
-  "description": "A project for using playwright for end-to-end testing purpose with docker for deployment",
+  "description": "A package.json to be used to install dependencies inside the container",
   "main": "index.js",
   "scripts": {
-    "test:e2e": "playwright test",
-    "test:e2e:trace": "playwright test --trace=on",
-    "test:e2e:open": "playwright show-report dist-e2e-tests/reports",
-    "docker": ""
+    "test-e2e": "playwright test",
+    "test-e2e:trace": "playwright test --trace=on",
+    "test-e2e:open": "playwright show-report dist-e2e-tests/reports"
   },
   "author": "",
   "license": "ISC",

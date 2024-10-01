@@ -21,19 +21,22 @@
     "index.js"
   ],
   "scripts": {
-    "copy:assets": "pnpm copy:extended-services-java",
-    "copy:extended-services-java": "run-script-os",
-    "copy:extended-services-java:linux:darwin": "copyfiles -u 1 ./node_modules/@kie-tools/playwright-base/ ./dist-dev/playwright-base",
-    "docker:run": "docker run -it --rm --ipc=host --mount type=bind,source=\"$(pwd)\"/tests,target=/app/tests/ --mount type=bind,source=\"$(pwd)\"/dist-e2e-tests,target=/app/dist-e2e-tests --network=host playwright-containerization /bin/bash",
-    "test:e2e": "playwright test",
-    "test:e2e:open": "playwright show-report dist-e2e-tests/reports",
-    "test:e2e:trace": "playwright test --trace=on"
+    "build:dev": "pnpm cleanup && pnpm copy:assets && run-script-if --bool \"$(build-env containerImages.build)\" --then \"pnpm image:docker:build\"",
+    "build:prod": "pnpm cleanup && pnpm copy:assets && run-script-if --bool \"$(build-env containerImages.build)\" --then \"pnpm image:docker:build\"",
+    "cleanup": "rimraf dist-dev && mkdir dist-dev",
+    "copy:assets": "pnpm copy:playwright-base",
+    "copy:playwright-base": "run-script-os",
+    "copy:playwright-base:linux:darwin": "copyfiles -u 3 ./node_modules/@kie-tools/playwright-base/* ./dist-dev/",
+    "docker:run": "docker run -it --rm --ipc=host --mount type=bind,source=\"$(pwd)\"/tests-e2e,target=/app/tests-e2e/ --mount type=bind,source=\"$(pwd)\"/dist-tests-e2e,target=/app/dist-tests-e2e --network=host apache/incubator-kie-playwright-containerization /bin/bash",
+    "image:docker:build": "kie-tools--image-builder build -r \"$(build-env playwrightContainerization.registry)\" -a \"$(build-env playwrightContainerization.account)\" -n \"$(build-env playwrightContainerization.name)\" -t \"$(build-env playwrightContainerization.buildTag)\" --build-arg UBUNTU_IMAGE_TAG=\"$(build-env playwrightContainerization.ubuntuImageTag)\" --build-arg NODE_VERSION=\"$(build-env playwrightContainerization.nodeVersion)\""
   },
   "devDependencies": {
+    "@kie-tools/image-builder": "workspace:*",
     "@kie-tools/playwright-base": "workspace:*",
     "@kie-tools/root-env": "workspace:*",
     "@playwright/test": "^1.45.2",
     "copyfiles": "^2.4.1",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "run-script-os": "^1.1.6"
   }
 }
