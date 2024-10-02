@@ -64,11 +64,12 @@
       { "id": "@kie-tools/boxed-expression-component" },
       { "id": "@kie-tools-core/operating-system" },
       { "id": "@kie-tools/feel-input-component" },
-      { "id": "@kie-tools/playwright-base" },
+      { "id": "@kie-tools/playwright-containerization" },
       { "id": "@kie-tools/storybook-base" },
       { "id": "@kie-tools-core/monaco-editor" },
       { "id": "@kie-tools/dmn-language-service" },
       { "id": "@kie-tools/i18n-common-dictionary" },
+      { "id": "@kie-tools/playwright-base" },
       { "id": "@kie-tools/bpmn-marshaller" },
       { "id": "@kie-tools/xml-parser-ts-codegen" },
       { "id": "@kie-tools/xml-parser-ts" },
@@ -164,7 +165,6 @@
       { "id": "@kie/kogito-jit-runner-image" },
       { "id": "@kie/kogito-jobs-service-allinone-image" },
       { "id": "@kie-tools/unitables" },
-      { "id": "@kie-tools/playwright-containerization" },
       { "id": "pmml-vscode-extension" },
       { "id": "@kie-tools/runtime-tools-components" },
       { "id": "@kie-tools/runtime-tools-shared-gateway-api" },
@@ -768,7 +768,7 @@
       },
       {
         "source": "@kie-tools/boxed-expression-component",
-        "target": "@kie-tools/playwright-base",
+        "target": "@kie-tools/playwright-containerization",
         "weight": 1
       },
       {
@@ -817,8 +817,13 @@
         "weight": 1
       },
       {
-        "source": "@kie-tools/playwright-base",
-        "target": "@kie-tools/root-env",
+        "source": "@kie-tools/playwright-containerization",
+        "target": "@kie-tools/image-builder",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/playwright-containerization",
+        "target": "@kie-tools/playwright-base",
         "weight": 1
       },
       {
@@ -864,6 +869,11 @@
       {
         "source": "@kie-tools/i18n-common-dictionary",
         "target": "@kie-tools-core/i18n",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/playwright-base",
+        "target": "@kie-tools/root-env",
         "weight": 1
       },
       {
@@ -1822,11 +1832,6 @@
         "weight": 1
       },
       {
-        "source": "@kie-tools/kie-sandbox-webapp-image",
-        "target": "@kie-tools/image-builder",
-        "weight": 1
-      },
-      {
         "source": "@kie-tools/online-editor",
         "target": "@kie-tools-core/k8s-yaml-to-apiserver-requests",
         "weight": 1
@@ -2022,16 +2027,6 @@
         "weight": 1
       },
       {
-        "source": "@kie-tools/playwright-containerization",
-        "target": "@kie-tools/image-builder",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/playwright-containerization",
-        "target": "@kie-tools/playwright-base",
-        "weight": 1
-      },
-      {
         "source": "pmml-vscode-extension",
         "target": "@kie-tools-core/vscode-extension",
         "weight": 1
@@ -2164,11 +2159,6 @@
       {
         "source": "@kie-tools/scesim-editor",
         "target": "@kie-tools/scesim-marshaller",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/scesim-editor",
-        "target": "@kie-tools/playwright-containerization",
         "weight": 1
       },
       {

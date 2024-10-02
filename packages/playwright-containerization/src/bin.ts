@@ -43,21 +43,21 @@ function getPlaywrightContainerizationImage() {
   return `${buildEnv.playwrightContainerization.registry}/${buildEnv.playwrightContainerization.account}/${buildEnv.playwrightContainerization.name}:${buildEnv.playwrightContainerization.buildTag}`;
 }
 
-async function main() {
-  function prettyPrint(type: LOG_LEVEL, message: string) {
-    if (type === LOG_LEVEL.NORMAL) {
-      console.log("[playwright-containerization] %s", message);
-    }
-
-    if (type === LOG_LEVEL.WARNING) {
-      console.log("\x1b[33m[playwright-containerization] %s\x1b[0m", message);
-    }
-
-    if (type === LOG_LEVEL.ERROR) {
-      console.error("\x1b[31m[playwright-containerization] %s\x1b[0m", message);
-    }
+function prettyPrint(type: LOG_LEVEL, message: string) {
+  if (type === LOG_LEVEL.NORMAL) {
+    console.log("[playwright-containerization] %s", message);
   }
 
+  if (type === LOG_LEVEL.WARNING) {
+    console.log("\x1b[33m[playwright-containerization] %s\x1b[0m", message);
+  }
+
+  if (type === LOG_LEVEL.ERROR) {
+    console.error("\x1b[31m[playwright-containerization] %s\x1b[0m", message);
+  }
+}
+
+async function main() {
   try {
     const { packageAbsolutePath, port, portEnvObjectPath } = await yargs(process.argv.slice(2))
       .version(false)
@@ -81,6 +81,13 @@ async function main() {
     ) {
       prettyPrint(LOG_LEVEL.ERROR, `--path value isn't a valid absolute path. --path=${packageAbsolutePath}`);
       return;
+    }
+
+    // Create dist-tests-e2e folder
+    try {
+      //
+    } catch (error) {
+      //
     }
 
     // Checks if image exists before starting
@@ -139,15 +146,15 @@ EOF`,
         ...shell(),
       });
     } catch (error) {
-      prettyPrint(LOG_LEVEL.NORMAL, `terminal was closed`);
-      // Clean up. Remove the container
-      execSync(`docker rm ${buildEnv.playwrightContainerization.containerName} -f`, {
-        stdio: "ignore",
-        ...shell(),
-      });
-      prettyPrint(LOG_LEVEL.NORMAL, `"${buildEnv.playwrightContainerization.containerName}" container was removed`);
-      return;
+      prettyPrint(LOG_LEVEL.NORMAL, `terminal was closed with an error`);
     }
+
+    // Clean up. Remove the container
+    execSync(`docker rm ${buildEnv.playwrightContainerization.containerName} -f`, {
+      stdio: "ignore",
+      ...shell(),
+    });
+    prettyPrint(LOG_LEVEL.NORMAL, `"${buildEnv.playwrightContainerization.containerName}" container was removed`);
   } catch (error) {
     prettyPrint(LOG_LEVEL.ERROR, "error while parsing the arguments");
     prettyPrint(LOG_LEVEL.ERROR, error);

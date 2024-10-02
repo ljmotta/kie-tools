@@ -47,7 +47,8 @@ RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
 # Install package.json deps
-RUN npm install && npm install -g pnpm@9.3.0
+RUN npm install -g pnpm@9.3.0
+RUN pnpm install
 
 # Install browsers
 RUN pnpm exec playwright install --with-deps chromium webkit chrome && rm -rf /var/lib/apt/lists/*
