@@ -2167,6 +2167,11 @@
         "weight": 1
       },
       {
+        "source": "@kie-tools/scesim-editor",
+        "target": "@kie-tools/playwright-containerization",
+        "weight": 1
+      },
+      {
         "source": "@kie-tools/scesim-marshaller",
         "target": "@kie-tools/xml-parser-ts-codegen",
         "weight": 1

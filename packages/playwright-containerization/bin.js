@@ -18,4 +18,4 @@
  * under the License.
  */
 
-require("./dist/index");
+require("./dist/bin.js");

@@ -24,8 +24,8 @@ const rootEnv = require("@kie-tools/root-env/env");
 module.exports = composeEnv([rootEnv], {
   vars: varsWithName({
     PLAYWRIGHT_CONTAINERIZATION__ubuntuImageTag: {
-      default: "22.04",
-      description: "The ubuntu tag used in the FROM import.",
+      default: "24.04",
+      description: "The ubuntu tag used in the FROM import. It should be the same version of the CI",
     },
     PLAYWRIGHT_CONTAINERIZATION__nodeVersion: {
       default: "20.14.0",

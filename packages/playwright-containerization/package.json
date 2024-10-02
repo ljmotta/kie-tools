@@ -13,15 +13,10 @@
     "url": "https://github.com/apache/incubator-kie-tools/issues"
   },
   "bin": {
-    "playwright-container": "bin.js"
+    "kie-tools--playwright-containerization": "bin.js"
   },
-  "types": "index.d.ts",
-  "main": "index.js",
-  "files": [
-    "index.js"
-  ],
   "scripts": {
-    "build:dev": "pnpm cleanup && pnpm copy:assets && run-script-if --bool \"$(build-env containerImages.build)\" --then \"pnpm image:docker:build\"",
+    "build:dev": "tsc -p tsconfig.json",
     "build:prod": "pnpm cleanup && pnpm copy:assets && run-script-if --bool \"$(build-env containerImages.build)\" --then \"pnpm image:docker:build\"",
     "cleanup": "rimraf dist-dev && mkdir dist-dev",
     "copy:assets": "pnpm copy:playwright-base",
@@ -30,13 +25,19 @@
     "docker:run": "docker run -it --rm --ipc=host --mount type=bind,source=\"$(pwd)\"/tests-e2e,target=/app/tests-e2e/ --mount type=bind,source=\"$(pwd)\"/dist-tests-e2e,target=/app/dist-tests-e2e --network=host apache/incubator-kie-playwright-containerization /bin/bash",
     "image:docker:build": "kie-tools--image-builder build -r \"$(build-env playwrightContainerization.registry)\" -a \"$(build-env playwrightContainerization.account)\" -n \"$(build-env playwrightContainerization.name)\" -t \"$(build-env playwrightContainerization.buildTag)\" --build-arg UBUNTU_IMAGE_TAG=\"$(build-env playwrightContainerization.ubuntuImageTag)\" --build-arg NODE_VERSION=\"$(build-env playwrightContainerization.nodeVersion)\""
   },
+  "dependencies": {
+    "yargs": "^17.0.1"
+  },
   "devDependencies": {
     "@kie-tools/image-builder": "workspace:*",
     "@kie-tools/playwright-base": "workspace:*",
     "@kie-tools/root-env": "workspace:*",
+    "@kie-tools/tsconfig": "workspace:*",
     "@playwright/test": "^1.45.2",
+    "@types/yargs": "^17.0.1",
     "copyfiles": "^2.4.1",
     "rimraf": "^3.0.2",
-    "run-script-os": "^1.1.6"
+    "run-script-os": "^1.1.6",
+    "typescript": "^5.5.3"
   }
 }
