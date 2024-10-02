@@ -59,29 +59,31 @@ async function main() {
   }
 
   try {
-    const {
-      path: projectAbsolutePath,
-      port,
-      portEnvPath,
-    } = await yargs(process.argv.slice(2))
+    const { packageAbsolutePath, port, portEnvObjectPath } = await yargs(process.argv.slice(2))
       .version(false)
       .help(false)
-      .usage("Usage: $0 --path [absolute path] --port [num] --portEnvPath [env.path.to.port]")
-      .demandOption(["path", "portEnvPath"])
-      .describe("path", "Project absolute path")
-      .describe("port", "The port where the application is running")
-      .describe("portEnvPath", "The env object path that has the port where the application is running")
+      .usage("Usage: $0 --packageAbsolutePath [value] --port [value] --portEnvObjectPath [value]")
+      .demandOption(["packageAbsolutePath", "port", "portEnvObjectPath"])
+      .describe("packageAbsolutePath", "The package absolute path")
+      .describe("port", "The port where the application will be running")
+      .describe("portEnvObjectPath", "The env object path that has the port where the application will be running")
+      .example(
+        "--packageAbsolutePath /path/to/project --port 8080 --portEnvObjectPath path.to.port",
+        "The example above"
+      )
       .epilog("CLI tool to start the Playwright dev container.")
       .parse();
 
+    // Check if the `packageAbsolutePath` has a valid path
     if (
-      typeof projectAbsolutePath !== "string" ||
-      (typeof projectAbsolutePath === "string" && fs.existsSync(projectAbsolutePath) === false)
+      typeof packageAbsolutePath !== "string" ||
+      (typeof packageAbsolutePath === "string" && fs.existsSync(packageAbsolutePath) === false)
     ) {
-      prettyPrint(LOG_LEVEL.ERROR, `--path value isn't a valid absolute path. --path=${projectAbsolutePath}`);
+      prettyPrint(LOG_LEVEL.ERROR, `--path value isn't a valid absolute path. --path=${packageAbsolutePath}`);
       return;
     }
 
+    // Checks if image exists before starting
     try {
       execSync(`docker image inspect ${getPlaywrightContainerizationImage()}`, {
         stdio: "ignore",
@@ -93,6 +95,8 @@ async function main() {
         `it looks like you don't have the Playwright containerization image "${getPlaywrightContainerizationImage()}" in your local machine.`
       );
       prettyPrint(LOG_LEVEL.WARNING, "proceeding to build the image...");
+
+      // Builds the image
       execSync(`pnpm -F playwright-containerization image:docker:build`, { stdio: "inherit", ...shell() });
     }
 
@@ -100,9 +104,9 @@ async function main() {
     try {
       execSync(
         `docker container run -d --ipc=host --name=${buildEnv.playwrightContainerization.containerName} \
-        --mount type=bind,source=${projectAbsolutePath}/playwright.config.ts,target=/kie-tools/playwright.config.ts \
-        --mount type=bind,source=${projectAbsolutePath}/tests-e2e,target=/kie-tools/tests-e2e/ \
-        --mount type=bind,source=${projectAbsolutePath}/dist-tests-e2e,target=/kie-tools/dist-tests-e2e \
+        --mount type=bind,source=${packageAbsolutePath}/playwright.config.ts,target=/kie-tools/playwright.config.ts \
+        --mount type=bind,source=${packageAbsolutePath}/tests-e2e,target=/kie-tools/tests-e2e/ \
+        --mount type=bind,source=${packageAbsolutePath}/dist-tests-e2e,target=/kie-tools/dist-tests-e2e \
         --network=host \
         ${getPlaywrightContainerizationImage()} \
         sleep infinity`,
@@ -118,7 +122,7 @@ async function main() {
       execSync(
         `docker exec -i ${buildEnv.playwrightContainerization.containerName} sh -c 'cat > /kie-tools/env/index.js' <<EOF
 module.exports = {
-  env: ${JSON.stringify(set({}, portEnvPath as string, port))}
+  env: ${JSON.stringify(set({}, portEnvObjectPath as string, port))}
 }
 EOF`,
         { stdio: "inherit", ...shell() }

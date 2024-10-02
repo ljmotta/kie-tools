@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# use the same image as the CI
+# It must use the same image as the CI
 ARG UBUNTU_IMAGE_TAG
 
 FROM --platform=linux/amd64 ubuntu:${UBUNTU_IMAGE_TAG}
@@ -50,4 +50,4 @@ ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 RUN npm install && npm install -g pnpm@9.3.0
 
 # Install browsers
-RUN pnpm exec playwright install && pnpm exec playwright install-deps && rm -rf /var/lib/apt/lists/*
+RUN pnpm exec playwright install --with-deps chromium webkit chrome && rm -rf /var/lib/apt/lists/*

@@ -17,7 +17,9 @@
 
 ## @kie-tools/playwright-containerization
 
-docker run -it --rm --ipc=host --mount type=bind,source="$(pwd)"/tests-e2e,target=/kie-tools/tests-e2e/ --mount type=bind,source="$(pwd)"/dist-tests-e2e,target=/kie-tools/dist-tests-e2e --network=host apache/incubator-kie-playwright-containerization:main /bin/bash
+```sh
+pnpm kie-tools--playwright-containerization --packageAbsolutePath [] --port [] --portEnvObjectPath []
+```
 
 ---
 
