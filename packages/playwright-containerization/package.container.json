@@ -6,13 +6,15 @@
   "scripts": {
     "test-e2e": "playwright test",
     "test-e2e:trace": "playwright test --trace=on",
-    "test-e2e:open": "playwright show-report dist-e2e-tests/reports"
+    "test-e2e:open": "playwright show-report dist-tests-e2e/reports"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.45.2",
+    "@types/lodash": "^4.14.168",
     "@types/node": "^20.14.2",
+    "lodash": "^4.17.21",
     "playwright": "^1.45.2",
     "typescript": "^5.5.3"
   }

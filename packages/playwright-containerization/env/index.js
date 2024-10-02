@@ -47,6 +47,10 @@ module.exports = composeEnv([rootEnv], {
       default: rootEnv.env.root.streamName,
       description: "Tag version of this image. E.g., `main` or `10.0.x` or `10.0.0",
     },
+    PLAYWRIGHT_CONTAINERIZATION__containerName: {
+      default: "kie-tools--playwright-containerization",
+      description: "The container name that will be started",
+    },
   }),
   get env() {
     return {
@@ -57,6 +61,7 @@ module.exports = composeEnv([rootEnv], {
         account: getOrDefault(this.vars.PLAYWRIGHT_CONTAINERIZATION__imageAccount),
         name: getOrDefault(this.vars.PLAYWRIGHT_CONTAINERIZATION__imageName),
         buildTag: getOrDefault(this.vars.PLAYWRIGHT_CONTAINERIZATION__imageBuildTag),
+        containerName: getOrDefault(this.vars.PLAYWRIGHT_CONTAINERIZATION__containerName),
       },
     };
   },

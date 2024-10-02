@@ -22,11 +22,13 @@ FROM --platform=linux/amd64 ubuntu:${UBUNTU_IMAGE_TAG}
 
 WORKDIR /kie-tools
 
-COPY ./dist-dev/playwright.config.ts playwright.config.ts
+# Create files that will be used during the test execution
+COPY ./dist-dev/playwright.config.ts playwright-base/playwright.config.ts
 COPY ./dist-dev/projectNames.ts playwright-base/projectNames.ts
 COPY ./dist-dev/annotations.ts playwright-base/annotations.ts
+RUN mkdir env
 
-# Make it available for the playwright.config.ts
+# Make it available for the package playwright.config.ts
 RUN ln -s ./playwright-base/projectNames.ts projectNames.ts
 
 COPY tsconfig.container.json tsconfig.json

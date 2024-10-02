@@ -22,6 +22,7 @@
 import { execSync } from "child_process";
 import yargs from "yargs/yargs";
 import fs from "fs";
+import set from "lodash/set";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -58,13 +59,18 @@ async function main() {
   }
 
   try {
-    const { path: projectAbsolutePath } = await yargs(process.argv.slice(2))
+    const {
+      path: projectAbsolutePath,
+      port,
+      portEnvPath,
+    } = await yargs(process.argv.slice(2))
       .version(false)
       .help(false)
-      .usage("Usage: $0 --path [absolute path]")
-      .alias("p", "path")
-      .demandOption(["p", "path"])
-      .describe("p", "Project absolute path")
+      .usage("Usage: $0 --path [absolute path] --port [num] --portEnvPath [env.path.to.port]")
+      .demandOption(["path", "portEnvPath"])
+      .describe("path", "Project absolute path")
+      .describe("port", "The port where the application is running")
+      .describe("portEnvPath", "The env object path that has the port where the application is running")
       .epilog("CLI tool to start the Playwright dev container.")
       .parse();
 
@@ -84,27 +90,62 @@ async function main() {
     } catch (error) {
       prettyPrint(
         LOG_LEVEL.WARNING,
-        `It looks like you don't have the Playwright containerization image "${getPlaywrightContainerizationImage()}" in your local machine.`
+        `it looks like you don't have the Playwright containerization image "${getPlaywrightContainerizationImage()}" in your local machine.`
       );
-      prettyPrint(LOG_LEVEL.WARNING, "Proceeding to build the image...");
+      prettyPrint(LOG_LEVEL.WARNING, "proceeding to build the image...");
       execSync(`pnpm -F playwright-containerization image:docker:build`, { stdio: "inherit", ...shell() });
     }
 
+    // Starts the container in detached mode. The next step requires a running container.
     try {
       execSync(
-        `docker container run -it --rm --ipc=host \
+        `docker container run -d --ipc=host --name=${buildEnv.playwrightContainerization.containerName} \
+        --mount type=bind,source=${projectAbsolutePath}/playwright.config.ts,target=/kie-tools/playwright.config.ts \
         --mount type=bind,source=${projectAbsolutePath}/tests-e2e,target=/kie-tools/tests-e2e/ \
         --mount type=bind,source=${projectAbsolutePath}/dist-tests-e2e,target=/kie-tools/dist-tests-e2e \
         --network=host \
         ${getPlaywrightContainerizationImage()} \
-        /bin/bash`,
+        sleep infinity`,
+        { stdio: "ignore", ...shell() }
+      );
+    } catch (error) {
+      prettyPrint(LOG_LEVEL.NORMAL, `"docker container run" command finished with an error`);
+      return;
+    }
+
+    // Creates a env file with the object that will be used by the `playwright.config.ts` file.
+    try {
+      execSync(
+        `docker exec -i ${buildEnv.playwrightContainerization.containerName} sh -c 'cat > /kie-tools/env/index.js' <<EOF
+module.exports = {
+  env: ${JSON.stringify(set({}, portEnvPath as string, port))}
+}
+EOF`,
         { stdio: "inherit", ...shell() }
       );
     } catch (error) {
-      prettyPrint(LOG_LEVEL.NORMAL, `"docker container run" command finished`);
+      prettyPrint(LOG_LEVEL.ERROR, `failed to create env file inside container`);
+      return;
+    }
+
+    try {
+      // Attach a terminal to the running container
+      execSync(`docker container exec -it ${buildEnv.playwrightContainerization.containerName} /bin/bash`, {
+        stdio: "inherit",
+        ...shell(),
+      });
+    } catch (error) {
+      prettyPrint(LOG_LEVEL.NORMAL, `terminal was closed`);
+      // Clean up. Remove the container
+      execSync(`docker rm ${buildEnv.playwrightContainerization.containerName} -f`, {
+        stdio: "ignore",
+        ...shell(),
+      });
+      prettyPrint(LOG_LEVEL.NORMAL, `"${buildEnv.playwrightContainerization.containerName}" container was removed`);
+      return;
     }
   } catch (error) {
-    prettyPrint(LOG_LEVEL.ERROR, "Error while parsing the arguments");
+    prettyPrint(LOG_LEVEL.ERROR, "error while parsing the arguments");
     prettyPrint(LOG_LEVEL.ERROR, error);
   }
 }

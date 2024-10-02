@@ -6848,6 +6848,9 @@ importers:
 
   packages/playwright-containerization:
     dependencies:
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       yargs:
         specifier: ^17.0.1
         version: 17.7.2
@@ -6867,6 +6870,9 @@ importers:
       '@playwright/test':
         specifier: ^1.45.2
         version: 1.45.2
+      '@types/lodash':
+        specifier: ^4.14.168
+        version: 4.14.202
       '@types/yargs':
         specifier: ^17.0.1
         version: 17.0.24

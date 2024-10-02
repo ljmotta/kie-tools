@@ -26,6 +26,7 @@
     "image:docker:build": "kie-tools--image-builder build -r \"$(build-env playwrightContainerization.registry)\" -a \"$(build-env playwrightContainerization.account)\" -n \"$(build-env playwrightContainerization.name)\" -t \"$(build-env playwrightContainerization.buildTag)\" --build-arg UBUNTU_IMAGE_TAG=\"$(build-env playwrightContainerization.ubuntuImageTag)\" --build-arg NODE_VERSION=\"$(build-env playwrightContainerization.nodeVersion)\""
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "yargs": "^17.0.1"
   },
   "devDependencies": {
@@ -34,6 +35,7 @@
     "@kie-tools/root-env": "workspace:*",
     "@kie-tools/tsconfig": "workspace:*",
     "@playwright/test": "^1.45.2",
+    "@types/lodash": "^4.14.168",
     "@types/yargs": "^17.0.1",
     "copyfiles": "^2.4.1",
     "rimraf": "^3.0.2",
