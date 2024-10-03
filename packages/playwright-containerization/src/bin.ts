@@ -79,15 +79,21 @@ async function main() {
       typeof packageAbsolutePath !== "string" ||
       (typeof packageAbsolutePath === "string" && fs.existsSync(packageAbsolutePath) === false)
     ) {
-      prettyPrint(LOG_LEVEL.ERROR, `--path value isn't a valid absolute path. --path=${packageAbsolutePath}`);
+      prettyPrint(
+        LOG_LEVEL.ERROR,
+        `--packageAbsolutePath value isn't a valid absolute path. --path=${packageAbsolutePath}`
+      );
       return;
     }
 
     // Create dist-tests-e2e folder
     try {
-      //
+      if (fs.existsSync(`${packageAbsolutePath}/dist-tests-e2e`) === false) {
+        fs.mkdirSync(`${packageAbsolutePath}/dist-tests-e2e`);
+      }
     } catch (error) {
-      //
+      prettyPrint(LOG_LEVEL.ERROR, `error while creating the "dist-tests-e2e" folder`);
+      prettyPrint(LOG_LEVEL.ERROR, error);
     }
 
     // Checks if image exists before starting
@@ -117,7 +123,7 @@ async function main() {
         --network=host \
         ${getPlaywrightContainerizationImage()} \
         sleep infinity`,
-        { stdio: "ignore", ...shell() }
+        { stdio: "inherit", ...shell() }
       );
     } catch (error) {
       prettyPrint(LOG_LEVEL.NORMAL, `"docker container run" command finished with an error`);
@@ -154,7 +160,7 @@ EOF`,
       stdio: "ignore",
       ...shell(),
     });
-    prettyPrint(LOG_LEVEL.NORMAL, `"${buildEnv.playwrightContainerization.containerName}" container was removed`);
+    prettyPrint(LOG_LEVEL.NORMAL, `"${buildEnv.playwrightContainerization.containerName}" container removed`);
   } catch (error) {
     prettyPrint(LOG_LEVEL.ERROR, "error while parsing the arguments");
     prettyPrint(LOG_LEVEL.ERROR, error);
