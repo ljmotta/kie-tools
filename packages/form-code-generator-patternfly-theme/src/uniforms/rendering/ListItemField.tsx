@@ -30,12 +30,12 @@ export interface Props {
   disabled?: boolean;
 }
 
-export const NestedFieldInput: React.FC<Props> = ({ codegenCtx, uniformsContext, field, itemProps, disabled }) => {
+export const ListItemField: React.FC<Props> = ({ codegenCtx, uniformsContext, field, itemProps, disabled }) => {
   return (
     <CodeGenContextProvider schema={uniformsContext.schema} codegenCtx={codegenCtx} uniformsCtx={uniformsContext}>
-      <AutoField key={field} name={field} disabled={disabled} itemProps={itemProps} />
+      <AutoField key={field} name={field} disabled={disabled} {...itemProps} />
     </CodeGenContextProvider>
   );
 };
 
-export default NestedFieldInput;
+export default ListItemField;

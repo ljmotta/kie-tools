@@ -32,6 +32,7 @@ export type TextFieldProps = HTMLFieldProps<
   {
     label: string;
     required: boolean;
+    itemProps?: any;
   }
 >;
 
@@ -63,14 +64,17 @@ const Text: React.FC<TextFieldProps> = (props: TextFieldProps) => {
   };
 
   const getTextInputElement = (): FormInput => {
+    console.log(props);
+
+    const isNested = props.name.split(".").pop() !== "$";
     const inputJsxCode = `<TextInput
-        name={'${props.name}'}
+        name={\`${props.itemProps?.isItem ? (props.itemProps?.itemName + isNested ? "." + props.name.split(".").pop() : "") : props.name}\`}
         id={'${props.id}'}
         isDisabled={${props.disabled || "false"}}
         placeholder={'${props.placeholder}'}
         type={'${props.type || "text"}'}
-        value={${ref.stateName}}
-        onChange={${ref.stateSetter}}
+        value={${props.itemProps?.isItem ? `${props.itemProps?.listStateName}[${props.itemProps?.indexName}]${isNested ? "." + props.name.split(".").pop() : ""}` : ref.stateName}}
+        onChange={newValue => ${props.itemProps?.isItem ? props.itemProps?.listStateSetter : ref.stateSetter}${props.itemProps?.isItem ? `(s => { const clone = [...s]; clone[${itemIndex}]})` : "(newValue)"}}
         />`;
 
     return buildDefaultInputElement({
