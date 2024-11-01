@@ -37,7 +37,8 @@
       { "id": "@kie-tools/image-builder" },
       { "id": "@kie-tools/image-env-to-json" },
       { "id": "@kie-tools/runtime-tools-management-console-webapp" },
-      { "id": "@kie-tools-examples/jbpm-travel-agency-example" },
+      { "id": "@kie-tools-examples/jbpm-travel-agency-basic-example" },
+      { "id": "@kie-tools-examples/jbpm-travel-agency-extended-example" },
       { "id": "@kie-tools-examples/ping-pong-view" },
       { "id": "@kie-tools-core/envelope-bus" },
       { "id": "@kie-tools-examples/ping-pong-view-angular" },
@@ -491,12 +492,22 @@
         "weight": 1
       },
       {
-        "source": "@kie-tools-examples/jbpm-travel-agency-example",
+        "source": "@kie-tools-examples/jbpm-travel-agency-basic-example",
         "target": "@kie-tools/jbpm-quarkus-devui",
         "weight": 1
       },
       {
-        "source": "@kie-tools-examples/jbpm-travel-agency-example",
+        "source": "@kie-tools-examples/jbpm-travel-agency-basic-example",
+        "target": "@kie-tools/kogito-management-console",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools-examples/jbpm-travel-agency-extended-example",
+        "target": "@kie-tools/jbpm-quarkus-devui",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools-examples/jbpm-travel-agency-extended-example",
         "target": "@kie-tools/kogito-management-console",
         "weight": 1
       },
@@ -2584,7 +2595,8 @@
       "examples/drools-process-usertasks-quarkus-example"
     ],
     ["@kie-tools-examples/jbpm-compact-architecture-example", "examples/jbpm-compact-architecture-example"],
-    ["@kie-tools-examples/jbpm-travel-agency-example", "examples/jbpm-travel-agency-basic-example"],
+    ["@kie-tools-examples/jbpm-travel-agency-basic-example", "examples/jbpm-travel-agency-basic-example"],
+    ["@kie-tools-examples/jbpm-travel-agency-extended-example", "examples/jbpm-travel-agency-extended-example"],
     ["@kie-tools-examples/ping-pong-view", "examples/ping-pong-view"],
     ["@kie-tools-examples/ping-pong-view-angular", "examples/ping-pong-view-angular"],
     ["@kie-tools-examples/ping-pong-view-react", "examples/ping-pong-view-react"],
