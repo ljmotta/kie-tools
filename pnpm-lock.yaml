@@ -329,6 +329,44 @@ importers:
         specifier: ^1.1.6
         version: 1.1.6
 
+  examples/jbpm-travel-agency-basic-example:
+    dependencies:
+      '@kie-tools/jbpm-quarkus-devui':
+        specifier: workspace:*
+        version: link:../../packages/jbpm-quarkus-devui
+      '@kie-tools/maven-base':
+        specifier: workspace:*
+        version: link:../../packages/maven-base
+    devDependencies:
+      '@kie-tools/kogito-management-console':
+        specifier: workspace:*
+        version: link:../../packages/kogito-management-console
+      '@kie-tools/root-env':
+        specifier: workspace:*
+        version: link:../../packages/root-env
+      run-script-os:
+        specifier: ^1.1.6
+        version: 1.1.6
+
+  examples/jbpm-travel-agency-example:
+    dependencies:
+      '@kie-tools/jbpm-quarkus-devui':
+        specifier: workspace:*
+        version: link:../../packages/jbpm-quarkus-devui
+      '@kie-tools/maven-base':
+        specifier: workspace:*
+        version: link:../../packages/maven-base
+    devDependencies:
+      '@kie-tools/kogito-management-console':
+        specifier: workspace:*
+        version: link:../../packages/kogito-management-console
+      '@kie-tools/root-env':
+        specifier: workspace:*
+        version: link:../../packages/root-env
+      run-script-os:
+        specifier: ^1.1.6
+        version: 1.1.6
+
   examples/ping-pong-view:
     dependencies:
       '@kie-tools-core/envelope':
