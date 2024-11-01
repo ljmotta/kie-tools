@@ -41,6 +41,7 @@
       { "id": "@kie-tools-core/envelope-bus" },
       { "id": "@kie-tools-examples/ping-pong-view-angular" },
       { "id": "@kie-tools-examples/ping-pong-view-react" },
+      { "id": "@kie-tools-examples/process-event-driven" },
       { "id": "@kie-tools-examples/sonataflow-greeting-quarkus-example" },
       { "id": "@kie-tools/sonataflow-quarkus-devui" },
       { "id": "@kie-tools/serverless-workflow-dev-ui-webapp" },
@@ -517,6 +518,11 @@
       {
         "source": "@kie-tools-examples/ping-pong-view-react",
         "target": "@kie-tools-examples/ping-pong-view",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools-examples/process-event-driven",
+        "target": "@kie-tools/jbpm-quarkus-devui",
         "weight": 1
       },
       {
@@ -2576,6 +2582,7 @@
     ["@kie-tools-examples/ping-pong-view", "examples/ping-pong-view"],
     ["@kie-tools-examples/ping-pong-view-angular", "examples/ping-pong-view-angular"],
     ["@kie-tools-examples/ping-pong-view-react", "examples/ping-pong-view-react"],
+    ["@kie-tools-examples/process-event-driven", "examples/process-event-driven"],
     ["@kie-tools-examples/sonataflow-greeting-quarkus-example", "examples/sonataflow-greeting-quarkus-example"],
     ["@kie-tools-examples/todo-list-view", "examples/todo-list-view"],
     ["kie-tools-examples-todo-list-view-vscode-extension", "examples/todo-list-view-vscode-extension"],

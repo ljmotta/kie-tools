@@ -29,6 +29,7 @@ digraph G {
   "@kie-tools-core/envelope" [ color = "purple", fontcolor = "purple", style = "rounded" ];
   "@kie-tools-examples/ping-pong-view-angular" [ color = "orange", fontcolor = "orange", style = "dashed, rounded" ];
   "@kie-tools-examples/ping-pong-view-react" [ color = "orange", fontcolor = "orange", style = "dashed, rounded" ];
+  "@kie-tools-examples/process-event-driven" [ color = "orange", fontcolor = "orange", style = "dashed, rounded" ];
   "@kie-tools-examples/sonataflow-greeting-quarkus-example" [ color = "orange", fontcolor = "orange", style = "dashed, rounded" ];
   "@kie-tools/sonataflow-quarkus-devui" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "@kie-tools-examples/todo-list-view" [ color = "orange", fontcolor = "orange", style = "dashed, rounded" ];
@@ -228,6 +229,7 @@ digraph G {
   "@kie-tools-examples/ping-pong-view" -> "@kie-tools-core/envelope" [ style = "solid", color = "orange" ];
   "@kie-tools-examples/ping-pong-view-angular" -> "@kie-tools-examples/ping-pong-view" [ style = "solid", color = "orange" ];
   "@kie-tools-examples/ping-pong-view-react" -> "@kie-tools-examples/ping-pong-view" [ style = "solid", color = "orange" ];
+  "@kie-tools-examples/process-event-driven" -> "@kie-tools/jbpm-quarkus-devui" [ style = "solid", color = "orange" ];
   "@kie-tools-examples/sonataflow-greeting-quarkus-example" -> "@kie-tools/sonataflow-quarkus-devui" [ style = "solid", color = "orange" ];
   "@kie-tools-examples/todo-list-view" -> "@kie-tools-core/envelope" [ style = "solid", color = "orange" ];
   "kie-tools-examples-todo-list-view-vscode-extension" -> "@kie-tools-core/vscode-extension" [ style = "solid", color = "orange" ];
