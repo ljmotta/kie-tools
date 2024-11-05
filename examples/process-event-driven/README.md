@@ -1,17 +1,17 @@
-# Process Event Driven
+# Process Event Driven Example
 
 ## Description
 
-A quickstart project that deals with traveller processing carried by rules. It illustrates
+A quickstart project that deals with traveler processing carried by rules. It illustrates
 how easy it is to make the Kogito processes and rules to work with Apache Kafka
 
 This example shows
 
-- consuming events from a Kafka topic and for each event start new process instance
-- each process instance is expecting a traveller information in JSON format
-- traveller is then processed by rules and based on the outcome of the processing (processed or not) traveller is
-  - if successfully processed traveller information is logged and then updated information is send to another Kafka topic
-  - if not processed traveller info is logged and then process instance finishes without sending reply to Kafka topic
+- Consuming events from a Kafka topic and for each event start new process instance
+- Each process instance is expecting a traveler information in JSON format
+- Traveler is then processed by rules and based on the outcome of the processing (processed or not) traveler is
+  - if successfully processed traveler information is logged and then updated information is send to another Kafka topic
+  - if not processed traveler info is logged and then process instance finishes without sending reply to Kafka topic
 
 <p align="center"><img width=75% height=50% src="docs/images/process.png"></p>
 
@@ -142,20 +142,20 @@ When running in either Quarkus Development or Native mode, we also leverage the 
 
 ### Use the application
 
-To make use of this application it is as simple as putting a message on `travellers` topic with following content (cloud event format)
+To make use of this application it is as simple as putting a message on `travelers` topic with following content (cloud event format)
 
-- To examine ProcessedTravellers topic and verify upcoming messages will be processed
+- To examine ProcessedTravelers topic and verify upcoming messages will be processed
 
 Execute in a separate terminal session
 
 ```sh
-docker exec -it process-event-driven-kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic processedtravellers
+docker exec -it process-event-driven-kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic processedtravelers
 ```
 
 - Send message that should be processed to Topic
 
 ```sh
-docker exec -it process-event-driven-kafka /opt/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic travellers
+docker exec -it process-event-driven-kafka /opt/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic travelers
 ```
 
 Content (cloud event format)
@@ -165,7 +165,7 @@ Content (cloud event format)
   "specversion": "1.0",
   "id": "21627e26-31eb-43e7-8343-92a696fd96b1",
   "source": "",
-  "type": "travellers",
+  "type": "travelers",
   "time": "2022-02-24T13:25:16Z",
   "data": {
     "firstName": "Jan",
@@ -179,17 +179,17 @@ Content (cloud event format)
 One liner
 
 ```
-{"specversion": "1.0", "id": "21627e26-31eb-43e7-8343-92a696fd96b1","source": "", "type": "travellers", "time": "2022-02-24T13:25:16Z", "data": { "firstName": "Jan", "lastName": "Kowalski", "email": "jan.kowalski@example.com", "nationality": "Polish" }}
+{"specversion": "1.0", "id": "21627e26-31eb-43e7-8343-92a696fd96b1","source": "", "type": "travelers", "time": "2022-02-24T13:25:16Z", "data": { "firstName": "Jan", "lastName": "Kowalski", "email": "jan.kowalski@example.com", "nationality": "Polish" }}
 ```
 
-this will then trigger the successful processing of the traveller and put another message on `processedtravellers` topic with following content (cloud event format)
+this will then trigger the successful processing of the traveler and put another message on `processedtravelers` topic with following content (cloud event format)
 
 ```json
 {
   "specversion": "1.0",
   "id": "e84a4591-3581-42cd-bb2a-fac989ffd1a0",
   "source": "/process/Travelers",
-  "type": "processedtravellers",
+  "type": "processedtravelers",
   "time": "2024-06-05T11:30:49.722368+02:00",
   "kogitoproctype": "BPMN",
   "kogitoprocinstanceid": "66d1c981-9d6d-4c01-bc43-b712dc73b6cc",
@@ -208,12 +208,12 @@ this will then trigger the successful processing of the traveller and put anothe
 
 there are a bunch of extension attributes that starts with `kogito` to provide some context of the execution and the event producer.
 
-To take the other path of the process put following message on `travellers` topic
+To take the other path of the process put following message on `travelers` topic
 
 - Send Message that should be skipped to Topic
 
 ```sh
-bin/kafka-console-producer.sh --broker-list localhost:9092 --topic travellers
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic travelers
 ```
 
 With the following content (Cloud Event Format)
@@ -223,7 +223,7 @@ With the following content (Cloud Event Format)
   "specversion": "1.0",
   "id": "31627e26-31eb-43e7-8343-92a696fd96b1",
   "source": "",
-  "type": "travellers",
+  "type": "travelers",
   "time": "2022-02-24T13:25:16Z",
   "data": {
     "firstName": "John",
@@ -237,7 +237,7 @@ With the following content (Cloud Event Format)
 One Liner
 
 ```
-{"specversion": "1.0","id": "31627e26-31eb-43e7-8343-92a696fd96b1","source": "","type": "travellers", "time": "2022-02-24T13:25:16Z","data": { "firstName" : "John", "lastName" : "Doe", "email" : "john.doe@example.com", "nationality" : "American"}}
+{"specversion": "1.0","id": "31627e26-31eb-43e7-8343-92a696fd96b1","source": "","type": "travelers", "time": "2022-02-24T13:25:16Z","data": { "firstName" : "John", "lastName" : "Doe", "email" : "john.doe@example.com", "nationality" : "American"}}
 ```
 
 this will not result in message being sent to `processedtravelers` topic.

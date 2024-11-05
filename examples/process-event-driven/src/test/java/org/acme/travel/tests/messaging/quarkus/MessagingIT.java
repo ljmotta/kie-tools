@@ -26,7 +26,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import org.acme.travel.Traveller;
+import org.acme.travel.Traveler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,8 +55,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 @QuarkusTestResource(KafkaQuarkusTestResource.class)
 public class MessagingIT {
 
-    public static final String TOPIC_PRODUCER = "travellers";
-    public static final String TOPIC_CONSUMER = "processedtravellers";
+    public static final String TOPIC_PRODUCER = "travelers";
+    public static final String TOPIC_CONSUMER = "processedtravelers";
     private static Logger LOGGER = LoggerFactory.getLogger(MessagingIT.class);
 
     private ObjectMapper objectMapper;
@@ -92,12 +92,12 @@ public class MessagingIT {
             LOGGER.info("Received from kafka: {}", s);
             try {
                 JsonNode event = objectMapper.readValue(s, JsonNode.class);
-                Traveller traveller = objectMapper.readValue(event.get("data").toString(), Traveller.class);
-                assertTrue(traveller.isProcessed());
-                assertTrue(traveller.getFirstName().matches("Name[0-9]+"));
-                assertTrue(traveller.getLastName().matches("LastName[0-9]+"));
-                assertTrue(traveller.getEmail().matches("email[0-9]+"));
-                assertTrue(traveller.getNationality().matches("Nationality[0-9]+"));
+                Traveler traveler = objectMapper.readValue(event.get("data").toString(), Traveler.class);
+                assertTrue(traveler.isProcessed());
+                assertTrue(traveler.getFirstName().matches("Name[0-9]+"));
+                assertTrue(traveler.getLastName().matches("LastName[0-9]+"));
+                assertTrue(traveler.getEmail().matches("email[0-9]+"));
+                assertTrue(traveler.getNationality().matches("Nationality[0-9]+"));
                 countDownLatch.countDown();
             } catch (JsonProcessingException e) {
                 LOGGER.error("Error parsing {}", s, e);
@@ -106,23 +106,23 @@ public class MessagingIT {
         });
 
         IntStream.range(0, count)
-                .mapToObj(i -> new Traveller("Name" + i, "LastName" + i, "email" + i, "Nationality" + i))
-                .forEach(traveller -> kafkaClient.produce(generateCloudEvent(traveller), TOPIC_PRODUCER));
+                .mapToObj(i -> new Traveler("Name" + i, "LastName" + i, "email" + i, "Nationality" + i, "HotelName" + i))
+                .forEach(traveler -> kafkaClient.produce(generateCloudEvent(traveler), TOPIC_PRODUCER));
 
         countDownLatch.await(10, TimeUnit.SECONDS);
         assertEquals(0, countDownLatch.getCount());
     }
 
-    private String generateCloudEvent(Traveller traveller) {
-        assertFalse(traveller.isProcessed());
+    private String generateCloudEvent(Traveler traveler) {
+        assertFalse(traveler.isProcessed());
         try {
             return objectMapper.writeValueAsString(CloudEventBuilder.v1()
                     .withId(UUID.randomUUID().toString())
                     .withSource(URI.create(""))
-                    //Start message event name in handle-travellers.bpmn
-                    .withType("travellers")
+                    //Start message event name in handle-travelers.bpmn
+                    .withType("travelers")
                     .withTime(OffsetDateTime.now())
-                    .withData(objectMapper.writeValueAsString(traveller).getBytes())
+                    .withData(objectMapper.writeValueAsString(traveler).getBytes())
                     .build());
         } catch (Exception e) {
             throw new RuntimeException(e);

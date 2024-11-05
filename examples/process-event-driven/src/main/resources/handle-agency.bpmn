@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<bpmn2:definitions
+  xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:bpsim="http://www.bpsim.org/schemas/1.0"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:drools="http://www.jboss.org/drools"
+  xmlns:xsi="xsi"
+  id="_a-dn0H3_ED2PzOD803Q4yA"
+  xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd http://www.omg.org/spec/DD/20100524/DC DC.xsd http://www.omg.org/spec/DD/20100524/DI DI.xsd "
+  exporter="jBPM Process Modeler"
+  exporterVersion="2.0"
+  targetNamespace="http://www.omg.org/bpmn20"
+>
+  <bpmn2:itemDefinition id="_hotelMessageItem" structureRef="org.acme.hotel.HotelMessage" />
+  <bpmn2:itemDefinition
+    id="__D32A6A6D-B198-4485-9881-2F604DD51BDF_eventOutputXItem"
+    structureRef="org.acme.hotel.HotelMessage"
+  />
+  <bpmn2:itemDefinition id="collaborationType" structureRef="org.acme.hotel.HotelMessage" />
+  <bpmn2:itemDefinition id="_A36B767C-68D7-4A5C-B01A-FD2AAE832474" structureRef="org.acme.hotel.HotelMessage" />
+  <bpmn2:itemDefinition id="_1A619A63-D777-486B-998F-116D748C73B7" structureRef="org.acme.hotel.HotelMessage" />
+  <bpmn2:message id="_a-dn0X3_ED2PzOD803Q4yA" itemRef="collaborationType" name="collaboration" />
+  <bpmn2:itemDefinition id="PId_Type" structureRef="String" />
+  <bpmn2:correlationProperty id="PId" name="Pn1" type="PId_Type">
+    <bpmn2:correlationPropertyRetrievalExpression
+      id="_814312E6-83B3-46A4-9DAA-3D47BFDC659A"
+      messageRef="_a-dn0X3_ED2PzOD803Q4yA"
+    >
+      <bpmn2:messagePath
+        id="_4699D735-A693-440A-9E48-BB8CC8A4A56E"
+        evaluatesToTypeRef="_A36B767C-68D7-4A5C-B01A-FD2AAE832474"
+        language="java"
+      >id</bpmn2:messagePath>
+    </bpmn2:correlationPropertyRetrievalExpression>
+  </bpmn2:correlationProperty>
+  <bpmn2:collaboration id="_D933D59C-29AC-4847-9B47-524931B7C50B" name="Default Collaboration">
+    <bpmn2:participant id="_E49A19AC-2C31-4373-BF4A-137B271D2E02" name="Pool Participant" processRef="handle_agency" />
+    <bpmn2:correlationKey id="Key" name="KeyName">
+      <bpmn2:correlationPropertyRef>PId</bpmn2:correlationPropertyRef>
+    </bpmn2:correlationKey>
+  </bpmn2:collaboration>
+  <bpmn2:process
+    id="handle_agency"
+    drools:packageName="org.kie.example"
+    drools:version="1.0"
+    drools:adHoc="false"
+    name="handle-agency"
+    isExecutable="true"
+    processType="Public"
+  >
+    <bpmn2:property id="hotelMessage" itemSubjectRef="_hotelMessageItem" name="hotelMessage" />
+    <bpmn2:sequenceFlow
+      id="_68AB58DF-9349-4EBB-8A2E-1F38B76BE4A1"
+      sourceRef="_8FC9EA63-93C8-443A-9DA5-C0351D773BE6"
+      targetRef="_3A2B99F1-E885-434A-8304-1213AC43CE3C"
+    />
+    <bpmn2:sequenceFlow
+      id="_60A21212-EB02-434F-9AC8-F1C7EB21EBA7"
+      sourceRef="_D32A6A6D-B198-4485-9881-2F604DD51BDF"
+      targetRef="_8FC9EA63-93C8-443A-9DA5-C0351D773BE6"
+    />
+    <bpmn2:sequenceFlow
+      id="_FB444661-5F48-432D-965A-C4996CC52E94"
+      sourceRef="_A07CABF6-05E3-44A3-BB33-EDE46ADF5FAA"
+      targetRef="_D32A6A6D-B198-4485-9881-2F604DD51BDF"
+    />
+    <bpmn2:endEvent id="_3A2B99F1-E885-434A-8304-1213AC43CE3C" name="end">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[end]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>_68AB58DF-9349-4EBB-8A2E-1F38B76BE4A1</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition />
+    </bpmn2:endEvent>
+    <bpmn2:scriptTask
+      id="_8FC9EA63-93C8-443A-9DA5-C0351D773BE6"
+      name="Process Hotel Book"
+      scriptFormat="http://www.java.com/java"
+    >
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Process Hotel Book]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>_60A21212-EB02-434F-9AC8-F1C7EB21EBA7</bpmn2:incoming>
+      <bpmn2:outgoing>_68AB58DF-9349-4EBB-8A2E-1F38B76BE4A1</bpmn2:outgoing>
+      <bpmn2:script>System.out.println("AAAAA");</bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:intermediateCatchEvent id="_D32A6A6D-B198-4485-9881-2F604DD51BDF" name="receive message">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[receive message]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>_FB444661-5F48-432D-965A-C4996CC52E94</bpmn2:incoming>
+      <bpmn2:outgoing>_60A21212-EB02-434F-9AC8-F1C7EB21EBA7</bpmn2:outgoing>
+      <bpmn2:dataOutput
+        id="_D32A6A6D-B198-4485-9881-2F604DD51BDF_eventOutputX"
+        drools:dtype="org.acme.hotel.HotelMessage"
+        itemSubjectRef="__D32A6A6D-B198-4485-9881-2F604DD51BDF_eventOutputXItem"
+        name="event"
+      />
+      <bpmn2:dataOutputAssociation>
+        <bpmn2:sourceRef>_D32A6A6D-B198-4485-9881-2F604DD51BDF_eventOutputX</bpmn2:sourceRef>
+        <bpmn2:targetRef>hotelMessage</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:outputSet>
+        <bpmn2:dataOutputRefs>_D32A6A6D-B198-4485-9881-2F604DD51BDF_eventOutputX</bpmn2:dataOutputRefs>
+      </bpmn2:outputSet>
+      <bpmn2:messageEventDefinition drools:msgref="collaboration" messageRef="_a-dn0X3_ED2PzOD803Q4yA" />
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:startEvent id="_A07CABF6-05E3-44A3-BB33-EDE46ADF5FAA" name="start">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[start]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>_FB444661-5F48-432D-965A-C4996CC52E94</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:correlationSubscription id="_144300B4-881F-474A-AA28-AE769A74423A" correlationKeyRef="Key">
+      <bpmn2:correlationPropertyBinding id="_711860A5-6321-481B-9C11-1E2EE48B8DFC" correlationPropertyRef="PId">
+        <bpmn2:dataPath
+          id="_9CE68374-61F0-435C-9CDD-24024ED4C7AF"
+          evaluatesToTypeRef="_1A619A63-D777-486B-998F-116D748C73B7"
+          language="java"
+        >"1"</bpmn2:dataPath>
+      </bpmn2:correlationPropertyBinding>
+    </bpmn2:correlationSubscription>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="handle_agency">
+      <bpmndi:BPMNShape
+        id="shape__A07CABF6-05E3-44A3-BB33-EDE46ADF5FAA"
+        bpmnElement="_A07CABF6-05E3-44A3-BB33-EDE46ADF5FAA"
+      >
+        <dc:Bounds height="56" width="56" x="175" y="157" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape
+        id="shape__D32A6A6D-B198-4485-9881-2F604DD51BDF"
+        bpmnElement="_D32A6A6D-B198-4485-9881-2F604DD51BDF"
+      >
+        <dc:Bounds height="56" width="56" x="335" y="157" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape
+        id="shape__8FC9EA63-93C8-443A-9DA5-C0351D773BE6"
+        bpmnElement="_8FC9EA63-93C8-443A-9DA5-C0351D773BE6"
+      >
+        <dc:Bounds height="102" width="154" x="495" y="134" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape
+        id="shape__3A2B99F1-E885-434A-8304-1213AC43CE3C"
+        bpmnElement="_3A2B99F1-E885-434A-8304-1213AC43CE3C"
+      >
+        <dc:Bounds height="56" width="56" x="753" y="157" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge
+        id="edge_shape__A07CABF6-05E3-44A3-BB33-EDE46ADF5FAA_to_shape__D32A6A6D-B198-4485-9881-2F604DD51BDF"
+        bpmnElement="_FB444661-5F48-432D-965A-C4996CC52E94"
+      >
+        <di:waypoint x="203" y="185" />
+        <di:waypoint x="335" y="185" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge
+        id="edge_shape__D32A6A6D-B198-4485-9881-2F604DD51BDF_to_shape__8FC9EA63-93C8-443A-9DA5-C0351D773BE6"
+        bpmnElement="_60A21212-EB02-434F-9AC8-F1C7EB21EBA7"
+      >
+        <di:waypoint x="363" y="185" />
+        <di:waypoint x="572" y="185" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge
+        id="edge_shape__8FC9EA63-93C8-443A-9DA5-C0351D773BE6_to_shape__3A2B99F1-E885-434A-8304-1213AC43CE3C"
+        bpmnElement="_68AB58DF-9349-4EBB-8A2E-1F38B76BE4A1"
+      >
+        <di:waypoint x="572" y="185" />
+        <di:waypoint x="753" y="185" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmn2:relationship type="BPSimData">
+    <bpmn2:extensionElements>
+      <bpsim:BPSimData>
+        <bpsim:Scenario id="default" name="Simulationscenario">
+          <bpsim:ScenarioParameters />
+          <bpsim:ElementParameters elementRef="_A07CABF6-05E3-44A3-BB33-EDE46ADF5FAA">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0" />
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="_8FC9EA63-93C8-443A-9DA5-C0351D773BE6">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0" />
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0" />
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0" />
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0" />
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+        </bpsim:Scenario>
+      </bpsim:BPSimData>
+    </bpmn2:extensionElements>
+    <bpmn2:source>_a-dn0H3_ED2PzOD803Q4yA</bpmn2:source>
+    <bpmn2:target>_a-dn0H3_ED2PzOD803Q4yA</bpmn2:target>
+  </bpmn2:relationship>
+</bpmn2:definitions>

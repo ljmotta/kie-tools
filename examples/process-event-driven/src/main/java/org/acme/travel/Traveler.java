@@ -18,25 +18,27 @@
  */
 package org.acme.travel;
 
-public class Traveller {
+public class Traveler {
 
     private String firstName;
     private String lastName;
     private String email;
     private String nationality;
+    private String hotelName;
 
     private boolean processed;
 
-    public Traveller() {
+    public Traveler() {
 
     }
 
-    public Traveller(String firstName, String lastName, String email, String nationality) {
+    public Traveler(String firstName, String lastName, String email, String nationality, String hotelName) {
         super();
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.nationality = nationality;
+        this.hotelName = hotelName;
     }
 
     public String getFirstName() {
@@ -71,6 +73,14 @@ public class Traveller {
         this.nationality = nationality;
     }
 
+    public String getHotelName() {
+        return hotelName;
+    }
+
+    public void setHotelName(String hotelName) {
+        this.hotelName = hotelName;
+    }
+
     public boolean isProcessed() {
         return processed;
     }
@@ -81,8 +91,8 @@ public class Traveller {
 
     @Override
     public String toString() {
-        return "Traveller [firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", nationality="
-                + nationality + ", processed=" + processed + "]";
+        return "Traveler [firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", nationality="
+                + nationality + ", processed=" + processed + ", hotelName=" + hotelName + "]";
     }
 
 }

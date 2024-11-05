@@ -20,10 +20,10 @@ package org.acme.travel;
 
 import org.drools.ruleunits.api.*;
 
-public class TravellerValidationService implements RuleUnitData {
-    private final SingletonStore<Traveller> traveller = DataSource.createSingleton();
+public class TravelerValidationService implements RuleUnitData {
+    private final SingletonStore<Traveler> traveler = DataSource.createSingleton();
 
-    public SingletonStore<Traveller> getTraveller() {
-        return traveller;
+    public SingletonStore<Traveler> getTraveler() {
+        return traveler;
     }
 }

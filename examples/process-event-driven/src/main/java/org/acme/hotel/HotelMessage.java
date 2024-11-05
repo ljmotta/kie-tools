@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,28 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.acme.travel
-unit TravellerValidationService
 
-import org.acme.travel.Traveller;
+package org.acme.hotel;
 
+public class HotelMessage {
 
-rule "Process travellers"
+    private String id;
+    private String content;
 
-when
-    $traveller: /traveller[processed == false, nationality != 'American']
-then
-	System.out.println("Hello traveller " + $traveller);   
-	$traveller.setProcessed( true );
-    
-end
+    public HotelMessage() {
 
-rule "Don't process travellers from US"
+    }
 
-when
-    $traveller: /traveller[processed == false, nationality == 'American']
-then
-	System.out.println("This system can't deal with " + $traveller.getNationality());
- 	$traveller.setProcessed( false ); 
-    
-end
+    public HotelMessage(String id, String hotelName) {
+        super();
+        this.id = id;
+        this.content = hotelName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+}
+
