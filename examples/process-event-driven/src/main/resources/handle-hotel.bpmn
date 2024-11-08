@@ -7,7 +7,7 @@
   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
   xmlns:drools="http://www.jboss.org/drools"
   xmlns:xsi="xsi"
-  id="_tpWwUH5lED2PzOD803Q4yA"
+  id="_JV9jsH_6ED2iXpirLGPtVQ"
   xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd http://www.omg.org/spec/DD/20100524/DC DC.xsd http://www.omg.org/spec/DD/20100524/DI DI.xsd "
   exporter="jBPM Process Modeler"
   exporterVersion="2.0"
@@ -18,19 +18,19 @@
     id="__A07CABF6-05E3-44A3-BB33-EDE46ADF5FAA_eventOutputXItem"
     structureRef="org.acme.hotel.HotelMessage"
   />
-  <bpmn2:itemDefinition id="collaborationType" structureRef="org.acme.hotel.HotelMessage" />
-  <bpmn2:itemDefinition id="_00659413-4664-498C-BD18-F1D76C068FDE" structureRef="" />
-  <bpmn2:itemDefinition id="_728217EE-C179-49BA-AFEF-B98B6CE3F6CC" structureRef="" />
-  <bpmn2:message id="_tpXXYH5lED2PzOD803Q4yA" itemRef="collaborationType" name="collaboration" />
-  <bpmn2:collaboration id="_0AB6CFA8-46C5-4BE5-AB3A-DA0195FA6244" name="Default Collaboration">
-    <bpmn2:participant id="_2DE160C5-6C1E-48E7-A5BD-8053BB0B5807" name="Pool Participant" processRef="handle_agency" />
+  <bpmn2:itemDefinition id="pongType" structureRef="org.acme.hotel.HotelMessage" />
+  <bpmn2:itemDefinition id="_13A29498-92C1-4131-A7D8-D08795FFC4B4" structureRef="" />
+  <bpmn2:itemDefinition id="_5A2BA1C7-2D12-42D6-8B5B-39F9190C1CD0" structureRef="" />
+  <bpmn2:message id="_JV-KwH_6ED2iXpirLGPtVQ" itemRef="pongType" name="pong" />
+  <bpmn2:collaboration id="_CF84BCF3-9FAD-40A5-AC48-CB74E87A9936" name="Default Collaboration">
+    <bpmn2:participant id="_30571BBA-B31C-449E-9D57-AC6F8E99EC9E" name="Pool Participant" processRef="handle_hotel" />
   </bpmn2:collaboration>
   <bpmn2:process
-    id="handle_agency"
+    id="handle_hotel"
     drools:packageName="org.kie.example"
     drools:version="1.0"
     drools:adHoc="false"
-    name="handle-agency"
+    name="Handle Hotel"
     isExecutable="true"
     processType="Public"
   >
@@ -88,11 +88,11 @@
       <bpmn2:outputSet>
         <bpmn2:dataOutputRefs>_A07CABF6-05E3-44A3-BB33-EDE46ADF5FAA_eventOutputX</bpmn2:dataOutputRefs>
       </bpmn2:outputSet>
-      <bpmn2:messageEventDefinition drools:msgref="collaboration" messageRef="_tpXXYH5lED2PzOD803Q4yA" />
+      <bpmn2:messageEventDefinition drools:msgref="pong" messageRef="_JV-KwH_6ED2iXpirLGPtVQ" />
     </bpmn2:startEvent>
   </bpmn2:process>
   <bpmndi:BPMNDiagram>
-    <bpmndi:BPMNPlane bpmnElement="handle_agency">
+    <bpmndi:BPMNPlane bpmnElement="handle_hotel">
       <bpmndi:BPMNShape
         id="shape__A07CABF6-05E3-44A3-BB33-EDE46ADF5FAA"
         bpmnElement="_A07CABF6-05E3-44A3-BB33-EDE46ADF5FAA"
@@ -155,7 +155,7 @@
         </bpsim:Scenario>
       </bpsim:BPSimData>
     </bpmn2:extensionElements>
-    <bpmn2:source>_tpWwUH5lED2PzOD803Q4yA</bpmn2:source>
-    <bpmn2:target>_tpWwUH5lED2PzOD803Q4yA</bpmn2:target>
+    <bpmn2:source>_JV9jsH_6ED2iXpirLGPtVQ</bpmn2:source>
+    <bpmn2:target>_JV9jsH_6ED2iXpirLGPtVQ</bpmn2:target>
   </bpmn2:relationship>
 </bpmn2:definitions>
