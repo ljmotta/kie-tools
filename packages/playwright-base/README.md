@@ -17,6 +17,14 @@
 
 ## @kie-tools/playwright-base
 
+## Using containers to generate screen shots
+
+### Build the image
+
+```
+pnpm -F playwright-base build:image
+```
+
 ---
 
 Apache KIE (incubating) is an effort undergoing incubation at The Apache Software
