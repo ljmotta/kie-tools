@@ -24,13 +24,13 @@ import { Text, TextVariants } from "@patternfly/react-core/dist/js/components/Te
 import { OUIAProps, ouiaPageTypeAndObjectId } from "@kie-tools/runtime-tools-components/dist/ouiaTools";
 import FormDetailsContainer from "../../containers/FormDetailsContainer/FormDetailsContainer";
 import "../../styles.css";
-import { useNavigate } from "react-router-dom";
 import Moment from "react-moment";
 import { useDevUIAppContext } from "../../contexts/DevUIAppContext";
 import { FormInfo } from "@kie-tools/runtime-tools-shared-gateway-api/dist/types";
 import { Notification } from "./components/FormDetailsNotification/FormDetailsNotification";
 import { FormNotification } from "@kie-tools/runtime-tools-components/dist/components/FormNotification";
 import { PageTitle } from "@kie-tools/runtime-tools-components/dist/components/PageTitle";
+import { useLocation } from "react-router";
 
 const FormDetailsPage: React.FC<OUIAProps> = () => {
   const [notification, setNotification] = useState<Notification>();
@@ -38,8 +38,8 @@ const FormDetailsPage: React.FC<OUIAProps> = () => {
   useEffect(() => {
     return ouiaPageTypeAndObjectId("form-detail");
   });
-  const navigate = useNavigate();
-  const formData: FormInfo = history.location.state["formData"];
+  const location = useLocation();
+  const formData: FormInfo = location.state["formData"];
 
   const onSuccess = () => {
     const message = `The form '${formData.name}.${formData.type}' has been successfully saved.`;
