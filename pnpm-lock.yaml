@@ -8596,9 +8596,6 @@ importers:
       graphql:
         specifier: 14.3.1
         version: 14.3.1
-      history:
-        specifier: ^4.9.0
-        version: 4.10.1
       react:
         specifier: ^17.0.2
         version: 17.0.2
@@ -8846,9 +8843,6 @@ importers:
       axios:
         specifier: ^1.7.4
         version: 1.7.4
-      history:
-        specifier: ^4.9.0
-        version: 4.10.1
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -9556,9 +9550,6 @@ importers:
       '@patternfly/react-icons':
         specifier: ^4.93.6
         version: 4.93.6(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
-      history:
-        specifier: ^4.9.0
-        version: 4.10.1
       react:
         specifier: '>=17.0.2 <19.0.0'
         version: 17.0.2
@@ -9928,9 +9919,6 @@ importers:
       apollo-link-http:
         specifier: 1.5.17
         version: 1.5.17(graphql@14.3.1)
-      history:
-        specifier: ^4.9.0
-        version: 4.10.1
       react:
         specifier: '>=17.0.2 <19.0.0'
         version: 17.0.2
@@ -10962,9 +10950,6 @@ importers:
       apollo-link-http:
         specifier: 1.5.17
         version: 1.5.17(graphql@14.3.1)
-      history:
-        specifier: ^4.9.0
-        version: 4.10.1
       react:
         specifier: ^17.0.2
         version: 17.0.2
@@ -12311,9 +12296,6 @@ importers:
       graphql:
         specifier: 14.3.1
         version: 14.3.1
-      history:
-        specifier: ^4.9.0
-        version: 4.10.1
       monaco-editor:
         specifier: ^0.39.0
         version: 0.39.0

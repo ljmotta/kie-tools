@@ -50,7 +50,7 @@ const TaskInboxContainer: React.FC<OUIAProps> = ({ ouiaId, ouiaSafe }) => {
       unsubscriber.unSubscribe();
       unsubscribeUserChange.unSubscribe();
     };
-  }, []);
+  }, [navigate]);
 
   return (
     <EmbeddedTaskInbox
