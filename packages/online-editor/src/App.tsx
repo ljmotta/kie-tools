@@ -95,7 +95,7 @@ function RoutesSwitch() {
           />
         )}
       </Route>
-      <Route exact={true} path={routes.home.path({})}>
+      <Route path={routes.home.path({})}>
         <HomePage />
       </Route>
       <Route>

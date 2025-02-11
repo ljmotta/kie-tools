@@ -46,7 +46,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
       {
         enabled: () => true,
         node: (
-          <Route key="0" exact path="/">
+          <Route key="0" path="/">
             <Redirect to={`/${navigate}`} />
           </Route>
         ),
@@ -54,7 +54,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
       {
         enabled: () => context.isWorkflowEnabled,
         node: (
-          <Route key="1" exact path="/Workflows">
+          <Route key="1" path="/Workflows">
             <WorkflowsPage />
           </Route>
         ),
@@ -62,7 +62,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
       {
         enabled: () => context.isWorkflowEnabled,
         node: (
-          <Route key="2" exact path="/Workflow/:instanceID">
+          <Route key="2" path="/Workflow/:instanceID">
             <WorkflowDetailsPage />
           </Route>
         ),
@@ -70,7 +70,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
       {
         enabled: () => context.isWorkflowEnabled,
         node: (
-          <Route key="5" exact path="/Forms">
+          <Route key="5" path="/Forms">
             <FormsListPage />
           </Route>
         ),
@@ -78,7 +78,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
       {
         enabled: () => context.isWorkflowEnabled,
         node: (
-          <Route key="6" exact path="/Forms/:formName">
+          <Route key="6" path="/Forms/:formName">
             <FormDetailPage />
           </Route>
         ),
@@ -86,7 +86,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
       {
         enabled: () => context.isWorkflowEnabled,
         node: (
-          <Route key="8" exact path="/WorkflowDefinition/Form/:workflowName">
+          <Route key="8" path="/WorkflowDefinition/Form/:workflowName">
             <WorkflowFormPage />
           </Route>
         ),
@@ -94,7 +94,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
       {
         enabled: () => context.isWorkflowEnabled,
         node: (
-          <Route key="9" exact path="/CustomDashboard">
+          <Route key="9" path="/CustomDashboard">
             <CustomDashboardListPage />
           </Route>
         ),
@@ -102,7 +102,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
       {
         enabled: () => context.isWorkflowEnabled,
         node: (
-          <Route key="10" exact path="/CustomDashboard/:customDashboardName">
+          <Route key="10" path="/CustomDashboard/:customDashboardName">
             <CustomDashboardViewPage />
           </Route>
         ),
@@ -118,7 +118,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
       {
         enabled: () => context.isWorkflowEnabled,
         node: (
-          <Route key="16" exact path="/Workflows/CloudEvent/:instanceId?">
+          <Route key="16" path="/Workflows/CloudEvent/:instanceId?">
             <CloudEventFormPage />
           </Route>
         ),
@@ -126,7 +126,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
       {
         enabled: () => context.isWorkflowEnabled,
         node: (
-          <Route key="17" exact path="/WorkflowDefinitions/CloudEvent">
+          <Route key="17" path="/WorkflowDefinitions/CloudEvent">
             <CloudEventFormPage />
           </Route>
         ),

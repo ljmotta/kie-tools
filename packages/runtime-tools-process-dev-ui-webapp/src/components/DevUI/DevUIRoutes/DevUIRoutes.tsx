@@ -47,7 +47,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
       {
         enabled: () => true,
         node: (
-          <Route key="0" exact path="/">
+          <Route key="0" path="/">
             <Redirect to={`/${navigate}`} />
           </Route>
         ),
@@ -55,7 +55,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
       {
         enabled: () => context.isProcessEnabled,
         node: (
-          <Route key="1" exact path="/Processes">
+          <Route key="1" path="/Processes">
             <ProcessesPage />
           </Route>
         ),
@@ -63,7 +63,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
       {
         enabled: () => context.isProcessEnabled,
         node: (
-          <Route key="2" exact path="/Process/:instanceID">
+          <Route key="2" path="/Process/:instanceID">
             <ProcessDetailsPage />
           </Route>
         ),
@@ -71,7 +71,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
       {
         enabled: () => context.isProcessEnabled,
         node: (
-          <Route key="3" exact path="/Jobs">
+          <Route key="3" path="/Jobs">
             <JobsManagementPage />
           </Route>
         ),
@@ -79,7 +79,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
       {
         enabled: () => context.isProcessEnabled,
         node: (
-          <Route key="4" exact path="/Tasks">
+          <Route key="4" path="/Tasks">
             <TaskInboxPage />
           </Route>
         ),
@@ -87,7 +87,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
       {
         enabled: () => context.isProcessEnabled,
         node: (
-          <Route key="5" exact path="/Forms">
+          <Route key="5" path="/Forms">
             <FormsListPage />
           </Route>
         ),
@@ -95,7 +95,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
       {
         enabled: () => context.isProcessEnabled,
         node: (
-          <Route key="6" exact path="/Forms/:formName">
+          <Route key="6" path="/Forms/:formName">
             <FormDetailPage />
           </Route>
         ),
@@ -103,7 +103,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
       {
         enabled: () => context.isProcessEnabled,
         node: (
-          <Route key="7" exact path="/ProcessDefinition/Form/:processName">
+          <Route key="7" path="/ProcessDefinition/Form/:processName">
             <ProcessFormPage />
           </Route>
         ),
@@ -111,7 +111,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
       {
         enabled: () => context.isProcessEnabled,
         node: (
-          <Route key="11" exact path="/TaskDetails/:taskId">
+          <Route key="11" path="/TaskDetails/:taskId">
             {(routeProps) => <TaskDetailsPage {...routeProps} />}
           </Route>
         ),

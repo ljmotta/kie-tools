@@ -84,7 +84,7 @@ export function App() {
         }
       >
         <Routes>
-          <Route exact={true} path={"/"}>
+          <Route path={"/"}>
             <p>Select a page</p>
           </Route>
           <Route path={Location.SWF_STANDALONE_EDITOR}>

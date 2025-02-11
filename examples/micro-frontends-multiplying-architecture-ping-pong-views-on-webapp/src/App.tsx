@@ -100,7 +100,7 @@ export function App() {
         }
       >
         <Routes>
-          <Route exact={true} path={"/"}>
+          <Route path={"/"}>
             <p>Select a page</p>
           </Route>
           <Route path={Location.PING_PONG_REACT_IFRAME_PAGES}>

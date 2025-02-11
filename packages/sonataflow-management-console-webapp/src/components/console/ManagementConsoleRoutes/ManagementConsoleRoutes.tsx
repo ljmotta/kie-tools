@@ -29,13 +29,13 @@ import { WorkflowFormPage } from "../../pages/WorkflowFormPage/WorkflowFormPage"
 const ManagementConsoleRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route exact path={routes.home.path({})}>
+      <Route path={routes.home.path({})}>
         <Redirect to={routes.runtimeToolsWorkflowInstances.path({})} />
       </Route>
-      <Route exact path={routes.runtimeToolsWorkflowInstances.path({})}>
+      <Route path={routes.runtimeToolsWorkflowInstances.path({})}>
         <WorkflowInstancesPage />
       </Route>
-      <Route exact path={routes.runtimeToolsWorkflowDefinitions.path({})}>
+      <Route path={routes.runtimeToolsWorkflowDefinitions.path({})}>
         <WorkflowDefinitionsPage />
       </Route>
       <Route path={routes.runtimeToolsWorkflowDetails.path({ workflowId: ":workflowId" })}>
@@ -47,7 +47,7 @@ const ManagementConsoleRoutes: React.FC = () => {
       <Route path={routes.runtimeToolsWorkflowForm.path({ workflowName: ":workflowName" })}>
         <WorkflowFormPage />
       </Route>
-      <Route exact path={routes.monitoring.path({})}>
+      <Route path={routes.monitoring.path({})}>
         <MonitoringPage dataIndexUrl={(window as any)["DATA_INDEX_ENDPOINT"]} />
       </Route>
     </Routes>

@@ -254,11 +254,11 @@ export class PMMLEditor extends React.Component<Props, State> {
                   }}
                 >
                   <Routes>
-                    <Route exact={true} path={"/"}>
+                    <Route path={"/"}>
                       {!isSingleModel && <LandingPage path={path} />}
                       {isSingleModel && <Redirect from={"/"} to={"/editor/0"} />}
                     </Route>
-                    <Route exact={true} path={"/editor/:index"}>
+                    <Route path={"/editor/:index"}>
                       <OperationContext.Provider
                         value={{
                           activeOperation: this.state.activeOperation,

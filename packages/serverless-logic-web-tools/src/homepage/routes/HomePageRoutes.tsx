@@ -67,7 +67,7 @@ export function HomePageRoutes(props: { isNavOpen: boolean }) {
           />
         )}
       </Route>
-      <Route path={routes.home.path({})} exact>
+      <Route path={routes.home.path({})}>
         <Overview isNavOpen={props.isNavOpen} />
       </Route>
       <Route path={routes.recentModels.path({})}>

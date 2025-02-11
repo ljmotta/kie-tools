@@ -38,7 +38,7 @@ export function App() {
         </div>
         <br />
         <Routes>
-          <Route exact={true} path="/dmn-read-only">
+          <Route path="/dmn-read-only">
             <DmnEditorComponent
               origin={"*"}
               key="dmn-read-only"
@@ -47,7 +47,7 @@ export function App() {
               initialContent={Promise.resolve("")}
             />
           </Route>
-          <Route exact={true} path="/dmn-editable">
+          <Route path="/dmn-editable">
             <DmnEditorComponent
               origin={"*"}
               key="dmn-editable"
@@ -56,7 +56,7 @@ export function App() {
               initialContent={Promise.resolve("")}
             />
           </Route>
-          <Route exact={true} path="/bpmn-editable">
+          <Route path="/bpmn-editable">
             <BpmnEditorComponent
               origin={"*"}
               key="bpmn-editable"
@@ -65,7 +65,7 @@ export function App() {
               initialContent={Promise.resolve("")}
             />
           </Route>
-          <Route exact={true} path="/bpmn-read-only">
+          <Route path="/bpmn-read-only">
             <BpmnEditorComponent
               origin={"*"}
               key="bpmn-read-only"
@@ -74,7 +74,7 @@ export function App() {
               initialContent={Promise.resolve("")}
             />
           </Route>
-          <Route exact={true} path="/bpmn-workitem">
+          <Route path="/bpmn-workitem">
             <BpmnEditorComponent
               origin={"*"}
               id="bpmn-workitem"
@@ -93,7 +93,7 @@ export function App() {
               }
             />
           </Route>
-          <Route exact={true} path="/both-bpmn-dmn">
+          <Route path="/both-bpmn-dmn">
             <>
               <BpmnEditorComponent origin={"*"} id="both-bpmn" readOnly={false} initialContent={Promise.resolve("")} />
               <DmnEditorComponent origin={"*"} id="both-dmn" readOnly={false} initialContent={Promise.resolve("")} />
