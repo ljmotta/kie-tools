@@ -19,7 +19,7 @@
 
 import { NoData } from "@kie-tools/runtime-tools-shared-webapp-components/dist/NoData";
 import React, { useMemo } from "react";
-import { Redirect, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { useDevUIAppContext } from "../../contexts/DevUIAppContext";
 import { WorkflowsPage } from "../../pages";
 import CloudEventFormPage from "../../pages/CloudEventFormPage/CloudEventFormPage";
@@ -47,7 +47,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
         enabled: () => true,
         node: (
           <Route key="0" path="/">
-            <Redirect to={`/${navigate}`} />
+            <Navigate to={`/${navigate}`} />
           </Route>
         ),
       },

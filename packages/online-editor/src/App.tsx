@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import { useMemo } from "react";
-import { Redirect, Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import { HashRouter } from "react-router-dom";
 import { EditorEnvelopeLocatorContextProvider } from "./envelopeLocator/hooks/EditorEnvelopeLocatorContext";
 import { EditorPage } from "./editor/EditorPage";
@@ -73,7 +73,7 @@ function RoutesSwitch() {
   return (
     <Routes>
       <Route path={routes.editor.path({ extension: `:extension(${supportedExtensions})` })}>
-        {({ match }: any) => <Redirect to={routes.newModel.path({ extension: match!.params.extension! })} />}
+        {({ match }: any) => <Navigate to={routes.newModel.path({ extension: match!.params.extension! })} />}
       </Route>
       <Route path={routes.newModel.path({ extension: `:extension(${supportedExtensions})` })}>
         {({ match }: any) => <NewWorkspaceWithEmptyFilePage extension={match!.params.extension!} />}

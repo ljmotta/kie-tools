@@ -18,7 +18,7 @@
  */
 
 import React from "react";
-import { Redirect, Routes } from "react-router";
+import { Navigate, Routes } from "react-router";
 import { Route } from "react-router-dom";
 import { useRoutes } from "../../navigation/Hooks";
 import { GitHubSettings } from "../github/GitHubSettings";
@@ -56,7 +56,7 @@ export function SettingsPageRoutes(props: {} & SettingsPageProps) {
         <RuntimeToolsSettings {...settingsPageProps} />
       </Route>
       <Route>
-        <Redirect to={routes.settings.github.path({})} />
+        <Navigate to={routes.settings.github.path({})} />
       </Route>
     </Routes>
   );

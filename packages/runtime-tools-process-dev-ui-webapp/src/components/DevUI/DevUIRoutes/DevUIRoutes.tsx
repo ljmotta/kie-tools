@@ -17,7 +17,7 @@
  * under the License.
  */
 import React, { useMemo } from "react";
-import { Redirect, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { JobsManagementPage, ProcessesPage } from "../../pages";
 import ProcessDetailsPage from "../../pages/ProcessDetailsPage/ProcessDetailsPage";
 import TaskInboxPage from "../../pages/TaskInboxPage/TaskInboxPage";
@@ -48,7 +48,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
         enabled: () => true,
         node: (
           <Route key="0" path="/">
-            <Redirect to={`/${navigate}`} />
+            <Navigate to={`/${navigate}`} />
           </Route>
         ),
       },

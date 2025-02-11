@@ -20,7 +20,7 @@
 import * as React from "react";
 import { I18nDictionariesProvider } from "@kie-tools-core/i18n/dist/react-components";
 import { Route, Routes } from "react-router";
-import { HashRouter, Redirect } from "react-router-dom";
+import { HashRouter, Navigate } from "react-router-dom";
 import { AppContext } from "./AppContext";
 import { AppContextProvider } from "./AppContextProvider";
 import { DmnFormErrorPage } from "./DmnFormErrorPage";
@@ -47,19 +47,19 @@ export function DmnFormApp() {
                     <Route path={routes.form.path({ modelName: ":modelName*" })}>
                       {({ match }: any) => {
                         const formData = app.data!.forms.find((form) => form.modelName === match?.params.modelName);
-                        return formData ? <DmnFormPage formData={formData} /> : <Redirect to={routes.error.path({})} />;
+                        return formData ? <DmnFormPage formData={formData} /> : <Navigate to={routes.error.path({})} />;
                       }}
                     </Route>
                   )}
                   {app.data?.forms[0] && (
                     <Route path={routes.root.path({})}>
-                      <Redirect to={routes.form.path({ modelName: app.data.forms[0].modelName })} />
+                      <Navigate to={routes.form.path({ modelName: app.data.forms[0].modelName })} />
                     </Route>
                   )}
                   <Route path={routes.error.path({})}>
                     <DmnFormErrorPage />
                   </Route>
-                  {!app.data && <Redirect to={routes.error.path({})} />}
+                  {!app.data && <Navigate to={routes.error.path({})} />}
                   <Route>
                     <NoMatchPage />
                   </Route>

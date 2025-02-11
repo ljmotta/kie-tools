@@ -17,7 +17,7 @@
  * under the License.
  */
 import * as React from "react";
-import { Redirect, Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { routes } from "../../../navigation/Routes";
 import { TriggerCloudEventPage } from "../../pages/TriggerCloudEventPage/TriggerCloudEventPage";
 import MonitoringPage from "../../pages/MonitoringPage/MonitoringPage";
@@ -30,7 +30,7 @@ const ManagementConsoleRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path={routes.home.path({})}>
-        <Redirect to={routes.runtimeToolsWorkflowInstances.path({})} />
+        <Navigate to={routes.runtimeToolsWorkflowInstances.path({})} />
       </Route>
       <Route path={routes.runtimeToolsWorkflowInstances.path({})}>
         <WorkflowInstancesPage />

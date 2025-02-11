@@ -36,7 +36,7 @@ import { HistoryContext, HistoryService } from "./history";
 import { LandingPage } from "./components/LandingPage/templates";
 import { Page } from "@patternfly/react-core/dist/js/components/Page";
 import { HashRouter } from "react-router-dom";
-import { Redirect, Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import { EmptyStateNoContent } from "./components/LandingPage/organisms";
 import { SingleEditorRouter } from "./components/EditorCore/organisms";
 import { PMMLModelMapping, PMMLModels, SupportedCapability } from "./PMMLModelHelper";
@@ -256,7 +256,7 @@ export class PMMLEditor extends React.Component<Props, State> {
                   <Routes>
                     <Route path={"/"}>
                       {!isSingleModel && <LandingPage path={path} />}
-                      {isSingleModel && <Redirect from={"/"} to={"/editor/0"} />}
+                      {isSingleModel && <Navigate to={"/editor/0"} />}
                     </Route>
                     <Route path={"/editor/:index"}>
                       <OperationContext.Provider

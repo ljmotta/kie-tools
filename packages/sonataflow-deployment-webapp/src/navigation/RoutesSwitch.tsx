@@ -17,7 +17,7 @@
  * under the License.
  */
 import React from "react";
-import { Redirect, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { APPDATA_JSON_FILENAME } from "../AppConstants";
 import { ErrorKind, ErrorPage } from "../pages/ErrorPage";
 import { NoMatchPage } from "../pages/NoMatchPage";
@@ -42,7 +42,7 @@ export function RoutesSwitch() {
         <ErrorPage kind={ErrorKind.APPDATA_JSON} errors={[`There was an error with the ${APPDATA_JSON_FILENAME}`]} />
       </Route>
       <Route path={routes.home.path({})}>
-        <Redirect to={routes.runtimeTools.workflowDefinitions.path({})} />
+        <Navigate to={routes.runtimeTools.workflowDefinitions.path({})} />
       </Route>
       <Route>
         <NoMatchPage />
