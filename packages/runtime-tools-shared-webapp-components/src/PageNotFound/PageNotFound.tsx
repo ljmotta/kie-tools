@@ -38,11 +38,7 @@ interface IOwnProps {
   defaultButton: string;
 }
 
-export type LocationProps = H.LocationState & { prev?: string };
-
-export interface PageNotFoundProps extends IOwnProps, OUIAProps {}
-
-export const PageNotFound: React.FC<PageNotFoundProps> = ({ ouiaId, ouiaSafe, ...props }) => {
+export const PageNotFound: React.FC<IOwnProps & OUIAProps> = ({ ouiaId, ouiaSafe, ...props }) => {
   const location = useLocation();
 
   let prevPath;

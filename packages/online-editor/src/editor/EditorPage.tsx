@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useHistory } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useRoutes } from "../navigation/Hooks";
 import { EditorToolbar } from "./Toolbar/EditorToolbar";
 import { useOnlineI18n } from "../i18n";
@@ -65,21 +65,17 @@ import { useSettings } from "../settings/SettingsContext";
 import { EditorEnvelopeLocatorFactory } from "../envelopeLocator/EditorEnvelopeLocatorFactory";
 import * as __path from "path";
 
-export interface Props {
-  workspaceId: string;
-  fileRelativePath: string;
-}
-
 let saveVersion = 1;
 let refreshVersion = 0;
 
 const ISSUES_URL = "https://github.com/apache/incubator-kie-issues/issues";
 
-export function EditorPage(props: Props) {
+export function EditorPage() {
   const { env } = useEnv();
   const routes = useRoutes();
   const editorEnvelopeLocator = useEditorEnvelopeLocator();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const { workspaceId: optionalWorkspaceId, fileRelativePath, extension } = useParams();
   const workspaces = useWorkspaces();
   const { previewSvgService } = usePreviewSvgs();
   const { locale, i18n } = useOnlineI18n();
@@ -89,13 +85,15 @@ export function EditorPage(props: Props) {
   const [isFileBroken, setFileBroken] = useState(false);
   const [_, setEditorPageError] = useState(false);
   const lastContent = useRef<string>();
-  const workspaceFilePromise = useWorkspaceFilePromise(props.workspaceId, props.fileRelativePath);
+  const fileRelativeCompletePath = `${fileRelativePath}.${extension}`;
+  const workspaceId = optionalWorkspaceId!;
+  const workspaceFilePromise = useWorkspaceFilePromise(workspaceId, fileRelativeCompletePath);
 
   const [embeddedEditorFile, setEmbeddedEditorFile] = useState<EmbeddedEditorFile>();
 
   useEffect(() => {
-    document.title = `${env.KIE_SANDBOX_APP_NAME} :: ${props.fileRelativePath}`;
-  }, [env.KIE_SANDBOX_APP_NAME, props.fileRelativePath]);
+    document.title = `${env.KIE_SANDBOX_APP_NAME} :: ${fileRelativeCompletePath}`;
+  }, [env.KIE_SANDBOX_APP_NAME, fileRelativeCompletePath]);
 
   const setContentErrorAlert = useGlobalAlert(
     useCallback(() => {
@@ -122,15 +120,18 @@ export function EditorPage(props: Props) {
       return;
     }
 
-    history.replace({
-      pathname: routes.workspaceWithFilePath.path({
-        workspaceId: workspaceFilePromise.data.workspaceFile.workspaceId,
-        fileRelativePath: workspaceFilePromise.data.workspaceFile.relativePathWithoutExtension,
-        extension: workspaceFilePromise.data.workspaceFile.extension,
-      }),
-      search: queryParams.toString(),
-    });
-  }, [history, routes, workspaceFilePromise, queryParams]);
+    navigate(
+      {
+        pathname: routes.workspaceWithFilePath.path({
+          workspaceId: workspaceFilePromise.data.workspaceFile.workspaceId,
+          fileRelativePath: workspaceFilePromise.data.workspaceFile.relativePathWithoutExtension,
+          extension: workspaceFilePromise.data.workspaceFile.extension,
+        }),
+        search: queryParams.toString(),
+      },
+      { replace: true }
+    );
+  }, [navigate, routes, workspaceFilePromise, queryParams]);
 
   // begin (REFRESH)
   // Update EmbeddedEditorFile, but only if content is different from what was saved
@@ -274,23 +275,23 @@ export function EditorPage(props: Props) {
   const handleResourceContentRequest = useCallback(
     async (request: ResourceContentRequest) => {
       return workspaces.resourceContentGet({
-        workspaceId: props.workspaceId,
+        workspaceId: workspaceId,
         relativePath: request.normalizedPosixPathRelativeToTheWorkspaceRoot, // This is the "normalized posix path relative to the workspace root", or here in the KIE Sandbox context, just "relativePath", as it is assumed that all "relativePaths" are relative to the workspace root.
         opts: request.opts,
       });
     },
-    [props.workspaceId, workspaces]
+    [workspaceId, workspaces]
   );
 
   const handleResourceListRequest = useCallback(
     async (request: ResourceListRequest) => {
       return workspaces.resourceContentList({
-        workspaceId: props.workspaceId,
+        workspaceId: workspaceId,
         globPattern: request.pattern,
         opts: request.opts,
       });
     },
-    [workspaces, props.workspaceId]
+    [workspaces, workspaceId]
   );
 
   const refreshEditor = useCallback(() => {
@@ -314,7 +315,7 @@ export function EditorPage(props: Props) {
         );
       }
 
-      history.push({
+      navigate({
         pathname: routes.workspaceWithFilePath.path({
           workspaceId: file.workspaceId,
           fileRelativePath: file.relativePathWithoutExtension,
@@ -322,7 +323,7 @@ export function EditorPage(props: Props) {
         }),
       });
     },
-    [workspaceFilePromise, workspaces, history, routes]
+    [workspaceFilePromise, workspaces, navigate, routes]
   );
 
   const handleSetContentError = useCallback(() => {
@@ -399,7 +400,7 @@ Error details: ${err}`);
   const { settings } = useSettings();
 
   const settingsAwareEditorEnvelopeLocator = useMemo(() => {
-    if (settings.editors.useLegacyDmnEditor && props.fileRelativePath.endsWith(".dmn")) {
+    if (settings.editors.useLegacyDmnEditor && fileRelativeCompletePath.endsWith(".dmn")) {
       return new EditorEnvelopeLocatorFactory().create({
         targetOrigin: window.location.origin,
         editorsConfig: [LEGACY_DMN_EDITOR_EDITOR_CONFIG],
@@ -407,7 +408,7 @@ Error details: ${err}`);
     }
 
     return editorEnvelopeLocator;
-  }, [editorEnvelopeLocator, props.fileRelativePath, settings.editors.useLegacyDmnEditor]);
+  }, [editorEnvelopeLocator, fileRelativeCompletePath, settings.editors.useLegacyDmnEditor]);
 
   // `workspaceFilePromise` is ONLY updated when there's an external change on this file (e.g., on another tab), but
   // when we jump between the classic and the new DMN Editor, `settingsAwareEditorEnvelopeLocator` changes,
@@ -459,7 +460,7 @@ Error details: ${err}`);
           </Bullseye>
         }
         rejected={(errors) => (
-          <EditorPageErrorPage title={"Can't open file"} errors={errors} path={props.fileRelativePath} />
+          <EditorPageErrorPage title={"Can't open file"} errors={errors} path={fileRelativeCompletePath} />
         )}
         resolved={(file) => (
           <ErrorBoundary error={errorMessage} setHasError={setEditorPageError}>

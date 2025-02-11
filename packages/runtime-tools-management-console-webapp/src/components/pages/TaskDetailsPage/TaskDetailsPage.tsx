@@ -17,7 +17,6 @@
  * under the License.
  */
 import React, { useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/js/components/Breadcrumb";
 import {
   Drawer,
@@ -58,15 +57,14 @@ import { PageTitle } from "@kie-tools/runtime-tools-components/dist/components/P
 import { EmbeddedTaskDetails } from "@kie-tools/runtime-tools-process-enveloped-components/dist/taskDetails";
 import { UserTaskInstance } from "@kie-tools/runtime-tools-process-gateway-api/dist/types";
 import { TaskState } from "@kie-tools/runtime-tools-process-enveloped-components/dist/taskDetails";
+import { useNavigate, useParams } from "react-router";
+import { Link } from "react-router-dom";
 
-interface Props {
-  taskId?: string;
-}
-
-const TaskDetailsPage: React.FC<RouteComponentProps<Props> & OUIAProps> = ({ ouiaId, ouiaSafe, ...props }) => {
+const TaskDetailsPage: React.FC<OUIAProps> = ({ ouiaId, ouiaSafe }) => {
   const taskInboxGatewayApi: TaskInboxGatewayApi = useTaskInboxGatewayApi();
+  const navigate = useNavigate();
+  const { taskId } = useParams();
 
-  const [taskId] = useState<string>(props.match.params.taskId);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userTask, setUserTask] = useState<UserTaskInstance>();
   const [notification, setNotification] = useState<Notification>();
@@ -116,7 +114,7 @@ const TaskDetailsPage: React.FC<RouteComponentProps<Props> & OUIAProps> = ({ oui
 
   const goToInbox = () => {
     taskInboxGatewayApi.clearOpenTask();
-    props.history.push("/Tasks");
+    navigate("/Tasks");
   };
 
   const onSubmitSuccess = (phase: string) => {

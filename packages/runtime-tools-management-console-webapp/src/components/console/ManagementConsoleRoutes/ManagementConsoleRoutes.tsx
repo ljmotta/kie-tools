@@ -17,41 +17,33 @@
  * under the License.
  */
 import * as React from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
-import { JobsPage, ProcessListPage, ProcessDetailsPage, TasksPage, TaskDetailsPage } from "../../pages";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { JobsPage, ProcessDetailsPage, TasksPage, TaskDetailsPage } from "../../pages";
 import { PageNotFound } from "@kie-tools/runtime-tools-shared-webapp-components/dist/PageNotFound";
 import { NoData } from "@kie-tools/runtime-tools-shared-webapp-components/dist/NoData";
 
 const ManagementConsoleRoutes: React.FC = () => {
   return (
-    <Switch>
-      <Route exact path="/">
-        <Redirect to="/ProcessInstances" />
+    <Routes>
+      <Route path="/">
+        <Navigate to="/ProcessInstances" />
       </Route>
-      <Route exact path="/ProcessInstances">
-        ProcessListPage
-      </Route>
-      <Route exact path="/Jobs">
+      <Route path="/ProcessInstances">ProcessListPage</Route>
+      <Route path="/Jobs">
         <JobsPage />
       </Route>
-      <Route exact path="/Process/:instanceID">
+      <Route path="/Process/:instanceID">
         <ProcessDetailsPage />
       </Route>
-      <Route exact path="/Tasks">
+      <Route path="/Tasks">
         <TasksPage />
       </Route>
-      <Route exact path="/TaskDetails/:taskId">
-        {(routeProps) => <TaskDetailsPage {...routeProps} />}
+      <Route path="/TaskDetails/:taskId">
+        <TaskDetailsPage />
       </Route>
-      <Route
-        path="/NoData"
-        render={(_props) => <NoData {..._props} defaultPath="/Jobs" defaultButton="Go to Jobs" />}
-      ></Route>
-      <Route
-        path="*"
-        render={(_props) => <PageNotFound {..._props} defaultPath="/Jobs" defaultButton="Go to Jobs" />}
-      ></Route>
-    </Switch>
+      <Route path="/NoData">{<NoData defaultPath="/Jobs" defaultButton="Go to Jobs" />}</Route>
+      <Route path="*">{<PageNotFound defaultPath="/Jobs" defaultButton="Go to Jobs" />}</Route>
+    </Routes>
   );
 };
 

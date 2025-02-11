@@ -17,7 +17,6 @@
  * under the License.
  */
 import React, { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
 import {
   Drawer,
   DrawerActions,
@@ -57,16 +56,14 @@ import {
 } from "@kie-tools/runtime-tools-components/dist/components/KogitoEmptyState";
 import { EmbeddedTaskDetails, TaskState } from "@kie-tools/runtime-tools-process-enveloped-components/dist/taskDetails";
 import { PageTitle } from "@kie-tools/runtime-tools-components/dist/components/PageTitle";
+import { useNavigate, useParams } from "react-router";
 
-interface Props {
-  taskId?: string;
-}
-
-const TaskDetailsPage: React.FC<RouteComponentProps<Props> & OUIAProps> = ({ ouiaId, ouiaSafe, ...props }) => {
+const TaskDetailsPage: React.FC<OUIAProps> = ({ ouiaId, ouiaSafe }) => {
   const taskInboxGatewayApi: TaskInboxGatewayApi = useTaskInboxGatewayApi();
   const appContext = useDevUIAppContext();
+  const navigate = useNavigate();
+  const { taskId } = useParams();
 
-  const [taskId] = useState<string>(props.match.params.taskId);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userTask, setUserTask] = useState<UserTaskInstance>();
   const [notification, setNotification] = useState<Notification>();
@@ -118,7 +115,7 @@ const TaskDetailsPage: React.FC<RouteComponentProps<Props> & OUIAProps> = ({ oui
 
   const goToInbox = () => {
     taskInboxGatewayApi.clearOpenTask();
-    props.history.push("/TaskInbox");
+    navigate("/TaskInbox");
   };
 
   const onSubmitSuccess = (phase: string) => {

@@ -76,7 +76,7 @@ function RoutesSwitch() {
         {({ match }: any) => <Navigate to={routes.newModel.path({ extension: match!.params.extension! })} />}
       </Route>
       <Route path={routes.newModel.path({ extension: `:extension(${supportedExtensions})` })}>
-        {({ match }: any) => <NewWorkspaceWithEmptyFilePage extension={match!.params.extension!} />}
+        <NewWorkspaceWithEmptyFilePage />
       </Route>
       <Route path={routes.import.path({})}>
         <NewWorkspaceFromUrlPage />
@@ -88,12 +88,7 @@ function RoutesSwitch() {
           extension: `:extension(${supportedExtensions})`,
         })}
       >
-        {({ match }: any) => (
-          <EditorPage
-            workspaceId={match!.params.workspaceId!}
-            fileRelativePath={`${match!.params.fileRelativePath}.${match!.params.extension}`}
-          />
-        )}
+        <EditorPage />
       </Route>
       <Route path={routes.home.path({})}>
         <HomePage />

@@ -30,7 +30,7 @@ export function RoutesSwitch() {
   return (
     <Routes>
       <Route path={routes.workflows.form.path({ workflowId: ":workflowId" })}>
-        {({ match }: any) => <WorkflowFormPage workflowId={match!.params.workflowId!} />}
+        <WorkflowFormPage />
       </Route>
       <Route path={routes.workflows.cloudEvent.path({})}>
         <CloudEventFormPage />

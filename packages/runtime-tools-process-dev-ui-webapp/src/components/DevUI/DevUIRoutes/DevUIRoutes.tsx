@@ -112,7 +112,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
         enabled: () => context.isProcessEnabled,
         node: (
           <Route key="11" path="/TaskDetails/:taskId">
-            {(routeProps) => <TaskDetailsPage {...routeProps} />}
+            <TaskDetailsPage />
           </Route>
         ),
       },
@@ -120,7 +120,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
         enabled: () => true,
         node: (
           <Route key="14" path="/NoData">
-            {(_props) => <NoData {..._props} defaultPath={defaultPath} defaultButton={defaultButton} />}
+            <NoData defaultPath={defaultPath} defaultButton={defaultButton} />
           </Route>
         ),
       },
@@ -128,7 +128,7 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
         enabled: () => true,
         node: (
           <Route key="18" path="*">
-            {(_props) => <PageNotFound {..._props} defaultPath={defaultPath} defaultButton={defaultButton} />}
+            <PageNotFound defaultPath={defaultPath} defaultButton={defaultButton} />
           </Route>
         ),
       },

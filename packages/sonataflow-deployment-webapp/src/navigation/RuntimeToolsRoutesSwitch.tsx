@@ -33,7 +33,7 @@ export function RuntimeToolsRoutesSwitch() {
         <RuntimeToolsWorkflowInstances />
       </Route>
       <Route path={routes.runtimeTools.workflowDetails.path({ workflowId: ":workflowId" })}>
-        {({ match }: any) => <RuntimeToolsWorkflowDetails workflowId={match!.params.workflowId!} />}
+        <RuntimeToolsWorkflowDetails />
       </Route>
     </Routes>
   );

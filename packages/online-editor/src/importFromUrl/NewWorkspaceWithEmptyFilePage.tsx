@@ -20,7 +20,6 @@
 import * as React from "react";
 import { useWorkspaces } from "@kie-tools-core/workspaces-git-fs/dist/context/WorkspacesContext";
 import { useEffect } from "react";
-import { useHistory } from "react-router";
 import { useRoutes } from "../navigation/Hooks";
 import { OnlineEditorPage } from "../pageTemplate/OnlineEditorPage";
 import { PageSection } from "@patternfly/react-core/dist/js/components/Page";
@@ -28,10 +27,12 @@ import { Text, TextContent, TextVariants } from "@patternfly/react-core/dist/js/
 import { Bullseye } from "@patternfly/react-core/dist/js/layouts/Bullseye";
 import { Spinner } from "@patternfly/react-core/dist/js/components/Spinner";
 import { AUTH_SESSION_NONE } from "../authSessions/AuthSessionApi";
+import { useNavigate, useParams } from "react-router";
 
-export function NewWorkspaceWithEmptyFilePage(props: { extension: string }) {
+export function NewWorkspaceWithEmptyFilePage() {
   const workspaces = useWorkspaces();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const { extension } = useParams();
   const routes = useRoutes();
 
   useEffect(() => {
@@ -44,19 +45,22 @@ export function NewWorkspaceWithEmptyFilePage(props: { extension: string }) {
         workspaces.addEmptyFile({
           workspaceId: workspace.workspaceId,
           destinationDirRelativePath: "",
-          extension: props.extension,
+          extension: extension!,
         })
       )
       .then((file) => {
-        history.replace({
-          pathname: routes.workspaceWithFilePath.path({
-            workspaceId: file.workspaceId,
-            fileRelativePath: file.relativePathWithoutExtension,
-            extension: file.extension,
-          }),
-        });
+        navigate(
+          {
+            pathname: routes.workspaceWithFilePath.path({
+              workspaceId: file.workspaceId,
+              fileRelativePath: file.relativePathWithoutExtension,
+              extension: file.extension,
+            }),
+          },
+          { replace: true }
+        );
       });
-  }, [routes, history, props.extension, workspaces]);
+  }, [routes, navigate, extension, workspaces]);
 
   return (
     <OnlineEditorPage>
