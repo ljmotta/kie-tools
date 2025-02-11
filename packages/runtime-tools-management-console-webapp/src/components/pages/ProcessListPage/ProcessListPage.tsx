@@ -20,10 +20,7 @@ import * as React from "react";
 import { useEffect } from "react";
 import { Card } from "@patternfly/react-core/dist/js/components/Card";
 import { PageSection } from "@patternfly/react-core/dist/js/components/Page";
-import { RouteComponentProps } from "react-router-dom";
 import ProcessListContainer from "../../containers/ProcessListContainer/ProcessListContainer";
-import { StaticContext } from "react-router";
-import * as H from "history";
 import "../../styles.css";
 import {
   OUIAProps,
@@ -32,18 +29,15 @@ import {
 } from "@kie-tools/runtime-tools-components/dist/ouiaTools";
 import { ProcessListState } from "@kie-tools/runtime-tools-process-gateway-api/dist/types";
 import { PageSectionHeader } from "@kie-tools/runtime-tools-components/dist/components/PageSectionHeader";
+import { useLocation } from "react-router";
 
-interface MatchProps {
-  instanceID: string;
-}
-
-const ProcessListPage: React.FC<RouteComponentProps<MatchProps, StaticContext, H.LocationState> & OUIAProps> = (
-  props
-) => {
+const ProcessListPage: React.FC<OUIAProps> = (props) => {
   useEffect(() => {
     return ouiaPageTypeAndObjectId("process-instances");
   });
-  const initialState: ProcessListState = props.location && (props.location.state as ProcessListState);
+  const location = useLocation();
+
+  const initialState: ProcessListState = location && (location.state as ProcessListState);
 
   return (
     <>

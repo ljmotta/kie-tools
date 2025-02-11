@@ -22,8 +22,7 @@ import { Card } from "@patternfly/react-core/dist/js/components/Card";
 import { PageSection } from "@patternfly/react-core/dist/js/components/Page";
 import { Bullseye } from "@patternfly/react-core/dist/js/layouts/Bullseye";
 import ProcessDetailsContainer from "../../containers/ProcessDetailsContainer/ProcessDetailsContainer";
-import { useNavigate } from "react-router";
-import * as H from "history";
+import { useLocation, useNavigate, useParams } from "react-router";
 import "../../styles.css";
 import { OUIAProps, ouiaPageTypeAndObjectId } from "@kie-tools/runtime-tools-components/dist/ouiaTools";
 import { ProcessInstance } from "@kie-tools/runtime-tools-process-gateway-api/dist/types";
@@ -35,28 +34,23 @@ import {
   ProcessDetailsGatewayApi,
 } from "@kie-tools/runtime-tools-process-webapp-components/dist/ProcessDetails";
 
-interface MatchProps {
-  instanceID: string;
-}
-
-const ProcessDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContext, H.LocationState> & OUIAProps> = ({
-  ...props
-}) => {
-  const processId = props.match.params.instanceID;
+const ProcessDetailsPage: React.FC<OUIAProps> = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { instanceID: processId } = useParams();
   useEffect(() => {
     return ouiaPageTypeAndObjectId("process-instances", processId);
   });
 
   const gatewayApi: ProcessDetailsGatewayApi = useProcessDetailsGatewayApi();
 
-  const navigate = useNavigate();
   const [processInstance, setProcessInstance] = useState<ProcessInstance>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>();
 
   useEffect(() => {
     window.onpopstate = () => {
-      props.navigate({ state: Object.assign({}, props.location.state) });
+      navigate({}, { state: Object.assign({}, location.state) });
     };
   });
 
@@ -86,7 +80,7 @@ const ProcessDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContext
       let prevPath;
       /* istanbul ignore else */
       if (currentPage) {
-        currentPage = Object.assign({}, currentPage, props.location.state);
+        currentPage = Object.assign({}, currentPage, location.state);
         const tempPath = currentPage.prev.split("/");
         prevPath = tempPath.filter((item) => item);
       }
@@ -105,12 +99,12 @@ const ProcessDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContext
                   .trim()
                   .toLowerCase()}`
               : "Go to process instances",
-            rememberedData: Object.assign({}, props.location.state),
+            rememberedData: Object.assign({}, location.state),
           },
         }
       );
     }
-  }, [error, navigate, isLoading, processId, processInstance, props.location.state]);
+  }, [error, navigate, isLoading, processId, processInstance, location.state]);
 
   const body = useMemo(() => {
     // Loading State
@@ -150,7 +144,7 @@ const ProcessDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContext
           "/",
           {
             pathname: "/ProcessInstances",
-            state: Object.assign({}, props.location.state),
+            state: Object.assign({}, location.state),
           },
         ]}
       />

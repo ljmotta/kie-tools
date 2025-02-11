@@ -34,37 +34,30 @@ import {
   WorkflowDetailsGatewayApi,
   useWorkflowDetailsGatewayApi,
 } from "@kie-tools/runtime-tools-swf-webapp-components/dist/WorkflowDetails/";
-import { useNavigate } from "react-router";
-import * as H from "history";
+import { useLocation, useNavigate, useParams } from "react-router";
 import "../../styles.css";
 import { WorkflowInstance } from "@kie-tools/runtime-tools-swf-gateway-api/dist/types";
 import { useDevUIAppContext } from "../../contexts/DevUIAppContext";
 
-interface MatchProps {
-  instanceID: string;
-}
-
-const WorkflowDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContext, H.LocationState> & OUIAProps> = ({
-  ouiaId,
-  ouiaSafe,
-  ...props
-}) => {
+const WorkflowDetailsPage: React.FC<OUIAProps> = ({ ouiaId, ouiaSafe }) => {
   useEffect(() => {
     return ouiaPageTypeAndObjectId("workflow-details");
   });
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { instanceID: workflowId } = useParams();
+
   const gatewayApi: WorkflowDetailsGatewayApi = useWorkflowDetailsGatewayApi();
   const appContext = useDevUIAppContext();
 
-  const navigate = useNavigate();
-  const workflowId = props.match.params.instanceID;
   const [workflowInstance, setWorkflowInstance] = useState<WorkflowInstance>({} as WorkflowInstance);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string>("");
   let currentPage = JSON.parse(window.localStorage.getItem("state") ?? "null");
   useEffect(() => {
     window.onpopstate = () => {
-      props.navigate({ state: Object.assign({}, props.location.state) });
+      navigate({}, { state: Object.assign({}, location.state) });
     };
   });
 
@@ -83,7 +76,7 @@ const WorkflowDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContex
       if (responseError.length === 0 && fetchError.length === 0 && Object.keys(response).length === 0) {
         let prevPath;
         if (currentPage) {
-          currentPage = Object.assign({}, currentPage, props.location.state);
+          currentPage = Object.assign({}, currentPage, location.state);
           const tempPath = currentPage.prev.split("/");
           prevPath = tempPath.filter((item: string) => item);
         }
@@ -102,7 +95,7 @@ const WorkflowDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContex
                     .trim()
                     .toLowerCase()}`
                 : "Go to workflow instances",
-              rememberedData: Object.assign({}, props.location.state),
+              rememberedData: Object.assign({}, location.state),
             },
           }
         );

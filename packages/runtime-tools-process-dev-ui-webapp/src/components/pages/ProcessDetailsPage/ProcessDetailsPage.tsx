@@ -28,8 +28,7 @@ import {
   ProcessDetailsGatewayApi,
   useProcessDetailsGatewayApi,
 } from "@kie-tools/runtime-tools-process-webapp-components/dist/ProcessDetails";
-import { useNavigate } from "react-router";
-import * as H from "history";
+import { useLocation, useNavigate, useParams } from "react-router";
 import "../../styles.css";
 import { useDevUIAppContext } from "../../contexts/DevUIAppContext";
 import {
@@ -39,31 +38,24 @@ import {
 } from "@kie-tools/runtime-tools-components/dist/ouiaTools";
 import { ProcessInstance } from "@kie-tools/runtime-tools-process-gateway-api/dist/types";
 
-interface MatchProps {
-  instanceID: string;
-}
-
-const ProcessDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContext, H.LocationState> & OUIAProps> = ({
-  ouiaId,
-  ouiaSafe,
-  ...props
-}) => {
+const ProcessDetailsPage: React.FC<OUIAProps> = ({ ouiaId, ouiaSafe }) => {
   useEffect(() => {
     return ouiaPageTypeAndObjectId("process-details");
   });
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { instanceID: processId } = useParams();
+
   const gatewayApi: ProcessDetailsGatewayApi = useProcessDetailsGatewayApi();
   const appContext = useDevUIAppContext();
-
-  const navigate = useNavigate();
-  const processId = props.match.params.instanceID;
   const [processInstance, setProcessInstance] = useState<ProcessInstance>({} as ProcessInstance);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string>("");
   let currentPage = JSON.parse(window.localStorage.getItem("state"));
   useEffect(() => {
     window.onpopstate = () => {
-      props.navigate({ state: Object.assign({}, props.location.state) });
+      navigate({}, { state: Object.assign({}, location.state) });
     };
   });
 
@@ -84,7 +76,7 @@ const ProcessDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContext
         let prevPath;
         /* istanbul ignore else */
         if (currentPage) {
-          currentPage = Object.assign({}, currentPage, props.location.state);
+          currentPage = Object.assign({}, currentPage, location.state);
           const tempPath = currentPage.prev.split("/");
           prevPath = tempPath.filter((item) => item);
         }
@@ -103,7 +95,7 @@ const ProcessDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContext
                     .trim()
                     .toLowerCase()}`
                 : "Go to process instances",
-              rememberedData: Object.assign({}, props.location.state),
+              rememberedData: Object.assign({}, location.state),
             },
           }
         );

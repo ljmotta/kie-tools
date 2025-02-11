@@ -29,9 +29,8 @@ import { WorkflowListContainer } from "@kie-tools/runtime-tools-swf-webapp-compo
 import { Card } from "@patternfly/react-core/dist/js/components/Card";
 import { PageSection } from "@patternfly/react-core/dist/js/components/Page";
 import { Tab, Tabs, TabTitleText } from "@patternfly/react-core/dist/js/components/Tabs";
-import * as H from "history";
 import React, { ReactText, useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useDevUIAppContext } from "../../contexts/DevUIAppContext";
 import "../../styles.css";
 import {
@@ -40,17 +39,10 @@ import {
 } from "@kie-tools/runtime-tools-swf-webapp-components/dist/WorkflowList";
 import { changeBaseURLToCurrentLocation } from "../../../url";
 
-interface MatchProps {
-  instanceID: string;
-}
-
-const WorkflowsPage: React.FC<RouteComponentProps<MatchProps, StaticContext, H.LocationState> & OUIAProps> = ({
-  ouiaId,
-  ouiaSafe,
-  ...props
-}) => {
+const WorkflowsPage: React.FC<OUIAProps> = ({ ouiaId, ouiaSafe }) => {
   const apiContext = useDevUIAppContext();
   const navigate = useNavigate();
+  const location = useLocation();
   const gatewayApi: WorkflowListGatewayApi = useWorkflowListGatewayApi();
 
   const [activeTabKey, setActiveTabKey] = useState<ReactText>(0);
@@ -59,7 +51,7 @@ const WorkflowsPage: React.FC<RouteComponentProps<MatchProps, StaticContext, H.L
     return ouiaPageTypeAndObjectId("workflow-instances");
   });
 
-  const initialState: WorkflowListState = props.location && (props.location.state as WorkflowListState);
+  const initialState: WorkflowListState = location && (location.state as WorkflowListState);
 
   const handleTabClick = (_event: React.MouseEvent<HTMLElement, MouseEvent>, tabIndex: number) => {
     setActiveTabKey(tabIndex);
