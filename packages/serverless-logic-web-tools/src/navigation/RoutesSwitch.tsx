@@ -35,26 +35,22 @@ export function RoutesSwitch() {
   const pageContainerRef = useRef<HTMLDivElement>(null);
   const [isNavOpen, setIsNavOpen] = useState(true);
 
-  const renderPage = () => {
-    return (
-      <OnlineEditorPage pageContainerRef={pageContainerRef} isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen}>
-        {!isRouteInSettingsSection ? (
-          <HomePageRoutes isNavOpen={isNavOpen} />
-        ) : (
-          <SettingsPageRoutes pageContainerRef={pageContainerRef} />
-        )}
-        {buildInfo && (
-          <div className={"kie-tools--build-info"}>
-            <Label>{buildInfo}</Label>
-          </div>
-        )}
-      </OnlineEditorPage>
-    );
-  };
-
   return (
     <Switch>
-      <Route path={routes.home.path({})} render={renderPage}></Route>
+      <Route path={routes.home.path({})}>
+        <OnlineEditorPage pageContainerRef={pageContainerRef} isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen}>
+          {!isRouteInSettingsSection ? (
+            <HomePageRoutes isNavOpen={isNavOpen} />
+          ) : (
+            <SettingsPageRoutes pageContainerRef={pageContainerRef} />
+          )}
+          {buildInfo && (
+            <div className={"kie-tools--build-info"}>
+              <Label>{buildInfo}</Label>
+            </div>
+          )}
+        </OnlineEditorPage>
+      </Route>
     </Switch>
   );
 }

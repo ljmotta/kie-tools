@@ -45,7 +45,7 @@ export function DmnFormApp() {
                 <Switch>
                   {app.data && (
                     <Route path={routes.form.path({ modelName: ":modelName*" })}>
-                      {({ match }) => {
+                      {({ match }: any) => {
                         const formData = app.data!.forms.find((form) => form.modelName === match?.params.modelName);
                         return formData ? <DmnFormPage formData={formData} /> : <Redirect to={routes.error.path({})} />;
                       }}
@@ -60,7 +60,9 @@ export function DmnFormApp() {
                     <DmnFormErrorPage />
                   </Route>
                   {!app.data && <Redirect to={routes.error.path({})} />}
-                  <Route component={NoMatchPage} />
+                  <Route>
+                    <NoMatchPage />
+                  </Route>
                 </Switch>
               </HashRouter>
             )

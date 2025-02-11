@@ -18,7 +18,7 @@
  */
 import * as React from "react";
 import { useCallback } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, useLocation, useNavigate } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient } from "apollo-client";
 import ManagementConsoleNav from "../ManagementConsoleNav/ManagementConsoleNav";
@@ -41,25 +41,6 @@ interface IOwnProps {
 }
 
 const ManagementConsole: React.FC<IOwnProps> = ({ apolloClient, userContext, children }) => {
-  const renderPage = useCallback(
-    (routeProps) => {
-      return (
-        <PageLayout
-          BrandSrc={managementConsoleLogo}
-          pageNavOpen={true}
-          BrandAltText={"Management Console Logo"}
-          BrandClick={() => routeProps.history.push("/")}
-          withHeader={true}
-          PageNav={<ManagementConsoleNav pathname={routeProps.location.pathname} />}
-          ouiaId="management-console"
-        >
-          {children}
-        </PageLayout>
-      );
-    },
-    [children]
-  );
-
   return (
     <ApolloProvider client={apolloClient}>
       <KogitoAppContextProvider userContext={userContext}>
@@ -70,7 +51,9 @@ const ManagementConsole: React.FC<IOwnProps> = ({ apolloClient, userContext, chi
                 <TaskFormContextProvider>
                   <Router>
                     <Switch>
-                      <Route path="/" render={renderPage} />
+                      <Route path="/">
+                        <PageRoute>{children}</PageRoute>
+                      </Route>
                     </Switch>
                   </Router>
                 </TaskFormContextProvider>
@@ -82,5 +65,24 @@ const ManagementConsole: React.FC<IOwnProps> = ({ apolloClient, userContext, chi
     </ApolloProvider>
   );
 };
+
+function PageRoute(props: React.PropsWithChildren<{}>) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  return (
+    <PageLayout
+      BrandSrc={managementConsoleLogo}
+      pageNavOpen={true}
+      BrandAltText={"Management Console Logo"}
+      BrandClick={() => navigate("/")}
+      withHeader={true}
+      PageNav={<ManagementConsoleNav pathname={location.pathname} />}
+      ouiaId="management-console"
+    >
+      {props.children}
+    </PageLayout>
+  );
+}
 
 export default ManagementConsole;

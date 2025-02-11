@@ -29,23 +29,25 @@ import { WorkflowFormPage } from "../../pages/WorkflowFormPage/WorkflowFormPage"
 const ManagementConsoleRoutes: React.FC = () => {
   return (
     <Switch>
-      <Route
-        exact
-        path={routes.home.path({})}
-        render={() => <Redirect to={routes.runtimeToolsWorkflowInstances.path({})} />}
-      />
-      <Route exact path={routes.runtimeToolsWorkflowInstances.path({})} component={WorkflowInstancesPage} />
-      <Route exact path={routes.runtimeToolsWorkflowDefinitions.path({})} component={WorkflowDefinitionsPage} />
+      <Route exact path={routes.home.path({})}>
+        <Redirect to={routes.runtimeToolsWorkflowInstances.path({})} />
+      </Route>
+      <Route exact path={routes.runtimeToolsWorkflowInstances.path({})}>
+        <WorkflowInstancesPage />
+      </Route>
+      <Route exact path={routes.runtimeToolsWorkflowDefinitions.path({})}>
+        <WorkflowDefinitionsPage />
+      </Route>
       <Route path={routes.runtimeToolsWorkflowDetails.path({ workflowId: ":workflowId" })}>
-        {({ match }) => <WorkflowDetailsPage workflowId={match!.params.workflowId!} />}
+        {({ match }: any) => <WorkflowDetailsPage workflowId={match!.params.workflowId!} />}
       </Route>
       <Route path={routes.runtimeToolsTriggerCloudEventForWorkflowDefinition.path({ workflowName: ":workflowName" })}>
-        {({ match }) => <TriggerCloudEventPage />}
+        {({ match }: any) => <TriggerCloudEventPage />}
       </Route>
       <Route path={routes.runtimeToolsWorkflowForm.path({ workflowName: ":workflowName" })}>
         <WorkflowFormPage />
       </Route>
-      <Route exact path={routes.monitoring.path({})} component={MonitoringPage}>
+      <Route exact path={routes.monitoring.path({})}>
         <MonitoringPage dataIndexUrl={(window as any)["DATA_INDEX_ENDPOINT"]} />
       </Route>
     </Switch>

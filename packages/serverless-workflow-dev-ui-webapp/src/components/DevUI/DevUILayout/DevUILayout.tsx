@@ -21,7 +21,7 @@ import React from "react";
 import { Route, Switch } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient } from "apollo-client";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter, useLocation } from "react-router";
 import { PageLayout } from "@kie-tools/runtime-tools-components/dist/components/PageLayout";
 import DevUINav from "../DevUINav/DevUINav";
 import { WorkflowDetailsContextProviderWithApolloClient } from "@kie-tools/runtime-tools-swf-webapp-components/dist/WorkflowDetails";
@@ -63,14 +63,6 @@ const DevUILayout: React.FC<IOwnProps> = ({
   openApiBaseUrl,
   openApiPath,
 }) => {
-  const renderPage = (routeProps: { location: { pathname: string } }) => {
-    return (
-      <PageLayout pageNavOpen={true} PageNav={<DevUINav pathname={routeProps.location.pathname} />}>
-        {children}
-      </PageLayout>
-    );
-  };
-
   return (
     <ApolloProvider client={apolloClient}>
       <DevUIAppContextProvider
@@ -95,7 +87,9 @@ const DevUILayout: React.FC<IOwnProps> = ({
                         <CloudEventFormContextProvider>
                           <MemoryRouter>
                             <Switch>
-                              <Route path="/" render={renderPage} />
+                              <Route path={"/"}>
+                                <PageRoute>{children}</PageRoute>
+                              </Route>
                             </Switch>
                           </MemoryRouter>
                         </CloudEventFormContextProvider>
@@ -111,5 +105,15 @@ const DevUILayout: React.FC<IOwnProps> = ({
     </ApolloProvider>
   );
 };
+
+function PageRoute(props: React.PropsWithChildren<{}>) {
+  const location = useLocation();
+
+  return (
+    <PageLayout pageNavOpen={true} PageNav={<DevUINav pathname={location.pathname} />}>
+      {props.children}
+    </PageLayout>
+  );
+}
 
 export default DevUILayout;

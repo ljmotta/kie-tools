@@ -43,7 +43,7 @@ export function HomePageRoutes(props: { isNavOpen: boolean }) {
   return (
     <Switch>
       <Route path={routes.newModel.path({ extension: `:extension(${supportedExtensions})` })}>
-        {({ match }) => <NewWorkspaceWithEmptyFilePage extension={match!.params.extension!} />}
+        {({ match }: any) => <NewWorkspaceWithEmptyFilePage extension={match!.params.extension!} />}
       </Route>
       <Route path={routes.importModel.path({})}>
         <NewWorkspaceFromUrlPage />
@@ -58,7 +58,7 @@ export function HomePageRoutes(props: { isNavOpen: boolean }) {
           extension: `:extension?`,
         })}
       >
-        {({ match }) => (
+        {({ match }: any) => (
           <EditorPage
             workspaceId={match!.params.workspaceId!}
             fileRelativePath={`${match!.params.fileRelativePath ?? ""}${
@@ -74,19 +74,19 @@ export function HomePageRoutes(props: { isNavOpen: boolean }) {
         <RecentModels />
       </Route>
       <Route path={routes.workspaceWithFiles.path({ workspaceId: ":workspaceId" })}>
-        {({ match }) => <WorkspaceFiles workspaceId={match!.params.workspaceId!} />}
+        {({ match }: any) => <WorkspaceFiles workspaceId={match!.params.workspaceId!} />}
       </Route>
       <Route path={routes.sampleCatalog.path({})}>
         <SamplesCatalog />
       </Route>
       <Route path={routes.runtimeToolsTriggerCloudEventForWorkflowInstance.path({ workflowId: ":workflowId" })}>
-        {({ match }) => <RuntimeToolsTriggerCloudEvent />}
+        {({ match }: any) => <RuntimeToolsTriggerCloudEvent />}
       </Route>
       <Route path={routes.runtimeToolsTriggerCloudEventForWorkflowDefinition.path({ workflowName: ":workflowName" })}>
-        {({ match }) => <RuntimeToolsTriggerCloudEvent />}
+        {({ match }: any) => <RuntimeToolsTriggerCloudEvent />}
       </Route>
       <Route path={routes.runtimeToolsWorkflowDetails.path({ workflowId: ":workflowId" })}>
-        {({ match }) => <RuntimeToolsWorkflowDetails workflowId={match!.params.workflowId!} />}
+        {({ match }: any) => <RuntimeToolsWorkflowDetails workflowId={match!.params.workflowId!} />}
       </Route>
       <Route path={routes.runtimeToolsWorkflowForm.path({ workflowName: ":workflowName" })}>
         <RuntimeToolsWorkflowForm />
@@ -97,7 +97,9 @@ export function HomePageRoutes(props: { isNavOpen: boolean }) {
       <Route path={routes.runtimeToolsWorkflowInstances.path({})}>
         <RuntimeToolsWorkflowInstances />
       </Route>
-      <Route component={NoMatchPage} />
+      <Route>
+        <NoMatchPage />
+      </Route>
     </Switch>
   );
 }

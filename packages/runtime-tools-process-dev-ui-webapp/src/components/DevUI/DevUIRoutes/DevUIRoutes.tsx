@@ -46,65 +46,90 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
     () => [
       {
         enabled: () => true,
-        node: <Route key="0" exact path="/" render={() => <Redirect to={`/${navigate}`} />} />,
-      },
-      {
-        enabled: () => context.isProcessEnabled,
-        node: <Route key="1" exact path="/Processes" component={ProcessesPage} />,
-      },
-      {
-        enabled: () => context.isProcessEnabled,
-        node: <Route key="2" exact path="/Process/:instanceID" component={ProcessDetailsPage} />,
-      },
-      {
-        enabled: () => context.isProcessEnabled,
-        node: <Route key="3" exact path="/Jobs" component={JobsManagementPage} />,
-      },
-      {
-        enabled: () => context.isProcessEnabled,
-        node: <Route key="4" exact path="/Tasks" component={TaskInboxPage} />,
-      },
-      {
-        enabled: () => context.isProcessEnabled,
-        node: <Route key="5" exact path="/Forms" component={FormsListPage} />,
-      },
-      {
-        enabled: () => context.isProcessEnabled,
-        node: <Route key="6" exact path="/Forms/:formName" component={FormDetailPage} />,
-      },
-      {
-        enabled: () => context.isProcessEnabled,
-        node: <Route key="7" exact path="/ProcessDefinition/Form/:processName" component={ProcessFormPage} />,
+        node: (
+          <Route key="0" exact path="/">
+            <Redirect to={`/${navigate}`} />
+          </Route>
+        ),
       },
       {
         enabled: () => context.isProcessEnabled,
         node: (
-          <Route
-            key="11"
-            exact
-            path="/TaskDetails/:taskId"
-            render={(routeProps) => <TaskDetailsPage {...routeProps} />}
-          />
+          <Route key="1" exact path="/Processes">
+            <ProcessesPage />
+          </Route>
+        ),
+      },
+      {
+        enabled: () => context.isProcessEnabled,
+        node: (
+          <Route key="2" exact path="/Process/:instanceID">
+            <ProcessDetailsPage />
+          </Route>
+        ),
+      },
+      {
+        enabled: () => context.isProcessEnabled,
+        node: (
+          <Route key="3" exact path="/Jobs">
+            <JobsManagementPage />
+          </Route>
+        ),
+      },
+      {
+        enabled: () => context.isProcessEnabled,
+        node: (
+          <Route key="4" exact path="/Tasks">
+            <TaskInboxPage />
+          </Route>
+        ),
+      },
+      {
+        enabled: () => context.isProcessEnabled,
+        node: (
+          <Route key="5" exact path="/Forms">
+            <FormsListPage />
+          </Route>
+        ),
+      },
+      {
+        enabled: () => context.isProcessEnabled,
+        node: (
+          <Route key="6" exact path="/Forms/:formName">
+            <FormDetailPage />
+          </Route>
+        ),
+      },
+      {
+        enabled: () => context.isProcessEnabled,
+        node: (
+          <Route key="7" exact path="/ProcessDefinition/Form/:processName">
+            <ProcessFormPage />
+          </Route>
+        ),
+      },
+      {
+        enabled: () => context.isProcessEnabled,
+        node: (
+          <Route key="11" exact path="/TaskDetails/:taskId">
+            {(routeProps) => <TaskDetailsPage {...routeProps} />}
+          </Route>
         ),
       },
       {
         enabled: () => true,
         node: (
-          <Route
-            key="14"
-            path="/NoData"
-            render={(_props) => <NoData {..._props} defaultPath={defaultPath} defaultButton={defaultButton} />}
-          />
+          <Route key="14" path="/NoData">
+            {(_props) => <NoData {..._props} defaultPath={defaultPath} defaultButton={defaultButton} />}
+          </Route>
         ),
       },
       {
         enabled: () => true,
         node: (
-          <Route
-            key="18"
-            path="*"
-            render={(_props) => <PageNotFound {..._props} defaultPath={defaultPath} defaultButton={defaultButton} />}
-          />
+          <Route key="18" path="*">
+            {(_props) => <PageNotFound {..._props} defaultPath={defaultPath} defaultButton={defaultButton} />}
+          </Route>
         ),
       },
     ],

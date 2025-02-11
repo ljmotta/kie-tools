@@ -30,7 +30,7 @@ export function RoutesSwitch() {
   return (
     <Switch>
       <Route path={routes.workflows.form.path({ workflowId: ":workflowId" })}>
-        {({ match }) => <WorkflowFormPage workflowId={match!.params.workflowId!} />}
+        {({ match }: any) => <WorkflowFormPage workflowId={match!.params.workflowId!} />}
       </Route>
       <Route path={routes.workflows.cloudEvent.path({})}>
         <CloudEventFormPage />
@@ -44,7 +44,9 @@ export function RoutesSwitch() {
       <Route path={routes.home.path({})}>
         <Redirect to={routes.runtimeTools.workflowDefinitions.path({})} />
       </Route>
-      <Route component={NoMatchPage} />
+      <Route>
+        <NoMatchPage />
+      </Route>
     </Switch>
   );
 }

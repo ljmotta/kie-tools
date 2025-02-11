@@ -25,20 +25,32 @@ import { NoData } from "@kie-tools/runtime-tools-shared-webapp-components/dist/N
 const ManagementConsoleRoutes: React.FC = () => {
   return (
     <Switch>
-      <Route exact path="/" render={() => <Redirect to="/ProcessInstances" />} />
-      <Route exact path="/ProcessInstances" component={ProcessListPage} />
-      <Route exact path="/Jobs" component={JobsPage} />
-      <Route exact path="/Process/:instanceID" component={ProcessDetailsPage} />
-      <Route exact path="/Tasks" component={TasksPage} />
-      <Route exact path="/TaskDetails/:taskId" render={(routeProps) => <TaskDetailsPage {...routeProps} />} />
+      <Route exact path="/">
+        <Redirect to="/ProcessInstances" />
+      </Route>
+      <Route exact path="/ProcessInstances">
+        ProcessListPage
+      </Route>
+      <Route exact path="/Jobs">
+        <JobsPage />
+      </Route>
+      <Route exact path="/Process/:instanceID">
+        <ProcessDetailsPage />
+      </Route>
+      <Route exact path="/Tasks">
+        <TasksPage />
+      </Route>
+      <Route exact path="/TaskDetails/:taskId">
+        {(routeProps) => <TaskDetailsPage {...routeProps} />}
+      </Route>
       <Route
         path="/NoData"
         render={(_props) => <NoData {..._props} defaultPath="/Jobs" defaultButton="Go to Jobs" />}
-      />
+      ></Route>
       <Route
         path="*"
         render={(_props) => <PageNotFound {..._props} defaultPath="/Jobs" defaultButton="Go to Jobs" />}
-      />
+      ></Route>
     </Switch>
   );
 };

@@ -44,7 +44,9 @@ export function App() {
             <Route path={routes.root.path({})}>
               <HomePage />
             </Route>
-            <Route component={NoMatchPage} />
+            <Route>
+              <NoMatchPage />
+            </Route>
           </Switch>
         </AppContextProvider>
       </HashRouter>

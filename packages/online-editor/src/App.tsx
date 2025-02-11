@@ -73,10 +73,10 @@ function RoutesSwitch() {
   return (
     <Switch>
       <Route path={routes.editor.path({ extension: `:extension(${supportedExtensions})` })}>
-        {({ match }) => <Redirect to={routes.newModel.path({ extension: match!.params.extension! })} />}
+        {({ match }: any) => <Redirect to={routes.newModel.path({ extension: match!.params.extension! })} />}
       </Route>
       <Route path={routes.newModel.path({ extension: `:extension(${supportedExtensions})` })}>
-        {({ match }) => <NewWorkspaceWithEmptyFilePage extension={match!.params.extension!} />}
+        {({ match }: any) => <NewWorkspaceWithEmptyFilePage extension={match!.params.extension!} />}
       </Route>
       <Route path={routes.import.path({})}>
         <NewWorkspaceFromUrlPage />
@@ -88,7 +88,7 @@ function RoutesSwitch() {
           extension: `:extension(${supportedExtensions})`,
         })}
       >
-        {({ match }) => (
+        {({ match }: any) => (
           <EditorPage
             workspaceId={match!.params.workspaceId!}
             fileRelativePath={`${match!.params.fileRelativePath}.${match!.params.extension}`}
@@ -98,7 +98,9 @@ function RoutesSwitch() {
       <Route exact={true} path={routes.home.path({})}>
         <HomePage />
       </Route>
-      <Route component={NoMatchPage} />
+      <Route>
+        <NoMatchPage />
+      </Route>
     </Switch>
   );
 }
