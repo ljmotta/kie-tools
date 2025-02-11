@@ -37,27 +37,19 @@ export function SettingsPageRoutes(props: {} & SettingsPageProps) {
 
   return (
     <Routes>
-      <Route path={routes.settings.github.path({})}>
-        <GitHubSettings {...settingsPageProps} />
-      </Route>
-      <Route path={routes.settings.openshift.path({})}>
-        <OpenShiftSettings {...settingsPageProps} />
-      </Route>
-      <Route path={routes.settings.service_account.path({})}>
-        <ServiceAccountSettings {...settingsPageProps} />
-      </Route>
-      <Route path={routes.settings.service_registry.path({})}>
-        <ServiceRegistrySettings {...settingsPageProps} />
-      </Route>
-      <Route path={routes.settings.storage.path({})}>
-        <StorageSettings />
-      </Route>
-      <Route path={routes.settings.runtime_tools.path({})}>
-        <RuntimeToolsSettings {...settingsPageProps} />
-      </Route>
-      <Route>
-        <Navigate to={routes.settings.github.path({})} />
-      </Route>
+      <Route path={routes.settings.github.path({})} element={<GitHubSettings {...settingsPageProps} />} />
+      <Route path={routes.settings.openshift.path({})} element={<OpenShiftSettings {...settingsPageProps} />} />
+      <Route
+        path={routes.settings.service_account.path({})}
+        element={<ServiceAccountSettings {...settingsPageProps} />}
+      />
+      <Route
+        path={routes.settings.service_registry.path({})}
+        element={<ServiceRegistrySettings {...settingsPageProps} />}
+      />
+      <Route path={routes.settings.storage.path({})} element={<StorageSettings />} />
+      <Route path={routes.settings.runtime_tools.path({})} element={<RuntimeToolsSettings {...settingsPageProps} />} />
+      <Route element={<Navigate to={routes.settings.github.path({})} />} />
     </Routes>
   );
 }

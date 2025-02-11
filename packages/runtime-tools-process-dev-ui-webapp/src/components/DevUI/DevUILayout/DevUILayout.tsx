@@ -90,9 +90,7 @@ const DevUILayout: React.FC<IOwnProps> = ({
                     <ProcessFormContextProvider>
                       <MemoryRouter>
                         <Routes>
-                          <Route path="/">
-                            <PageRoute>{children}</PageRoute>
-                          </Route>
+                          <Route path="/" element={<PageRoute>{children}</PageRoute>} />
                         </Routes>
                       </MemoryRouter>
                     </ProcessFormContextProvider>

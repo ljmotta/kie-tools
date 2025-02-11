@@ -50,9 +50,7 @@ const ManagementConsole: React.FC<IOwnProps> = ({ apolloClient, userContext, chi
                   <WorkflowFormContextProvider>
                     <Router>
                       <Routes>
-                        <Route path={"/"}>
-                          <BasePage>{children}</BasePage>
-                        </Route>
+                        <Route path={"/"} element={<BasePage>{children}</BasePage>} />
                       </Routes>
                     </Router>
                   </WorkflowFormContextProvider>

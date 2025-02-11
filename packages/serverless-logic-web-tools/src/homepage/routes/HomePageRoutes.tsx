@@ -42,57 +42,43 @@ export function HomePageRoutes(props: { isNavOpen: boolean }) {
   const supportedExtensions = useMemo(() => supportedFileExtensionArray.join("|"), []);
   return (
     <Routes>
-      <Route path={routes.newModel.path({ extension: `:extension(${supportedExtensions})` })}>
-        <NewWorkspaceWithEmptyFilePage />
-      </Route>
-      <Route path={routes.importModel.path({})}>
-        <NewWorkspaceFromUrlPage />
-      </Route>
-      <Route path={routes.sampleShowcase.path({})}>
-        <NewWorkspaceFromSample />
-      </Route>
+      <Route
+        path={routes.newModel.path({ extension: `:extension(${supportedExtensions})` })}
+        element={<NewWorkspaceWithEmptyFilePage />}
+      />
+      <Route path={routes.importModel.path({})} element={<NewWorkspaceFromUrlPage />} />
+      <Route path={routes.sampleShowcase.path({})} element={<NewWorkspaceFromSample />} />
       <Route
         path={routes.workspaceWithFilePath.path({
           workspaceId: ":workspaceId",
           fileRelativePath: `:fileRelativePath*`,
           extension: `:extension?`,
         })}
-      >
-        <EditorPage />
-      </Route>
-      <Route path={routes.home.path({})}>
-        <Overview isNavOpen={props.isNavOpen} />
-      </Route>
-      <Route path={routes.recentModels.path({})}>
-        <RecentModels />
-      </Route>
-      <Route path={routes.workspaceWithFiles.path({ workspaceId: ":workspaceId" })}>
-        <WorkspaceFiles />
-      </Route>
-      <Route path={routes.sampleCatalog.path({})}>
-        <SamplesCatalog />
-      </Route>
-      <Route path={routes.runtimeToolsTriggerCloudEventForWorkflowInstance.path({ workflowId: ":workflowId" })}>
-        <RuntimeToolsTriggerCloudEvent />
-      </Route>
-      <Route path={routes.runtimeToolsTriggerCloudEventForWorkflowDefinition.path({ workflowName: ":workflowName" })}>
-        <RuntimeToolsTriggerCloudEvent />
-      </Route>
-      <Route path={routes.runtimeToolsWorkflowDetails.path({ workflowId: ":workflowId" })}>
-        <RuntimeToolsWorkflowDetails />
-      </Route>
-      <Route path={routes.runtimeToolsWorkflowForm.path({ workflowName: ":workflowName" })}>
-        <RuntimeToolsWorkflowForm />
-      </Route>
-      <Route path={routes.runtimeToolsWorkflowDefinitions.path({})}>
-        <RuntimeToolsWorkflowDefinitions />
-      </Route>
-      <Route path={routes.runtimeToolsWorkflowInstances.path({})}>
-        <RuntimeToolsWorkflowInstances />
-      </Route>
-      <Route>
-        <NoMatchPage />
-      </Route>
+        element={<EditorPage />}
+      />
+      <Route path={routes.home.path({})} element={<Overview isNavOpen={props.isNavOpen} />} />
+      <Route path={routes.recentModels.path({})} element={<RecentModels />} />
+      <Route path={routes.workspaceWithFiles.path({ workspaceId: ":workspaceId" })} element={<WorkspaceFiles />} />
+      <Route path={routes.sampleCatalog.path({})} element={<SamplesCatalog />} />
+      <Route
+        path={routes.runtimeToolsTriggerCloudEventForWorkflowInstance.path({ workflowId: ":workflowId" })}
+        element={<RuntimeToolsTriggerCloudEvent />}
+      />
+      <Route
+        path={routes.runtimeToolsTriggerCloudEventForWorkflowDefinition.path({ workflowName: ":workflowName" })}
+        element={<RuntimeToolsTriggerCloudEvent />}
+      />
+      <Route
+        path={routes.runtimeToolsWorkflowDetails.path({ workflowId: ":workflowId" })}
+        element={<RuntimeToolsWorkflowDetails />}
+      />
+      <Route
+        path={routes.runtimeToolsWorkflowForm.path({ workflowName: ":workflowName" })}
+        element={<RuntimeToolsWorkflowForm />}
+      />
+      <Route path={routes.runtimeToolsWorkflowDefinitions.path({})} element={<RuntimeToolsWorkflowDefinitions />} />
+      <Route path={routes.runtimeToolsWorkflowInstances.path({})} element={<RuntimeToolsWorkflowInstances />} />
+      <Route element={<NoMatchPage />} />
     </Routes>
   );
 }

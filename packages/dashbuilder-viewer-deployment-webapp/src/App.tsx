@@ -38,15 +38,9 @@ export function App() {
       <HashRouter>
         <AppContextProvider>
           <Routes>
-            <Route path={routes.dashboard.path({ filePath: ":filePath*" })}>
-              <HomePage />
-            </Route>
-            <Route path={routes.root.path({})}>
-              <HomePage />
-            </Route>
-            <Route>
-              <NoMatchPage />
-            </Route>
+            <Route path={routes.dashboard.path({ filePath: ":filePath*" })} element={<HomePage />} />
+            <Route path={routes.root.path({})} element={<HomePage />} />
+            <Route element={<NoMatchPage />} />
           </Routes>
         </AppContextProvider>
       </HashRouter>

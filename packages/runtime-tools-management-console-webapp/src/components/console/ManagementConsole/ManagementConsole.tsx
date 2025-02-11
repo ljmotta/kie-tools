@@ -50,9 +50,7 @@ const ManagementConsole: React.FC<IOwnProps> = ({ apolloClient, userContext, chi
                 <TaskFormContextProvider>
                   <Router>
                     <Routes>
-                      <Route path="/">
-                        <PageRoute>{children}</PageRoute>
-                      </Route>
+                      <Route path="/" element={<PageRoute>{children}</PageRoute>} />
                     </Routes>
                   </Router>
                 </TaskFormContextProvider>

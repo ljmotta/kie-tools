@@ -38,67 +38,90 @@ export function App() {
         </div>
         <br />
         <Routes>
-          <Route path="/dmn-read-only">
-            <DmnEditorComponent
-              origin={"*"}
-              key="dmn-read-only"
-              id="dmn-read-only"
-              readOnly={true}
-              initialContent={Promise.resolve("")}
-            />
-          </Route>
-          <Route path="/dmn-editable">
-            <DmnEditorComponent
-              origin={"*"}
-              key="dmn-editable"
-              id="dmn-editable"
-              readOnly={false}
-              initialContent={Promise.resolve("")}
-            />
-          </Route>
-          <Route path="/bpmn-editable">
-            <BpmnEditorComponent
-              origin={"*"}
-              key="bpmn-editable"
-              id="bpmn-editable"
-              readOnly={false}
-              initialContent={Promise.resolve("")}
-            />
-          </Route>
-          <Route path="/bpmn-read-only">
-            <BpmnEditorComponent
-              origin={"*"}
-              key="bpmn-read-only"
-              id="bpmn-read-only"
-              readOnly={true}
-              initialContent={Promise.resolve("")}
-            />
-          </Route>
-          <Route path="/bpmn-workitem">
-            <BpmnEditorComponent
-              origin={"*"}
-              id="bpmn-workitem"
-              readOnly={false}
-              initialContent={Promise.resolve(processWithWidDefinition)}
-              resources={
-                new Map([
-                  [
-                    "custom-workitem.wid",
-                    {
-                      contentType: "text",
-                      content: Promise.resolve(customWorkItemWid),
-                    },
-                  ],
-                ])
-              }
-            />
-          </Route>
-          <Route path="/both-bpmn-dmn">
-            <>
-              <BpmnEditorComponent origin={"*"} id="both-bpmn" readOnly={false} initialContent={Promise.resolve("")} />
-              <DmnEditorComponent origin={"*"} id="both-dmn" readOnly={false} initialContent={Promise.resolve("")} />
-            </>
-          </Route>
+          <Route
+            path="/dmn-read-only"
+            element={
+              <DmnEditorComponent
+                origin={"*"}
+                key="dmn-read-only"
+                id="dmn-read-only"
+                readOnly={true}
+                initialContent={Promise.resolve("")}
+              />
+            }
+          />
+          <Route
+            path="/dmn-editable"
+            element={
+              <DmnEditorComponent
+                origin={"*"}
+                key="dmn-editable"
+                id="dmn-editable"
+                readOnly={false}
+                initialContent={Promise.resolve("")}
+              />
+            }
+          />
+          <Route
+            path="/bpmn-editable"
+            element={
+              <BpmnEditorComponent
+                origin={"*"}
+                key="bpmn-editable"
+                id="bpmn-editable"
+                readOnly={false}
+                initialContent={Promise.resolve("")}
+              />
+            }
+          />
+          <Route
+            path="/bpmn-read-only"
+            element={
+              <BpmnEditorComponent
+                origin={"*"}
+                key="bpmn-read-only"
+                id="bpmn-read-only"
+                readOnly={true}
+                initialContent={Promise.resolve("")}
+              />
+            }
+          />
+          <Route
+            path="/bpmn-workitem"
+            element={
+              <BpmnEditorComponent
+                origin={"*"}
+                id="bpmn-workitem"
+                readOnly={false}
+                initialContent={Promise.resolve(processWithWidDefinition)}
+                resources={
+                  new Map([
+                    [
+                      "custom-workitem.wid",
+                      {
+                        contentType: "text",
+                        content: Promise.resolve(customWorkItemWid),
+                      },
+                    ],
+                  ])
+                }
+              />
+            }
+          />
+          <Route
+            path="/both-bpmn-dmn"
+            element={
+              <>
+                <BpmnEditorComponent
+                  origin={"*"}
+                  id="both-bpmn"
+                  readOnly={false}
+                  initialContent={Promise.resolve("")}
+                />
+                <DmnEditorComponent origin={"*"} id="both-dmn" readOnly={false} initialContent={Promise.resolve("")} />
+              </>
+            }
+          />
         </Routes>
       </>
     </Router>

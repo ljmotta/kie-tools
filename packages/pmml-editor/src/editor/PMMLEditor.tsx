@@ -254,24 +254,32 @@ export class PMMLEditor extends React.Component<Props, State> {
                   }}
                 >
                   <Routes>
-                    <Route path={"/"}>
-                      {!isSingleModel && <LandingPage path={path} />}
-                      {isSingleModel && <Navigate to={"/editor/0"} />}
-                    </Route>
-                    <Route path={"/editor/:index"}>
-                      <OperationContext.Provider
-                        value={{
-                          activeOperation: this.state.activeOperation,
-                          setActiveOperation: (operation) =>
-                            this.setState({
-                              ...this.state,
-                              activeOperation: operation,
-                            }),
-                        }}
-                      >
-                        <SingleEditorRouter path={path} />
-                      </OperationContext.Provider>
-                    </Route>
+                    <Route
+                      path={"/"}
+                      element={
+                        <>
+                          {!isSingleModel && <LandingPage path={path} />}
+                          {isSingleModel && <Navigate to={"/editor/0"} />}
+                        </>
+                      }
+                    />
+                    <Route
+                      path={"/editor/:index"}
+                      element={
+                        <OperationContext.Provider
+                          value={{
+                            activeOperation: this.state.activeOperation,
+                            setActiveOperation: (operation) =>
+                              this.setState({
+                                ...this.state,
+                                activeOperation: operation,
+                              }),
+                          }}
+                        >
+                          <SingleEditorRouter path={path} />
+                        </OperationContext.Provider>
+                      }
+                    />
                   </Routes>
                 </HistoryContext.Provider>
               </ValidationContext.Provider>

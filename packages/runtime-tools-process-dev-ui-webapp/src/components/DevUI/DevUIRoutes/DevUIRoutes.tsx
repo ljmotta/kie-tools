@@ -46,90 +46,50 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
     () => [
       {
         enabled: () => true,
-        node: (
-          <Route key="0" path="/">
-            <Navigate to={`/${navigate}`} />
-          </Route>
-        ),
+        node: <Route key="0" path="/" element={<Navigate to={`/${navigate}`} />} />,
       },
       {
         enabled: () => context.isProcessEnabled,
-        node: (
-          <Route key="1" path="/Processes">
-            <ProcessesPage />
-          </Route>
-        ),
+        node: <Route key="1" path="/Processes" element={<ProcessesPage />} />,
       },
       {
         enabled: () => context.isProcessEnabled,
-        node: (
-          <Route key="2" path="/Process/:instanceID">
-            <ProcessDetailsPage />
-          </Route>
-        ),
+        node: <Route key="2" path="/Process/:instanceID" element={<ProcessDetailsPage />} />,
       },
       {
         enabled: () => context.isProcessEnabled,
-        node: (
-          <Route key="3" path="/Jobs">
-            <JobsManagementPage />
-          </Route>
-        ),
+        node: <Route key="3" path="/Jobs" element={<JobsManagementPage />} />,
       },
       {
         enabled: () => context.isProcessEnabled,
-        node: (
-          <Route key="4" path="/Tasks">
-            <TaskInboxPage />
-          </Route>
-        ),
+        node: <Route key="4" path="/Tasks" element={<TaskInboxPage />} />,
       },
       {
         enabled: () => context.isProcessEnabled,
-        node: (
-          <Route key="5" path="/Forms">
-            <FormsListPage />
-          </Route>
-        ),
+        node: <Route key="5" path="/Forms" element={<FormsListPage />} />,
       },
       {
         enabled: () => context.isProcessEnabled,
-        node: (
-          <Route key="6" path="/Forms/:formName">
-            <FormDetailPage />
-          </Route>
-        ),
+        node: <Route key="6" path="/Forms/:formName" element={<FormDetailPage />} />,
       },
       {
         enabled: () => context.isProcessEnabled,
-        node: (
-          <Route key="7" path="/ProcessDefinition/Form/:processName">
-            <ProcessFormPage />
-          </Route>
-        ),
+        node: <Route key="7" path="/ProcessDefinition/Form/:processName" element={<ProcessFormPage />} />,
       },
       {
         enabled: () => context.isProcessEnabled,
+        node: <Route key="11" path="/TaskDetails/:taskId" element={<TaskDetailsPage />} />,
+      },
+      {
+        enabled: () => true,
         node: (
-          <Route key="11" path="/TaskDetails/:taskId">
-            <TaskDetailsPage />
-          </Route>
+          <Route key="14" path="/NoData" element={<NoData defaultPath={defaultPath} defaultButton={defaultButton} />} />
         ),
       },
       {
         enabled: () => true,
         node: (
-          <Route key="14" path="/NoData">
-            <NoData defaultPath={defaultPath} defaultButton={defaultButton} />
-          </Route>
-        ),
-      },
-      {
-        enabled: () => true,
-        node: (
-          <Route key="18" path="*">
-            <PageNotFound defaultPath={defaultPath} defaultButton={defaultButton} />
-          </Route>
+          <Route key="18" path="*" element={<PageNotFound defaultPath={defaultPath} defaultButton={defaultButton} />} />
         ),
       },
     ],

@@ -37,20 +37,23 @@ export function RoutesSwitch() {
 
   return (
     <Routes>
-      <Route path={routes.home.path({})}>
-        <OnlineEditorPage pageContainerRef={pageContainerRef} isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen}>
-          {!isRouteInSettingsSection ? (
-            <HomePageRoutes isNavOpen={isNavOpen} />
-          ) : (
-            <SettingsPageRoutes pageContainerRef={pageContainerRef} />
-          )}
-          {buildInfo && (
-            <div className={"kie-tools--build-info"}>
-              <Label>{buildInfo}</Label>
-            </div>
-          )}
-        </OnlineEditorPage>
-      </Route>
+      <Route
+        path={routes.home.path({})}
+        element={
+          <OnlineEditorPage pageContainerRef={pageContainerRef} isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen}>
+            {!isRouteInSettingsSection ? (
+              <HomePageRoutes isNavOpen={isNavOpen} />
+            ) : (
+              <SettingsPageRoutes pageContainerRef={pageContainerRef} />
+            )}
+            {buildInfo && (
+              <div className={"kie-tools--build-info"}>
+                <Label>{buildInfo}</Label>
+              </div>
+            )}
+          </OnlineEditorPage>
+        }
+      />
     </Routes>
   );
 }

@@ -84,18 +84,10 @@ export function App() {
         }
       >
         <Routes>
-          <Route path={"/"}>
-            <p>Select a page</p>
-          </Route>
-          <Route path={Location.SWF_STANDALONE_EDITOR}>
-            <SwfStandaloneEditorPage />
-          </Route>
-          <Route path={Location.SWF_STANDALONE_EDITOR_DIAGRAM_ONLY}>
-            <SwfStandaloneDiagramOnlyEditorPage />
-          </Route>
-          <Route path={Location.SWF_STANDALONE_EDITOR_TEXT_ONLY}>
-            <SwfStandaloneTextOnlyEditorPage />
-          </Route>
+          <Route path={"/"} element={<p>Select a page</p>} />
+          <Route path={Location.SWF_STANDALONE_EDITOR} element={<SwfStandaloneEditorPage />} />
+          <Route path={Location.SWF_STANDALONE_EDITOR_DIAGRAM_ONLY} element={<SwfStandaloneDiagramOnlyEditorPage />} />
+          <Route path={Location.SWF_STANDALONE_EDITOR_TEXT_ONLY} element={<SwfStandaloneTextOnlyEditorPage />} />
         </Routes>
       </Page>
     </Router>

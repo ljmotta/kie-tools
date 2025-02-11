@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import { useMemo } from "react";
-import { Navigate, Route, Routes } from "react-router";
+import { Navigate, Route, Routes, useParams } from "react-router";
 import { HashRouter } from "react-router-dom";
 import { EditorEnvelopeLocatorContextProvider } from "./envelopeLocator/hooks/EditorEnvelopeLocatorContext";
 import { EditorPage } from "./editor/EditorPage";
@@ -72,32 +72,33 @@ function RoutesSwitch() {
 
   return (
     <Routes>
-      <Route path={routes.editor.path({ extension: `:extension(${supportedExtensions})` })}>
-        {({ match }: any) => <Navigate to={routes.newModel.path({ extension: match!.params.extension! })} />}
-      </Route>
-      <Route path={routes.newModel.path({ extension: `:extension(${supportedExtensions})` })}>
-        <NewWorkspaceWithEmptyFilePage />
-      </Route>
-      <Route path={routes.import.path({})}>
-        <NewWorkspaceFromUrlPage />
-      </Route>
+      <Route
+        path={routes.editor.path({ extension: `:extension(${supportedExtensions})` })}
+        element={<RedirectToNewWorkspace />}
+      />
+      <Route
+        path={routes.newModel.path({ extension: `:extension(${supportedExtensions})` })}
+        element={<NewWorkspaceWithEmptyFilePage />}
+      />
+      <Route path={routes.import.path({})} element={<NewWorkspaceFromUrlPage />} />
       <Route
         path={routes.workspaceWithFilePath.path({
           workspaceId: ":workspaceId",
           fileRelativePath: `:fileRelativePath*`,
           extension: `:extension(${supportedExtensions})`,
         })}
-      >
-        <EditorPage />
-      </Route>
-      <Route path={routes.home.path({})}>
-        <HomePage />
-      </Route>
-      <Route>
-        <NoMatchPage />
-      </Route>
+        element={<EditorPage />}
+      />
+      <Route path={routes.home.path({})} element={<HomePage />} />
+      <Route element={<NoMatchPage />} />
     </Routes>
   );
+}
+
+function RedirectToNewWorkspace() {
+  const routes = useRoutes();
+  const { extension } = useParams();
+  return <Navigate to={routes.newModel.path({ extension: extension! })} />;
 }
 
 function nest(...components: Array<[(...args: any[]) => any, object]>) {

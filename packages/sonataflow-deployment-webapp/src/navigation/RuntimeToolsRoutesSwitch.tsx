@@ -26,15 +26,12 @@ import { RuntimeToolsWorkflowDefinitions } from "../runtimeTools/pages/RuntimeTo
 export function RuntimeToolsRoutesSwitch() {
   return (
     <Routes>
-      <Route path={routes.runtimeTools.workflowDefinitions.path({})}>
-        <RuntimeToolsWorkflowDefinitions />
-      </Route>
-      <Route path={routes.runtimeTools.workflowInstances.path({})}>
-        <RuntimeToolsWorkflowInstances />
-      </Route>
-      <Route path={routes.runtimeTools.workflowDetails.path({ workflowId: ":workflowId" })}>
-        <RuntimeToolsWorkflowDetails />
-      </Route>
+      <Route path={routes.runtimeTools.workflowDefinitions.path({})} element={<RuntimeToolsWorkflowDefinitions />} />
+      <Route path={routes.runtimeTools.workflowInstances.path({})} element={<RuntimeToolsWorkflowInstances />} />
+      <Route
+        path={routes.runtimeTools.workflowDetails.path({ workflowId: ":workflowId" })}
+        element={<RuntimeToolsWorkflowDetails />}
+      />
     </Routes>
   );
 }

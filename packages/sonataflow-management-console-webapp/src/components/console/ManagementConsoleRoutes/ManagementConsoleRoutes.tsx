@@ -29,27 +29,25 @@ import { WorkflowFormPage } from "../../pages/WorkflowFormPage/WorkflowFormPage"
 const ManagementConsoleRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path={routes.home.path({})}>
-        <Navigate to={routes.runtimeToolsWorkflowInstances.path({})} />
-      </Route>
-      <Route path={routes.runtimeToolsWorkflowInstances.path({})}>
-        <WorkflowInstancesPage />
-      </Route>
-      <Route path={routes.runtimeToolsWorkflowDefinitions.path({})}>
-        <WorkflowDefinitionsPage />
-      </Route>
-      <Route path={routes.runtimeToolsWorkflowDetails.path({ workflowId: ":workflowId" })}>
-        <WorkflowDetailsPage />
-      </Route>
-      <Route path={routes.runtimeToolsTriggerCloudEventForWorkflowDefinition.path({ workflowName: ":workflowName" })}>
-        <TriggerCloudEventPage />
-      </Route>
-      <Route path={routes.runtimeToolsWorkflowForm.path({ workflowName: ":workflowName" })}>
-        <WorkflowFormPage />
-      </Route>
-      <Route path={routes.monitoring.path({})}>
-        <MonitoringPage dataIndexUrl={(window as any)["DATA_INDEX_ENDPOINT"]} />
-      </Route>
+      <Route path={routes.home.path({})} element={<Navigate to={routes.runtimeToolsWorkflowInstances.path({})} />} />
+      <Route path={routes.runtimeToolsWorkflowInstances.path({})} element={<WorkflowInstancesPage />} />
+      <Route path={routes.runtimeToolsWorkflowDefinitions.path({})} element={<WorkflowDefinitionsPage />} />
+      <Route
+        path={routes.runtimeToolsWorkflowDetails.path({ workflowId: ":workflowId" })}
+        element={<WorkflowDetailsPage />}
+      />
+      <Route
+        path={routes.runtimeToolsTriggerCloudEventForWorkflowDefinition.path({ workflowName: ":workflowName" })}
+        element={<TriggerCloudEventPage />}
+      />
+      <Route
+        path={routes.runtimeToolsWorkflowForm.path({ workflowName: ":workflowName" })}
+        element={<WorkflowFormPage />}
+      />
+      <Route
+        path={routes.monitoring.path({})}
+        element={<MonitoringPage dataIndexUrl={(window as any)["DATA_INDEX_ENDPOINT"]} />}
+      />
     </Routes>
   );
 };

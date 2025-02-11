@@ -29,24 +29,17 @@ import { RuntimeToolsRoutesSwitch } from "./RuntimeToolsRoutesSwitch";
 export function RoutesSwitch() {
   return (
     <Routes>
-      <Route path={routes.workflows.form.path({ workflowId: ":workflowId" })}>
-        <WorkflowFormPage />
-      </Route>
-      <Route path={routes.workflows.cloudEvent.path({})}>
-        <CloudEventFormPage />
-      </Route>
-      <Route path={routes.runtimeTools.home.path({})}>
-        <RuntimeToolsRoutesSwitch />
-      </Route>
-      <Route path={routes.dataJsonError.path({})}>
-        <ErrorPage kind={ErrorKind.APPDATA_JSON} errors={[`There was an error with the ${APPDATA_JSON_FILENAME}`]} />
-      </Route>
-      <Route path={routes.home.path({})}>
-        <Navigate to={routes.runtimeTools.workflowDefinitions.path({})} />
-      </Route>
-      <Route>
-        <NoMatchPage />
-      </Route>
+      <Route path={routes.workflows.form.path({ workflowId: ":workflowId" })} element={<WorkflowFormPage />} />
+      <Route path={routes.workflows.cloudEvent.path({})} element={<CloudEventFormPage />} />
+      <Route path={routes.runtimeTools.home.path({})} element={<RuntimeToolsRoutesSwitch />} />
+      <Route
+        path={routes.dataJsonError.path({})}
+        element={
+          <ErrorPage kind={ErrorKind.APPDATA_JSON} errors={[`There was an error with the ${APPDATA_JSON_FILENAME}`]} />
+        }
+      />
+      <Route path={routes.home.path({})} element={<Navigate to={routes.runtimeTools.workflowDefinitions.path({})} />} />
+      <Route element={<NoMatchPage />} />
     </Routes>
   );
 }

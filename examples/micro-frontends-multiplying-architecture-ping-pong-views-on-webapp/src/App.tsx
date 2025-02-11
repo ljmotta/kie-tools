@@ -100,24 +100,12 @@ export function App() {
         }
       >
         <Routes>
-          <Route path={"/"}>
-            <p>Select a page</p>
-          </Route>
-          <Route path={Location.PING_PONG_REACT_IFRAME_PAGES}>
-            <PingPongReactIFrameViewsPage />
-          </Route>
-          <Route path={Location.PING_PONG_REACT_DIV_PAGES}>
-            <PingPongReactDivViewsPage />
-          </Route>
-          <Route path={Location.PING_PONG_ANGULAR_IFRAME_PAGES}>
-            <PingPongAngularIFrameViewsPage />
-          </Route>
-          <Route path={Location.PING_PONG_ANGULAR_DIV_PAGES}>
-            <PingPongAngularDivViewsPage />
-          </Route>
-          <Route path={Location.PING_PONG_MIXED_PAGES}>
-            <PingPongMixedViewsPage />
-          </Route>
+          <Route path={"/"} element={<p>Select a page</p>} />
+          <Route path={Location.PING_PONG_REACT_IFRAME_PAGES} element={<PingPongReactIFrameViewsPage />} />
+          <Route path={Location.PING_PONG_REACT_DIV_PAGES} element={<PingPongReactDivViewsPage />} />
+          <Route path={Location.PING_PONG_ANGULAR_IFRAME_PAGES} element={<PingPongAngularIFrameViewsPage />} />
+          <Route path={Location.PING_PONG_ANGULAR_DIV_PAGES} element={<PingPongAngularDivViewsPage />} />
+          <Route path={Location.PING_PONG_MIXED_PAGES} element={<PingPongMixedViewsPage />} />
         </Routes>
       </Page>
     </Router>

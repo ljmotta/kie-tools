@@ -87,9 +87,7 @@ const DevUILayout: React.FC<IOwnProps> = ({
                         <CloudEventFormContextProvider>
                           <MemoryRouter>
                             <Routes>
-                              <Route path={"/"}>
-                                <PageRoute>{children}</PageRoute>
-                              </Route>
+                              <Route path={"/"} element={<PageRoute>{children}</PageRoute>} />
                             </Routes>
                           </MemoryRouter>
                         </CloudEventFormContextProvider>

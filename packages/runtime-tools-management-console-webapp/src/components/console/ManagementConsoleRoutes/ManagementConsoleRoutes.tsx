@@ -25,24 +25,14 @@ import { NoData } from "@kie-tools/runtime-tools-shared-webapp-components/dist/N
 const ManagementConsoleRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="/">
-        <Navigate to="/ProcessInstances" />
-      </Route>
-      <Route path="/ProcessInstances">ProcessListPage</Route>
-      <Route path="/Jobs">
-        <JobsPage />
-      </Route>
-      <Route path="/Process/:instanceID">
-        <ProcessDetailsPage />
-      </Route>
-      <Route path="/Tasks">
-        <TasksPage />
-      </Route>
-      <Route path="/TaskDetails/:taskId">
-        <TaskDetailsPage />
-      </Route>
-      <Route path="/NoData">{<NoData defaultPath="/Jobs" defaultButton="Go to Jobs" />}</Route>
-      <Route path="*">{<PageNotFound defaultPath="/Jobs" defaultButton="Go to Jobs" />}</Route>
+      <Route path="/" element={<Navigate to="/ProcessInstances" />} />
+      <Route path="/ProcessInstances" element={<>ProcessListPage</>} />
+      <Route path="/Jobs" element={<JobsPage />} />
+      <Route path="/Process/:instanceID" element={<ProcessDetailsPage />} />
+      <Route path="/Tasks" element={<TasksPage />} />
+      <Route path="/TaskDetails/:taskId" element={<TaskDetailsPage />} />
+      <Route path="/NoData" element={<NoData defaultPath="/Jobs" defaultButton="Go to Jobs" />} />
+      <Route path="*" element={<PageNotFound defaultPath="/Jobs" defaultButton="Go to Jobs" />} />
     </Routes>
   );
 };
