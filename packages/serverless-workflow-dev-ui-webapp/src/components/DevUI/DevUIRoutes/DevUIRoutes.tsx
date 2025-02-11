@@ -18,9 +18,8 @@
  */
 
 import { NoData } from "@kie-tools/runtime-tools-shared-webapp-components/dist/NoData";
-import { PageNotFound, PageNotFoundProps } from "@kie-tools/runtime-tools-shared-webapp-components/dist/PageNotFound";
 import React, { useMemo } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Redirect, Route, Routes } from "react-router-dom";
 import { useDevUIAppContext } from "../../contexts/DevUIAppContext";
 import { WorkflowsPage } from "../../pages";
 import CloudEventFormPage from "../../pages/CloudEventFormPage/CloudEventFormPage";
@@ -133,10 +132,10 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
         ),
       },
     ],
-    [context.isWorkflowEnabled]
+    [context.isWorkflowEnabled, dataIndexUrl, navigate]
   );
 
-  return <Switch>{routes.filter((r) => r.enabled()).map((r) => r.node)}</Switch>;
+  return <Routes>{routes.filter((r) => r.enabled()).map((r) => r.node)}</Routes>;
 };
 
 export default DevUIRoutes;

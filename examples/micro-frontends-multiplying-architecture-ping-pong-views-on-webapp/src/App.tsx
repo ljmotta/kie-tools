@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { Brand } from "@patternfly/react-core/dist/js/components/Brand";
 import { Nav, NavItem, NavList } from "@patternfly/react-core/dist/js/components/Nav";
 import { Page, PageHeader } from "@patternfly/react-core/dist/js/components/Page";
-import { HashRouter as Router, Link, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Link, Route, Routes } from "react-router-dom";
 import { PingPongReactIFrameViewsPage } from "./React/PingPongReactIFrameViewsPage";
 import { PingPongReactDivViewsPage } from "./React/PingPongReactDivViewsPage";
 import { PingPongAngularIFrameViewsPage } from "./Angular/PingPongAngularIFrameViewsPage";
@@ -99,7 +99,7 @@ export function App() {
           />
         }
       >
-        <Switch>
+        <Routes>
           <Route exact={true} path={"/"}>
             <p>Select a page</p>
           </Route>
@@ -118,7 +118,7 @@ export function App() {
           <Route path={Location.PING_PONG_MIXED_PAGES}>
             <PingPongMixedViewsPage />
           </Route>
-        </Switch>
+        </Routes>
       </Page>
     </Router>
   );

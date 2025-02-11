@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { Brand } from "@patternfly/react-core/dist/js/components/Brand";
 import { Nav, NavItem, NavList } from "@patternfly/react-core/dist/js/components/Nav";
 import { Page, PageHeader } from "@patternfly/react-core/dist/js/components/Page";
-import { HashRouter as Router, Link, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Link, Route, Routes } from "react-router-dom";
 import { SwfStandaloneEditorPage } from "./Pages/SwfStandaloneEditorPage";
 import { SwfStandaloneDiagramOnlyEditorPage } from "./Pages/SwfStandaloneDiagramOnlyEditorPage";
 import { SwfStandaloneTextOnlyEditorPage } from "./Pages/SwfStandaloneTextOnlyEditorPage";
@@ -83,7 +83,7 @@ export function App() {
           />
         }
       >
-        <Switch>
+        <Routes>
           <Route exact={true} path={"/"}>
             <p>Select a page</p>
           </Route>
@@ -96,7 +96,7 @@ export function App() {
           <Route path={Location.SWF_STANDALONE_EDITOR_TEXT_ONLY}>
             <SwfStandaloneTextOnlyEditorPage />
           </Route>
-        </Switch>
+        </Routes>
       </Page>
     </Router>
   );

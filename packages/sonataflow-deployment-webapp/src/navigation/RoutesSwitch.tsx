@@ -17,7 +17,7 @@
  * under the License.
  */
 import React from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Redirect, Route, Routes } from "react-router-dom";
 import { APPDATA_JSON_FILENAME } from "../AppConstants";
 import { ErrorKind, ErrorPage } from "../pages/ErrorPage";
 import { NoMatchPage } from "../pages/NoMatchPage";
@@ -28,7 +28,7 @@ import { RuntimeToolsRoutesSwitch } from "./RuntimeToolsRoutesSwitch";
 
 export function RoutesSwitch() {
   return (
-    <Switch>
+    <Routes>
       <Route path={routes.workflows.form.path({ workflowId: ":workflowId" })}>
         {({ match }: any) => <WorkflowFormPage workflowId={match!.params.workflowId!} />}
       </Route>
@@ -47,6 +47,6 @@ export function RoutesSwitch() {
       <Route>
         <NoMatchPage />
       </Route>
-    </Switch>
+    </Routes>
   );
 }

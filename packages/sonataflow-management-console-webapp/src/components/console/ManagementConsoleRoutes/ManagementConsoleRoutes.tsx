@@ -17,7 +17,7 @@
  * under the License.
  */
 import * as React from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Redirect, Route, Routes } from "react-router-dom";
 import { routes } from "../../../navigation/Routes";
 import { TriggerCloudEventPage } from "../../pages/TriggerCloudEventPage/TriggerCloudEventPage";
 import MonitoringPage from "../../pages/MonitoringPage/MonitoringPage";
@@ -28,7 +28,7 @@ import { WorkflowFormPage } from "../../pages/WorkflowFormPage/WorkflowFormPage"
 
 const ManagementConsoleRoutes: React.FC = () => {
   return (
-    <Switch>
+    <Routes>
       <Route exact path={routes.home.path({})}>
         <Redirect to={routes.runtimeToolsWorkflowInstances.path({})} />
       </Route>
@@ -50,7 +50,7 @@ const ManagementConsoleRoutes: React.FC = () => {
       <Route exact path={routes.monitoring.path({})}>
         <MonitoringPage dataIndexUrl={(window as any)["DATA_INDEX_ENDPOINT"]} />
       </Route>
-    </Switch>
+    </Routes>
   );
 };
 

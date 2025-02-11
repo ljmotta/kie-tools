@@ -18,10 +18,9 @@
  */
 
 import * as React from "react";
-import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Link, Route, Routes } from "react-router-dom";
 import { DmnEditorComponent } from "./components/DmnEditorComponent";
 import { BpmnEditorComponent } from "./components/BpmnEditorComponent";
-import { ContentType } from "@kie-tools-core/workspace/dist/api";
 import processWithWidDefinition from "raw-loader!./resources/processWithWidDefinition.bpmn2";
 import customWorkItemWid from "raw-loader!./resources/widDefinitions.wid";
 
@@ -38,7 +37,7 @@ export function App() {
           <Link to="/both-bpmn-dmn">Both BPMN DMN</Link>
         </div>
         <br />
-        <Switch>
+        <Routes>
           <Route exact={true} path="/dmn-read-only">
             <DmnEditorComponent
               origin={"*"}
@@ -100,7 +99,7 @@ export function App() {
               <DmnEditorComponent origin={"*"} id="both-dmn" readOnly={false} initialContent={Promise.resolve("")} />
             </>
           </Route>
-        </Switch>
+        </Routes>
       </>
     </Router>
   );

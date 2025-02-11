@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import { useMemo } from "react";
-import { Redirect, Route, Switch } from "react-router";
+import { Redirect, Route, Routes } from "react-router";
 import { HashRouter } from "react-router-dom";
 import { EditorEnvelopeLocatorContextProvider } from "./envelopeLocator/hooks/EditorEnvelopeLocatorContext";
 import { EditorPage } from "./editor/EditorPage";
@@ -71,7 +71,7 @@ function RoutesSwitch() {
   const supportedExtensions = useMemo(() => "bpmn|bpmn2|dmn|pmml", []);
 
   return (
-    <Switch>
+    <Routes>
       <Route path={routes.editor.path({ extension: `:extension(${supportedExtensions})` })}>
         {({ match }: any) => <Redirect to={routes.newModel.path({ extension: match!.params.extension! })} />}
       </Route>
@@ -101,7 +101,7 @@ function RoutesSwitch() {
       <Route>
         <NoMatchPage />
       </Route>
-    </Switch>
+    </Routes>
   );
 }
 

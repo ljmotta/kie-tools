@@ -18,10 +18,10 @@
  */
 
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient } from "apollo-client";
-import { MemoryRouter, useLocation } from "react-router";
+import { MemoryRouter, Routes, useLocation } from "react-router";
 import { PageLayout } from "@kie-tools/runtime-tools-components/dist/components/PageLayout";
 import DevUINav from "../DevUINav/DevUINav";
 import { WorkflowDetailsContextProviderWithApolloClient } from "@kie-tools/runtime-tools-swf-webapp-components/dist/WorkflowDetails";
@@ -86,11 +86,11 @@ const DevUILayout: React.FC<IOwnProps> = ({
                       <WorkflowFormContextProvider>
                         <CloudEventFormContextProvider>
                           <MemoryRouter>
-                            <Switch>
+                            <Routes>
                               <Route path={"/"}>
                                 <PageRoute>{children}</PageRoute>
                               </Route>
-                            </Switch>
+                            </Routes>
                           </MemoryRouter>
                         </CloudEventFormContextProvider>
                       </WorkflowFormContextProvider>

@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import { useMemo, useRef, useState } from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes, useRouteMatch } from "react-router-dom";
 import { useRoutes } from "./Hooks";
 import { OnlineEditorPage } from "../homepage/pageTemplate/OnlineEditorPage";
 import { Label } from "@patternfly/react-core/dist/js/components/Label";
@@ -36,7 +36,7 @@ export function RoutesSwitch() {
   const [isNavOpen, setIsNavOpen] = useState(true);
 
   return (
-    <Switch>
+    <Routes>
       <Route path={routes.home.path({})}>
         <OnlineEditorPage pageContainerRef={pageContainerRef} isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen}>
           {!isRouteInSettingsSection ? (
@@ -51,6 +51,6 @@ export function RoutesSwitch() {
           )}
         </OnlineEditorPage>
       </Route>
-    </Switch>
+    </Routes>
   );
 }

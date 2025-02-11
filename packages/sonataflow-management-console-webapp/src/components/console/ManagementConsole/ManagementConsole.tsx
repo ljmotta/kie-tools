@@ -17,7 +17,7 @@
  * under the License.
  */
 import * as React from "react";
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient } from "apollo-client";
 import {
@@ -49,11 +49,11 @@ const ManagementConsole: React.FC<IOwnProps> = ({ apolloClient, userContext, chi
                 <WorkflowDefinitionListContextProviderWithApolloClient apolloClient={apolloClient}>
                   <WorkflowFormContextProvider>
                     <Router>
-                      <Switch>
+                      <Routes>
                         <Route path={"/"}>
                           <BasePage>{children}</BasePage>
                         </Route>
-                      </Switch>
+                      </Routes>
                     </Router>
                   </WorkflowFormContextProvider>
                 </WorkflowDefinitionListContextProviderWithApolloClient>

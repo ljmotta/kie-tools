@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import { I18nDictionariesProvider } from "@kie-tools-core/i18n/dist/react-components";
-import { Route, Switch } from "react-router";
+import { Route, Routes } from "react-router";
 import { HashRouter, Redirect } from "react-router-dom";
 import { AppContext } from "./AppContext";
 import { AppContextProvider } from "./AppContextProvider";
@@ -42,7 +42,7 @@ export function DmnFormApp() {
           {(app) =>
             app.fetchDone && (
               <HashRouter>
-                <Switch>
+                <Routes>
                   {app.data && (
                     <Route path={routes.form.path({ modelName: ":modelName*" })}>
                       {({ match }: any) => {
@@ -63,7 +63,7 @@ export function DmnFormApp() {
                   <Route>
                     <NoMatchPage />
                   </Route>
-                </Switch>
+                </Routes>
               </HashRouter>
             )
           }

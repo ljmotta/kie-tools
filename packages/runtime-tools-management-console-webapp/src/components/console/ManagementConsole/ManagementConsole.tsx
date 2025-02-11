@@ -17,8 +17,7 @@
  * under the License.
  */
 import * as React from "react";
-import { useCallback } from "react";
-import { BrowserRouter as Router, Route, Switch, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, useLocation, useNavigate, Routes } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient } from "apollo-client";
 import ManagementConsoleNav from "../ManagementConsoleNav/ManagementConsoleNav";
@@ -50,11 +49,11 @@ const ManagementConsole: React.FC<IOwnProps> = ({ apolloClient, userContext, chi
               <TaskInboxContextProvider apolloClient={apolloClient}>
                 <TaskFormContextProvider>
                   <Router>
-                    <Switch>
+                    <Routes>
                       <Route path="/">
                         <PageRoute>{children}</PageRoute>
                       </Route>
-                    </Switch>
+                    </Routes>
                   </Router>
                 </TaskFormContextProvider>
               </TaskInboxContextProvider>

@@ -17,7 +17,7 @@
  * under the License.
  */
 import React, { useMemo } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Redirect, Route, Routes } from "react-router-dom";
 import { JobsManagementPage, ProcessesPage } from "../../pages";
 import ProcessDetailsPage from "../../pages/ProcessDetailsPage/ProcessDetailsPage";
 import TaskInboxPage from "../../pages/TaskInboxPage/TaskInboxPage";
@@ -133,10 +133,10 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ navigate }) => {
         ),
       },
     ],
-    [context.isProcessEnabled]
+    [context.isProcessEnabled, navigate]
   );
 
-  return <Switch>{routes.filter((r) => r.enabled()).map((r) => r.node)}</Switch>;
+  return <Routes>{routes.filter((r) => r.enabled()).map((r) => r.node)}</Routes>;
 };
 
 export default DevUIRoutes;

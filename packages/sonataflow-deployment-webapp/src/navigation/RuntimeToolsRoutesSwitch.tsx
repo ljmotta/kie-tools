@@ -17,7 +17,7 @@
  * under the License.
  */
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { RuntimeToolsWorkflowInstances } from "../runtimeTools/pages/RuntimeToolsWorkflowInstances";
 import { routes } from "../routes";
 import { RuntimeToolsWorkflowDetails } from "../runtimeTools/pages/RuntimeToolsWorkflowDetails";
@@ -25,7 +25,7 @@ import { RuntimeToolsWorkflowDefinitions } from "../runtimeTools/pages/RuntimeTo
 
 export function RuntimeToolsRoutesSwitch() {
   return (
-    <Switch>
+    <Routes>
       <Route path={routes.runtimeTools.workflowDefinitions.path({})}>
         <RuntimeToolsWorkflowDefinitions />
       </Route>
@@ -35,6 +35,6 @@ export function RuntimeToolsRoutesSwitch() {
       <Route path={routes.runtimeTools.workflowDetails.path({ workflowId: ":workflowId" })}>
         {({ match }: any) => <RuntimeToolsWorkflowDetails workflowId={match!.params.workflowId!} />}
       </Route>
-    </Switch>
+    </Routes>
   );
 }

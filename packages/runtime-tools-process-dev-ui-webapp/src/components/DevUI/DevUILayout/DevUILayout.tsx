@@ -17,22 +17,19 @@
  * under the License.
  */
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient } from "apollo-client";
-import { MemoryRouter, useLocation } from "react-router";
+import { MemoryRouter, Routes, useLocation } from "react-router";
 import DevUINav from "../DevUINav/DevUINav";
 import FormsListContextProvider from "../../../channel/FormsList/FormsListContextProvider";
 import FormDetailsContextProvider from "../../../channel/FormDetails/FormDetailsContextProvider";
 import DevUIAppContextProvider from "../../contexts/DevUIAppContextProvider";
-import ProcessDefinitionListContextProvider from "../../../channel/ProcessDefinitionList/ProcessDefinitionListContextProvider";
 import ProcessFormContextProvider from "../../../channel/ProcessForm/ProcessFormContextProvider";
 import { CustomLabels } from "../../../api/CustomLabels";
 import { User } from "@kie-tools/runtime-tools-process-enveloped-components/dist/taskForm";
 import { DiagramPreviewSize } from "@kie-tools/runtime-tools-process-enveloped-components/dist/processDetails";
 import { PageLayout } from "@kie-tools/runtime-tools-components/dist/components/PageLayout";
-import { ProcessListContextProvider } from "@kie-tools/runtime-tools-process-webapp-components/dist/ProcessList";
-import { ProcessDetailsContextProvider } from "@kie-tools/runtime-tools-process-webapp-components/dist/ProcessDetails";
 import { JobsManagementContextProvider } from "@kie-tools/runtime-tools-process-webapp-components/dist/JobsManagement";
 import { TaskFormContextProvider } from "../../contexts/TaskFormContextProvider";
 import { TaskInboxContextProvider } from "../../contexts/TaskInboxContextProvider";
@@ -92,11 +89,11 @@ const DevUILayout: React.FC<IOwnProps> = ({
                   <FormDetailsContextProvider>
                     <ProcessFormContextProvider>
                       <MemoryRouter>
-                        <Switch>
+                        <Routes>
                           <Route path="/">
                             <PageRoute>{children}</PageRoute>
                           </Route>
-                        </Switch>
+                        </Routes>
                       </MemoryRouter>
                     </ProcessFormContextProvider>
                   </FormDetailsContextProvider>

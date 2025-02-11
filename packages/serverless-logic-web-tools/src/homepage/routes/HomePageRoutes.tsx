@@ -18,7 +18,7 @@
  */
 
 import React, { useMemo } from "react";
-import { Switch } from "react-router";
+import { Routes } from "react-router";
 import { Overview } from "../overView/Overview";
 import { RecentModels } from "../recentModels/RecentModels";
 import { Route } from "react-router-dom";
@@ -41,7 +41,7 @@ export function HomePageRoutes(props: { isNavOpen: boolean }) {
   const routes = useRoutes();
   const supportedExtensions = useMemo(() => supportedFileExtensionArray.join("|"), []);
   return (
-    <Switch>
+    <Routes>
       <Route path={routes.newModel.path({ extension: `:extension(${supportedExtensions})` })}>
         {({ match }: any) => <NewWorkspaceWithEmptyFilePage extension={match!.params.extension!} />}
       </Route>
@@ -100,6 +100,6 @@ export function HomePageRoutes(props: { isNavOpen: boolean }) {
       <Route>
         <NoMatchPage />
       </Route>
-    </Switch>
+    </Routes>
   );
 }

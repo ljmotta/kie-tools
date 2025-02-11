@@ -18,7 +18,7 @@
  */
 
 import React from "react";
-import { Redirect, Switch } from "react-router";
+import { Redirect, Routes } from "react-router";
 import { Route } from "react-router-dom";
 import { useRoutes } from "../../navigation/Hooks";
 import { GitHubSettings } from "../github/GitHubSettings";
@@ -36,7 +36,7 @@ export function SettingsPageRoutes(props: {} & SettingsPageProps) {
   };
 
   return (
-    <Switch>
+    <Routes>
       <Route path={routes.settings.github.path({})}>
         <GitHubSettings {...settingsPageProps} />
       </Route>
@@ -58,6 +58,6 @@ export function SettingsPageRoutes(props: {} & SettingsPageProps) {
       <Route>
         <Redirect to={routes.settings.github.path({})} />
       </Route>
-    </Switch>
+    </Routes>
   );
 }

@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import { I18nDictionariesProvider } from "@kie-tools-core/i18n/dist/react-components";
-import { Route, Switch } from "react-router";
+import { Route, Routes } from "react-router";
 import { HashRouter } from "react-router-dom";
 import { AppContextProvider } from "./context/AppContextProvider";
 import { AppI18nContext, appI18nDefaults, appI18nDictionaries } from "./i18n";
@@ -37,7 +37,7 @@ export function App() {
     >
       <HashRouter>
         <AppContextProvider>
-          <Switch>
+          <Routes>
             <Route path={routes.dashboard.path({ filePath: ":filePath*" })}>
               <HomePage />
             </Route>
@@ -47,7 +47,7 @@ export function App() {
             <Route>
               <NoMatchPage />
             </Route>
-          </Switch>
+          </Routes>
         </AppContextProvider>
       </HashRouter>
     </I18nDictionariesProvider>
