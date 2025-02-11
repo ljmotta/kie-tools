@@ -35,8 +35,8 @@
     "@readme/openapi-parser": "^2.5.0",
     "json-refs": "^3.0.15",
     "lodash": "^4.17.21",
-    "react-router": "^5.3.4",
-    "react-router-dom": "^5.3.4"
+    "react-router": "^6.29.0",
+    "react-router-dom": "^6.29.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",

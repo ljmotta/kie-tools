@@ -34,7 +34,7 @@
     "apollo-client": "2.6.10",
     "apollo-link-http": "1.5.17",
     "history": "^4.9.0",
-    "react-router": "^5.3.4"
+    "react-router": "^6.29.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",

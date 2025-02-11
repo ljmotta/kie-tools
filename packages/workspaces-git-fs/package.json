@@ -32,7 +32,7 @@
     "client-zip": "^2.3.1",
     "isomorphic-git": "^1.11.1",
     "minimatch": "^3.0.5",
-    "react-router": "^5.3.4",
+    "react-router": "^6.29.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
