@@ -31,8 +31,7 @@ import { PageSection } from "@patternfly/react-core/dist/js/components/Page";
 import { Tab, Tabs, TabTitleText } from "@patternfly/react-core/dist/js/components/Tabs";
 import * as H from "history";
 import React, { ReactText, useCallback, useEffect, useState } from "react";
-import { StaticContext, useHistory } from "react-router";
-import { RouteComponentProps } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useDevUIAppContext } from "../../contexts/DevUIAppContext";
 import "../../styles.css";
 import {
@@ -51,7 +50,7 @@ const WorkflowsPage: React.FC<RouteComponentProps<MatchProps, StaticContext, H.L
   ...props
 }) => {
   const apiContext = useDevUIAppContext();
-  const history = useHistory();
+  const navigate = useNavigate();
   const gatewayApi: WorkflowListGatewayApi = useWorkflowListGatewayApi();
 
   const [activeTabKey, setActiveTabKey] = useState<ReactText>(0);
@@ -68,12 +67,14 @@ const WorkflowsPage: React.FC<RouteComponentProps<MatchProps, StaticContext, H.L
 
   const onOpenWorkflowDetails = useCallback(
     (args: { workflowId: string; state: WorkflowListState }) => {
-      history.push({
-        pathname: `/Workflow/${args.workflowId}`,
-        state: gatewayApi.workflowListState,
-      });
+      navigate(
+        {
+          pathname: `/Workflow/${args.workflowId}`,
+        },
+        { state: gatewayApi.workflowListState }
+      );
     },
-    [history]
+    [navigate]
   );
 
   const getFinalEndpoint = useCallback(
@@ -88,34 +89,42 @@ const WorkflowsPage: React.FC<RouteComponentProps<MatchProps, StaticContext, H.L
 
   const onOpenWorkflowForm = useCallback(
     (workflowDefinition: WorkflowDefinition) => {
-      history.push({
-        pathname: `/WorkflowDefinition/Form/${workflowDefinition.workflowName}`,
-        state: {
-          workflowDefinition: {
-            workflowName: workflowDefinition.workflowName,
-            endpoint: getFinalEndpoint(workflowDefinition.endpoint),
-            serviceUrl: getFinalServiceUrl(workflowDefinition.serviceUrl),
-          },
+      navigate(
+        {
+          pathname: `/WorkflowDefinition/Form/${workflowDefinition.workflowName}`,
         },
-      });
+        {
+          state: {
+            workflowDefinition: {
+              workflowName: workflowDefinition.workflowName,
+              endpoint: getFinalEndpoint(workflowDefinition.endpoint),
+              serviceUrl: getFinalServiceUrl(workflowDefinition.serviceUrl),
+            },
+          },
+        }
+      );
     },
-    [history, getFinalEndpoint, getFinalServiceUrl]
+    [navigate, getFinalEndpoint, getFinalServiceUrl]
   );
 
   const onOpenTriggerCloudEvent = useCallback(
     (workflowDefinition: WorkflowDefinition) => {
-      history.push({
-        pathname: `/WorkflowDefinitions/CloudEvent`,
-        state: {
-          workflowDefinition: {
-            workflowName: workflowDefinition.workflowName,
-            endpoint: getFinalEndpoint(workflowDefinition.endpoint),
-            serviceUrl: getFinalServiceUrl(workflowDefinition.serviceUrl),
-          },
+      navigate(
+        {
+          pathname: `/WorkflowDefinitions/CloudEvent`,
         },
-      });
+        {
+          state: {
+            workflowDefinition: {
+              workflowName: workflowDefinition.workflowName,
+              endpoint: getFinalEndpoint(workflowDefinition.endpoint),
+              serviceUrl: getFinalServiceUrl(workflowDefinition.serviceUrl),
+            },
+          },
+        }
+      );
     },
-    [history, getFinalEndpoint, getFinalServiceUrl]
+    [navigate, getFinalEndpoint, getFinalServiceUrl]
   );
 
   return (

@@ -18,7 +18,7 @@
  */
 import * as React from "react";
 import { useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { OUIAProps, componentOuiaProps } from "@kie-tools/runtime-tools-components/dist/ouiaTools";
 import { ProcessInstance } from "@kie-tools/runtime-tools-process-gateway-api/dist/types";
 import {
@@ -36,20 +36,20 @@ const ProcessDetailsContainer: React.FC<ProcessDetailsContainerProps & OUIAProps
   ouiaId,
   ouiaSafe,
 }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const gatewayApi: ProcessDetailsGatewayApi = useProcessDetailsGatewayApi();
   useEffect(() => {
     const unSubscribeHandler = gatewayApi.onOpenProcessInstanceDetailsListener({
       onOpen(id: string) {
-        history.push(`/`);
-        history.push(`/Process/${id}`);
+        navigate(`/`);
+        navigate(`/Process/${id}`);
       },
     });
 
     return () => {
       unSubscribeHandler.unSubscribe();
     };
-  }, [gatewayApi, history, processInstance]);
+  }, [gatewayApi, navigate, processInstance]);
 
   return (
     <EmbeddedProcessDetails

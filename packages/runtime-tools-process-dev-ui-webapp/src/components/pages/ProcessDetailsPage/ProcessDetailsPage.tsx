@@ -20,7 +20,6 @@ import React, { useState, useEffect } from "react";
 import { Card } from "@patternfly/react-core/dist/js/components/Card";
 import { PageSection } from "@patternfly/react-core/dist/js/components/Page";
 import { Bullseye } from "@patternfly/react-core/dist/js/layouts/Bullseye";
-import { RouteComponentProps } from "react-router-dom";
 import { PageSectionHeader } from "@kie-tools/runtime-tools-components/dist/components/PageSectionHeader";
 import { ServerErrors } from "@kie-tools/runtime-tools-components/dist/components/ServerErrors";
 import { KogitoSpinner } from "@kie-tools/runtime-tools-components/dist/components/KogitoSpinner";
@@ -29,7 +28,7 @@ import {
   ProcessDetailsGatewayApi,
   useProcessDetailsGatewayApi,
 } from "@kie-tools/runtime-tools-process-webapp-components/dist/ProcessDetails";
-import { StaticContext, useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import * as H from "history";
 import "../../styles.css";
 import { useDevUIAppContext } from "../../contexts/DevUIAppContext";
@@ -56,7 +55,7 @@ const ProcessDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContext
   const gatewayApi: ProcessDetailsGatewayApi = useProcessDetailsGatewayApi();
   const appContext = useDevUIAppContext();
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const processId = props.match.params.instanceID;
   const [processInstance, setProcessInstance] = useState<ProcessInstance>({} as ProcessInstance);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -64,7 +63,7 @@ const ProcessDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContext
   let currentPage = JSON.parse(window.localStorage.getItem("state"));
   useEffect(() => {
     window.onpopstate = () => {
-      props.history.push({ state: Object.assign({}, props.location.state) });
+      props.navigate({ state: Object.assign({}, props.location.state) });
     };
   });
 
@@ -89,21 +88,25 @@ const ProcessDetailsPage: React.FC<RouteComponentProps<MatchProps, StaticContext
           const tempPath = currentPage.prev.split("/");
           prevPath = tempPath.filter((item) => item);
         }
-        history.push({
-          pathname: "/NoData",
-          state: {
-            prev: currentPage ? currentPage.prev : "/ProcessInstances",
-            title: "Process not found",
-            description: `Process instance with the id ${processId} not found`,
-            buttonText: currentPage
-              ? `Go to ${prevPath[0]
-                  .replace(/([A-Z])/g, " $1")
-                  .trim()
-                  .toLowerCase()}`
-              : "Go to process instances",
-            rememberedData: Object.assign({}, props.location.state),
+        navigate(
+          {
+            pathname: "/NoData",
           },
-        });
+          {
+            state: {
+              prev: currentPage ? currentPage.prev : "/ProcessInstances",
+              title: "Process not found",
+              description: `Process instance with the id ${processId} not found`,
+              buttonText: currentPage
+                ? `Go to ${prevPath[0]
+                    .replace(/([A-Z])/g, " $1")
+                    .trim()
+                    .toLowerCase()}`
+                : "Go to process instances",
+              rememberedData: Object.assign({}, props.location.state),
+            },
+          }
+        );
       }
     }
   }

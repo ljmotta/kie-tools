@@ -36,7 +36,7 @@ import { useOnlineI18n } from "../../i18n";
 import { ExtendedServicesButtons } from "../ExtendedServices/ExtendedServicesButtons";
 import { useRoutes } from "../../navigation/Hooks";
 import { EmbeddedEditorRef } from "@kie-tools-core/editor/dist/embedded";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { useWorkspaces, WorkspaceFile } from "@kie-tools-core/workspaces-git-fs/dist/context/WorkspacesContext";
 import { PlusIcon } from "@patternfly/react-icons/dist/js/icons/plus-icon";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/js/layouts/Flex";
@@ -123,7 +123,7 @@ export function EditorToolbarWithWorkspace(
   const settingsDispatch = useSettingsDispatch();
   const routes = useRoutes();
   const editorEnvelopeLocator = useEditorEnvelopeLocator();
-  const history = useHistory();
+  const navigate = useNavigate();
   const workspaces = useWorkspaces();
   const { i18n } = useOnlineI18n();
   const copyContentTextArea = useRef<HTMLTextAreaElement>(null);
@@ -163,11 +163,11 @@ export function EditorToolbarWithWorkspace(
       })
       .pop();
     if (!nextFile) {
-      history.push({ pathname: routes.home.path({}) });
+      navigate({ pathname: routes.home.path({}) });
       return;
     }
 
-    history.push({
+    navigate({
       pathname: routes.workspaceWithFilePath.path({
         workspaceId: nextFile.workspaceId,
         fileRelativePath: nextFile.relativePathWithoutExtension,
@@ -176,7 +176,7 @@ export function EditorToolbarWithWorkspace(
     });
   }, [
     editorEnvelopeLocator,
-    history,
+    navigate,
     props.workspace.files,
     props.workspaceFile.relativePath,
     routes.home,
@@ -186,7 +186,7 @@ export function EditorToolbarWithWorkspace(
   const deleteWorkspaceFile = useCallback(async () => {
     if (props.workspace.files.length === 1) {
       await workspaces.deleteWorkspace({ workspaceId: props.workspaceFile.workspaceId });
-      history.push({ pathname: routes.home.path({}) });
+      navigate({ pathname: routes.home.path({}) });
       return;
     }
 
@@ -195,7 +195,14 @@ export function EditorToolbarWithWorkspace(
     });
 
     handleDeletedWorkspaceFile();
-  }, [props.workspace.files.length, props.workspaceFile, workspaces, handleDeletedWorkspaceFile, history, routes.home]);
+  }, [
+    props.workspace.files.length,
+    props.workspaceFile,
+    workspaces,
+    handleDeletedWorkspaceFile,
+    navigate,
+    routes.home,
+  ]);
 
   const deleteFileDropdownItem = useMemo(() => {
     return (
@@ -404,7 +411,7 @@ export function EditorToolbarWithWorkspace(
                             return;
                           }
 
-                          history.push({
+                          navigate({
                             pathname: routes.workspaceWithFilePath.path({
                               workspaceId: file.workspaceId,
                               fileRelativePath: file.relativePathWithoutExtension,

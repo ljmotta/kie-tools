@@ -22,7 +22,7 @@ import { OUIAProps } from "@kie-tools/runtime-tools-components/dist/ouiaTools";
 import { Card } from "@patternfly/react-core/dist/js/components/Card";
 import { PageSection } from "@patternfly/react-core/dist/js/components/Page";
 import { PageTitle } from "@kie-tools/runtime-tools-components/dist/components/PageTitle";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CustomDashboardViewContainer from "../../containers/CustomDashboardViewContainer/CustomDashboardViewContainer";
 import { CustomDashboardInfo } from "@kie-tools/runtime-tools-shared-gateway-api/dist/types";
 
@@ -31,7 +31,7 @@ export interface CustomDashboardViewPageState {
 }
 
 const CustomDashboardViewPage: React.FC<OUIAProps> = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const initialState = history.location && (history.location.state as CustomDashboardViewPageState);
   const dashboardInfo: CustomDashboardInfo = initialState.data;
 

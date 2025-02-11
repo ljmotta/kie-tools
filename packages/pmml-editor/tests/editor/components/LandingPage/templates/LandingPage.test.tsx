@@ -27,7 +27,7 @@ const PATH: string = "path";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
-  useHistory: () => ({
+  useNavigate: () => ({
     push: jest.fn(),
   }),
 }));

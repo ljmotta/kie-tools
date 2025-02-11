@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { Location, LocationDescriptorObject } from "history";
 
 export type BlockerDelegate = (args: { location: Location }) => boolean;
@@ -46,7 +46,7 @@ export const NavigationBlockerContext = React.createContext<NavigationBlockerCon
 export const NavigationStatusContext = React.createContext<NavigationStatus & NavigationStatusHelpers>({} as any);
 
 export function NavigationContextProvider(props: { children: React.ReactNode }) {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [status, setStatus] = useState<NavigationStatus>({
     blockers: new Map(),

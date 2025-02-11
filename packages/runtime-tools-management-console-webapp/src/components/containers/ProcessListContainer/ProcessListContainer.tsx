@@ -18,7 +18,7 @@
  */
 import * as React from "react";
 import { useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   ProcessListGatewayApi,
   useProcessListGatewayApi,
@@ -32,22 +32,24 @@ interface ProcessListContainerProps {
 }
 
 const ProcessListContainer: React.FC<ProcessListContainerProps & OUIAProps> = ({ initialState, ouiaId, ouiaSafe }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const gatewayApi: ProcessListGatewayApi = useProcessListGatewayApi();
 
   useEffect(() => {
     const unsubscriber = gatewayApi.onOpenProcessListen({
       onOpen(process: ProcessInstance) {
-        history.push({
-          pathname: `/Process/${process.id}`,
-          state: gatewayApi.processListState,
-        });
+        navigate(
+          {
+            pathname: `/Process/${process.id}`,
+          },
+          { state: gatewayApi.processListState }
+        );
       },
     });
     return () => {
       unsubscriber.unSubscribe();
     };
-  }, [gatewayApi, history]);
+  }, [gatewayApi, navigate]);
 
   return (
     <EmbeddedProcessList
