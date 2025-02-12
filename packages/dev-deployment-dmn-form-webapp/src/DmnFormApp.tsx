@@ -43,21 +43,10 @@ export function DmnFormApp() {
             app.fetchDone && (
               <HashRouter>
                 <Routes>
-                  {app.data && (
-                    <Route
-                      path={routes.form.path({ modelName: ":modelName*" })}
-                      element={<DmnFormPageRoute app={app} />}
-                    />
-                  )}
-                  {app.data?.forms[0] && (
-                    <Route
-                      path={routes.root.path({})}
-                      element={<Navigate to={routes.form.path({ modelName: app.data.forms[0].modelName })} />}
-                    />
-                  )}
+                  <Route path={routes.root.path({})} element={<RootPageRouteElement app={app} />} />
+                  <Route path={routes.form.path({ modelName: "*" })} element={<DmnFormPageRouteElement app={app} />} />
                   <Route path={routes.error.path({})} element={<DmnFormErrorPage />} />
-                  {!app.data && <Navigate to={routes.error.path({})} />}
-                  <Route element={<NoMatchPage />} />
+                  <Route path={"*"} element={<NoMatchPage />} />
                 </Routes>
               </HashRouter>
             )
@@ -68,9 +57,22 @@ export function DmnFormApp() {
   );
 }
 
-function DmnFormPageRoute(props: { app: AppContextType }) {
-  const { modelName } = useParams();
+function RootPageRouteElement({ app }: { app: AppContextType }) {
+  // If we have data, and elements in the form array, we must navigate to the /form route.
+  // Otherwise we navigate to the /error route.
+  if (app.data !== undefined && app.data?.forms[0] !== undefined) {
+    return <Navigate to={routes.form.path({ modelName: app.data.forms[0].modelName })} replace />;
+  }
+  return <Navigate to={routes.error.path({})} replace />;
+}
 
-  const formData = props.app.data!.forms.find((form) => form.modelName === modelName);
-  return formData ? <DmnFormPage formData={formData} /> : <Navigate to={routes.error.path({})} />;
+function DmnFormPageRouteElement({ app }: { app: AppContextType }) {
+  const params = useParams();
+  const modelName = params["*"];
+  const formData = app.data?.forms.find((form) => form.modelName === modelName);
+
+  if (formData !== undefined) {
+    return <DmnFormPage formData={formData} />;
+  }
+  return <Navigate to={routes.error.path({})} />;
 }

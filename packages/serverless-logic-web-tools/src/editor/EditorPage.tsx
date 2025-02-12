@@ -59,8 +59,7 @@ export function EditorPage() {
   const [webToolsEditor, webToolsEditorRef] = useController<WebToolsEmbeddedEditorRef>();
   const [editorPageDock, editorPageDockRef] = useController<EditorPageDockDrawerRef>();
   const lastContent = useRef<string>();
-  const { workspaceId, fileRelativePath, extension } = useParams();
-  const fileRelativeCompletePath = `${fileRelativePath ?? ""}${extension ? `.${extension}` : ""}`;
+  const { workspaceId, "*": fileRelativeCompletePath } = useParams();
   const workspaceFilePromise = useWorkspaceFilePromise(workspaceId, fileRelativeCompletePath);
   const workspacePromise = useWorkspacePromise(workspaceId);
   const [embeddedEditorFile, setEmbeddedEditorFile] = useState<EmbeddedEditorFile>();
@@ -71,7 +70,7 @@ export function EditorPage() {
   const { notifications, onLazyValidate } = useEditorNotifications({
     webToolsEditor,
     content: lastContent.current,
-    fileRelativePath: fileRelativeCompletePath,
+    fileRelativePath: fileRelativeCompletePath ?? "",
   });
 
   useEffect(() => {
@@ -92,7 +91,6 @@ export function EditorPage() {
         pathname: routes.workspaceWithFilePath.path({
           workspaceId: workspaceFilePromise.data.workspaceFile.workspaceId,
           fileRelativePath: workspaceFilePromise.data.workspaceFile.relativePathWithoutExtension,
-          extension: workspaceFilePromise.data.workspaceFile.extension,
         }),
         search: queryParams.toString(),
       },
@@ -225,12 +223,12 @@ export function EditorPage() {
   );
 
   return workspacePromise.status === PromiseStateStatus.REJECTED ? (
-    <ErrorPage kind="File" errors={workspacePromise.error} filePath={fileRelativeCompletePath} />
+    <ErrorPage kind="File" errors={workspacePromise.error} filePath={fileRelativeCompletePath ?? ""} />
   ) : (
     <PromiseStateWrapper
       promise={workspaceFilePromise}
       pending={<LoadingSpinner />}
-      rejected={(errors) => <ErrorPage kind="File" errors={errors} filePath={fileRelativeCompletePath} />}
+      rejected={(errors) => <ErrorPage kind="File" errors={errors} filePath={fileRelativeCompletePath ?? ""} />}
       resolved={(file) => (
         <>
           <Page>

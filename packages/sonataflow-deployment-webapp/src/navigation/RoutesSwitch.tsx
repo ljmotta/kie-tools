@@ -39,7 +39,7 @@ export function RoutesSwitch() {
         }
       />
       <Route path={routes.home.path({})} element={<Navigate to={routes.runtimeTools.workflowDefinitions.path({})} />} />
-      <Route element={<NoMatchPage />} />
+      <Route path={"*"} element={<NoMatchPage />} />
     </Routes>
   );
 }

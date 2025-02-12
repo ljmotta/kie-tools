@@ -81,7 +81,11 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
       },
       {
         enabled: () => context.isWorkflowEnabled,
-        node: <Route key="16" path="/Workflows/CloudEvent/:instanceId?" element={<CloudEventFormPage />} />,
+        node: <Route key="15" path="/Workflows/CloudEvent/:instanceId" element={<CloudEventFormPage />} />,
+      },
+      {
+        enabled: () => context.isWorkflowEnabled,
+        node: <Route key="16" path="/Workflows/CloudEvent" element={<CloudEventFormPage />} />,
       },
       {
         enabled: () => context.isWorkflowEnabled,

@@ -18,7 +18,7 @@
  */
 
 import React, { useMemo } from "react";
-import { Routes } from "react-router";
+import { Navigate, Routes, useParams } from "react-router";
 import { Overview } from "../overView/Overview";
 import { RecentModels } from "../recentModels/RecentModels";
 import { Route } from "react-router-dom";
@@ -39,20 +39,18 @@ import { RuntimeToolsWorkflowForm } from "../../runtimeTools/pages/RuntimeToolsW
 
 export function HomePageRoutes(props: { isNavOpen: boolean }) {
   const routes = useRoutes();
-  const supportedExtensions = useMemo(() => supportedFileExtensionArray.join("|"), []);
   return (
     <Routes>
       <Route
-        path={routes.newModel.path({ extension: `:extension(${supportedExtensions})` })}
-        element={<NewWorkspaceWithEmptyFilePage />}
+        path={routes.newModel.path({ extension: `:extension` })}
+        element={<NewModelRouteElement supportedExtensions={supportedFileExtensionArray} />}
       />
       <Route path={routes.importModel.path({})} element={<NewWorkspaceFromUrlPage />} />
       <Route path={routes.sampleShowcase.path({})} element={<NewWorkspaceFromSample />} />
       <Route
         path={routes.workspaceWithFilePath.path({
           workspaceId: ":workspaceId",
-          fileRelativePath: `:fileRelativePath*`,
-          extension: `:extension?`,
+          fileRelativePath: `*`,
         })}
         element={<EditorPage />}
       />
@@ -78,7 +76,18 @@ export function HomePageRoutes(props: { isNavOpen: boolean }) {
       />
       <Route path={routes.runtimeToolsWorkflowDefinitions.path({})} element={<RuntimeToolsWorkflowDefinitions />} />
       <Route path={routes.runtimeToolsWorkflowInstances.path({})} element={<RuntimeToolsWorkflowInstances />} />
-      <Route element={<NoMatchPage />} />
+      <Route path={"*"} element={<NoMatchPage />} />
     </Routes>
   );
+}
+
+function NewModelRouteElement({ supportedExtensions }: { supportedExtensions: string[] }) {
+  const routes = useRoutes();
+  const { extension } = useParams();
+  const foundExtension = supportedExtensions.find((supportedExtension) => supportedExtension === (extension ?? ""));
+
+  if (foundExtension === undefined) {
+    return <Navigate to={routes.home.path({})} replace />;
+  }
+  return <NewWorkspaceWithEmptyFilePage />;
 }
