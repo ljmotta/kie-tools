@@ -27,16 +27,12 @@ import { UnsupportedModelPage } from "../templates";
 import { Operation, useOperation } from "../../EditorScorecard";
 import { LinearRegressionViewerPage } from "../../LinearRegressionViewer/templates";
 
-interface ModelParams {
-  index?: string;
-}
-
 interface SingleEditorRouterProps {
   path: string;
 }
 
 export const SingleEditorRouter = (props: SingleEditorRouterProps) => {
-  const { index } = useParams<ModelParams>();
+  const { index } = useParams();
 
   const { setActiveOperation } = useOperation();
 
