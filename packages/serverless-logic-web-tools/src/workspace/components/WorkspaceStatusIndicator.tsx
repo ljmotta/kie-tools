@@ -87,16 +87,17 @@ export function WorkspaceStatusIndicator(props: { workspace: ActiveWorkspace }) 
     `block-navigation-for-${props.workspace.descriptor.workspaceId}`,
     useCallback(
       ({ location }) => {
-        const match = matchPath<{ workspaceId: string }>(location.pathname, {
-          strict: true,
-          exact: true,
-          sensitive: false,
-          path: routes.workspaceWithFilePath.path({
-            workspaceId: ":workspaceId",
-            fileRelativePath: ":fileRelativePath*",
-            extension: ":extension",
-          }),
-        });
+        const match = matchPath(
+          {
+            caseSensitive: false,
+            path: routes.workspaceWithFilePath.path({
+              workspaceId: ":workspaceId",
+              fileRelativePath: ":fileRelativePath*",
+              extension: ":extension",
+            }),
+          },
+          location.pathname
+        );
 
         if (match?.params.workspaceId === props.workspace.descriptor.workspaceId) {
           return false;
