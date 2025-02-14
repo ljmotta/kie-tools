@@ -1,8 +1,8 @@
 module github.com/apache/incubator-kie-tools/packages/kn-plugin-workflow
 
-go 1.22.0
+go 1.24
 
-toolchain go1.23.2
+toolchain go1.24.0
 
 replace github.com/apache/incubator-kie-tools/packages/sonataflow-operator/api v0.0.0 => ./node_modules/@kie-tools/sonataflow-operator/api
 
