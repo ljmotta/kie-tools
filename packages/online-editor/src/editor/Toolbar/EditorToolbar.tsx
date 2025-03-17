@@ -34,7 +34,7 @@ import {
 import { SaveIcon } from "@patternfly/react-icons/dist/js/icons/save-icon";
 import { useOnlineI18n } from "../../i18n";
 import { ExtendedServicesButtons } from "../ExtendedServices/ExtendedServicesButtons";
-import { useRoutes } from "../../navigation/Hooks";
+import { useNavigationBlockersBypass, useRoutes } from "../../navigation/Hooks";
 import { EmbeddedEditorRef } from "@kie-tools-core/editor/dist/embedded";
 import { useNavigate } from "react-router";
 import { useWorkspaces, WorkspaceFile } from "@kie-tools-core/workspaces-git-fs/dist/context/WorkspacesContext";
@@ -137,6 +137,7 @@ export function EditorToolbarWithWorkspace(
     useEditorToolbarDispatchContext();
 
   useWorkspaceNavigationBlocker(props.workspace);
+  const navigationBlockersBypass = useNavigationBlockersBypass();
 
   const { gitConfig } = useAuthSession(props.workspace.descriptor.gitAuthSessionId);
 
@@ -163,7 +164,12 @@ export function EditorToolbarWithWorkspace(
       })
       .pop();
     if (!nextFile) {
-      navigate({ pathname: routes.home.path({}) });
+      // TODO: This will forcefully return home.
+      // There's no way to undo this deletion because the workspace won't be accesible
+      // anymore without an editable file.
+      navigationBlockersBypass.execute(() => {
+        navigate({ pathname: routes.home.path({}) });
+      });
       return;
     }
 
@@ -177,6 +183,7 @@ export function EditorToolbarWithWorkspace(
   }, [
     editorEnvelopeLocator,
     navigate,
+    navigationBlockersBypass,
     props.workspace.files,
     props.workspaceFile.relativePath,
     routes.home,
@@ -185,8 +192,11 @@ export function EditorToolbarWithWorkspace(
 
   const deleteWorkspaceFile = useCallback(async () => {
     if (props.workspace.files.length === 1) {
+      // This was the last file, delete the workspace and return home
       await workspaces.deleteWorkspace({ workspaceId: props.workspaceFile.workspaceId });
-      navigate({ pathname: routes.home.path({}) });
+      navigationBlockersBypass.execute(() => {
+        navigate({ pathname: routes.home.path({}) });
+      });
       return;
     }
 
@@ -200,6 +210,7 @@ export function EditorToolbarWithWorkspace(
     props.workspaceFile,
     workspaces,
     handleDeletedWorkspaceFile,
+    navigationBlockersBypass,
     navigate,
     routes.home,
   ]);

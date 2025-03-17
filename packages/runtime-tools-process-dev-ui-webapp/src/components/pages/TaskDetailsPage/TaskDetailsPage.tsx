@@ -78,6 +78,14 @@ const TaskDetailsPage: React.FC<OUIAProps> = ({ ouiaId, ouiaSafe }) => {
     try {
       const task = await taskInboxGatewayApi.getTaskById(taskId);
       setUserTask(task);
+      if (
+        (appContext.getCurrentUser().id && !task?.potentialUsers?.includes(appContext.getCurrentUser()?.id)) ||
+        (!appContext.getCurrentUser().id && (task?.potentialUsers?.length ?? 0) > 0)
+      ) {
+        setIsDetailsExpanded(true);
+      } else {
+        setIsDetailsExpanded(false);
+      }
     } catch (err) {
       setError(err);
     } finally {
@@ -115,7 +123,7 @@ const TaskDetailsPage: React.FC<OUIAProps> = ({ ouiaId, ouiaSafe }) => {
 
   const goToInbox = () => {
     taskInboxGatewayApi.clearOpenTask();
-    navigate("/TaskInbox");
+    navigate("/Tasks");
   };
 
   const onSubmitSuccess = (phase: string) => {
@@ -154,7 +162,7 @@ const TaskDetailsPage: React.FC<OUIAProps> = ({ ouiaId, ouiaSafe }) => {
             <Card className={"Dev-ui__card-size"}>
               <ServerErrors error={error} variant="large">
                 <Button variant="primary" onClick={() => goToInbox()}>
-                  Go to Inbox
+                  Go to Tasks
                 </Button>
               </ServerErrors>
             </Card>
@@ -174,8 +182,8 @@ const TaskDetailsPage: React.FC<OUIAProps> = ({ ouiaId, ouiaSafe }) => {
             <Card className={"Dev-ui__card-size"}>
               <KogitoEmptyState
                 type={KogitoEmptyStateType.Info}
-                title={"Cannot find task"}
-                body={`Cannot find task with id '${taskId}'`}
+                title={"Cannot find Task"}
+                body={`Cannot find Task with id '${taskId}'`}
               />
             </Card>
           </GridItem>

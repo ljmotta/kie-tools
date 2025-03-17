@@ -63,7 +63,7 @@ const ProcessFormPage: React.FC<OUIAProps> = ({ ouiaId, ouiaSafe }) => {
       details: notificationDetails,
       customActions: [
         {
-          label: "Go to process list",
+          label: "Go to Processes",
           onClick: () => {
             setNotification(null);
             goToProcessDefinition();
