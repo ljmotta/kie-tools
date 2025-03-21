@@ -17,10 +17,10 @@
  * under the License.
  */
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient } from "apollo-client";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter, Routes, useLocation } from "react-router";
 import DevUINav from "../DevUINav/DevUINav";
 import FormsListContextProvider from "../../../channel/FormsList/FormsListContextProvider";
 import FormDetailsContextProvider from "../../../channel/FormDetails/FormDetailsContextProvider";
@@ -66,14 +66,6 @@ const DevUILayout: React.FC<IOwnProps> = ({
   diagramPreviewSize,
   children,
 }) => {
-  const renderPage = (routeProps) => {
-    return (
-      <PageLayout pageNavOpen={true} withHeader={false} PageNav={<DevUINav pathname={routeProps.location.pathname} />}>
-        {children}
-      </PageLayout>
-    );
-  };
-
   return (
     <ApolloProvider client={apolloClient}>
       <DevUIAppContextProvider
@@ -97,9 +89,9 @@ const DevUILayout: React.FC<IOwnProps> = ({
                   <FormDetailsContextProvider>
                     <ProcessFormContextProvider>
                       <MemoryRouter>
-                        <Switch>
-                          <Route path="/" render={renderPage} />
-                        </Switch>
+                        <Routes>
+                          <Route path="/" element={<PageRoute>{children}</PageRoute>} />
+                        </Routes>
                       </MemoryRouter>
                     </ProcessFormContextProvider>
                   </FormDetailsContextProvider>
@@ -112,5 +104,15 @@ const DevUILayout: React.FC<IOwnProps> = ({
     </ApolloProvider>
   );
 };
+
+function PageRoute(props: React.PropsWithChildren<{}>) {
+  const location = useLocation();
+
+  return (
+    <PageLayout pageNavOpen={true} withHeader={false} PageNav={<DevUINav pathname={location.pathname} />}>
+      {props.children}
+    </PageLayout>
+  );
+}
 
 export default DevUILayout;

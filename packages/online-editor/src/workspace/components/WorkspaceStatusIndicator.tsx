@@ -192,16 +192,17 @@ export function WorkspaceStatusIndicator(props: {
     `block-navigation-for-${props.gitStatusProps.workspaceDescriptor.workspaceId}`,
     useCallback(
       ({ location }) => {
-        const match = matchPath<{ workspaceId: string }>(location.pathname, {
-          strict: true,
-          exact: true,
-          sensitive: false,
-          path: routes.workspaceWithFilePath.path({
-            workspaceId: ":workspaceId",
-            fileRelativePath: ":fileRelativePath*",
-            extension: ":extension",
-          }),
-        });
+        const match = matchPath(
+          {
+            caseSensitive: false,
+            path: routes.workspaceWithFilePath.path({
+              workspaceId: ":workspaceId",
+              fileRelativePath: ":fileRelativePath*",
+              extension: ":extension",
+            }),
+          },
+          location.pathname
+        );
 
         if (match?.params.workspaceId === props.gitStatusProps.workspaceDescriptor.workspaceId) {
           return false;

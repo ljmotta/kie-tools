@@ -26,7 +26,7 @@ import { Bullseye } from "@patternfly/react-core/dist/js/layouts/Bullseye";
 import { Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core/dist/js/components/Card";
 import { Text, TextContent, TextVariants } from "@patternfly/react-core/dist/js/components/Text";
 import { useRoutes } from "../navigation/Hooks";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { Button, ButtonVariant } from "@patternfly/react-core/dist/js/components/Button";
 import { Spinner } from "@patternfly/react-core/dist/js/components/Spinner";
 import { UploadIcon } from "@patternfly/react-icons/dist/js/icons/upload-icon";
@@ -43,7 +43,7 @@ enum UploadType {
 }
 export function UploadCard(props: { expandWorkspace: (workspaceId: string) => void }) {
   const routes = useRoutes();
-  const history = useHistory();
+  const navigate = useNavigate();
   const workspaces = useWorkspaces();
 
   const [uploading, setUploading] = useState(UploadType.NONE);
@@ -124,7 +124,7 @@ export function UploadCard(props: { expandWorkspace: (workspaceId: string) => vo
           return props.expandWorkspace(workspace.workspaceId);
         }
 
-        history.push({
+        navigate({
           pathname: routes.workspaceWithFilePath.path({
             workspaceId: workspace.workspaceId,
             fileRelativePath: suggestedFirstFile.relativePathWithoutExtension,
@@ -135,7 +135,7 @@ export function UploadCard(props: { expandWorkspace: (workspaceId: string) => vo
         setUploading(UploadType.NONE);
       }
     },
-    [props, workspaces, history, routes]
+    [props, workspaces, navigate, routes]
   );
 
   const { acceptedFiles, getRootProps, getInputProps, isDragActive, draggedFiles } = useDropzone({

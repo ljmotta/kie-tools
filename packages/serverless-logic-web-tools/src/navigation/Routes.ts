@@ -131,11 +131,8 @@ export const routes = {
   sampleShowcase: new Route<{ queryParams: QueryParams.SAMPLE_ID }>(() => `/sample`),
 
   workspaceWithFilePath: new Route<{
-    pathParams: PathParams.WORKSPACE_ID | PathParams.FILE_RELATIVE_PATH | PathParams.EXTENSION;
-  }>(
-    ({ workspaceId, fileRelativePath, extension }) =>
-      `/${workspaceId}/file/${fileRelativePath}${extension ? "." + extension : ""}`
-  ),
+    pathParams: PathParams.WORKSPACE_ID | PathParams.FILE_RELATIVE_PATH;
+  }>(({ workspaceId, fileRelativePath }) => `/${workspaceId}/file/${fileRelativePath}`),
 
   workspaceWithFiles: new Route<{
     pathParams: PathParams.WORKSPACE_ID;

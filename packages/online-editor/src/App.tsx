@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import { useMemo } from "react";
-import { Redirect, Route, Switch } from "react-router";
+import { Navigate, Route, Routes, useParams } from "react-router";
 import { HashRouter } from "react-router-dom";
 import { EditorEnvelopeLocatorContextProvider } from "./envelopeLocator/hooks/EditorEnvelopeLocatorContext";
 import { EditorPage } from "./editor/EditorPage";
@@ -68,39 +68,64 @@ export function App() {
 
 function RoutesSwitch() {
   const routes = useRoutes();
-  const supportedExtensions = useMemo(() => "bpmn|bpmn2|dmn|pmml", []);
+  const supportedExtensions = useMemo(() => ["bpmn", "bpmn2", "dmn", "pmml"], []);
 
   return (
-    <Switch>
-      <Route path={routes.editor.path({ extension: `:extension(${supportedExtensions})` })}>
-        {({ match }) => <Redirect to={routes.newModel.path({ extension: match!.params.extension! })} />}
-      </Route>
-      <Route path={routes.newModel.path({ extension: `:extension(${supportedExtensions})` })}>
-        {({ match }) => <NewWorkspaceWithEmptyFilePage extension={match!.params.extension!} />}
-      </Route>
-      <Route path={routes.import.path({})}>
-        <NewWorkspaceFromUrlPage />
-      </Route>
+    <Routes>
+      <Route
+        path={routes.editor.path({ extension: ":extension" })}
+        element={<EditorRouteElement supportedExtensions={supportedExtensions} />}
+      />
+      <Route
+        path={routes.newModel.path({ extension: `:extension` })}
+        element={<NewModelRouteElement supportedExtensions={supportedExtensions} />}
+      />
+      <Route path={routes.import.path({})} element={<NewWorkspaceFromUrlPage />} />
       <Route
         path={routes.workspaceWithFilePath.path({
           workspaceId: ":workspaceId",
-          fileRelativePath: `:fileRelativePath*`,
-          extension: `:extension(${supportedExtensions})`,
+          fileRelativePath: `*`,
         })}
-      >
-        {({ match }) => (
-          <EditorPage
-            workspaceId={match!.params.workspaceId!}
-            fileRelativePath={`${match!.params.fileRelativePath}.${match!.params.extension}`}
-          />
-        )}
-      </Route>
-      <Route exact={true} path={routes.home.path({})}>
-        <HomePage />
-      </Route>
-      <Route component={NoMatchPage} />
-    </Switch>
+        element={<WorkspaceWithFilePathRouteElement supportedExtensions={supportedExtensions} />}
+      />
+      <Route path={routes.home.path({})} element={<HomePage />} />
+      <Route path={"*"} element={<NoMatchPage />} />
+    </Routes>
   );
+}
+
+function EditorRouteElement({ supportedExtensions }: { supportedExtensions: string[] }) {
+  const routes = useRoutes();
+  const { extension } = useParams();
+  const foundExtension = supportedExtensions.find((supportedExtension) => supportedExtension === (extension ?? ""));
+
+  if (foundExtension === undefined) {
+    return <Navigate to={routes.home.path({})} replace />;
+  }
+  return <Navigate to={routes.newModel.path({ extension: foundExtension })} />;
+}
+
+function NewModelRouteElement({ supportedExtensions }: { supportedExtensions: string[] }) {
+  const routes = useRoutes();
+  const { extension } = useParams();
+  const foundExtension = supportedExtensions.find((supportedExtension) => supportedExtension === (extension ?? ""));
+
+  if (foundExtension === undefined) {
+    return <Navigate to={routes.home.path({})} replace />;
+  }
+  return <NewWorkspaceWithEmptyFilePage />;
+}
+
+function WorkspaceWithFilePathRouteElement({ supportedExtensions }: { supportedExtensions: string[] }) {
+  const routes = useRoutes();
+  const { "*": fileRelativePath } = useParams();
+  // Get the file extension
+  const extension = fileRelativePath?.split(".").slice(1).join(".");
+  const foundExtension = supportedExtensions.find((supportedExtension) => supportedExtension === (extension ?? ""));
+  if (foundExtension === undefined) {
+    return <Navigate to={routes.home.path({})} replace />;
+  }
+  return <EditorPage />;
 }
 
 function nest(...components: Array<[(...args: any[]) => any, object]>) {

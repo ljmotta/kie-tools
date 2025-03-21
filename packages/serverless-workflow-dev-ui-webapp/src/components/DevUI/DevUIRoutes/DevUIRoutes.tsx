@@ -18,9 +18,8 @@
  */
 
 import { NoData } from "@kie-tools/runtime-tools-shared-webapp-components/dist/NoData";
-import { PageNotFound, PageNotFoundProps } from "@kie-tools/runtime-tools-shared-webapp-components/dist/PageNotFound";
 import React, { useMemo } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { useDevUIAppContext } from "../../contexts/DevUIAppContext";
 import { WorkflowsPage } from "../../pages";
 import CloudEventFormPage from "../../pages/CloudEventFormPage/CloudEventFormPage";
@@ -46,57 +45,57 @@ const DevUIRoutes: React.FC<IOwnProps> = ({ dataIndexUrl, navigate }) => {
     () => [
       {
         enabled: () => true,
-        node: <Route key="0" exact path="/" render={() => <Redirect to={`/${navigate}`} />} />,
+        node: <Route key="0" path="/" element={<Navigate to={`/${navigate}`} />} />,
       },
       {
         enabled: () => context.isWorkflowEnabled,
-        node: <Route key="1" exact path="/Workflows" component={WorkflowsPage} />,
+        node: <Route key="1" path="/Workflows" element={<WorkflowsPage />} />,
       },
       {
         enabled: () => context.isWorkflowEnabled,
-        node: <Route key="2" exact path="/Workflow/:instanceID" component={WorkflowDetailsPage} />,
+        node: <Route key="2" path="/Workflow/:instanceID" element={<WorkflowDetailsPage />} />,
       },
       {
         enabled: () => context.isWorkflowEnabled,
-        node: <Route key="5" exact path="/Forms" component={FormsListPage} />,
+        node: <Route key="5" path="/Forms" element={<FormsListPage />} />,
       },
       {
         enabled: () => context.isWorkflowEnabled,
-        node: <Route key="6" exact path="/Forms/:formName" component={FormDetailPage} />,
+        node: <Route key="6" path="/Forms/:formName" element={<FormDetailPage />} />,
       },
       {
         enabled: () => context.isWorkflowEnabled,
-        node: <Route key="8" exact path="/WorkflowDefinition/Form/:workflowName" component={WorkflowFormPage} />,
+        node: <Route key="8" path="/WorkflowDefinition/Form/:workflowName" element={<WorkflowFormPage />} />,
       },
       {
         enabled: () => context.isWorkflowEnabled,
-        node: <Route key="9" exact path="/CustomDashboard" component={CustomDashboardListPage} />,
+        node: <Route key="9" path="/CustomDashboard" element={<CustomDashboardListPage />} />,
       },
       {
         enabled: () => context.isWorkflowEnabled,
-        node: <Route key="10" exact path="/CustomDashboard/:customDashboardName" component={CustomDashboardViewPage} />,
+        node: <Route key="10" path="/CustomDashboard/:customDashboardName" element={<CustomDashboardViewPage />} />,
       },
       {
         enabled: () => context.isWorkflowEnabled,
-        node: (
-          <Route key="13" path="/Monitoring">
-            <MonitoringPage dataIndexUrl={dataIndexUrl} />
-          </Route>
-        ),
+        node: <Route key="13" path="/Monitoring" element={<MonitoringPage dataIndexUrl={dataIndexUrl} />} />,
       },
       {
         enabled: () => context.isWorkflowEnabled,
-        node: <Route key="16" exact path="/Workflows/CloudEvent/:instanceId?" component={CloudEventFormPage} />,
+        node: <Route key="15" path="/Workflows/CloudEvent/:instanceId" element={<CloudEventFormPage />} />,
       },
       {
         enabled: () => context.isWorkflowEnabled,
-        node: <Route key="17" exact path="/WorkflowDefinitions/CloudEvent" component={CloudEventFormPage} />,
+        node: <Route key="16" path="/Workflows/CloudEvent" element={<CloudEventFormPage />} />,
+      },
+      {
+        enabled: () => context.isWorkflowEnabled,
+        node: <Route key="17" path="/WorkflowDefinitions/CloudEvent" element={<CloudEventFormPage />} />,
       },
     ],
-    [context.isWorkflowEnabled]
+    [context.isWorkflowEnabled, dataIndexUrl, navigate]
   );
 
-  return <Switch>{routes.filter((r) => r.enabled()).map((r) => r.node)}</Switch>;
+  return <Routes>{routes.filter((r) => r.enabled()).map((r) => r.node)}</Routes>;
 };
 
 export default DevUIRoutes;
