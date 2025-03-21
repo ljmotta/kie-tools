@@ -26,9 +26,10 @@
   <!-- As this app aims to work as any consumer app would. -->
 
   <parent>
-    <groupId>org.apache</groupId>
-    <artifactId>apache</artifactId>
-    <version>33</version>
+    <groupId>org.kie</groupId>
+    <artifactId>kie-tools-maven-base</artifactId>
+    <version>${revision}</version>
+    <relativePath>../../node_modules/@kie-tools/maven-base/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -53,6 +54,9 @@
     <!-- Config -->
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <quarkus.analytics.disabled>true</quarkus.analytics.disabled>
+
+    <!-- Quarkus -->
+    <version.quarkus>3.15.3</version.quarkus>
 
     <!-- 3rd party -->
     <version.junit>4.13.2</version.junit>
