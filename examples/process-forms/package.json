@@ -1,0 +1,34 @@
+{
+  "private": true,
+  "name": "@kie-tools-examples/process-form",
+  "version": "0.0.0",
+  "description": "",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/apache/incubator-kie-tools",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apache/incubator-kie-tools.git"
+  },
+  "bugs": {
+    "url": "https://github.com/apache/incubator-kie-tools/issues"
+  },
+  "scripts": {
+    "build:dev": "run-script-if --bool \"$(build-env examples.build)\" --then run-script-os",
+    "install": "node install.js",
+    "lint": "echo 'Linting'"
+  },
+  "dependencies": {
+    "@kie-tools/jbpm-quarkus-devui": "workspace:*",
+    "@kie-tools/maven-base": "workspace:*"
+  },
+  "devDependencies": {
+    "@kie-tools/root-env": "workspace:*",
+    "run-script-os": "^1.1.6"
+  },
+  "kieTools": {
+    "requiredPreinstalledCliCommands": [
+      "java",
+      "mvn"
+    ]
+  }
+}
