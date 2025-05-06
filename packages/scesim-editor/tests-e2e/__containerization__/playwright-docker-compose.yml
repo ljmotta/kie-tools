@@ -29,6 +29,7 @@ services:
     tty: true
     network_mode: host
     user: "1000:1000"
+    ipc: "host"
     environment:
       - KIE_TOOLS_BUILD__runEndToEndTests=true
       - KIE_TOOLS_BUILD__containerizedEndToEndTests=false # Already inside the container, variable must be false.
