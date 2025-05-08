@@ -63,7 +63,7 @@ const customConfig = defineConfig({
     },
   ],
   // Override
-  projects: buildEnv.onlineEditor.test.ONLINE_EDITOR__skipPlaywrightTestsForArm64
+  projects: buildEnv.playwrightBase.skipGoogleChromeTestsForArm
     ? [
         {
           timeout: 60000,

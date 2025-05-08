@@ -17,8 +17,9 @@
  * under the License.
  */
 
-import { defineConfig } from "@playwright/test";
+import { devices, defineConfig } from "@playwright/test";
 import playwrightBaseConfig from "@kie-tools/playwright-base/playwright.config";
+import { ProjectName } from "@kie-tools/playwright-base/projectNames";
 import merge from "lodash/merge";
 
 import { env } from "./env";
@@ -38,13 +39,34 @@ const customConfig = defineConfig({
     timeout: 180000,
   },
 
-  expect: {
-    toHaveScreenshot: {
-      // An acceptable ratio of pixels that are different to the
-      // total amount of pixels, between 0 and 1.
-      maxDiffPixelRatio: 0.1,
-    },
-  },
+  projects: buildEnv.playwrightBase.skipGoogleChromeTestsForArm
+    ? [
+        {
+          timeout: 60000,
+          name: ProjectName.CHROMIUM,
+          use: { ...devices["Desktop Chrome"], permissions: ["clipboard-read"] },
+          testIgnore: "*",
+        },
+
+        // {
+        //   name: "firefox",
+        //   use: { ...devices["Desktop Firefox"] },
+        // },
+
+        {
+          timeout: 60000,
+          name: ProjectName.WEBKIT,
+          use: { ...devices["Desktop Safari"], deviceScaleFactor: 1 },
+        },
+
+        {
+          timeout: 60000,
+          name: ProjectName.GOOGLE_CHROME,
+          use: { ...devices["Desktop Chrome"], channel: "chrome", permissions: ["clipboard-read"] },
+          testIgnore: "*",
+        },
+      ]
+    : undefined,
 });
 
 export default defineConfig(merge(playwrightBaseConfig, customConfig));
