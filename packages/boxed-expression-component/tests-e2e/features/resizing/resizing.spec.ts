@@ -50,11 +50,11 @@ test.describe("Resizing", () => {
       expect(await literal.boundingBox()).toHaveProperty("width", 190);
       await resizing.reset(header);
       if (browserName === "webkit") {
-        expect(await header.boundingBox()).toHaveProperty("width", 312);
-        expect(await literal.boundingBox()).toHaveProperty("width", 312);
+        expect(await header.boundingBox()).toHaveProperty("width", 332);
+        expect(await literal.boundingBox()).toHaveProperty("width", 332);
       } else {
-        expect(await header.boundingBox()).toHaveProperty("width", 301);
-        expect(await literal.boundingBox()).toHaveProperty("width", 301);
+        expect(await header.boundingBox()).toHaveProperty("width", 253);
+        expect(await literal.boundingBox()).toHaveProperty("width", 253);
       }
     });
   });
@@ -136,10 +136,10 @@ test.describe("Resizing", () => {
       expect(await result.boundingBox()).toHaveProperty("width", 120);
       expect(await literal.boundingBox()).toHaveProperty("width", 212);
       await resizing.reset(header);
-      expect(await header.boundingBox()).toHaveProperty("width", 351);
+      expect(await header.boundingBox()).toHaveProperty("width", 332);
       expect(await firstEntry.boundingBox()).toHaveProperty("width", 120);
       expect(await result.boundingBox()).toHaveProperty("width", 120);
-      expect(await literal.boundingBox()).toHaveProperty("width", 231);
+      expect(await literal.boundingBox()).toHaveProperty("width", 212);
     });
 
     test("should resize results column and reset", async ({ page, resizing }) => {
@@ -157,7 +157,7 @@ test.describe("Resizing", () => {
       expect(await firstEntry.boundingBox()).toHaveProperty("width", 120);
     });
 
-    test("should resize context entry cell and reset", async ({ page, resizing }) => {
+    test("should resize context entry cell and reset", async ({ page, resizing, browserName }) => {
       const firstEntry = page.getByRole("cell", { name: "ContextEntry-1 (<Undefined>)" });
       const header = page.getByRole("columnheader", { name: "Expression Name (<Undefined>)" });
       const result = page.getByRole("cell", { name: "<result>" });
@@ -167,9 +167,15 @@ test.describe("Resizing", () => {
       expect(await header.boundingBox()).toHaveProperty("width", 382);
       expect(await firstEntry.boundingBox()).toHaveProperty("width", 170);
       await resizing.reset(firstEntry);
-      expect(await result.boundingBox()).toHaveProperty("width", 120);
-      expect(await header.boundingBox()).toHaveProperty("width", 332);
-      expect(await firstEntry.boundingBox()).toHaveProperty("width", 120);
+      if (browserName === "webkit") {
+        expect(await result.boundingBox()).toHaveProperty("width", 123);
+        expect(await header.boundingBox()).toHaveProperty("width", 335);
+        expect(await firstEntry.boundingBox()).toHaveProperty("width", 123);
+      } else {
+        expect(await result.boundingBox()).toHaveProperty("width", 120);
+        expect(await header.boundingBox()).toHaveProperty("width", 332);
+        expect(await firstEntry.boundingBox()).toHaveProperty("width", 120);
+      }
     });
 
     test("should change context entry name, resize to fit and reset to result size", async ({
@@ -201,9 +207,9 @@ test.describe("Resizing", () => {
       expect(await result.boundingBox()).toHaveProperty("width", 120);
       expect(await literal.boundingBox()).toHaveProperty("width", 212);
       await resizing.reset(firstEntry);
-      expect(await header.boundingBox()).toHaveProperty("width", 365);
-      expect(await firstEntry.boundingBox()).toHaveProperty("width", 153);
-      expect(await result.boundingBox()).toHaveProperty("width", 153);
+      expect(await header.boundingBox()).toHaveProperty("width", 342);
+      expect(await firstEntry.boundingBox()).toHaveProperty("width", 130);
+      expect(await result.boundingBox()).toHaveProperty("width", 130);
       expect(await literal.boundingBox()).toHaveProperty("width", 212);
       await resizing.reset(result);
       expect(await header.boundingBox()).toHaveProperty("width", 332);
@@ -304,9 +310,9 @@ test.describe("Resizing", () => {
       expect(await annotationsHeader.boundingBox()).toHaveProperty("width", 240);
       await resizing.reset(inputHeader);
       if (browserName === "webkit") {
-        expect(await inputHeader.boundingBox()).toHaveProperty("width", 179);
+        expect(await inputHeader.boundingBox()).toHaveProperty("width", 190);
       } else {
-        expect(await inputHeader.boundingBox()).toHaveProperty("width", 173);
+        expect(await inputHeader.boundingBox()).toHaveProperty("width", 147);
       }
       expect(await outputHeader.boundingBox()).toHaveProperty("width", 100);
       expect(await annotationsHeader.boundingBox()).toHaveProperty("width", 240);
@@ -354,9 +360,9 @@ test.describe("Resizing", () => {
       await resizing.reset(outputHeader);
       expect(await inputHeader.boundingBox()).toHaveProperty("width", 100);
       if (browserName === "webkit") {
-        expect(await outputHeader.boundingBox()).toHaveProperty("width", 179);
+        expect(await outputHeader.boundingBox()).toHaveProperty("width", 190);
       } else {
-        expect(await outputHeader.boundingBox()).toHaveProperty("width", 173);
+        expect(await outputHeader.boundingBox()).toHaveProperty("width", 147);
       }
       expect(await annotationsHeader.boundingBox()).toHaveProperty("width", 240);
     });
@@ -389,13 +395,13 @@ test.describe("Resizing", () => {
       await resizing.reset(header);
       expect(await inputHeader.boundingBox()).toHaveProperty("width", 100);
       if (browserName === "webkit") {
-        expect(await header.boundingBox()).toHaveProperty("width", 326);
-        expect(await output1.boundingBox()).toHaveProperty("width", 163);
-        expect(await output2.boundingBox()).toHaveProperty("width", 163);
+        expect(await header.boundingBox()).toHaveProperty("width", 346);
+        expect(await output1.boundingBox()).toHaveProperty("width", 173);
+        expect(await output2.boundingBox()).toHaveProperty("width", 173);
       } else {
-        expect(await header.boundingBox()).toHaveProperty("width", 315);
-        expect(await output1.boundingBox()).toHaveProperty("width", 157);
-        expect(await output2.boundingBox()).toHaveProperty("width", 158);
+        expect(await header.boundingBox()).toHaveProperty("width", 265);
+        expect(await output1.boundingBox()).toHaveProperty("width", 132);
+        expect(await output2.boundingBox()).toHaveProperty("width", 133);
       }
       expect(await annotationsHeader.boundingBox()).toHaveProperty("width", 240);
     });
@@ -422,11 +428,11 @@ test.describe("Resizing", () => {
       await resizing.reset(output1);
       expect(await inputHeader.boundingBox()).toHaveProperty("width", 100);
       if (browserName === "webkit") {
-        expect(await outputHeader.boundingBox()).toHaveProperty("width", 279);
-        expect(await output1.boundingBox()).toHaveProperty("width", 179);
+        expect(await outputHeader.boundingBox()).toHaveProperty("width", 290);
+        expect(await output1.boundingBox()).toHaveProperty("width", 190);
       } else {
-        expect(await outputHeader.boundingBox()).toHaveProperty("width", 273);
-        expect(await output1.boundingBox()).toHaveProperty("width", 173);
+        expect(await outputHeader.boundingBox()).toHaveProperty("width", 247);
+        expect(await output1.boundingBox()).toHaveProperty("width", 147);
       }
       expect(await output2.boundingBox()).toHaveProperty("width", 100);
       expect(await annotationsHeader.boundingBox()).toHaveProperty("width", 240);
@@ -546,13 +552,13 @@ test.describe("Resizing", () => {
       expect(await column2.boundingBox()).toHaveProperty("width", 100);
       await resizing.reset(columnsHeader);
       if (browserName === "webkit") {
-        expect(await columnsHeader.boundingBox()).toHaveProperty("width", 256);
-        expect(await column1.boundingBox()).toHaveProperty("width", 128);
-        expect(await column2.boundingBox()).toHaveProperty("width", 128);
+        expect(await columnsHeader.boundingBox()).toHaveProperty("width", 272);
+        expect(await column1.boundingBox()).toHaveProperty("width", 136);
+        expect(await column2.boundingBox()).toHaveProperty("width", 136);
       } else {
-        expect(await columnsHeader.boundingBox()).toHaveProperty("width", 248);
-        expect(await column1.boundingBox()).toHaveProperty("width", 124);
-        expect(await column2.boundingBox()).toHaveProperty("width", 124);
+        expect(await columnsHeader.boundingBox()).toHaveProperty("width", 209);
+        expect(await column1.boundingBox()).toHaveProperty("width", 104);
+        expect(await column2.boundingBox()).toHaveProperty("width", 105);
       }
     });
 
@@ -573,11 +579,11 @@ test.describe("Resizing", () => {
       await resizing.reset(column1);
 
       if (browserName === "webkit") {
-        expect(await columnsHeader.boundingBox()).toHaveProperty("width", 279);
-        expect(await column1.boundingBox()).toHaveProperty("width", 179);
+        expect(await columnsHeader.boundingBox()).toHaveProperty("width", 290);
+        expect(await column1.boundingBox()).toHaveProperty("width", 190);
       } else {
-        expect(await columnsHeader.boundingBox()).toHaveProperty("width", 273);
-        expect(await column1.boundingBox()).toHaveProperty("width", 173);
+        expect(await columnsHeader.boundingBox()).toHaveProperty("width", 247);
+        expect(await column1.boundingBox()).toHaveProperty("width", 147);
       }
       expect(await column2.boundingBox()).toHaveProperty("width", 100);
     });
@@ -680,9 +686,9 @@ test.describe("Resizing", () => {
       expect(await params.boundingBox()).toHaveProperty("width", 212);
       expect(await literal.boundingBox()).toHaveProperty("width", 212);
       await resizing.reset(header);
-      expect(await header.boundingBox()).toHaveProperty("width", 256);
-      expect(await params.boundingBox()).toHaveProperty("width", 256);
-      expect(await literal.boundingBox()).toHaveProperty("width", 256);
+      expect(await header.boundingBox()).toHaveProperty("width", 216);
+      expect(await params.boundingBox()).toHaveProperty("width", 216);
+      expect(await literal.boundingBox()).toHaveProperty("width", 216);
     });
 
     test("should create function parameters and resize to fit", async ({ page, resizing }) => {
@@ -811,10 +817,10 @@ test.describe("Resizing", () => {
       expect(await params.boundingBox()).toHaveProperty("width", 120);
       expect(await literal.boundingBox()).toHaveProperty("width", 212);
       await resizing.reset(header);
-      expect(await header.boundingBox()).toHaveProperty("width", 364);
-      expect(await functionName.boundingBox()).toHaveProperty("width", 364);
+      expect(await header.boundingBox()).toHaveProperty("width", 332);
+      expect(await functionName.boundingBox()).toHaveProperty("width", 332);
       expect(await params.boundingBox()).toHaveProperty("width", 120);
-      expect(await literal.boundingBox()).toHaveProperty("width", 244);
+      expect(await literal.boundingBox()).toHaveProperty("width", 212);
     });
 
     test("should change function name and resize to fit", async ({ page, resizing, browserName }) => {
@@ -842,10 +848,10 @@ test.describe("Resizing", () => {
       expect(await params.boundingBox()).toHaveProperty("width", 120);
       expect(await literal.boundingBox()).toHaveProperty("width", 212);
       await resizing.reset(functionName);
-      expect(await header.boundingBox()).toHaveProperty("width", 391);
-      expect(await functionName.boundingBox()).toHaveProperty("width", 391);
+      expect(await header.boundingBox()).toHaveProperty("width", 332);
+      expect(await functionName.boundingBox()).toHaveProperty("width", 332);
       expect(await params.boundingBox()).toHaveProperty("width", 120);
-      expect(await literal.boundingBox()).toHaveProperty("width", 271);
+      expect(await literal.boundingBox()).toHaveProperty("width", 212);
     });
 
     test("should change parameter name and resize to fit", async ({ page, resizing, browserName }) => {
@@ -873,9 +879,9 @@ test.describe("Resizing", () => {
       expect(await params.boundingBox()).toHaveProperty("width", 120);
       expect(await literal.boundingBox()).toHaveProperty("width", 212);
       await resizing.reset(params);
-      expect(await header.boundingBox()).toHaveProperty("width", 365);
-      expect(await functionName.boundingBox()).toHaveProperty("width", 365);
-      expect(await params.boundingBox()).toHaveProperty("width", 153);
+      expect(await header.boundingBox()).toHaveProperty("width", 342);
+      expect(await functionName.boundingBox()).toHaveProperty("width", 342);
+      expect(await params.boundingBox()).toHaveProperty("width", 130);
       expect(await literal.boundingBox()).toHaveProperty("width", 212);
     });
 
@@ -957,8 +963,8 @@ test.describe("Resizing", () => {
       expect(await header.boundingBox()).toHaveProperty("width", 212);
       expect(await literal.boundingBox()).toHaveProperty("width", 212);
       await resizing.reset(header);
-      expect(await header.boundingBox()).toHaveProperty("width", 283);
-      expect(await literal.boundingBox()).toHaveProperty("width", 283);
+      expect(await header.boundingBox()).toHaveProperty("width", 239);
+      expect(await literal.boundingBox()).toHaveProperty("width", 239);
     });
   });
 

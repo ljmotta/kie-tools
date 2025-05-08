@@ -15,9 +15,9 @@
 # specific language governing permissions and limitations
 # under the License.
 
-ARG ARCH
-
 FROM mcr.microsoft.com/playwright:v1.45.2-noble
+
+ARG ARCH
 
 RUN if [ "$ARCH" != "arm" ]; then \
       npx playwright@1.45.2 install chrome --with-deps; \
