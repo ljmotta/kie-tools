@@ -17,6 +17,8 @@
 
 FROM mcr.microsoft.com/playwright:v1.45.2-noble
 
+RUN npx playwright@1.45.2 install chrome --with-deps
+
 # Installing `pnpm` to keep it consistent with the kie-tools repository
 RUN npm install --global pnpm@9.3.0
 

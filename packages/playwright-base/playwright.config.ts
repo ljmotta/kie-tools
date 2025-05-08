@@ -79,10 +79,10 @@ export default defineConfig({
       use: { ...devices["Desktop Safari"], deviceScaleFactor: 1 },
     },
 
-    // {
-    //   timeout: 180_000,
-    //   name: ProjectName.GOOGLE_CHROME,
-    //   use: { ...devices["Desktop Chrome"], channel: "chrome", permissions: ["clipboard-read"] },
-    // },
+    {
+      timeout: 180_000,
+      name: ProjectName.GOOGLE_CHROME,
+      use: { ...devices["Desktop Chrome"], channel: "chrome", permissions: ["clipboard-read"] },
+    },
   ],
 });
