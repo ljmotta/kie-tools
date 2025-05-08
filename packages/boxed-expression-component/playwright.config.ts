@@ -44,7 +44,6 @@ const customConfig = defineConfig({
           timeout: 60000,
           name: ProjectName.CHROMIUM,
           use: { ...devices["Desktop Chrome"], permissions: ["clipboard-read"] },
-          testIgnore: "*",
         },
 
         // {
