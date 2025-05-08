@@ -15,9 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
+ARG ARCH
+
 FROM mcr.microsoft.com/playwright:v1.45.2-noble
 
-RUN if [[ $(uname -p) != \"arm\" ]]; then npx playwright@1.45.2 install chrome --with-deps; fi
+RUN if [ "$ARCH" != "arm" ]; then \
+      npx playwright@1.45.2 install chrome --with-deps; \
+    fi
 
 # Installing `pnpm` to keep it consistent with the kie-tools repository
 RUN npm install --global pnpm@9.3.0
