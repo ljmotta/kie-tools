@@ -300,6 +300,8 @@ test.describe("Resizing", () => {
         monacoParentLocator: page.getByTestId("kie-tools--bee--expression-popover-menu"),
         content: "Installment Calculation",
       });
+      // Required to ensure PopoverMenu will be closed before Decision Table fill
+      await expect(page.getByTestId("kie-tools--bee--expression-popover-menu")).not.toBeAttached();
 
       const inputHeader = page.getByRole("columnheader", { name: "Installment Calculation (<Undefined>)" });
       const outputHeader = page.getByRole("columnheader", { name: "Expression Name (<Undefined>)" });

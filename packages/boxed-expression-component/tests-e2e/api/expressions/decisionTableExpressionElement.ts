@@ -33,14 +33,9 @@ export class DecisionTableExpressionElement {
     let cellNumber = args.startAtCell;
     for (const row of args.tableData) {
       for (const cellData of row) {
-        if (cellData === "-") {
-          cellNumber++;
-          continue;
-        }
         await this.monaco.fill({ monacoParentLocator: this.locator, content: cellData, nth: cellNumber });
         cellNumber++;
       }
-      cellNumber++;
     }
   }
 

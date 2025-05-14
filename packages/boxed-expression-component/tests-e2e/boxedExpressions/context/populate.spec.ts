@@ -73,13 +73,13 @@ test.describe("Populate Boxed Context", () => {
     await bee.expression.asDecisionTable().fill({
       startAtCell: 1,
       tableData: [
-        ["false", "<100", `"High"`],
-        ["false", "[100..120)", `"Medium"`],
-        ["false", "[120..130]", `"Low"`],
-        ["false", ">130", `"Very Low"`],
-        ["true", "<80", `"Decline"`],
-        ["true", "[80..90)", `"High"`],
-        ["true", "[90..110]", `"Medium"`],
+        ["false", "<100", `"High"`, ""],
+        ["false", "[100..120)", `"Medium"`, ""],
+        ["false", "[120..130]", `"Low"`, ""],
+        ["false", ">130", `"Very Low"`, ""],
+        ["true", "<80", `"Decline"`, ""],
+        ["true", "[80..90)", `"High"`, ""],
+        ["true", "[90..110]", `"Medium"`, ""],
         ["true", ">110", `"Low"`],
       ],
     });
