@@ -81,11 +81,11 @@ test.describe("Populate Decision table", () => {
     await bee.expression.asDecisionTable().fill({
       startAtCell: 0,
       tableData: [
-        ["true", "-", "-", "-", `"Decline"`],
-        ["-", "<580", "-", "-", `"Refer"`],
-        ["-", "-", "false", "-", `"Decline"`],
-        ["-", "-", "-", `"High"`, `"Refer"`],
-        ["-", "-", "-", "-", `"Accept"`],
+        ["true", "-", "-", "-", `"Decline"`, ""],
+        ["-", "<580", "-", "-", `"Refer"`, ""],
+        ["-", "-", "false", "-", `"Decline"`, ""],
+        ["-", "-", "-", `"High"`, `"Refer"`, ""],
+        ["-", "-", "-", "-", `"Accept"`, ""],
       ],
     });
 

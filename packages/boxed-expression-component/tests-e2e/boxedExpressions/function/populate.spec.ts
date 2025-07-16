@@ -106,12 +106,15 @@ test.describe("Populate Boxed Function", () => {
       submit: true,
     });
 
+    // Required to ensure PopoverMenu will be closed before Decision Table fill
+    await expect(page.getByTestId("kie-tools--bee--expression-popover-menu")).not.toBeAttached();
+
     await bee.expression.asDecisionTable().fill({
       startAtCell: 1,
       tableData: [
-        [`"High", "Decline"`, "0.6"],
-        [`"Medium"`, "0.7"],
-        [`"Low", "Very Low"`, "0.8"],
+        [`"High", "Decline"`, "0.6", ""],
+        [`"Medium"`, "0.7", ""],
+        [`"Low", "Very Low"`, "0.8", ""],
       ],
     });
 

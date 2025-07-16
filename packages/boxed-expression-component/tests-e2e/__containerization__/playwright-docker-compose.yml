@@ -19,7 +19,6 @@
 
 services:
   playwright:
-    platform: linux/amd64
     container_name: kie-tools-playwright-containerization-boxed-expression-component
     image: dev.local/apache-kie-tools/playwright-e2e-tests-image:${STREAM_NAME}
     depends_on:
@@ -32,6 +31,7 @@ services:
     environment:
       - KIE_TOOLS_BUILD__runEndToEndTests=true
       - KIE_TOOLS_BUILD__containerizedEndToEndTests=false # Already inside the container, variable must be false.
+      - PLAYWRIGHT_BASE__skipGoogleChromeTestsForArm=${PLAYWRIGHT_BASE__skipGoogleChromeTestsForArm}
     volumes:
       - type: bind
         source: ./../../../../
