@@ -63,13 +63,6 @@ export default class Driver {
       "--disable-gpu"
     );
 
-    console.log("Chrome Extension Path:", chromeExtensionPath);
-    console.log("Chrome Options:", chromeOptions);
-
-    if (process.env.CI) {
-      chromeOptions.addArguments("--headless=new");
-    }
-
     // init chrome driver log
     const LOGS_DIR: string = resolve("dist-tests-e2e", "logs");
     if (!existsSync(LOGS_DIR)) {
