@@ -58,8 +58,17 @@ export default class Driver {
       "--allow-insecure-localhost",
       "--disable-web-security",
       "--remote-allow-origins=*",
+      "--disable-dev-shm-usage",
+      "--no-sandbox",
       "--disable-gpu"
     );
+
+    console.log("Chrome Extension Path:", chromeExtensionPath);
+    console.log("Chrome Options:", chromeOptions);
+
+    if (process.env.CI) {
+      chromeOptions.addArguments("--headless=new");
+    }
 
     // init chrome driver log
     const LOGS_DIR: string = resolve("dist-tests-e2e", "logs");
