@@ -50,8 +50,10 @@ export default class Driver {
     // init chrome options
     const chromeOptions: Options = new Options();
     chromeOptions.addExtensions(chromeExtensionPath);
+    chromeOptions.enableBidi();
     chromeOptions.addArguments(
       "--user-data-dir=" + CHROME_DIR,
+      "--load-extension=" + CHROME_DIR,
       "--disable-features=DisableLoadExtensionCommandLineSwitch",
       "--enable-features=UnexpireFlagsM118",
       "--allow-insecure-localhost",
@@ -61,6 +63,8 @@ export default class Driver {
       "--no-sandbox",
       "--disable-gpu"
     );
+    chromeOptions.addArguments("--remote-debugging-pipe");
+    chromeOptions.addArguments("--enable-unsafe-extension-debugging");
 
     // init chrome driver log
     const LOGS_DIR: string = resolve("dist-tests-e2e", "logs");
