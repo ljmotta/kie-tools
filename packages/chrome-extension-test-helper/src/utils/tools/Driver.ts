@@ -49,7 +49,6 @@ export default class Driver {
 
     // init chrome options
     const chromeOptions: Options = new Options();
-    chromeOptions.addExtensions(chromeExtensionPath);
     chromeOptions.enableBidi();
     chromeOptions.addArguments(
       "--user-data-dir=" + CHROME_DIR,
@@ -59,12 +58,9 @@ export default class Driver {
       "--allow-insecure-localhost",
       "--disable-web-security",
       "--remote-allow-origins=*",
-      "--disable-dev-shm-usage",
-      "--no-sandbox",
-      "--disable-gpu"
+      "--remote-debugging-pipe",
+      "--enable-unsafe-extension-debugging"
     );
-    chromeOptions.addArguments("--remote-debugging-pipe");
-    chromeOptions.addArguments("--enable-unsafe-extension-debugging");
 
     // init chrome driver log
     const LOGS_DIR: string = resolve("dist-tests-e2e", "logs");
@@ -83,9 +79,10 @@ export default class Driver {
       .build();
 
     // maximize chrome browser window
-    await ErrorProcessor.run(async () => {
-      await driver.manage().window().setRect({ width: 1920, height: 1080 });
-    }, "Error while setting browser window size.");
+    await ErrorProcessor.run(
+      async () => await driver.manage().window().maximize(),
+      "Error while maximizing browser window."
+    );
 
     return driver;
   }

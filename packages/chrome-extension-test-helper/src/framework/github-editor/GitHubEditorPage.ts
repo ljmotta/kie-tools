@@ -33,7 +33,7 @@ export default class GitHubEditorPage extends EditorPage {
   private static readonly KOGITO_TOOLBAR_LOCATOR = By.className("kogito-toolbar-container");
 
   public async waitUntilLoaded(): Promise<void> {
-    return await this.tools.by(GitHubEditorPage.KOGITO_TOOLBAR_LOCATOR).wait(10000).untilPresent();
+    return await this.tools.by(GitHubEditorPage.KOGITO_TOOLBAR_LOCATOR).wait(5000).untilPresent();
   }
 
   public async copyLinkToOnlineEditor(): Promise<void> {
