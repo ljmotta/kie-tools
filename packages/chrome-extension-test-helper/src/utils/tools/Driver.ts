@@ -60,8 +60,7 @@ export default class Driver {
       "--remote-allow-origins=*",
       "--disable-dev-shm-usage",
       "--no-sandbox",
-      "--disable-gpu",
-      "--headless=new"
+      "--disable-gpu"
     );
 
     // init chrome driver log
