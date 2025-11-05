@@ -51,6 +51,7 @@ export default class Driver {
     const chromeOptions: Options = new Options();
     chromeOptions.addArguments(
       "--user-data-dir=" + CHROME_DIR,
+      "--disable-extensions-except=" + chromeExtensionPath,
       "--load-extension=" + chromeExtensionPath,
       // This flag enables --load-extension, required for testing Chrome extensions
       "--disable-features=DisableLoadExtensionCommandLineSwitch",
@@ -78,6 +79,9 @@ export default class Driver {
       .forBrowser(Browser.CHROME)
       .setChromeOptions(chromeOptions)
       .build();
+
+    console.log("Capabilities:", await driver.getCapabilities());
+    console.log("UA:", await driver.executeScript("return navigator.userAgent"));
 
     // maximize chrome browser window
     await ErrorProcessor.run(async () => {
