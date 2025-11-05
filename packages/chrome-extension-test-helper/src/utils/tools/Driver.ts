@@ -47,7 +47,6 @@ export default class Driver {
       mkdirSync(CHROME_DIR, { recursive: true });
     }
 
-    // init chrome options
     const chromeOptions: Options = new Options();
     chromeOptions.enableBidi();
     chromeOptions.addArguments(
@@ -59,7 +58,10 @@ export default class Driver {
       "--disable-web-security",
       "--remote-allow-origins=*",
       "--remote-debugging-pipe",
-      "--enable-unsafe-extension-debugging"
+      "--enable-unsafe-extension-debugging",
+      "--disable-dev-shm-usage",
+      "--no-sandbox",
+      "--disable-gpu"
     );
 
     // init chrome driver log
@@ -78,11 +80,13 @@ export default class Driver {
       .setChromeOptions(chromeOptions)
       .build();
 
+    console.log("Capabilities:", await driver.getCapabilities());
+    console.log("UA:", await driver.executeScript("return navigator.userAgent"));
+
     // maximize chrome browser window
-    await ErrorProcessor.run(
-      async () => await driver.manage().window().maximize(),
-      "Error while maximizing browser window."
-    );
+    await ErrorProcessor.run(async () => {
+      await driver.manage().window().setRect({ width: 1920, height: 1080 });
+    }, "Error while setting browser window size.");
 
     return driver;
   }
