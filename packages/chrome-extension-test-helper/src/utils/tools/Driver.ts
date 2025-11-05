@@ -50,11 +50,10 @@ export default class Driver {
     const chromeOptions: Options = new Options();
     chromeOptions.enableBidi();
     chromeOptions.addArguments("--user-data-dir=" + CHROME_DIR);
-    chromeOptions.addArguments("--allow-insecure-localhost");
-    chromeOptions.addArguments("--disable-web-security");
     chromeOptions.addArguments("--remote-allow-origins=*");
     chromeOptions.addArguments("--remote-debugging-pipe");
     chromeOptions.addArguments("--enable-unsafe-extension-debugging");
+    chromeOptions.addArguments("--no-sandbox");
     chromeOptions.addExtensions(CHROME_DIR);
 
     // init chrome driver log
@@ -72,9 +71,6 @@ export default class Driver {
       .forBrowser(Browser.CHROME)
       .setChromeOptions(chromeOptions)
       .build();
-
-    console.log("Capabilities:", await driver.getCapabilities());
-    console.log("UA:", await driver.executeScript("return navigator.userAgent"));
 
     // maximize chrome browser window
     await ErrorProcessor.run(async () => {
