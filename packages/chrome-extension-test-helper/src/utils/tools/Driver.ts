@@ -60,7 +60,8 @@ export default class Driver {
       "--remote-allow-origins=*",
       "--disable-dev-shm-usage",
       "--no-sandbox",
-      "--disable-gpu"
+      "--disable-gpu",
+      "--headless=new"
     );
 
     // init chrome driver log
@@ -80,10 +81,9 @@ export default class Driver {
       .build();
 
     // maximize chrome browser window
-    await ErrorProcessor.run(
-      async () => await driver.manage().window().maximize(),
-      "Error while maximizing browser window."
-    );
+    await ErrorProcessor.run(async () => {
+      await driver.manage().window().setRect({ width: 1920, height: 1080 });
+    }, "Error while setting browser window size.");
 
     return driver;
   }
