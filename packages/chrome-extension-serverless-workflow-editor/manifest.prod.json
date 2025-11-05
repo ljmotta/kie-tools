@@ -7,7 +7,7 @@
     {
       "run_at": "document_idle",
       "js": ["content_scripts/github.js"],
-      "matches": ["https://*.github.com/*"],
+      "matches": ["https://github.com/*", "https://*.github.com/*"],
       "all_frames": true
     }
   ],
@@ -16,9 +16,12 @@
   "web_accessible_resources": [{ "resources": ["resources/*", "scripts/*"], "matches": ["https://*/*", "http://*/*"] }],
   "declarative_net_request": { "rule_resources": [{ "id": "rulesset_1", "enabled": true, "path": "rules.json" }] },
   "permissions": ["declarativeNetRequest"],
-  "host_permissions": ["https://*.github.com/*", "http://*.github.com/*"],
-  "sandbox": { "pages": ["https://raw.githubusercontent.com"] },
-  "content_security_policy": { "sandbox": "sandbox allow-scripts; object-src 'self'" },
+  "host_permissions": [
+    "https://github.com/*",
+    "http://github.com/*",
+    "https://*.github.com/*",
+    "http://*.github.com/*"
+  ],
   "externally_connectable": {
     "matches": [
       "https://*.github.com/*",
