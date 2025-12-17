@@ -19,16 +19,16 @@
 
 import { generateUuid } from "@kie-tools/boxed-expression-component/dist/api";
 import {
-  DMN15__tBusinessKnowledgeModel,
-  DMN15__tDecision,
-  DMN15__tDecisionService,
-  DMN15__tDefinitions,
-  DMN15__tGroup,
-  DMN15__tInputData,
-  DMN15__tKnowledgeSource,
-  DMN15__tTextAnnotation,
-  DMNDI15__DMNShape,
-} from "@kie-tools/dmn-marshaller/dist/schemas/dmn-1_5/ts-gen/types";
+  DMN_LATEST__tBusinessKnowledgeModel,
+  DMN_LATEST__tDecision,
+  DMN_LATEST__tDecisionService,
+  DMN_LATEST__tDefinitions,
+  DMN_LATEST__tGroup,
+  DMN_LATEST__tInputData,
+  DMN_LATEST__tKnowledgeSource,
+  DMN_LATEST__tTextAnnotation,
+  DMN_LATEST__DMNShape,
+} from "@kie-tools/dmn-marshaller";
 import { XmlQName } from "@kie-tools/xml-parser-ts/dist/qNames";
 import { Normalized } from "@kie-tools/dmn-marshaller/dist/normalization/normalize";
 import { drag } from "d3-drag";
@@ -86,6 +86,7 @@ import { deleteNode, NodeDeletionMode } from "../../mutations/deleteNode";
 import { nodeNatures } from "../../mutations/NodeNature";
 import { computeIndexedDrd } from "../../store/computed/computeIndexes";
 import { addOrGetDrd } from "../../mutations/addOrGetDrd";
+import { useDmnEditorI18n } from "../../i18n";
 
 export type ElementFilter<E extends { __$$element: string }, Filter extends string> = E extends any
   ? E["__$$element"] extends Filter
@@ -95,14 +96,14 @@ export type ElementFilter<E extends { __$$element: string }, Filter extends stri
 
 export type NodeDmnObjects =
   | null
-  | Unpacked<Normalized<DMN15__tDefinitions>["drgElement"]>
-  | ElementFilter<Unpacked<Normalized<DMN15__tDefinitions>["artifact"]>, "textAnnotation" | "group">;
+  | Unpacked<Normalized<DMN_LATEST__tDefinitions>["drgElement"]>
+  | ElementFilter<Unpacked<Normalized<DMN_LATEST__tDefinitions>["artifact"]>, "textAnnotation" | "group">;
 
 export type DmnDiagramNodeData<T extends NodeDmnObjects = NodeDmnObjects> = {
   dmnObjectNamespace: string | undefined;
   dmnObjectQName: XmlQName;
   dmnObject: T;
-  shape: Normalized<DMNDI15__DMNShape> & { index: number };
+  shape: Normalized<DMN_LATEST__DMNShape> & { index: number };
   index: number;
   hasHiddenRequirements: boolean;
   /**
@@ -121,7 +122,7 @@ export const InputDataNode = React.memo(
     zIndex,
     type,
     id,
-  }: RF.NodeProps<DmnDiagramNodeData<Normalized<DMN15__tInputData> & { __$$element: "inputData" }>>) => {
+  }: RF.NodeProps<DmnDiagramNodeData<Normalized<DMN_LATEST__tInputData> & { __$$element: "inputData" }>>) => {
     const ref = useRef<HTMLDivElement>(null);
 
     const snapGrid = useDmnEditorStore((s) => s.diagram.snapGrid);
@@ -156,7 +157,7 @@ export const InputDataNode = React.memo(
     const onTypeRefChange = useCallback<OnTypeRefChange>(
       (newTypeRef) => {
         dmnEditorStoreApi.setState((state) => {
-          const drgElement = state.dmn.model.definitions.drgElement![index] as Normalized<DMN15__tInputData>;
+          const drgElement = state.dmn.model.definitions.drgElement![index] as Normalized<DMN_LATEST__tInputData>;
           drgElement.variable ??= { "@_id": generateUuid(), "@_name": inputData["@_name"] };
           drgElement.variable["@_typeRef"] = newTypeRef;
         });
@@ -207,6 +208,12 @@ export const InputDataNode = React.memo(
       [isAlternativeInputDataShape, selected]
     );
 
+    const isSingleNodeSelected = useDmnEditorStore((s) => s.diagram._selectedNodes.length === 1);
+    const showPanels = useMemo(() => {
+      // return (isSingleNodeSelected && selected) || shouldActLikeHovered;
+      return shouldActLikeHovered;
+    }, [shouldActLikeHovered]);
+
     return (
       <>
         {refactorConfirmationDialog}
@@ -250,10 +257,10 @@ export const InputDataNode = React.memo(
           data-nodelabel={inputData["@_name"]}
         >
           <div className={`kie-dmn-editor--node `}>
-            <InfoNodePanel isVisible={!isTargeted && shouldActLikeHovered} />
+            <InfoNodePanel isVisible={!isTargeted && showPanels} />
             <OutgoingStuffNodePanel
               nodeHref={id}
-              isVisible={!settings.isReadOnly && !isTargeted && shouldActLikeHovered}
+              isVisible={!settings.isReadOnly && !isTargeted && showPanels}
               nodeTypes={outgoingStructure[NODE_TYPES.inputData].nodes}
               edgeTypes={outgoingStructure[NODE_TYPES.inputData].edges}
             />
@@ -275,7 +282,7 @@ export const InputDataNode = React.memo(
                 fontCssProperties={fontCssProperties}
               />
             )}
-            {shouldActLikeHovered && !settings.isReadOnly && (
+            {showPanels && !settings.isReadOnly && (
               <NodeResizerHandle
                 nodeType={type as typeof NODE_TYPES.inputData}
                 snapGrid={snapGrid}
@@ -286,7 +293,7 @@ export const InputDataNode = React.memo(
               />
             )}
             <DataTypeNodePanel
-              isVisible={!isTargeted && shouldActLikeHovered}
+              isVisible={!isTargeted && showPanels}
               isReadOnly={settings.isReadOnly}
               variable={inputData.variable}
               dmnObjectNamespace={dmnObjectNamespace}
@@ -337,7 +344,7 @@ export const DecisionNode = React.memo(
     zIndex,
     type,
     id,
-  }: RF.NodeProps<DmnDiagramNodeData<Normalized<DMN15__tDecision> & { __$$element: "decision" }>>) => {
+  }: RF.NodeProps<DmnDiagramNodeData<Normalized<DMN_LATEST__tDecision> & { __$$element: "decision" }>>) => {
     const ref = useRef<HTMLDivElement>(null);
     const isExternal = !!dmnObjectQName.prefix;
 
@@ -370,7 +377,7 @@ export const DecisionNode = React.memo(
     const onTypeRefChange = useCallback<OnTypeRefChange>(
       (newTypeRef) => {
         dmnEditorStoreApi.setState((state) => {
-          const drgElement = state.dmn.model.definitions.drgElement![index] as Normalized<DMN15__tDecision>;
+          const drgElement = state.dmn.model.definitions.drgElement![index] as Normalized<DMN_LATEST__tDecision>;
           drgElement.variable ??= { "@_id": generateUuid(), "@_name": decision["@_name"] };
           drgElement.variable["@_typeRef"] = newTypeRef;
           if (drgElement.expression) {
@@ -413,6 +420,12 @@ export const DecisionNode = React.memo(
       [decision, evaluationResultsByNodeId, isEvaluationHighlightsEnabled]
     );
 
+    const isSingleNodeSelected = useDmnEditorStore((s) => s.diagram._selectedNodes.length === 1);
+    const showPanels = useMemo(() => {
+      // return (isSingleNodeSelected && selected) || shouldActLikeHovered;
+      return shouldActLikeHovered;
+    }, [shouldActLikeHovered]);
+
     return (
       <>
         {refactorConfirmationDialog}
@@ -438,13 +451,11 @@ export const DecisionNode = React.memo(
           data-nodehref={id}
           data-nodelabel={decision["@_name"]}
         >
-          <InfoNodePanel isVisible={!isTargeted && shouldActLikeHovered} />
-          {!isExternal && (
-            <EditExpressionNodePanel isVisible={!isTargeted && shouldActLikeHovered} id={decision["@_id"]!} />
-          )}
+          <InfoNodePanel isVisible={!isTargeted && showPanels} />
+          {!isExternal && <EditExpressionNodePanel isVisible={!isTargeted && showPanels} id={decision["@_id"]!} />}
           <OutgoingStuffNodePanel
             nodeHref={id}
-            isVisible={!settings.isReadOnly && !isTargeted && shouldActLikeHovered}
+            isVisible={!settings.isReadOnly && !isTargeted && showPanels}
             nodeTypes={outgoingStructure[NODE_TYPES.decision].nodes}
             edgeTypes={outgoingStructure[NODE_TYPES.decision].edges}
           />
@@ -461,7 +472,7 @@ export const DecisionNode = React.memo(
             shouldCommitOnBlur={true}
             fontCssProperties={fontCssProperties}
           />
-          {shouldActLikeHovered && !settings.isReadOnly && (
+          {showPanels && !settings.isReadOnly && (
             <NodeResizerHandle
               nodeType={type as typeof NODE_TYPES.decision}
               snapGrid={snapGrid}
@@ -471,7 +482,7 @@ export const DecisionNode = React.memo(
             />
           )}
           <DataTypeNodePanel
-            isVisible={!isTargeted && shouldActLikeHovered}
+            isVisible={!isTargeted && showPanels}
             isReadOnly={settings.isReadOnly}
             variable={decision.variable}
             dmnObjectNamespace={dmnObjectNamespace}
@@ -495,7 +506,7 @@ export const BkmNode = React.memo(
     type,
     id,
   }: RF.NodeProps<
-    DmnDiagramNodeData<Normalized<DMN15__tBusinessKnowledgeModel> & { __$$element: "businessKnowledgeModel" }>
+    DmnDiagramNodeData<Normalized<DMN_LATEST__tBusinessKnowledgeModel> & { __$$element: "businessKnowledgeModel" }>
   >) => {
     const ref = useRef<HTMLDivElement>(null);
     const isExternal = !!dmnObjectQName.prefix;
@@ -526,7 +537,7 @@ export const BkmNode = React.memo(
         dmnEditorStoreApi.setState((state) => {
           const drgElement = state.dmn.model.definitions.drgElement![
             index
-          ] as Normalized<DMN15__tBusinessKnowledgeModel>;
+          ] as Normalized<DMN_LATEST__tBusinessKnowledgeModel>;
           drgElement.variable ??= { "@_id": generateUuid(), "@_name": bkm["@_name"] };
           drgElement.variable["@_typeRef"] = newTypeRef;
           if (drgElement.encapsulatedLogic) {
@@ -546,6 +557,12 @@ export const BkmNode = React.memo(
       nodeType: type as NodeType,
       isEnabled: enableCustomNodeStyles,
     });
+
+    const isSingleNodeSelected = useDmnEditorStore((s) => s.diagram._selectedNodes.length === 1);
+    const showPanels = useMemo(() => {
+      // return (isSingleNodeSelected && selected) || shouldActLikeHovered;
+      return shouldActLikeHovered;
+    }, [shouldActLikeHovered]);
 
     return (
       <>
@@ -573,11 +590,11 @@ export const BkmNode = React.memo(
           data-nodehref={id}
           data-nodelabel={bkm["@_name"]}
         >
-          <InfoNodePanel isVisible={!isTargeted && shouldActLikeHovered} />
-          {!isExternal && <EditExpressionNodePanel isVisible={!isTargeted && shouldActLikeHovered} id={bkm["@_id"]!} />}
+          <InfoNodePanel isVisible={!isTargeted && showPanels} />
+          {!isExternal && <EditExpressionNodePanel isVisible={!isTargeted && showPanels} id={bkm["@_id"]!} />}
           <OutgoingStuffNodePanel
             nodeHref={id}
-            isVisible={!settings.isReadOnly && !isTargeted && shouldActLikeHovered}
+            isVisible={!settings.isReadOnly && !isTargeted && showPanels}
             nodeTypes={outgoingStructure[NODE_TYPES.bkm].nodes}
             edgeTypes={outgoingStructure[NODE_TYPES.bkm].edges}
           />
@@ -594,7 +611,7 @@ export const BkmNode = React.memo(
             shouldCommitOnBlur={true}
             fontCssProperties={fontCssProperties}
           />
-          {shouldActLikeHovered && !settings.isReadOnly && (
+          {showPanels && !settings.isReadOnly && (
             <NodeResizerHandle
               nodeType={type as typeof NODE_TYPES.bkm}
               snapGrid={snapGrid}
@@ -604,7 +621,7 @@ export const BkmNode = React.memo(
             />
           )}
           <DataTypeNodePanel
-            isVisible={!isTargeted && shouldActLikeHovered}
+            isVisible={!isTargeted && showPanels}
             isReadOnly={settings.isReadOnly}
             variable={bkm.variable}
             dmnObjectNamespace={dmnObjectNamespace}
@@ -627,7 +644,9 @@ export const KnowledgeSourceNode = React.memo(
     zIndex,
     type,
     id,
-  }: RF.NodeProps<DmnDiagramNodeData<Normalized<DMN15__tKnowledgeSource> & { __$$element: "knowledgeSource" }>>) => {
+  }: RF.NodeProps<
+    DmnDiagramNodeData<Normalized<DMN_LATEST__tKnowledgeSource> & { __$$element: "knowledgeSource" }>
+  >) => {
     const ref = useRef<HTMLDivElement>(null);
 
     const snapGrid = useDmnEditorStore((s) => s.diagram.snapGrid);
@@ -663,6 +682,12 @@ export const KnowledgeSourceNode = React.memo(
       isEnabled: enableCustomNodeStyles,
     });
 
+    const isSingleNodeSelected = useDmnEditorStore((s) => s.diagram._selectedNodes.length === 1);
+    const showPanels = useMemo(() => {
+      // return (isSingleNodeSelected && selected) || shouldActLikeHovered;
+      return shouldActLikeHovered;
+    }, [shouldActLikeHovered]);
+
     return (
       <>
         {refactorConfirmationDialog}
@@ -689,10 +714,10 @@ export const KnowledgeSourceNode = React.memo(
           data-nodehref={id}
           data-nodelabel={knowledgeSource["@_name"]}
         >
-          <InfoNodePanel isVisible={!isTargeted && shouldActLikeHovered} />
+          <InfoNodePanel isVisible={!isTargeted && showPanels} />
           <OutgoingStuffNodePanel
             nodeHref={id}
-            isVisible={!settings.isReadOnly && !isTargeted && shouldActLikeHovered}
+            isVisible={!settings.isReadOnly && !isTargeted && showPanels}
             nodeTypes={outgoingStructure[NODE_TYPES.knowledgeSource].nodes}
             edgeTypes={outgoingStructure[NODE_TYPES.knowledgeSource].edges}
           />
@@ -709,7 +734,7 @@ export const KnowledgeSourceNode = React.memo(
             shouldCommitOnBlur={true}
             fontCssProperties={fontCssProperties}
           />
-          {shouldActLikeHovered && !settings.isReadOnly && (
+          {showPanels && !settings.isReadOnly && (
             <NodeResizerHandle
               nodeType={type as typeof NODE_TYPES.knowledgeSource}
               snapGrid={snapGrid}
@@ -733,7 +758,7 @@ export const TextAnnotationNode = React.memo(
     zIndex,
     type,
     id,
-  }: RF.NodeProps<DmnDiagramNodeData<Normalized<DMN15__tTextAnnotation> & { __$$element: "textAnnotation" }>>) => {
+  }: RF.NodeProps<DmnDiagramNodeData<Normalized<DMN_LATEST__tTextAnnotation> & { __$$element: "textAnnotation" }>>) => {
     const ref = useRef<HTMLDivElement>(null);
 
     const snapGrid = useDmnEditorStore((s) => s.diagram.snapGrid);
@@ -774,6 +799,12 @@ export const TextAnnotationNode = React.memo(
       isEnabled: enableCustomNodeStyles,
     });
 
+    const isSingleNodeSelected = useDmnEditorStore((s) => s.diagram._selectedNodes.length === 1);
+    const showPanels = useMemo(() => {
+      // return (isSingleNodeSelected && selected) || shouldActLikeHovered;
+      return shouldActLikeHovered;
+    }, [shouldActLikeHovered]);
+
     return (
       <>
         <svg className={`kie-dmn-editor--node-shape ${className}`}>
@@ -798,10 +829,10 @@ export const TextAnnotationNode = React.memo(
           data-nodehref={id}
           data-nodelabel={textAnnotation["@_label"] ?? textAnnotation.text?.__$$text}
         >
-          <InfoNodePanel isVisible={!isTargeted && shouldActLikeHovered} />
+          <InfoNodePanel isVisible={!isTargeted && showPanels} />
           <OutgoingStuffNodePanel
             nodeHref={id}
-            isVisible={!settings.isReadOnly && !isTargeted && shouldActLikeHovered}
+            isVisible={!settings.isReadOnly && !isTargeted && showPanels}
             nodeTypes={outgoingStructure[NODE_TYPES.textAnnotation].nodes}
             edgeTypes={outgoingStructure[NODE_TYPES.textAnnotation].edges}
           />
@@ -819,7 +850,7 @@ export const TextAnnotationNode = React.memo(
             shouldCommitOnBlur={true}
             fontCssProperties={fontCssProperties}
           />
-          {shouldActLikeHovered && !settings.isReadOnly && (
+          {showPanels && !settings.isReadOnly && (
             <NodeResizerHandle
               nodeType={type as typeof NODE_TYPES.textAnnotation}
               snapGrid={snapGrid}
@@ -843,7 +874,9 @@ export const DecisionServiceNode = React.memo(
     zIndex,
     type,
     id,
-  }: RF.NodeProps<DmnDiagramNodeData<Normalized<DMN15__tDecisionService> & { __$$element: "decisionService" }>>) => {
+  }: RF.NodeProps<
+    DmnDiagramNodeData<Normalized<DMN_LATEST__tDecisionService> & { __$$element: "decisionService" }>
+  >) => {
     const ref = useRef<SVGRectElement>(null);
     const { externalModelsByNamespace } = useExternalModels();
     const snapGrid = useDmnEditorStore((s) => s.diagram.snapGrid);
@@ -1109,7 +1142,7 @@ export const DecisionServiceNode = React.memo(
     const onTypeRefChange = useCallback<OnTypeRefChange>(
       (newTypeRef) => {
         dmnEditorStoreApi.setState((state) => {
-          const drgElement = state.dmn.model.definitions.drgElement![index] as Normalized<DMN15__tInputData>;
+          const drgElement = state.dmn.model.definitions.drgElement![index] as Normalized<DMN_LATEST__tInputData>;
           drgElement.variable ??= { "@_id": generateUuid(), "@_name": decisionService["@_name"] };
           drgElement.variable["@_typeRef"] = newTypeRef;
         });
@@ -1151,6 +1184,7 @@ export const DecisionServiceNode = React.memo(
               shapeIndex: shape.index,
               localYPosition: e.y,
               snapGrid: state.diagram.snapGrid,
+              __readonly_decisionServiceHref: id,
             });
           });
         })
@@ -1164,7 +1198,16 @@ export const DecisionServiceNode = React.memo(
       return () => {
         selection.on(".drag", null);
       };
-    }, [decisionService, dmnEditorStoreApi, dmnObjectNamespace, externalModelsByNamespace, id, index, shape.index]);
+    }, [
+      decisionService,
+      dmnEditorStoreApi,
+      dmnObjectNamespace,
+      externalModelsByNamespace,
+      id,
+      index,
+      shape.index,
+      isCollapsed,
+    ]);
 
     const { fontCssProperties, shapeStyle } = useNodeStyle({
       dmnStyle: shape["di:Style"],
@@ -1272,7 +1315,7 @@ export const GroupNode = React.memo(
     dragging,
     type,
     id,
-  }: RF.NodeProps<DmnDiagramNodeData<Normalized<DMN15__tGroup> & { __$$element: "group" }>>) => {
+  }: RF.NodeProps<DmnDiagramNodeData<Normalized<DMN_LATEST__tGroup> & { __$$element: "group" }>>) => {
     const ref = useRef<SVGRectElement>(null);
 
     const snapGrid = useDmnEditorStore((s) => s.diagram.snapGrid);
@@ -1395,6 +1438,7 @@ export const GroupNode = React.memo(
 
 export const UnknownNode = React.memo(
   ({ data: { shape }, selected, dragging, type, id }: RF.NodeProps<DmnDiagramNodeData<null>>) => {
+    const { i18n } = useDmnEditorI18n();
     const ref = useRef<HTMLDivElement>(null);
 
     const snapGrid = useDmnEditorStore((s) => s.diagram.snapGrid);
@@ -1450,7 +1494,7 @@ export const UnknownNode = React.memo(
               nodeType={type as typeof NODE_TYPES.unknown}
               snapGrid={snapGrid}
               nodeId={id}
-              nodeName={"unknown"}
+              nodeName={i18n.nodes.unknown}
               nodeShapeIndex={shape.index}
             />
           )}
@@ -1464,11 +1508,12 @@ export const UnknownNode = React.memo(
 ///
 
 export function EmptyLabel() {
+  const { i18n } = useDmnEditorI18n();
   return (
     <span style={{ fontFamily: "serif" }}>
-      <i style={{ opacity: 0.8 }}>{`<Empty>`}</i>
+      <i style={{ opacity: 0.8 }}>{i18n.nodes.empty}</i>
       <br />
-      <i style={{ opacity: 0.5, fontSize: "0.8em", lineHeight: "0.8em" }}>{`Double-click to name`}</i>
+      <i style={{ opacity: 0.5, fontSize: "0.8em", lineHeight: "0.8em" }}>{i18n.nodes.doubleClickToName}</i>
     </span>
   );
 }
@@ -1522,7 +1567,7 @@ function useNodeResizing(id: string): boolean {
 
 type NodeDimensionsArgs = {
   snapGrid: SnapGrid;
-  shape: Normalized<DMNDI15__DMNShape>;
+  shape: Normalized<DMN_LATEST__DMNShape>;
 } & (
   | { nodeType: Extract<NodeType, typeof NODE_TYPES.inputData>; isAlternativeInputDataShape: boolean }
   | { nodeType: Exclude<NodeType, typeof NODE_TYPES.inputData> }
@@ -1650,7 +1695,7 @@ export function useDataTypeCreationCallbackForNodes(index: number, drgElementNam
   return useCallback<OnCreateDataType>(
     (newDataTypeName) => {
       dmnEditorStoreApi.setState((state) => {
-        const drgElement = state.dmn.model.definitions.drgElement![index] as Normalized<DMN15__tInputData>;
+        const drgElement = state.dmn.model.definitions.drgElement![index] as Normalized<DMN_LATEST__tInputData>;
         drgElement.variable ??= { "@_id": generateUuid(), "@_name": drgElementName };
         drgElement.variable["@_typeRef"] = newDataTypeName;
         const newItemDefinition = addTopLevelItemDefinition({

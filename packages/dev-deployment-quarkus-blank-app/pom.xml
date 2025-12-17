@@ -36,8 +36,7 @@
   <name>KIE Tools :: KIE Sandbox :: Dev deployment Quarkus blank app</name>
 
   <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -61,11 +60,37 @@
     <version.org.iq80.snappy>0.5</version.org.iq80.snappy>
     <version.commons-io>2.16.1</version.commons-io>
     <version.com.google.protobuf>3.25.5</version.com.google.protobuf>
-    <version.io.netty>4.1.121.Final</version.io.netty>
+    <version.io.netty>4.1.128.Final</version.io.netty>
+
+    <!-- These versions are overrides for transitive dependencies, to fix security vulnerabilities.
+           They need to be checked with Quarkus and Spring Boot upgrades and eventually removed, if they are not needed anymore. -->
+    <version.angus.mail>2.0.5</version.angus.mail>
+    <version.nimbus.jose.jwt>9.37.4</version.nimbus.jose.jwt>
+    <version.io.vertx>4.5.22</version.io.vertx>
+    <!-- End of various transitive overrides. -->
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <!-- These versions are overrides for transitive dependencies, to fix security vulnerabilities.
+           They need to be checked with Quarkus and Spring Boot upgrades and eventually removed, if they are not needed anymore. -->
+      <dependency>
+        <groupId>org.eclipse.angus</groupId>
+        <artifactId>angus-mail</artifactId>
+        <version>${version.angus.mail}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.nimbusds</groupId>
+        <artifactId>nimbus-jose-jwt</artifactId>
+        <version>${version.nimbus.jose.jwt}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-web</artifactId>
+        <version>${version.io.vertx}</version>
+      </dependency>
+      <!-- End of various transitive overrides. -->
+
       <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-bom</artifactId>
@@ -93,7 +118,7 @@
         <version>${version.org.kie.kogito}</version>
       </dependency>
 
-      <!-- Increasing netty-handler and netty-common version to fix CVE-2025-25193 & CVE-2025-24970 -->
+      <!-- Forcing of netty version to fix vulnerabilities. -->
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-handler</artifactId>
@@ -102,6 +127,16 @@
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-common</artifactId>
+        <version>${version.io.netty}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-codec</artifactId>
+        <version>${version.io.netty}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-codec-http</artifactId>
         <version>${version.io.netty}</version>
       </dependency>
     </dependencies>

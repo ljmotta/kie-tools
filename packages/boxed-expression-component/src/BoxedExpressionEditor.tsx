@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import "@patternfly/react-styles/css/components/Drawer/drawer.css";
+import "@patternfly/react-core/dist/styles/base.css";
 import { I18nDictionariesProvider } from "@kie-tools-core/i18n/dist/react-components";
 import * as React from "react";
 import { BeeGwtService, BoxedExpression, DmnDataType, Normalized, PmmlDocument } from "./api";
@@ -29,7 +29,6 @@ import {
 import { ExpressionDefinitionRoot } from "./expressions/ExpressionDefinitionRoot/ExpressionDefinitionRoot";
 import { BoxedExpressionEditorContextProvider, OnExpressionChange } from "./BoxedExpressionEditorContext";
 import { FeelIdentifiers } from "@kie-tools/dmn-feel-antlr4-parser";
-import "./base-no-reset-wrapped.css";
 import "./@types/react-table";
 
 export type OnRequestFeelIdentifiers = () => FeelIdentifiers;
@@ -66,6 +65,7 @@ export interface BoxedExpressionEditorProps {
   onRequestFeelIdentifiers?: OnRequestFeelIdentifiers;
   /** Hide DMN 1.4 boxed expressions */
   hideDmn14BoxedExpressions?: boolean;
+  locale?: string;
 }
 
 export function BoxedExpressionEditor({
@@ -85,12 +85,13 @@ export function BoxedExpressionEditor({
   widthsById,
   onWidthsChange,
   hideDmn14BoxedExpressions,
+  locale,
 }: BoxedExpressionEditorProps) {
   return (
     <I18nDictionariesProvider
       defaults={boxedExpressionEditorI18nDefaults}
       dictionaries={boxedExpressionEditorDictionaries}
-      initialLocale={navigator.language}
+      initialLocale={locale ?? navigator.language}
       ctx={BoxedExpressionEditorI18nContext}
     >
       <BoxedExpressionEditorContextProvider

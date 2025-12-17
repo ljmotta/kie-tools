@@ -42,13 +42,13 @@ import {
 } from "@patternfly/react-core/dist/js/components/EmptyState";
 import { Text, TextContent } from "@patternfly/react-core/dist/js/components/Text";
 import { formDmnI18n } from "./i18n";
-import { I18nWrapped } from "@kie-tools-core/i18n/dist/react-components";
 import "./styles.scss";
 import { ErrorBoundary } from "@kie-tools/dmn-runner/dist/ErrorBoundary";
 import { ExclamationTriangleIcon } from "@patternfly/react-icons/dist/js/icons/exclamation-triangle-icon";
 import { DecisionResult, DmnEvaluationStatus, DmnEvaluationResult } from "@kie-tools/extended-services-api";
 import { Flex } from "@patternfly/react-core/dist/js/layouts/Flex";
 import { Button } from "@patternfly/react-core/dist/js/components/Button";
+import { I18nWrappedTemplate } from "@kie-tools-core/i18n/dist/react-components";
 
 const ISSUES_URL = "https://github.com/apache/incubator-kie-issues/issues";
 
@@ -190,7 +190,12 @@ export function FormDmnOutputs({
                 <Tooltip
                   key={`date-tooltip-${dmnFormResult}`}
                   content={
-                    <I18nWrapped components={{ date: current.toString() }}>{i18n.result.dateTooltip}</I18nWrapped>
+                    <I18nWrappedTemplate
+                      text={i18n.result.dateTooltip}
+                      interpolationMap={{
+                        date: current.toString(),
+                      }}
+                    />
                   }
                 >
                   <div className={"kogito--editor__dmn-form-result__results-date"}>
@@ -212,7 +217,7 @@ export function FormDmnOutputs({
               return (
                 <>
                   {parentKey && <DescriptionListTerm>{parentKey}</DescriptionListTerm>}
-                  <i>(null)</i>
+                  <i>[]</i>
                 </>
               );
             }
@@ -293,7 +298,7 @@ export function FormDmnOutputs({
                 {openBoxedExpressionEditor !== undefined && (
                   <Button
                     variant={"plain"}
-                    title={`Open '${dmnFormResult.decisionName}' expression`}
+                    title={i18n.result.openExpression(dmnFormResult.decisionName)}
                     icon={<ArrowUpIcon />}
                     onClick={() => onOpenBoxedExpressionEditor?.(dmnFormResult.decisionId)}
                   />
@@ -313,6 +318,7 @@ export function FormDmnOutputs({
       resultStatus,
       onAnimationEnd,
       onOpenBoxedExpressionEditor,
+      i18n.result,
     ]
   );
 
@@ -328,17 +334,16 @@ export function FormDmnOutputs({
             <TextContent>{i18n.result.error.explanation}</TextContent>
             <br />
             <TextContent>
-              <I18nWrapped
-                components={{
+              <I18nWrappedTemplate
+                text={i18n.result.error.message}
+                interpolationMap={{
                   jira: (
                     <a href={ISSUES_URL} target={"_blank"} rel={"noopener noreferrer"}>
                       {ISSUES_URL}
                     </a>
                   ),
                 }}
-              >
-                {i18n.result.error.message}
-              </I18nWrapped>
+              />
             </TextContent>
           </EmptyStateBody>
         </EmptyState>
