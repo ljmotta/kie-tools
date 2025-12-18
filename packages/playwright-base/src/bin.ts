@@ -149,7 +149,18 @@ async function main() {
                   isAppleSilicon() && buildEnv.playwrightBase.skipGoogleChromeTestsForArm === true ? "false" : "true";
                 dockerComposeUp(!!argv.ci, { PLAYWRIGHT_BASE__enableGoogleChromeProject: enableChrome, ...extraEnv });
                 console.info(
-                  `[playwright-base] docker compose up done (enableChrome=${enableChrome}, ci=${!!argv.ci}), extraEnv=${JSON.stringify(extraEnv)}.`
+                  `[playwright-base] docker compose up done. Env
+CI=${!!argv.ci}
+PLAYWRIGHT_BASE__enableChromiumProject=${buildEnv.playwrightBase.enableChromiumProject}
+PLAYWRIGHT_BASE__enableGoogleChromeProject=${buildEnv.playwrightBase.enableGoogleChromeProject}
+PLAYWRIGHT_BASE__enableWebkitProject=${buildEnv.playwrightBase.enableWebkitProject}
+PLAYWRIGHT_BASE__projectTimeout=${buildEnv.playwrightBase.projectTimeout}
+PLAYWRIGHT_BASE__expectTimeout=${buildEnv.playwrightBase.expectTimeout}
+PLAYWRIGHT_BASE__maxDiffPixelRatio=${buildEnv.playwrightBase.maxDiffPixelRatio}
+PLAYWRIGHT_BASE__retries=${buildEnv.playwrightBase.retries}
+PLAYWRIGHT_BASE__workers=${buildEnv.playwrightBase.workers}
+extraEnv=${JSON.stringify(extraEnv)}
+`
                 );
 
                 execSync(
@@ -189,7 +200,18 @@ async function main() {
                   isAppleSilicon() && buildEnv.playwrightBase.skipGoogleChromeTestsForArm === true ? "false" : "true";
                 dockerComposeUp(false, { PLAYWRIGHT_BASE__enableGoogleChromeProject: enableChrome, ...extraEnv });
                 console.info(
-                  `[playwright-base] docker compose up done (enableChrome=${enableChrome}, ci=${!!argv.ci}), extraEnv=${JSON.stringify(extraEnv)}.`
+                  `[playwright-base] docker compose up done. Env
+CI=${!!argv.ci}
+PLAYWRIGHT_BASE__enableChromiumProject=${buildEnv.playwrightBase.enableChromiumProject}
+PLAYWRIGHT_BASE__enableGoogleChromeProject=${buildEnv.playwrightBase.enableGoogleChromeProject}
+PLAYWRIGHT_BASE__enableWebkitProject=${buildEnv.playwrightBase.enableWebkitProject}
+PLAYWRIGHT_BASE__projectTimeout=${buildEnv.playwrightBase.projectTimeout}
+PLAYWRIGHT_BASE__expectTimeout=${buildEnv.playwrightBase.expectTimeout}
+PLAYWRIGHT_BASE__maxDiffPixelRatio=${buildEnv.playwrightBase.maxDiffPixelRatio}
+PLAYWRIGHT_BASE__retries=${buildEnv.playwrightBase.retries}
+PLAYWRIGHT_BASE__workers=${buildEnv.playwrightBase.workers}
+extraEnv=${JSON.stringify(extraEnv)}
+`
                 );
 
                 const result = spawnSync(
