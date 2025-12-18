@@ -147,14 +147,18 @@ async function main() {
               },
               (argv) => {
                 const extraEnv = collectAdditionalEnv(argv);
-                const isChormeEnabled =
-                  isAppleSilicon() && buildEnv.playwrightBase.enableGoogleChromeTestsForAppleSilicon === true
-                    ? "true"
-                    : !isAppleSilicon()
+                // If Google Chrome is enabled check if tests are enabled for Apple Silicon
+                const isGoogleChromeEnabled =
+                  buildEnv.playwrightBase.enableGoogleChromeProject === true
+                    ? isAppleSilicon() && buildEnv.playwrightBase.enableGoogleChromeTestsForAppleSilicon === true
                       ? "true"
-                      : "false";
+                      : !isAppleSilicon()
+                        ? "true"
+                        : "false"
+                    : "false";
+
                 dockerComposeUp(!!argv.ci, {
-                  PLAYWRIGHT_BASE__enableGoogleChromeProject: isChormeEnabled,
+                  PLAYWRIGHT_BASE__enableGoogleChromeProject: isGoogleChromeEnabled,
                   ...extraEnv,
                 });
                 console.info(
@@ -162,7 +166,7 @@ async function main() {
 CI=${!!argv.ci}
 PLAYWRIGHT_BASE__enableGoogleChromeTestsForAppleSilicon=${buildEnv.playwrightBase.enableGoogleChromeTestsForAppleSilicon}
 PLAYWRIGHT_BASE__enableChromiumProject=${buildEnv.playwrightBase.enableChromiumProject}
-PLAYWRIGHT_BASE__enableGoogleChromeProject=${isChormeEnabled}
+PLAYWRIGHT_BASE__enableGoogleChromeProject=${isGoogleChromeEnabled}
 PLAYWRIGHT_BASE__enableWebkitProject=${buildEnv.playwrightBase.enableWebkitProject}
 PLAYWRIGHT_BASE__projectTimeout=${buildEnv.playwrightBase.projectTimeout}
 PLAYWRIGHT_BASE__expectTimeout=${buildEnv.playwrightBase.expectTimeout}
@@ -206,18 +210,23 @@ extraEnv=${JSON.stringify(extraEnv)}
               },
               (argv) => {
                 const extraEnv = collectAdditionalEnv(argv);
-                const enableChrome =
-                  isAppleSilicon() && buildEnv.playwrightBase.enableGoogleChromeTestsForAppleSilicon === true
-                    ? "true"
-                    : !isAppleSilicon()
+                const isGoogleChromeEnabled =
+                  buildEnv.playwrightBase.enableGoogleChromeProject === true
+                    ? isAppleSilicon() && buildEnv.playwrightBase.enableGoogleChromeTestsForAppleSilicon === true
                       ? "true"
-                      : "false";
-                dockerComposeUp(false, { PLAYWRIGHT_BASE__enableGoogleChromeProject: enableChrome, ...extraEnv });
+                      : !isAppleSilicon()
+                        ? "true"
+                        : "false"
+                    : "false";
+                dockerComposeUp(false, {
+                  PLAYWRIGHT_BASE__enableGoogleChromeProject: isGoogleChromeEnabled,
+                  ...extraEnv,
+                });
                 console.info(
                   `[playwright-base] docker compose up done. Env
 CI=${!!argv.ci}
 PLAYWRIGHT_BASE__enableChromiumProject=${buildEnv.playwrightBase.enableChromiumProject}
-PLAYWRIGHT_BASE__enableGoogleChromeProject=${enableChrome}
+PLAYWRIGHT_BASE__enableGoogleChromeProject=${isGoogleChromeEnabled}
 PLAYWRIGHT_BASE__enableWebkitProject=${buildEnv.playwrightBase.enableWebkitProject}
 PLAYWRIGHT_BASE__projectTimeout=${buildEnv.playwrightBase.projectTimeout}
 PLAYWRIGHT_BASE__expectTimeout=${buildEnv.playwrightBase.expectTimeout}
