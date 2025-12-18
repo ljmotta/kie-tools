@@ -33,6 +33,8 @@ const buildEnv: any = env;
 function basePlaywrightEnv(): Record<string, string> {
   return {
     STREAM_NAME: buildEnv.root.streamName,
+    PLAYWRIGHT_BASE__enableGoogleChromeTestsForAppleSilicon:
+      buildEnv.playwrightBase.enableGoogleChromeTestsForAppleSilicon,
     PLAYWRIGHT_BASE__enableChromiumProject: buildEnv.playwrightBase.enableChromiumProject,
     PLAYWRIGHT_BASE__enableGoogleChromeProject: buildEnv.playwrightBase.enableGoogleChromeProject,
     PLAYWRIGHT_BASE__enableWebkitProject: buildEnv.playwrightBase.enableWebkitProject,
@@ -146,11 +148,16 @@ async function main() {
               (argv) => {
                 const extraEnv = collectAdditionalEnv(argv);
                 const enableChrome =
-                  isAppleSilicon() && buildEnv.playwrightBase.skipGoogleChromeTestsForArm === true ? "false" : "true";
+                  isAppleSilicon() && buildEnv.playwrightBase.enableGoogleChromeTestsForAppleSilicon === true
+                    ? "true"
+                    : !isAppleSilicon()
+                      ? "true"
+                      : "false";
                 dockerComposeUp(!!argv.ci, { PLAYWRIGHT_BASE__enableGoogleChromeProject: enableChrome, ...extraEnv });
                 console.info(
                   `[playwright-base] docker compose up done. Env
 CI=${!!argv.ci}
+PLAYWRIGHT_BASE__enableGoogleChromeTestsForAppleSilicon=${buildEnv.playwrightBase.enableGoogleChromeTestsForAppleSilicon}
 PLAYWRIGHT_BASE__enableChromiumProject=${buildEnv.playwrightBase.enableChromiumProject}
 PLAYWRIGHT_BASE__enableGoogleChromeProject=${buildEnv.playwrightBase.enableGoogleChromeProject}
 PLAYWRIGHT_BASE__enableWebkitProject=${buildEnv.playwrightBase.enableWebkitProject}
@@ -197,7 +204,11 @@ extraEnv=${JSON.stringify(extraEnv)}
               (argv) => {
                 const extraEnv = collectAdditionalEnv(argv);
                 const enableChrome =
-                  isAppleSilicon() && buildEnv.playwrightBase.skipGoogleChromeTestsForArm === true ? "false" : "true";
+                  isAppleSilicon() && buildEnv.playwrightBase.enableGoogleChromeTestsForAppleSilicon === true
+                    ? "true"
+                    : !isAppleSilicon()
+                      ? "true"
+                      : "false";
                 dockerComposeUp(false, { PLAYWRIGHT_BASE__enableGoogleChromeProject: enableChrome, ...extraEnv });
                 console.info(
                   `[playwright-base] docker compose up done. Env
