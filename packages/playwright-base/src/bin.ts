@@ -147,19 +147,22 @@ async function main() {
               },
               (argv) => {
                 const extraEnv = collectAdditionalEnv(argv);
-                const enableChrome =
+                const isChormeEnabled =
                   isAppleSilicon() && buildEnv.playwrightBase.enableGoogleChromeTestsForAppleSilicon === true
                     ? "true"
                     : !isAppleSilicon()
                       ? "true"
                       : "false";
-                dockerComposeUp(!!argv.ci, { PLAYWRIGHT_BASE__enableGoogleChromeProject: enableChrome, ...extraEnv });
+                dockerComposeUp(!!argv.ci, {
+                  PLAYWRIGHT_BASE__enableGoogleChromeProject: isChormeEnabled,
+                  ...extraEnv,
+                });
                 console.info(
                   `[playwright-base] docker compose up done. Env
 CI=${!!argv.ci}
 PLAYWRIGHT_BASE__enableGoogleChromeTestsForAppleSilicon=${buildEnv.playwrightBase.enableGoogleChromeTestsForAppleSilicon}
 PLAYWRIGHT_BASE__enableChromiumProject=${buildEnv.playwrightBase.enableChromiumProject}
-PLAYWRIGHT_BASE__enableGoogleChromeProject=${buildEnv.playwrightBase.enableGoogleChromeProject}
+PLAYWRIGHT_BASE__enableGoogleChromeProject=${isChormeEnabled}
 PLAYWRIGHT_BASE__enableWebkitProject=${buildEnv.playwrightBase.enableWebkitProject}
 PLAYWRIGHT_BASE__projectTimeout=${buildEnv.playwrightBase.projectTimeout}
 PLAYWRIGHT_BASE__expectTimeout=${buildEnv.playwrightBase.expectTimeout}
@@ -214,7 +217,7 @@ extraEnv=${JSON.stringify(extraEnv)}
                   `[playwright-base] docker compose up done. Env
 CI=${!!argv.ci}
 PLAYWRIGHT_BASE__enableChromiumProject=${buildEnv.playwrightBase.enableChromiumProject}
-PLAYWRIGHT_BASE__enableGoogleChromeProject=${buildEnv.playwrightBase.enableGoogleChromeProject}
+PLAYWRIGHT_BASE__enableGoogleChromeProject=${enableChrome}
 PLAYWRIGHT_BASE__enableWebkitProject=${buildEnv.playwrightBase.enableWebkitProject}
 PLAYWRIGHT_BASE__projectTimeout=${buildEnv.playwrightBase.projectTimeout}
 PLAYWRIGHT_BASE__expectTimeout=${buildEnv.playwrightBase.expectTimeout}
