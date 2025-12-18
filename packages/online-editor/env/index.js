@@ -201,6 +201,9 @@ module.exports = composeEnv(
             name: getOrDefault(this.vars.ONLINE_EDITOR__devDeploymentDmnFormWebappImageName),
           },
         },
+        playwrightBase: {
+          skipGoogleChromeTestsForArm: true,
+        },
       };
     },
   }

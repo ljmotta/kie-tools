@@ -25,6 +25,10 @@ module.exports = composeEnv([require("@kie-tools/root-env/env")], {
       default: "false",
       description: "Toggles the installation of Playwright dependencies. Can be `true` or `false`.",
     },
+    PLAYWRIGHT_BASE__skipGoogleChromeTestsForArm: {
+      default: "false",
+      description: "Skip Google Chrome tests for ARM OSs. Overrides PLAYWRIGHT_BASE__enableGoogleChromeProject.",
+    },
     PLAYWRIGHT_BASE__enableChromiumProject: {
       default: "true",
       description: "Enable or disable Chromium project",
@@ -62,6 +66,7 @@ module.exports = composeEnv([require("@kie-tools/root-env/env")], {
     return {
       playwrightBase: {
         installDeps: str2bool(getOrDefault(this.vars.PLAYWRIGHT_BASE__installDeps)),
+        skipGoogleChromeTestsForArm: str2bool(getOrDefault(this.vars.PLAYWRIGHT_BASE__skipGoogleChromeTestsForArm)),
         enableChromiumProject: str2bool(getOrDefault(this.vars.PLAYWRIGHT_BASE__enableChromiumProject)),
         enableGoogleChromeProject: str2bool(getOrDefault(this.vars.PLAYWRIGHT_BASE__enableGoogleChromeProject)),
         enableWebkitProject: str2bool(getOrDefault(this.vars.PLAYWRIGHT_BASE__enableWebkitProject)),
