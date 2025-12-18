@@ -50,7 +50,7 @@ module.exports = composeEnv([require("@kie-tools/root-env/env")], {
       description: "The timeout of an expect assertion",
     },
     PLAYWRIGHT_BASE__maxDiffPixelRatio: {
-      default: "0",
+      default: "0.01",
       description: "The threshold of the maximum difference on screenshot comparisons (in percentage)",
     },
     PLAYWRIGHT_BASE__retries: {

@@ -138,8 +138,8 @@ jobs:
           KIE_TOOLS_BUILD__ignoreTestFailures: ${{ !github.event.pull_request }}
           KIE_TOOLS_BUILD__ignoreEndToEndTestFailures: ${{ !github.event.pull_request }}
           PLAYWRIGHT_BASE__enableChromiumProject: "true"
-          PLAYWRIGHT_BASE__enableGoogleChromeProject: "false"
-          PLAYWRIGHT_BASE__enableWebkitProject: "false"
+          PLAYWRIGHT_BASE__enableGoogleChromeProject: "true"
+          PLAYWRIGHT_BASE__enableWebkitProject: "true"
           PLAYWRIGHT_BASE__projectTimeout: "90000"
           PLAYWRIGHT_BASE__expectTimeout: "30000"
           PLAYWRIGHT_BASE__retries: "2"
