@@ -145,7 +145,8 @@ async function main() {
               },
               (argv) => {
                 const extraEnv = collectAdditionalEnv(argv);
-                const enableChrome = !isAppleSilicon() ? "true" : "false";
+                const enableChrome =
+                  !isAppleSilicon() && buildEnv.playwrightBase.enableGoogleChromeProject === true ? "true" : "false";
                 dockerComposeUp(!!argv.ci, { PLAYWRIGHT_BASE__enableGoogleChromeProject: enableChrome, ...extraEnv });
                 console.info(
                   `[playwright-base] docker compose up done (enableChrome=${enableChrome}, ci=${!!argv.ci}), extraEnv=${JSON.stringify(extraEnv)}.`
@@ -184,7 +185,8 @@ async function main() {
               },
               (argv) => {
                 const extraEnv = collectAdditionalEnv(argv);
-                const enableChrome = !isAppleSilicon() ? "true" : "false";
+                const enableChrome =
+                  !isAppleSilicon() && buildEnv.playwrightBase.enableGoogleChromeProject === true ? "true" : "false";
                 dockerComposeUp(false, { PLAYWRIGHT_BASE__enableGoogleChromeProject: enableChrome, ...extraEnv });
                 console.info(
                   `[playwright-base] docker compose up done (enableChrome=${enableChrome}, ci=${!!argv.ci}), extraEnv=${JSON.stringify(extraEnv)}.`
