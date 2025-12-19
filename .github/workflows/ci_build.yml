@@ -150,7 +150,7 @@ jobs:
           MAVEN_ARGS: "-B -Puse-maven-repo-local-tail"
           MAVEN_OPTS: "-Xmx2g"
         run: >-
-          eval "pnpm -F dmn-editor-standalone^... -F online-editor^... -F scesim-editor^... --workspace-concurrency=1 build:dev && pnpm -F dmn-editor-standalone -F online-editor -F scesim-editor --workspace-concurrency=1 build:prod"
+          eval "pnpm ${{ steps.setup_build_mode.outputs.fullBuildPnpmFilterString }} --workspace-concurrency=1 build:prod"
 
       - name: "PARTIAL → Build upstream"
         if: steps.setup_build_mode.outputs.mode == 'partial' && steps.setup_build_mode.outputs.upstreamPnpmFilterString != ''
@@ -179,8 +179,8 @@ jobs:
           PLAYWRIGHT_BASE__enableWebkitProject: "true"
           PLAYWRIGHT_BASE__projectTimeout: "90000"
           PLAYWRIGHT_BASE__expectTimeout: "30000"
-          PLAYWRIGHT_BASE__retries: "2"
-          PLAYWRIGHT_BASE__workers: "4"
+          PLAYWRIGHT_BASE__retries: "3"
+          PLAYWRIGHT_BASE__workers: "2"
           DISPLAY: ":99.0"
           START_SERVER_AND_TEST_INSECURE: "true"
           NODE_OPTIONS: "--max_old_space_size=6144"
