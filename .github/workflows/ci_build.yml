@@ -150,7 +150,7 @@ jobs:
           MAVEN_ARGS: "-B -Puse-maven-repo-local-tail"
           MAVEN_OPTS: "-Xmx2g"
         run: >-
-          eval "pnpm -F dmn-editor-standalone^... -F online-editor^... -F scesim-editor^... --workspace-concurrency=1 build:dev && pnpm -F dmn-editor-standalone -F online-editor -F scesim-editor build:prod"
+          eval "pnpm -F dmn-editor-standalone^... -F online-editor^... -F scesim-editor^... --workspace-concurrency=1 build:dev && pnpm -F dmn-editor-standalone -F online-editor -F scesim-editor --workspace-concurrency=1 build:prod"
 
       - name: "PARTIAL → Build upstream"
         if: steps.setup_build_mode.outputs.mode == 'partial' && steps.setup_build_mode.outputs.upstreamPnpmFilterString != ''
