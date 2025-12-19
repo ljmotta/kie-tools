@@ -17,17 +17,34 @@
  * under the License.
  */
 
-const { varsWithName, composeEnv } = require("@kie-tools-scripts/build-env");
+const { varsWithName, composeEnv, str2bool, getOrDefault } = require("@kie-tools-scripts/build-env");
 
-module.exports = composeEnv([require("@kie-tools/root-env/env"), require("@kie-tools-core/webpack-base/env")], {
-  vars: varsWithName({}),
-  get env() {
-    return {
-      boxedExpressionComponent: {
-        storybook: {
-          port: "9900",
-        },
+module.exports = composeEnv(
+  [
+    require("@kie-tools/root-env/env"),
+    require("@kie-tools-core/webpack-base/env"),
+    require("@kie-tools/playwright-base/env"),
+  ],
+  {
+    vars: varsWithName({
+      BOXED_EXPRESSION_COMPONENT_PLAYWRIGHT__enableGoogleChromeTestsForAppleSilicon: {
+        default: "true",
+        description: "Enable Google Chrome tests for ARM OSs. Overrides PLAYWRIGHT_BASE__enableGoogleChromeProject.",
       },
-    };
-  },
-});
+    }),
+    get env() {
+      return {
+        boxedExpressionComponent: {
+          playwright: {
+            enableGoogleChromeTestsForAppleSilicon: str2bool(
+              getOrDefault(this.vars.BOXED_EXPRESSION_COMPONENT_PLAYWRIGHT__enableGoogleChromeTestsForAppleSilicon)
+            ),
+          },
+          storybook: {
+            port: "9900",
+          },
+        },
+      };
+    },
+  }
+);

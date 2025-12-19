@@ -17,20 +17,37 @@
  * under the License.
  */
 
-const { varsWithName, composeEnv } = require("@kie-tools-scripts/build-env");
+const { varsWithName, composeEnv, str2bool, getOrDefault } = require("@kie-tools-scripts/build-env");
 
-module.exports = composeEnv([require("@kie-tools/root-env/env"), require("@kie-tools-core/webpack-base/env")], {
-  vars: varsWithName({}),
-  get env() {
-    return {
-      dmnEditorStandalone: {
-        dev: {
-          port: "9006",
-        },
-        storybook: {
-          port: "9903",
-        },
+module.exports = composeEnv(
+  [
+    require("@kie-tools/root-env/env"),
+    require("@kie-tools-core/webpack-base/env"),
+    require("@kie-tools/playwright-base/env"),
+  ],
+  {
+    vars: varsWithName({
+      DMN_EDITOR_STANDALONE_PLAYWRIGHT__enableGoogleChromeTestsForAppleSilicon: {
+        default: "true",
+        description: "Enable Google Chrome tests for ARM OSs. Overrides PLAYWRIGHT_BASE__enableGoogleChromeProject.",
       },
-    };
-  },
-});
+    }),
+    get env() {
+      return {
+        dmnEditorStandalone: {
+          playwright: {
+            enableGoogleChromeTestsForAppleSilicon: str2bool(
+              getOrDefault(this.vars.DMN_EDITOR_STANDALONE_PLAYWRIGHT__enableGoogleChromeTestsForAppleSilicon)
+            ),
+          },
+          dev: {
+            port: "9006",
+          },
+          storybook: {
+            port: "9903",
+          },
+        },
+      };
+    },
+  }
+);
