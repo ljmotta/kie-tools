@@ -47,19 +47,14 @@ export default class Driver {
       mkdirSync(CHROME_DIR, { recursive: true });
     }
 
-    // init chrome options
     const chromeOptions: Options = new Options();
-    chromeOptions.addArguments(
-      "--user-data-dir=" + CHROME_DIR,
-      "--load-extension=" + chromeExtensionPath,
-      // This flag enables --load-extension, required for testing Chrome extensions
-      "--disable-features=DisableLoadExtensionCommandLineSwitch",
-      "--enable-features=UnexpireFlagsM118",
-      "--allow-insecure-localhost",
-      "--disable-web-security",
-      "--remote-allow-origins=*",
-      "--disable-gpu"
-    );
+    chromeOptions.enableBidi();
+    chromeOptions.addArguments("--user-data-dir=" + CHROME_DIR);
+    chromeOptions.addArguments("--remote-allow-origins=*");
+    chromeOptions.addArguments("--remote-debugging-pipe");
+    chromeOptions.addArguments("--enable-unsafe-extension-debugging");
+    chromeOptions.addArguments("--no-sandbox");
+    chromeOptions.addExtensions(CHROME_DIR);
 
     // init chrome driver log
     const LOGS_DIR: string = resolve("dist-tests-e2e", "logs");
@@ -78,10 +73,9 @@ export default class Driver {
       .build();
 
     // maximize chrome browser window
-    await ErrorProcessor.run(
-      async () => await driver.manage().window().maximize(),
-      "Error while maximizing browser window."
-    );
+    await ErrorProcessor.run(async () => {
+      await driver.manage().window().setRect({ width: 1920, height: 1080 });
+    }, "Error while setting browser window size.");
 
     return driver;
   }
