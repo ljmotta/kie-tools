@@ -15,7 +15,7 @@
    under the License.
 -->
 
-## @kie-tools/form
+## @kie-tools/dmn-uniforms-patternfly-form-wrapper
 
 ---
 
