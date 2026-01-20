@@ -4273,6 +4273,12 @@ importers:
       '@kie-tools-core/react-hooks':
         specifier: workspace:*
         version: link:../react-hooks
+      '@kie-tools/dmn-language-service':
+        specifier: workspace:*
+        version: link:../dmn-language-service
+      '@kie-tools/dmn-marshaller':
+        specifier: workspace:*
+        version: link:../dmn-marshaller
       '@kie-tools/extended-services-api':
         specifier: workspace:*
         version: link:../extended-services-api

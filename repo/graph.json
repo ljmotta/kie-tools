@@ -1548,11 +1548,6 @@
         "weight": 1
       },
       {
-        "source": "@kie-tools/dev-deployment-dmn-form-webapp",
-        "target": "@kie-tools/maven-base",
-        "weight": 1
-      },
-      {
         "source": "@kie-tools/dmn-uniforms-patternfly-form-wrapper",
         "target": "@kie-tools/uniforms-patternfly-form-wrapper",
         "weight": 1
@@ -1690,6 +1685,11 @@
       {
         "source": "@kie-tools/dmn-runner",
         "target": "@kie-tools-core/react-hooks",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/dmn-runner",
+        "target": "@kie-tools/dmn-language-service",
         "weight": 1
       },
       {

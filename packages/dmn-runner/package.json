@@ -25,6 +25,8 @@
   },
   "dependencies": {
     "@kie-tools-core/react-hooks": "workspace:*",
+    "@kie-tools/dmn-language-service": "workspace:*",
+    "@kie-tools/dmn-marshaller": "workspace:*",
     "@kie-tools/extended-services-api": "workspace:*",
     "@kie-tools/uniforms-patternfly": "workspace:*",
     "@patternfly/react-core": "^5.4.1",

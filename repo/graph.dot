@@ -363,7 +363,6 @@ digraph G {
   "@kie-tools/dev-deployment-base-image" -> "@kie-tools/image-builder" [ style = "dashed", color = "black" ];
   "@kie-tools/dev-deployment-dmn-form-webapp" -> "@kie-tools-core/patternfly-base" [ style = "solid", color = "black" ];
   "@kie-tools/dev-deployment-dmn-form-webapp" -> "@kie-tools/dmn-uniforms-patternfly-form-wrapper" [ style = "solid", color = "black" ];
-  "@kie-tools/dev-deployment-dmn-form-webapp" -> "@kie-tools/maven-base" [ style = "dashed", color = "black" ];
   "@kie-tools/dev-deployment-dmn-form-webapp-image" -> "@kie-tools/dev-deployment-dmn-form-webapp" [ style = "solid", color = "black" ];
   "@kie-tools/dev-deployment-dmn-form-webapp-image" -> "@kie-tools/image-env-to-json" [ style = "solid", color = "black" ];
   "@kie-tools/dev-deployment-dmn-form-webapp-image" -> "@kie-tools/image-builder" [ style = "dashed", color = "black" ];
@@ -387,6 +386,7 @@ digraph G {
   "@kie-tools/dmn-marshaller" -> "@kie-tools/xml-parser-ts-codegen" [ style = "dashed", color = "blue" ];
   "@kie-tools/dmn-marshaller-backend-compatibility-tester" -> "@kie-tools-core/drools-and-kogito" [ style = "dashed", color = "black" ];
   "@kie-tools/dmn-runner" -> "@kie-tools-core/react-hooks" [ style = "solid", color = "blue" ];
+  "@kie-tools/dmn-runner" -> "@kie-tools/dmn-language-service" [ style = "solid", color = "blue" ];
   "@kie-tools/dmn-runner" -> "@kie-tools/extended-services-api" [ style = "solid", color = "blue" ];
   "@kie-tools/dmn-runner" -> "@kie-tools/uniforms-patternfly" [ style = "solid", color = "blue" ];
   "@kie-tools/dmn-testing-models" -> "@kie-tools/maven-base" [ style = "solid", color = "black" ];
